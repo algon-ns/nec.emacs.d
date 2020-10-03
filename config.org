@@ -1,0 +1,5252 @@
+#+TITLE:   Emacs configuration file
+#+AUTHOR:   Niels Søndergaard
+#+EMAIL:   niels@algon.dk
+#+CATEGORY:   Emacs configuratione files
+#+DESCRIPTION:   A literate programming version of my Emacs Configuration
+#+LANGUAGE:    da
+#+OPTIONS:   html-postamble:nil toc:t d:nil num:nil :results nil
+#+OPTIONS:   skip:nil author:t email:t creator:nil timestamp:nil
+#+PROPERTIES:   header-args :tangle config.el :comments link :results
+:PROPERTIES:
+:ID:       77278751-5C93-4253-8198-D33BE1F77D8B
+:END:
+#+STARTUP:   overview
+
+* Preface
+:PROPERTIES:
+:CUSTOM_ID:   Preface
+:ID:       14796200-E6EB-4AB0-8DF2-67058C724D0B
+:END:
+This is my configuration og emacs, it's not a general configurations
+to fit all.
+It reflects my needs and competence, and nothing more than that.
+
+The present document, referred to in the source code version as
+=config.org=, contains the bulk of my configurations for GNU Emacs.
+It is designed using principles of "literate programming": a
+combination of ordinary language and inline code blocks.  Emacs knows
+how to parse this file properly so as to evaluate only the Elisp
+("Emacs Lisp") included herein.  The rest is for humans to make sense
+of my additions and their underlying rationale.
+
+Literate programming allows us to be more expressive and deliberate.
+Not only can we use typography to its maximum potential, but may also
+employ techniques such as internal links between sections.  This makes
+the final product much more useful for end users than a terse script.
+
+In more practical terms, this document is written using =org-mode=.  It
+contains all /package configurations/ for my Emacs setup.  To actually
+work, it needs to be initialised from another file that only covers the
+absolute essentials.
+** about me
+:PROPERTIES:
+:CUSTOM_ID: about me
+:END:
+My main competence is not programming, even though I started coding 
+systems in assembler, PL/1, COBOL, Fortran, Pascal and C, some 40 
+years ago.
+
+Most of that was forgotten, when I retired some years ago.
+
+I've been using emacs for many years, but never went into any 
+configuration, just vanilla emacs on different computers, as my 
+main work were sales support.
+
+So the expierience were not really good, but I've now for about half a year
+been playing with configuring my emacs.
+
+I'm using an old iMAC 27" (Mid 2011 and High Sierra), this machine is more
+than 10 years by now, and can't be upgraded, however it suits me well, 
+so I hesitate buying a new.
+
+By the way, I'm a Dane from Denmark, born in 1945, and educated a 
+Master of Science (Chemical engineering, with speciality in 
+quantum mechanical theory and computer simulations of chemical 
+reactions).
+** about this file
+:PROPERTIES:
+:CUSTOM_ID: about this file
+:END:
+
+Thanks to at lot of people, I've had a lot of inspiration reading and trying
+to figure out, what they did and why they did it..
+
+Insert witty quote about imitation, theft, and plagiarism here. 
+Many of the ideas in this file are +stolen from+ inspired by the works of others:
+
+A few to mention:
+- [[https://github.com/jwiegley/dot-emacs/][John Wiegley]] (=jwiegley=)
+- [[https://github.com/sachac][Sacha Chua]] (=sachac=)
+- [[https://lics.cas.mcmaster.ca/node/14][Musa Al-hassey]] 
+- [[https://buildfunthings.com][Arjen Wiersma]] (=buildfunthings=)
+- [[https://ogbe.net/emacsconfig.html][Dennis Ogbe]] (=do@ogbe.net=)
+- [[https://github.com/rememberYou][Terencio Agozzino]]
+- [[https://github.com/novoid/dot-emacs][Karl Voit]], but also configurations like purcell, doom, centaur and many more
+has been the foundation for this.
+
+The base for my emacs configuration, is the config comming from [[https://github.com/Borderliner/RME][Ryan's Minimal Emacs]]
+by [[MailTo:ryan.hajianpour@gmail.com][Ryan Hajianpour]] (=Borderliner=), but I don't think there is anything left by now.
+
+Note that all Elisp blocks part of a =DISABLED= heading or which are
+marked with =:tangle no= won't be tangled to the =config.el= file.
+Unfortunately, within the Org-mode rendering of GitHub, you won't see
+the =DISABLED= keyword nor the =:tangle no= parameter of the babel
+blocks. Please get the Org-mode file and open it in your Emacs directly.
+Originally, Karl Voit found this process on
+http://www.holgerschurig.de/en/emacs-init-tangle/ 
+
+Karl Voit have adapted its code and write additional features.
+...and I've +stolen+ been inspired by the code.
+
+If you wonder, where You found this file....
+- Git Repo :: [[https://github.com/algon-ns/.emacs.d][github.com/algon-ns/.emacs.d]]                
+** early_init.el and init.Elisp
+*** early_init.el (require emacs version > 27.0)
+#+begin_example emacs-lisp
+(setq enable-local-variables :safe)
+;;
+;;Some default settings are here
+(setq-default debug-on-error         nil
+              message-log-max        t
+              ad-redefinition-action 'accept)
+;;;;;; Set garbage collection threshold
+;; From https://www.reddit.com/r/emacs/comments/3kqt6e/2_easy_little_known_steps_to_speed_up_emacs_start/
+(setq gc-cons-threshold-original gc-cons-threshold)
+(setq gc-cons-threshold (* 1024 1024 10))
+;;;;;; Set file-name-handler-alist
+;; Also from https://www.reddit.com/r/emacs/comments/3kqt6e/2_easy_little_known_steps_to_speed_up_emacs_start/
+(setq file-name-handler-alist-original file-name-handler-alist)
+(setq file-name-handler-alist nil)
+;;;;;; Set deferred timer to reset them
+(run-with-idle-timer
+ 5 nil
+ (lambda ()
+   (setq gc-cons-threshold gc-cons-threshold-original)
+   (setq file-name-handler-alist file-name-handler-alist-original)
+   (makunbound 'gc-cons-threshold-original)
+   (makunbound 'file-name-handler-alist-original)
+   (straight-use-package 'gcmh)
+   (use-package gcmh
+     :straight t
+ ;;    :delight " "
+     :init
+     (setq gcmh-verbose           nil
+         gcmh-lows-cons-threshold #x800000
+         gcmh-high-cons-threshold #x3200000
+         gcmh-idle-delay          3600)
+     :config
+     (gcmh-mode))
+   (setq garbage-collection-messages nil)
+   (message "gc-cons-threshold and file-name-handler-alist restored")))               
+
+(defcustom nec/measure-time t
+  "Do we want to measure time for this startup?"
+  :group 'nec
+  :type 'boolean)
+
+(defcustom my-user-emacs-directory "~/.emacs.d/"
+   "this is my home directory (in emacs)"
+   :group 'nec
+   :type 'string)
+
+;; goto my base
+(cd my-user-emacs-directory)
+(setq default-directory my-user-emacs-directory)
+(setq user-emacs-directory my-user-emacs-directory)
+
+(defvar my-init-el-start-time (current-time) "Time when init.el was started")
+;; from http://ergoemacs.org/emacs/elisp_datetime.html
+(setq my-config-el-start-time-iso (concat
+ (format-time-string "%Y-%m-%dT%T")
+ ((lambda (x) (concat (substring x 0 3) ":" (substring x 3 5)))
+  (format-time-string "%z"))))
+
+(setq nec/total-time (current-time))
+(if nec/measure-time (setq nec/nutid (current-time)))
+
+(defun nec/timer (tekst)
+  (message  (concat  "→ ★ " tekst "  %.2fs" )  (float-time (time-subtract (current-time) nec/nutid)))
+  (setq nec/nutid (current-time)))
+
+;; Prevent the glimpse of un-styled Emacs by disabling these UI elements early.
+(setq-default inhibit-startup-screen t)
+(menu-bar-mode -1)
+(push '(menu-bar-lines . 0) default-frame-alist)
+(push '(tool-bar-lines . 0) default-frame-alist)
+(push '(vertical-scroll-bars) default-frame-alist)
+
+;; Resizing the Emacs frame can be a terribly expensive part of changing the
+;; font. By inhibiting this, we easily halve startup times with fonts that are
+;; larger than the system default.
+(setq frame-inhibit-implied-resize t)
+#+end_example
+*** init.el (not tested with emacs version< 27.1)
+#+begin_example emacs-lisp
+
+(defvar bootstrap-version)
+(let ((bootstrap-file
+       (expand-file-name "straight/repos/straight.el/bootstrap.el" user-emacs-directory))
+      (bootstrap-version 5))
+  (unless (file-exists-p bootstrap-file)
+    (with-current-buffer
+        (url-retrieve-synchronously
+         "https://raw.githubusercontent.com/raxod502/straight.el/develop/install.el"
+         'silent 'inhibit-cookies)
+      (goto-char (point-max))
+      (eval-print-last-sexp)))
+  (load bootstrap-file nil 'nomessage))
+;; To not increase Emacs startup time, check package modifications when packages
+;; edited (with Emacs) or manually invoke =straight-check-all= command, instead of
+;; checking modifications at startup.
+(setq straight-check-for-modifications '(check-on-save find-when-checking))
+
+;; =M-x straight-pull-all=: update all packages.
+;; =M-x straight-normalize-all=: restore all packages (remove local edits)
+;;=M-x straight-freeze-versions= and =M-x straight-thaw-versions= are like =pip
+;;  freeze requirements.txt= and =pip install -r requirements.txt=
+;;  To tell straight.el that you want to use the version of Org shipped with
+;;  Emacs, rather than cloning the upstream repository:
+(straight-use-package 'org)
+(straight-use-package 'org-plus-contrib)
+;; need to get hold of org a soon as possible
+(setq org-export-backends '(ascii beamer html icalendar latex md odt koma-letter))
+;;;;Effectively replace use-package with straight-use-package
+;;; https://github.com/raxod502/straight.el/blob/develop/README.md#integration-with-use-package
+(straight-use-package 'use-package)
+(setq straight-use-package-by-default t)
+(require 'server)
+(unless (server-running-p)
+  (server-start))
+
+(defmacro use-feature (name &rest args)
+  "Like `use-package', but with `straight-use-package-by-default' disabled.
+NAME and ARGS are as in `use-package'."
+  (declare (indent defun))
+  `(use-package ,name
+     ,@args))
+
+;; Feature `straight-x' from package `straight' provides
+;; experimental/unstable extensions to straight.el which are not yet
+;; ready for official inclusion.
+;;(use-feature straight-x
+;; Add an autoload for this extremely useful command.y
+;;  :commands (straight-x-fetch-all))
+
+(straight-use-package 'general)
+(use-package general
+  :init
+  (defalias 'gsetq #'general-setq)
+  (defalias 'gsetq-local #'general-setq-local)
+  (defalias 'gsetq-default #'general-setq-default))
+
+;;(straight-use-package 'gcmh)
+;;(use-package gcmh
+;;  :straight t
+;;  :init
+;;  (setq gcmh-verbose           nil
+;;      gcmh-lows-cons-threshold #x800000
+;;      gcmh-high-cons-threshold #x1600000
+;;      gcmh-idle-delay          3600)
+;;  :config
+;;  (gcmh-mode))
+(setq garbage-collection-messages nil)
+;;
+(defvar current-date-time-format "%a %b %d %Y-%m-%dT%H:%M:%S "
+  "Format of date to insert with `insert-current-date-time' func
+   See help of `format-time-string' for possible replacements")
+;; from: http://stackoverflow.com/questions/251908/how-can-i-insert-current-date-and-time-into-a-file-using-emacs
+(defvar current-time-format "%a %H:%M:%S"
+  "Format of date to insert with `insert-current-time' func.
+   Note the weekly scope of the command's precision.")
+;;
+;; local load list
+(add-to-list 'load-path (concat my-user-emacs-directory "lisp"))
+(setq custom-theme-directory "~/.emacs.d/themes")
+;;;;  package.el
+;;; so package-list-packages includes them
+(require 'package)
+(add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/"))
+
+;;; get and untangle the config.org file
+(defun my-tangle-config-org ()
+  "This function will write all source blocks from =config.org= into =config.el= that are ...
+- not marked as =tangle: no=
+- doesn't have the TODO state =DISABLED=
+- have a source-code of =emacs-lisp="
+  (require 'org)
+  (let* ((body-list ())
+         (output-file (concat my-user-emacs-directory "config.el"))
+         (org-babel-default-header-args (org-babel-merge-params org-babel-default-header-args
+                                                                (list (cons :tangle output-file)))))
+    (message "—————• Re-generating %s …" output-file)
+    (save-restriction
+      (save-excursion
+        (org-babel-map-src-blocks (concat my-user-emacs-directory "config.org")
+	  (let* (
+		 (org_block_info (org-babel-get-src-block-info 'light))
+		 ;;(block_name (nth 4 org_block_info))
+		 (tfile (cdr (assq :tangle (nth 2 org_block_info))))
+		 (match_for_TODO_keyword)
+		 )
+	    (save-excursion
+	      (catch 'exit
+		;;(when (string= "" block_name)
+		;;  (message "Going to write block name: " block_name)
+		;;  (add-to-list 'body-list (concat "message(\"" block_name "\")"));; adding a debug statement for named blocks
+		;;  )
+		(org-back-to-heading t)
+		(when (looking-at org-outline-regexp)
+		  (goto-char (1- (match-end 0))))
+		(when (looking-at (concat " +" org-todo-regexp "\\( +\\|[ \t]*$\\)"))
+		  (setq match_for_TODO_keyword (match-string 1)))))
+	    (unless (or (string= "no" tfile)
+			(string= "DISABLED" match_for_TODO_keyword)
+			(not (string= "emacs-lisp" lang)))
+	      (add-to-list 'body-list (concat "\n\n;; #####################################################################################\n"
+					      "(message \"config • " (org-get-heading) " …\")\n\n")
+			   )
+	      (add-to-list 'body-list body)
+	      ))))
+      (with-temp-file output-file
+        (insert ";;; init.el --- -*- lexical-binding: t -*-\n")
+        (insert ";; ============================================================\n")
+        (insert ";; Don't edit this file, edit config.org' instead ...\n")
+        (insert ";; Auto-generated at " (format-time-string current-date-time-format (current-time)) " on host " system-name "\n")
+        (insert ";; ============================================================\n")
+        (insert (apply 'concat (reverse body-list))))
+      (message "—————• Wrote %s" output-file))))
+
+;; following lines are executed only when my-tangle-config-org-hook-func()
+;; was not invoked when saving config.org which is the normal case:
+(let ((orgfile (concat my-user-emacs-directory "config.org"))
+      (elfile (concat my-user-emacs-directory "config.el")))
+  (when (or (not (file-exists-p elfile))
+            (file-newer-than-file-p orgfile elfile))
+    (my-tangle-config-org)
+    ;;(save-buffers-kill-emacs);; TEST: kill Emacs when config has been re-generated due to many issues when loading newly generated config.el
+    )
+  (load-file elfile))
+
+;; when config.org is saved, re-generate config.el:
+(defun my-tangle-config-org-hook-func ()
+  (when (string= "config.org" (buffer-name))
+	(let ((orgfile (concat my-user-emacs-directory "config.org"))
+		  (elfile (concat my-user-emacs-directory "config.el")))
+	  (my-tangle-config-org))))
+(add-hook 'after-save-hook 'my-tangle-config-org-hook-func)
+(message "→★ loading init.el in %.2fs" (float-time (time-subtract (current-time) my-init-el-start-time)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(put 'dired-find-alternate-file 'disabled nil)
+#+end_example
+* Contents                                                            :TOC_5:
+:PROPERTIES:
+:CUSTOM_ID: Contents
+:END:
+- [[#preface][Preface]]
+  - [[#about-me][about me]]
+  - [[#about-this-file][about this file]]
+  - [[#early_initel-and-initelisp][early_init.el and init.Elisp]]
+    - [[#early_initel-require-emacs-version--270][early_init.el (require emacs version > 27.0)]]
+    - [[#initel-not-tested-with-emacs-version-271][init.el (not tested with emacs version< 27.1)]]
+- [[#basic-emacs][Basic emacs]]
+  - [[#fundamental-constants-and-functions][Fundamental constants and functions]]
+    - [[#version-and-full-stop][Version and full stop]]
+    - [[#load-custom-file][load custom file]]
+    - [[#fundamentals-for-hydras][Fundamentals for Hydras]]
+    - [[#typeface-suitability-test][Typeface suitability test]]
+    - [[#read-the-users-onfiguration-file][Read the users onfiguration file]]
+    - [[#diminish-modes][Diminish modes]]
+    - [[#bind-key][bind key]]
+    - [[#variables-and-defaults][Variables and Defaults]]
+    - [[#backup][Backup]]
+    - [[#y-instead-of-the-much-longer-yes]['y' instead of the much longer 'yes']]
+    - [[#disable-tabs-forever-and-fix-indentation-offset][Disable tabs *forever* and fix indentation offset]]
+    - [[#create-missing-directory-for-find-file][create missing directory for find-file]]
+    - [[#ctrl-s--isearch][ctrl-s  (isearch)]]
+    - [[#making-emacs-secure][Making emacs secure]]
+    - [[#smex][SMEX]]
+    - [[#registers][Registers]]
+  - [[#buffer][buffer]]
+    - [[#utf-8-please][UTF-8 please]]
+    - [[#go-to-scratch-buffer][go to scratch buffer]]
+    - [[#kill-buffer-and-the-file-associated][kill buffer and the file associated]]
+    - [[#rename-current-buffer-and-file-associated][rename current buffer and file associated]]
+    - [[#clean-stale-buffers][Clean stale buffers]]
+    - [[#list-buffers][List buffers]]
+    - [[#save-all-buffer][Save all buffer]]
+    - [[#load-misc-fonts][Load misc fonts]]
+    - [[#unfill-a-paragraph][Unfill a paragraph]]
+    - [[#auto-fill-mode][Auto fill mode]]
+    - [[#move-to-indentation-or-beginning-of-the-line][Move to indentation or beginning of the line]]
+    - [[#increase-or-decrease-font-size-across-all-buffers][Increase or decrease font size across all buffers]]
+  - [[#misc][misc]]
+    - [[#crux][Crux]]
+    - [[#disk-usage][Disk Usage]]
+    - [[#hostname][hostname]]
+    - [[#path-and-env-from-os][PATH and env (from OS)]]
+    - [[#server-mode][server Mode]]
+    - [[#time-stamp--large-file-warning][Time stamp / large file warning]]
+    - [[#copy-id][Copy ID]]
+    - [[#list-environment][list-environment]]
+    - [[#running-on-a-macos-mashine][running on a macOS mashine]]
+      - [[#key-bindings][Key Bindings]]
+      - [[#ligatures-in-code][Ligatures in Code]]
+      - [[#dash][Dash]]
+      - [[#brew-and-ls][Brew and ls]]
+      - [[#notifications][Notifications]]
+    - [[#line-numbers-i-like-them-all-over-the-places][line numbers, I like them all over the places]]
+    - [[#keyfreq][Keyfreq]]
+    - [[#grep-and-find-file][grep and find file]]
+  - [[#emacs-interface][emacs interface]]
+    - [[#ac-jump][AC Jump]]
+    - [[#term][term]]
+    - [[#all-the-icons][all-the-icons]]
+    - [[#helm][Helm]]
+    - [[#yasnippet][Yasnippet]]
+    - [[#ido][IDO]]
+    - [[#smartparens][Smartparens]]
+    - [[#set-danish-calendar-data][Set danish calendar data]]
+    - [[#calculate-eastern-sunday][calculate eastern sunday]]
+    - [[#danish-hollidays][Danish hollidays]]
+    - [[#rainbow][Rainbow]]
+    - [[#company][Company]]
+    - [[#company-box][Company-box]]
+    - [[#hippie-expand][Hippie Expand]]
+    - [[#hydra][Hydra]]
+    - [[#show-face-under-cursor][Show face under cursor]]
+    - [[#set-emacs-up-to-have-color-on-terminal][Set emacs up to have color on terminal]]
+    - [[#auto-super-save][Auto Super Save]]
+    - [[#keys][Keys]]
+  - [[#user-interface][User interface]]
+    - [[#never-loose-the-cursor][Never loose the cursor]]
+    - [[#dimming-unused-windows][Dimming Unused Windows]]
+    - [[#ask-before-killing-emacs][Ask before killing emacs]]
+    - [[#modeline][Modeline]]
+    - [[#theme][Theme]]
+    - [[#term-1][Term]]
+    - [[#edit-command][Edit command]]
+    - [[#dired-filefinder][Dired filefinder]]
+    - [[#games][Games]]
+    - [[#flyckeck][Flyckeck]]
+    - [[#dashboard][Dashboard]]
+- [[#org-and-friends][org and friends]]
+    - [[#org-general-settings][org general settings]]
+    - [[#org-bullets][org bullets]]
+    - [[#refiling-setup][Refiling Setup]]
+    - [[#org-contact][org contact]]
+    - [[#org-journal][org-journal]]
+    - [[#doct][doct]]
+    - [[#org-capture][org capture]]
+    - [[#org-roam][org-roam]]
+    - [[#org-roam-server][org-roam-server]]
+    - [[#org-agenda][org agenda]]
+    - [[#org-brain][org-brain]]
+    - [[#org-manage-and-header][org-manage and header]]
+    - [[#calendar][Calendar]]
+    - [[#org-pdftools][org-pdftools]]
+- [[#languages][Languages]]
+    - [[#python][Python]]
+    - [[#projectile][Projectile]]
+    - [[#rust][Rust]]
+    - [[#latex][LaTeX]]
+    - [[#php][PHP]]
+    - [[#dap-debug-adapter-protocol][DAP (debug adapter protocol)]]
+    - [[#markdown][MarkDown]]
+    - [[#template-test][template-test]]
+- [[#applications][Applications]]
+    - [[#header-for-emacs-lisp-files][Header for emacs-lisp files]]
+    - [[#magit][Magit]]
+    - [[#remember-mode][Remember mode]]
+    - [[#tæl-ord][Tæl ord]]
+    - [[#elgantt][elgantt]]
+    - [[#gnus][gnus]]
+    - [[#zone][zone]]
+    - [[#smog][smog]]
+    - [[#elfeed][elfeed]]
+- [[#the-end][The end]]
+    - [[#time-uses][time uses]]
+
+* Basic emacs
+:PROPERTIES:
+:CUSTOM_ID: Basic emacs
+:END:
+I've tried to make this i an orderdly manner, which is not an 
+easy task for me, as the characteristic order is far from my 
+normally behavior.
+First the basics for running emacs
+** Fundamental constants and functions
+:PROPERTIES:
+:CUSTOM_ID: Fundamental constants and functions
+:END:
+*** Version and full stop
+:PROPERTIES:
+:CUSTOM_ID: Version and full stop
+:END:
+It might run on former versions of emacs, but I dont know, 
+as I started this in version 27.0.90
+#+begin_src emacs-lisp
+;; Keep self motivated!
+(setq frame-title-format '("" "%b - Som i en Drømmeverden (•̀ᴗ•́)و"))
+(setq emacs/ emacs-version)
+;; Startup message: Emacs & Org versions:4 ends here
+(when (version< emacs/ "26")
+  (warning "This requires Emacs 26 and above!"))
+(if nec/measure-time (nec/timer "version control "))
+#+end_src
+*** load custom file
+:PROPERTIES:
+:CUSTOM_ID: load custom file
+:END:
+When you install a package or use the various customisation interfaces
+to tweak things to your liking, Emacs will append a piece of Elisp to
+your init file.  In my experience, this is a common source of
+inconsistencies, arising from a conflict between the user's code and
+what is stored in that added =custom= snippet.
+
+As such, I prefer to have all "custom" code stored in a separate,
+disposable file that I do not keep under version control.  When
+something does not seem to work as intended it is easy to edit
+=~/.emacs.d/custom.el= or outright delete it.
+#+begin_src emacs-lisp
+;;; Offload the custom-set-variables to a separate file
+;;; This keeps your init.el neater and you have the option
+;;; to gitignore your custom.el if you see fit.
+(setq custom-file "~/.emacs.d/custom.el")
+(unless (file-exists-p custom-file)
+  (write-region "" nil custom-file))
+;;; Load custom file. Don't hide errors. Hide success message
+(load custom-file 'noerror)
+(if nec/measure-time
+          (nec/timer "Load custom.el   "))
+#+end_src
+*** Fundamentals for Hydras
+:PROPERTIES:
+:CUSTOM_ID: h:af691a31-917e-4d9b-aee6-5744b1173999
+:END:
+
+A "hydra" is an ad-hoc mode for mapping commands to a group of more
+convenient key bindings.  In an active hydra, all of its keys---the
+hydra's "heads"---can be typed in any order, keeping the mode active in
+the process (if wanted), while at least one key performs the function of
+exiting the hydra.
+
+In practice, *I do not use hydras as substitutes for mode maps*.  Instead,
+I treat them as complementary to minor modes that offer enhancements to
+a particular major mode but are otherwise not very useful outside that
+niche.  Think of cases such as a code linter (the minor mode) as part of
+a programming session (major mode).
+
+The reason I use hydras this way is due to the official key binding
+conventions that I [generally] follow (as documented in the Emacs
+manual).  The idea of using =C-c [a-z]= for all these minor modes is good
+only if you have a few of them and only if they are more useful outside
+a particular task.  In other words, it does not scale.
+
+I thus employ =C-c h= as a common prefix for all my hydras (knowing that
+it is meant for private use), binding each sequence to the relevant
+minor mode's map.  An extra key completes the chord following mnemonics.
+For instance, a hydra about the linter when that is active is =C-c h l=,
+for the outline viewer =C-c h o=, for git merge conflicts =C-c h g=, and so
+on.
+
+Look for the =defhydra= macro in the relevant package declarations (these
+will evolve over time).  Hydras are colour-coded as a means of denoting
+their behaviour with regard to the use of non-defined keys and the
+criteria for exiting.
+
+| Colour   | Hydra heads         | Other keys          |
+|----------+---------------------+---------------------|
+| red      | Accept and Continue | Accept and Exit     |
+| pink     | Accept and Continue | Accept and Continue |
+| amaranth | Accept and Continue | Reject and Continue |
+| teal     | Exit                | Reject and Continue |
+| blue     | Exit                | Accept and Exit     |
+
+Also check [[https://github.com/abo-abo/hydra][the project's source]] for more information.
+
+#+begin_src emacs-lisp
+(straight-use-package 'hydra)
+#+end_src
+*** Typeface suitability test
+:PROPERTIES:
+:CUSTOM_ID: h:9035a1ed-e988-4731-89a5-0d9e302c3dea
+:END:
+
+Here is a test I have come up with to make an initial assessment of the
+overall quality of a monospaced font that is meant to work well in a
+programming context: /can you discern each character at a quick glance?/
+If yes, your choice of typeface is good /prima facie/, otherwise search
+for something else.
+
+Note that this test is not perfect, since many typefaces fall short in
+less obvious ways, such as the space between the characters.  Also note
+that the website version of this document may not accurately represent
+the typeface I am using.
+
+#+begin_example
+()[]{}<>«»‹›
+6bB8&
+0ODdoaoOQGC
+I1tilIJL|
+!¡ij
+5$§Ss
+x×X
+.,·°%
+¡!¿?
+:;
+`''"‘’“”
+—-~≈=≠+*_
+…⋯
+...
+
+Sample character set
+Check for monospacing and Greek glyphs
+
+ABCDEFGHIJKLMNOPQRSTUVWXYZÆØÅ
+abcdefghijklmnopqrstuvwxyzæøå
+0123456789
+~!@#$%^&*+
+`'"‘’“”.,;:…
+()[]{}—-_=|<>/\
+ΑΒΓΔΕΖΗΘΙΚΛΜΝΞΟΠΡΣΤΥΦΧΨΩ
+αβγδεζηθικλμνξοπρστυφχψω
+#+end_example
+
+*** Read the users onfiguration file
+:PROPERTIES:
+:CUSTOM_ID: Read the users onfiguration file
+:END:
+Here we read the Users wishes for the configuration
+ ** not implemented yet **
+# ! # #+begin_src emacs-lisp
+(defvar konf-file "~/.emacs.d/user_config.el"
+  "Set name for the user-configuration file, feature is under construction"
+  :group 'nec
+  :type 'string )
+
+(unless (file-exists-p konf-file)
+  (write-region "use-tabbar by NS" nil konf-file))
+;;; Load user_config file. Don't hide errors. Hide success message
+(defvar use-tabbar nil
+  "If not nil, then use tab for buffers, if nill, don't use tab"
+  :group 'nec
+  :type 'boolean)
+
+(load konf-file nil t)
+(if nec/measure-time
+          (nec/timer "Load konf-file.el   "))
+#+end_src
+*** Diminish modes
+:PROPERTIES:
+:CUSTOM_ID: Diminish modes
+:END:
+#+begin_src emacs-lisp
+(use-package diminish
+  :straight t
+  :config (diminish 'org-indent-mode " ➣")
+          (diminish 'org-mode " ")
+          (diminish 'blacken-mode " ")
+          (diminish 'auto-fill-mode " ⚮")
+          (diminish 'ctrlf-mode " ")
+;;          (diminish 'gcmh-mode " ")
+          (diminish 'dired-filter-mode " ")
+          (diminish 'rainbow-delimiters-mode " ♼")
+          (diminish 'flx-ido " "))
+;;
+(straight-use-package-lazy '(delight :type git :host github :repo "emacs-straight/delight" :files ("*" (:exclude ".git"))))
+(delight 'gcmh " ")
+(delight 'auto-fill-mode " ⚮")
+
+;;
+(if nec/measure-time (nec/timer "Diminish   "))
+#+end_src
+;;
+*** bind key
+:PROPERTIES:
+:CUSTOM_ID: bind key
+:END:
+#+begin_src emacs-lisp
+;;
+(straight-use-package '(bind-key :type git :flavor melpa :files ("bind-key.el" "bind-key-pkg.el") 
+                         :host github :repo "jwiegley/use-package"))
+;; Have a thick ruler between vertical windows
+(window-divider-mode)
+(if nec/measure-time (nec/timer "bind key   "))
+#+end_src
+*** Variables and Defaults
+:PROPERTIES:
+:CUSTOM_ID: Variables and Defaults
+:END:
+#+begin_src emacs-lisp
+;;
+(defgroup nec nil
+  "nec (Niels' Emacs Configuration) Emacs customization."
+  :group 'convenience
+  :link '(url-link :tag "Homepage" "https://algon.dk"))
+
+;; my name, and I live in Denmark
+(defcustom nec-full-name "Niels Søndergaard"
+  "Set user full name."
+  :group 'nec
+  :type 'string)
+(defcustom nec-mail-address "niels@algon.dk"
+  "Set user email address."
+  :group 'nec
+  :type 'string)
+;;
+(setq user-full-name nec-full-name
+      user-mail-address nec-mail-address
+      calendar-latitude 55.938434
+      calendar-longitude 12.489334
+      calendar-location-name "Nivå, Denmark")
+
+;; goto my base
+(defconst sys/w32p  (eq system-type 'windows-nt)
+  "Are we running on a WinTel system?")
+(defconst sys/linuxp (eq system-type 'gnu/linux)
+  "Are we running on a GNU/Linux system?")
+(defconst sys/macp (eq system-type 'darwin)
+  "Are we running on a Mac system?")
+(defconst sys/mac-x-p (and (display-graphic-p) sys/macp)
+  "Are we running under 'nextstep' on a Mac system?")
+(defconst sys/mac-cocoa-p (featurep 'cocoa)
+  "Are we running with Cocoa on a Mac system?")
+(defconst sys/linux-x-p (and (display-graphic-p) sys/linuxp)
+  "Are we running under X on a GNU/Linux system?")
+(defconst sys/cygwinp (eq system-type 'cygwin)
+  "Are we running on a Cygwin system?")
+;;
+(defcustom nec-logo (expand-file-name "images/hands.png" user-emacs-directory)
+  "Set nec logo. nil means official logo."
+  :group 'nec
+  :type 'string)
+
+(defcustom nec-icon (display-graphic-p)
+  "Display icons or not."
+  :group 'nec
+  :type 'boolean)
+;;
+(defcustom nec-theme-alist
+  '((default    . doom-one)
+    (classic    . doom-monokai-classic)
+    (colorful   . doom-snazzy)
+    (dark       . doom-dark+)
+    (light      . doom-one-light)
+    (day        . doom-acario-light)
+    (night      . doom-city-lights)
+    (afternoon  . afternoon)
+    (moe        . moe-dark)
+    (zenburn    . zenburn)
+    (space-dark . spacemacs-dark)
+    (space-light . spacemacs-light))
+  "List of themes mapped to internal themes."
+  :group 'nec
+  :type '(alist :key-type (symbol :tag "Theme")
+                :value-type (symbol :tag "Internal theme")))
+(defcustom nec-auto-themes '((:sunraise  . doom-one-light)
+		                   (:sunset . doom-one))
+  "List of themes mapped to the time they should be loaded.
+The keywords `:sunrise' and `:sunset' can be used for the time
+if `calendar-latitude' and `calendar-longitude' are set.
+For example:
+  '((:sunrise . doom-one-light)
+    (:sunset  . doom-one))"
+  :group 'nec
+  :type `(alist :key-type (string :tag "Time")
+                :value-type (symbol :tag "Theme")))
+;;
+(defcustom nec-theme 'default
+  "The color theme."
+  :group 'nec
+  :type `(choice (const :tag "Auto" 'auto)
+                 (const :tag "Random" 'random)
+                 ,@(mapcar
+                    (lambda (item)
+                      (let ((name (car item)))
+                        (list 'const
+                              :tag (capitalize (symbol-name name))
+                              name)))
+                    nec-theme-alist)
+                 symbol))
+
+(defcustom nec-dashboard t
+  "Use dashboard at startup or not.
+If Non-nil, use dashboard, otherwise will restore previous session."
+  :group 'nec
+  :type 'boolean)
+
+(defcustom nec-frame-size 0.75
+  "Set frame size, relative to the screen size"
+  :group 'nec
+  :type 'float)
+
+(defcustom nec-line-spacing 0.2
+  "Line spacing in frame "
+  :group 'nec
+  :type 'float)
+
+
+(defcustom nec-prettify-symbols-alist
+  '(("lambda" . ?λ)
+    ("<-" . ?←)
+    ("->" . ?→)
+    ("->>" . ?↠)
+    ("=>" . ?⇒)
+    ("map" . ?↦)
+    ("/=" . ?≠)
+    ("!=" . ?≠)
+    ("==" . ?≡)
+    ("<=" . ?≤)
+    (">=" . ?≥)
+    ("=<<" . (?= (Br . Bl) ?≪))
+    (">>=" . (?≫ (Br . Bl) ?=))
+    ("<=<" . ?↢)
+    (">=>" . ?↣)
+    ("&&" . ?∧)
+    ("||" . ?∨)
+    ("not" . ?¬)
+    ("[ ]" . ?☐)
+    ("[X]" . ?☑)
+    ("[-]" . ?⛝)
+    ("#+ARCHIVE:" . ?)    ("#+archive:" . ?)
+    ("#+AUTHOR:" . ?)     ("#+author:" . ?)
+    ("#+CREATOR:" . ?)    ("#+creator:" . ?)
+    ("#+DATE:" . ?)       ("#+date:" . ?)
+    ("#+DESCRIPTION:" . ?⸙) ("#+description:" . ?⸙)
+    ("#+LANGUAGE:" . ?⚑)    ("#+language:" . ?⚑)
+    ("#+CATEGORY:" . ?)   ("#+category:" . ?)
+    ("#+EMAIL:" . ?)       ("#+EMAIL:" . ?)   
+    ("#+OPTIONS:" . ?)     ("#+OPTIONS:" . ?)
+    ("#+SETUPFILE:" . ?)    ("#+SETUPFILE:" . ?)
+    ("#+TAGS:" . ?)    ("#+tags:" . ?)
+    ("#+LATEX:" . ?)    ("#+latex:" . ?)
+    ("#+TITLE:" . ?)    ("#+title:" . ?)
+    ("#+PROPERTIES:" . ?)    ("#+property:" . ?)
+    ("#+BEGIN_SRC" . ?✎)    ("#+begin_src" . ?✎)
+    ("#+END_SRC" . ?□)    ("#+end_src" . ?□)
+    ("#+BEGIN_QUOTE" . ?»)    ("#+begin_quote" . ?»)
+    ("#+END_QUOTE" . ?«)    ("#+END_QUOTE" . ?«)
+    ("#+HEADERS" . ?)    ("#+HEADERS" . ?)
+    ("#+RESULTS:" . ?)    ("#+RESULTS:" . ?)
+    (":LOGBOOK:" . ?▤)
+    ( ":PROPERTIES:" . ?⚙)
+    ( ":END:" . ?⏏)
+
+)
+  "Alist of symbol prettifications for `org-mode'."
+  :group 'nec
+  :type '(alist :key-type string :value-type (choice character sexp)))
+
+	(use-package pretty-symbols
+    :straight t
+    :config
+    (setq pretty-symbol-categories '(relational logical lambda org-specific nil cpp general))
+
+    (defun yant/str-to-glyph (str)
+      "Transform string into glyph, displayed correctly."
+      (let ((composition nil))
+        (dolist (char (string-to-list str)	    
+                    (nreverse (cdr composition)))
+	  (push char composition)
+	  (push '(Br . Bl) composition)))))
+    (setq pretty-symbol-patterns
+	  (append pretty-symbol-patterns
+		'((?▤ org-specific ":LOGBOOK:" (org-mode))
+            (?⚙ org-specific ":PROPERTIES:" (org-mode))
+      	  (?⏏ org-specific ":END:" (org-mode))
+      	  (?★ org-specific "\\[#A\\]" (org-mode))
+      	  ("" org-specific "\\[#B\\]" (org-mode))
+      	  (?☕ org-specific "\\[#C\\]" (org-mode))
+            (?⁂ org-specific "\\(^\\*\\)[^*]" (org-mode) 1)
+            (?• org-specific "^\\(?:\\*\\{1\\}\\)\\(\\*\\)[^*]" (org-mode) 1)
+            (?⊢ org-specific "^\\(?:\\*\\{2\\}\\)\\(\\*\\)[^*]" (org-mode) 1)
+            (?⋮ org-specific "^\\(?:\\*\\{3\\}\\)\\(\\*\\)[^*]" (org-mode) 1)
+            (?⋱ org-specific "^\\(?:\\*\\{4,\\}\\)\\(\\*\\)[^*]" (org-mode) 1)
+      	  ((yant/str-to-glyph "☐") org-specific "\\(?:^*+ +\\)\\(\\<TODO\\>\\)" (org-mode) 1)
+      	  ((yant/str-to-glyph "☑") org-specific "\\(?:^*+ +\\)\\(\\<DONE\\>\\)" (org-mode) 1)
+      	  ((yant/str-to-glyph "✘") org-specific "\\(?:^*+ +\\)\\(\\<FAILED\\>\\)" (org-mode) 1)
+      	  ((yant/str-to-glyph "✘") org-specific "\\(?:^*+ +\\)\\(\\<CANCELLED\\>\\)" (org-mode) 1)
+      	  ((yant/str-to-glyph "▶") org-specific "\\(?:^*+ +\\)\\(\\<NEXT\\>\\)" (org-mode) 1)
+            ((yant/str-to-glyph "☇") org-specific "\\(?:^*+ +\\)\\(\\<MERGED\\>\\)" (org-mode) 1)
+      	  ((yant/str-to-glyph "⚑") org-specific "\\(?:^*+ +\\)\\(\\<WAITING\\>\\)" (org-mode) 1)
+      	  ((yant/str-to-glyph "♲") org-specific "\\(?:^*+ +\\)\\(\\<HOLD\\>\\)" (org-mode) 1)
+      	  ((yant/str-to-glyph "☠D") org-specific "\\<DEADLINE:" (org-mode))
+      	  ((yant/str-to-glyph "◴S") org-specific "\\<SCHEDULED:" (org-mode)))))
+
+
+
+
+(if nec/measure-time
+          (nec/timer "Variables" ))
+
+(setq-default cursor-type 'bar)           ; Line-style cursor similar to other text editors
+(setq initial-scratch-message "Hi, Welcome to emacs")         ; Make *scratch* buffer blank
+(setq-default frame-title-format '("" "%b - Som i en Drømmeverden (•̀ᴗ•́)و"))
+(setq ring-bell-function 'ignore)         ; Disable bell sound
+(fset 'yes-or-no-p 'y-or-n-p)             ; y-or-n-p makes answering questions faster
+(show-paren-mode t)
+(show-paren-mode 'mixed)
+
+
+(setq bookmark-default-file "~/.emacs.d/private/bookmarks"
+      browse-url-generic-program "safari"
+      browse-url-text-browser "safari"
+      browse-url-text-emacs-args '("-show_cursor"))
+(setq display-time-24hr-format t
+      display-time-day-and-date t
+      display-time-format nil)
+(setq legacy-style-world-list
+      '(("PST8PDT" "Seattle")
+        ("EST5EDT" "New York")
+        ("GMT0BST" "London")
+        ("CET-1CDT" "København")
+        ("IST-5:30" "Bangalore")
+        ("JST-9" "Tokyo")))
+
+;;; Lockfiles unfortunately cause more pain than benefit
+(setq create-lockfiles nil)
+(setq-default
+  blink-cursor-interval .6
+  blink-matching-paren  t
+  cursor-in-non-selected-windows t)
+
+(blink-cursor-mode 1)
+
+(setq hscroll-margin                  7
+      scroll-margin                   7
+      hscroll-step                    7
+      scroll-step                     7
+      scroll-conservatively           100000
+      scroll-preserve-screen-position 'always
+      mac-mouse-wheel-smooth-scroll    nil)
+
+(setq-default shell-file-name "/bin/zsh")
+(setq-default
+ visual-fill-column-width       100
+ word-wrap                      t
+ highlight-indent-guides-method 'column
+ tab-width                      8
+ tooltip-delay                  1.5)
+
+(setq-default
+ whitespace-line-column 80
+ whitespace-style       '(face spaces tabs newline
+  			space-mark tab-mark newline-mark
+  			lines-tail empty))
+
+(setq-default
+   buffers-menu-max-size 30
+   case-fold-search      t
+   column-number-mode    t
+   ediff-split-window-function 'split-window-horizontally
+   ediff-window-setup-function 'ediff-setup-windows-plain
+   indent-tabs-mode      nil
+   line-move-visual      t
+   make-backup-files     nil
+   mouse-yank-at-point   t
+   require-final-newline t
+   save-interprogram-paste-before-kill t
+   set-mark-command-repeat-pop    t
+   tab-always-indent              'complete
+   truncate-lines                 nil
+   truncate-partial-width-windows nil)
+(setq recentf-save-file "~/.emacs.d/private/recentf")
+(if nec/measure-time (nec/timer "Set constants "))   
+#+end_src
+*** Backup
+:PROPERTIES:
+:CUSTOM_ID: Backup
+:END:
+ This enables file backups to N versions of saves (5), as opposed to only
+ backing up the very first save. I don't re-launch emacs that often
+ so this is necessary to get useful backups.
+#+begin_src emacs-lisp
+ (setq backup-directory-alist `(("." . ,(concat user-emacs-directory "private/backups")))
+          vc-make-backup-files t
+          version-control t
+          kept-old-versions 3
+          kept-new-versions 5
+          delete-old-versions t
+          backup-by-copying t)
+(if nec/measure-time (nec/timer "Backup   "))
+#+end_src
+*** 'y' instead of the much longer 'yes'
+:PROPERTIES:
+:CUSTOM_ID: 'y' instead of the much longer 'yes'
+:END:
+For some reason, there are different types of confirmation prompts in
+Emacs. One of them forces you to write "yes" and the other one only to press
+"y", so I disable the first type.
+#+begin_src emacs-lisp
+(fset 'yes-or-no-p 'y-or-n-p)
+(if nec/measure-time
+          (nec/timer "y/yes problem   "))
+#+end_src
+*** Disable tabs *forever* and fix indentation offset
+:PROPERTIES:
+:CUSTOM_ID: Disable tabs *forever* and fix indentation offset
+:END:
+I know, everyone has a strong opinion about it. I just hate them.
+#+begin_src emacs-lisp
+(setq-default indent-tabs-mode nil)
+#+end_src
+Related to this, it is important to fix two settings: the indentation offset
+and the tab width. Since eventually I will open a file, I want Emacs to be able
+to handle them properly. However, the defaults state that the tab width is 8
+characters and the indentation offset is 2. That is a problem over there, and
+we will use the solomonic solution: set both to 4.
+#+begin_src emacs-lisp
+(setq tab-width 4)
+;;(defvaralias 'c-basic-offset 'tab-width)
+(defvaralias 'cperl-indent-level 'tab-width)
+(if nec/measure-time (nec/timer "Ban TAB   "))
+#+end_src
+*** create missing directory for find-file
+:PROPERTIES:
+:CUSTOM_ID: create missing directory for find-file
+:END:
+#+begin_src emacs-lisp
+(defun my-create-non-existent-directory ()
+  (let ((parent-directory (file-name-directory buffer-file-name)))
+    (when (and (not (file-exists-p parent-directory))
+               (y-or-n-p (format "Directory `%s' does not exist! Create it?" parent-directory)))
+      (make-directory parent-directory t))))
+;;
+(add-to-list 'find-file-not-found-functions #'my-create-non-existent-directory)
+(if nec/measure-time
+          (nec/timer "Create missing files   "))
+#+end_src
+*** ctrl-s  (isearch)
+:PROPERTIES:
+:CUSTOM_ID: ctrl-s  (isearch)
+:END:
+#+BEGIN_SRC emacs-lisp
+;;A simple (but also advanced) incremental search in stead of C-s, swiper etc.
+(use-package ctrlf
+  :straight t
+  :config (ctrlf-mode +1))
+
+(if nec/measure-time (nec/timer "crtl-s" ))
+#+END_SRC
+*** Making emacs secure
+:PROPERTIES:
+:CUSTOM_ID: Making emacs secure
+:END:
+Some safety tips regarding your editor are covered in the excellent article
+[[https://glyph.twistedmatrix.com/2015/11/editor-malware.html][Your Text Editor is Malware]]. So, before going on with the configuration, let's
+get some things straight. First of all, enable checking trust on TLS
+connections.
+#+begin_src emacs-lisp
+(setq tls-checktrust t)
+#+end_src
+Now that we have enabled this feature, Emacs can't fetch HTTPS anymore: Emacs
+does not distribute trust root certificates. So let's try to put a remedy for
+it. First, there are some things you need to install outside of Emacs: the
+=certifi= package for =PyPI= using =python3 -m pip install --user certifi= and
+=gnutls= by running =brew install gnutls= or =apt-get install gnutls-bin=. Once
+we have everything set, we just need to tell Emacs where to search for the
+tools: setting the =tls-program= variable.
+#+begin_src emacs-lisp
+;; This snippet is ready to work in both UNIX-like and Windows OS
+(let ((trustfile
+       (replace-regexp-in-string
+        "\\\\" "/"
+        (replace-regexp-in-string
+         "\n" ""
+         (shell-command-to-string (concat "python3 -m certifi"))))))
+  (setq tls-program
+        (list
+         (format "gnutls-cli%s --x509cafile %s -p %%p %%h"
+                 (if (eq window-system 'w32) ".exe" "") trustfile)))
+  ;; (setq gnutls-verify-error t)
+  (setq gnutls-trustfiles (list trustfile)))
+#+end_src
+And, just in case (specially since the blog post provided it), we can create a
+function to check if this setup is properly done:
+#+begin_src emacs-lisp
+(defun check-tls-config ()
+  "Check for correctness in the TLS configuration for Emacs."
+  (interactive)
+  (let ((bad-hosts
+         (cl-loop for bad
+               in `("https://wrong.host.badssl.com/"
+                    "https://self-signed.badssl.com/")
+               if (condition-case e
+                      (url-retrieve
+                       bad (lambda (retrieved) t))
+                    (error nil))
+               collect bad)))
+    (if bad-hosts
+        (error (format "TLS misconfigured; retrieved %s ok" bad-hosts))
+      (url-retrieve "https://badssl.com"
+                    (lambda (retrieved) t)))))
+(if nec/measure-time
+          (nec/timer "Secure emacs   "))
+#+end_src
+*** SMEX
+:PROPERTIES:
+:CUSTOM_ID: SMEX
+:END:
+#+begin_src emacs-lisp
+(use-package smex
+  :straight t
+  :diminish
+  :init
+  (setq smex-save-file "~/.emacs.d/private/smex-items")
+  (smex-initialize))
+(smex-auto-update 120)
+(global-set-key (kbd "M-x") 'smex)
+(global-set-key (kbd "M-X") 'smex-major-mode-commands)
+;; This is your old M-x.
+(global-set-key (kbd "C-c C-c M-x") 'execute-extended-command)
+(if nec/measure-time (nec/timer "SMEX   "))
+#+end_src
+*** Registers
+:PROPERTIES:
+:CUSTOM_ID: Registers
+:END:
+Emacs registers are compartments where you can save text, rectangles,
+positions, and other things for later use. Once you save text or a
+rectangle in a register, you can copy it into the buffer once or many
+times; once you save a position in a register, you can jump back to
+that position once or many times.
+
+For more information: `C-h r' and then letter *i* to search for
+registers and the amazing video from [[https://youtu.be/u1YoF4ycLTY][Protesilaos]].
+
+The prefix to all commands of registers is *C-x r*
+
+| command             | description                         |
+|---------------------+-------------------------------------|
+| M-x view-register R | see what register R contains        |
+| C-x r s             | save region to register             |
+| C-x r i             | insert text from a register         |
+| C-x r n             | record a number defaults to 0       |
+| C-x r +             | increment a number from register    |
+| C-x r SPC           | record a position into register     |
+| C-x r j             | jump to positions or windows config |
+| C-x r w             | save a window configuration         |
+| C-x r f             | save a frame configuration          |
+
+Important note: the data saved into the register is persistent as long
+as you don't override it.
+
+The way to specify a number, is to use an universal argument e.g.
+*C-u <number> C-x n*
+
+Clean all the registers you saved.
+#+begin_src emacs-lisp
+  (defun bk/clear-registers ()
+    "Remove all saved registers."
+    (interactive)
+    (setq register-alist nil))
+#+end_src
+
+#+begin_src emacs-lisp
+    (set-register ?t "(if nec/measure-time (nec/timer \" \"))")
+    (set-register ?r (concat "#+AUTHOR: Niels Søndergaard\n"
+                             "#+LANGUAGE: da\n"
+                             "#+CATEGORY: ROAM File\n"
+                             "#+DATE: --\n" ))
+    (set-register ?G (concat "#+TITLE: --\n"
+                             "#+AUTHOR: Niels Søndergaard\n"
+                             "#+LANGUAGE: da\n"                             
+                             "#+CATEGORY: --\n"
+                             "#+DATE: --\n"))
+(if nec/measure-time (nec/timer "Registers "))
+#+end_src
+** buffer
+*** UTF-8 please
+:PROPERTIES:
+:CUSTOM_ID: UTF-8 please
+:END:
+#+begin_src emacs-lisp
+(set-charset-priority 'unicode)
+(setq locale-coding-system 'utf-8)
+(set-terminal-coding-system 'utf-8)
+;; (set-keyboard-coding-system 'utf-8)
+(set-selection-coding-system 'utf-8)
+(prefer-coding-system 'utf-8)
+(setq default-process-coding-system '(utf-8-unix . utf-8-unix))
+(if nec/measure-time (nec/timer "UTF-8   "))
+#+end_src
+*** go to scratch buffer
+
+    #+BEGIN_SRC emacs-lisp
+      (defun bk/scratch-buffer ()
+        "Function to change buffer to scratch buffer."
+        (interactive)
+        (let ((buf (get-buffer "*scratch*")))
+          (if buf
+              (switch-to-buffer buf)
+            (switch-to-buffer (get-buffer-create "*scratch*"))
+            (lisp-interaction-mode))))
+
+      (global-set-key (kbd "C-c b s") #'bk/scratch-buffer)
+    #+END_SRC
+
+*** kill buffer and the file associated
+
+   #+BEGIN_SRC emacs-lisp
+     (defun bk/kill-buffer-and-file (buffer-name)
+       "Removes file connected to current buffer and kills buffer."
+       (interactive "bKill buffer and its file:")
+       (let* ((buffer (get-buffer buffer-name))
+   	   (filename (buffer-file-name buffer)))
+         (if (not (and filename (file-exists-p filename)))
+   	  (error "Buffer '%s' is not visiting a file!" buffer-name)
+   	(delete-file filename)
+   	(kill-buffer buffer))))
+   #+END_SRC
+*** rename current buffer and file associated
+
+    #+BEGIN_SRC emacs-lisp
+      (defun bk/rename-current-buffer-file ()
+        "Renames current buffer and file it is visiting."
+        (interactive)
+        (let* ((name (buffer-name))
+               (filename (buffer-file-name))
+               (new-name (read-file-name "New name: " filename)))
+          (if (get-buffer new-name)
+              (error "A buffer named '%s' already exists!" new-name)
+            (rename-file filename new-name 1)
+            (rename-buffer new-name)
+            (set-visited-file-name new-name)
+            (set-buffer-modified-p nil)
+            (message "File '%s' sucessfully renamed to '%s'"
+                     name (file-name-nondirectory new-name)))))
+    #+END_SRC
+
+*** Clean stale buffers
+:PROPERTIES:
+:CUSTOM_ID: Clean stale buffers
+:END:
+We do clean, in the middle of the night
+#+begin_src emacs-lisp
+(use-package midnight
+  :straight t)
+
+(setq clean-buffer-list-kill-buffer-names (nconc clean-buffer-list-kill-buffer-names
+                 '("*buffer-selection*"
+                   "*Finder*"
+                   "*Finder Category*"
+                   "*Finder-package*"
+                   "organizer.org"
+                   "*httpd*"
+                   "*helm M-x*"
+                   "*elfeed.org*"
+                   "contacts.org"
+                   "Notes.org"
+                   "*vc-change-log*")))
+(if nec/measure-time (nec/timer "Clean buffers   "))
+#+end_src
+*** List buffers
+:PROPERTIES:
+:CUSTOM_ID: List buffers
+:END:
+#+begin_src emacs-lisp
+;; Buffers
+(defun list-all-buffers (&optional files-only)
+  "Display a list of names of existing buffers.
+The list is displayed in a buffer named `*Buffer List*'.
+Non-null optional arg FILES-ONLY means mention only file buffers."
+  (interactive "P")
+  (display-buffer (list-buffers-noselect files-only (buffer-list))))
+(if nec/measure-time (nec/timer "List buffers "))
+#+end_src
+*** Save all buffer
+:PROPERTIES:
+:CUSTOM_ID: Save all buffer
+:END:
+#+begin_src emacs-lisp
+;; SaveAllBuffers
+(defun save-all-buffers ()
+  "Instead of `save-buffer', save all opened buffers by calling `save-some-buffers' with ARG t."
+  (interactive)
+  (save-some-buffers t))
+(global-set-key (kbd "C-x C-s") nil)
+(global-set-key (kbd "C-x C-s") #'save-all-buffers)
+(if nec/measure-time (nec/timer "save all buffers   "))
+#+end_src
+*** Load misc fonts
+:PROPERTIES:
+:CUSTOM_ID: Load misc fonts
+:END:
+#+BEGIN_SRC emacs-lisp
+
+(when (display-graphic-p)
+  ;; Don't suspend frame on C-z, let it undo
+  (global-set-key (kbd "C-z") 'undo)
+  
+  ;; set a default font
+   (when (member "DejaVu Sans Mono" (font-family-list))
+    (set-face-attribute 'default nil :font "DejaVu Sans Mono"))
+
+   (when (member "Liberation Mono" (font-family-list))
+    (set-face-attribute 'default nil :font "Liberation Mono"))
+  
+   (when (member "OpenDyslexic" (font-family-list))
+        (set-face-attribute 'variable-pitch nil :font "OpenDyslexic"))
+;;  (set-face-attribute 'default nil :font "OpenDyslexic Mono")
+  ;; specify font for all unicode characters
+  ;; TODO: EmojiOne fonts look better in black and white but for some reason are huge
+  (set-fontset-font t 'unicode (font-spec :family "Noto Emoji" ) nil 'prepend)
+  (set-fontset-font t 'latin "Noto Sans")
+  (set-face-attribute 'default nil :font "Source Code Pro Medium"))
+
+(use-package fira-code-mode
+  :straight t
+  :diminish
+  :config (add-hook 'prog-mode-hook 'fira-code-mode))
+;;
+;; global font-lock
+(global-font-lock-mode 1)
+(global-prettify-symbols-mode +1)
+(if nec/measure-time
+          (nec/timer "Load misc fonts   "))
+#+end_src
+*** Unfill a paragraph 
+:PROPERTIES:
+:CUSTOM_ID: Unfill a paragraph 
+:END:
+#+begin_src emacs-lisp
+;; Takes a multi-line paragraph and makes it into a single line of text
+(defun unfill-paragraph ()
+  (interactive)
+  (let ((fill-column (point-max)))
+    (fill-paragraph nil)))
+(if nec/measure-time (nec/timer "Unfill a paragraph "))
+#+end_src
+*** Auto fill mode
+:PROPERTIES:
+:CUSTOM_ID: Auto fill mode
+:END:
+
+In fill mode, when you type past the end of a line, Emacs automatically starts a
+new line, cleverly formatting paragraphs. This is a powerful form of “word
+wrap”.
+
+#+BEGIN_SRC emacs-lisp
+(setq-default fill-column 80          ;; Let's avoid going over 80 columns
+              truncate-lines nil      ;; I never want to scroll horizontally
+              indent-tabs-mode nil)   ;; Use spaces instead of tabs
+#+END_SRC
+
+Certain variables are sensibly local to a buffer, and so ~setq~ only alters their
+value for one buffer. Using ~setq-default~ we change a variable's default value,
+in every buffer.
+
+#+BEGIN_SRC emacs-lisp
+;; Wrap long lines when editing text
+(add-hook 'text-mode-hook 'turn-on-auto-fill)
+(add-hook 'org-mode-hook 'turn-on-auto-fill)
+(if nec/measure-time (nec/timer "Auto Fill Mode"))
+#+end_src
+*** Move to indentation or beginning of the line
+:PROPERTIES:
+:CUSTOM_ID: Move to indentation or beginning of the line
+:END:
+By default, =C-c a= moves the cursor to the beginning of the line. If there is
+indentation, usually you want to move to the beginning of the line after the
+indentation, which is indeed bound by default to =M-m=. However, my muscle
+memory seems to be unable to learn that those are two different actions, so
+it's time to use some Emacs magic. =beginning-of-line-dwim= takes you to the
+beginning of indentation, as =M-m= would do. If you are already there, it takes
+you to the absolute beginning of the line.
+
+#+BEGIN_SRC emacs-lisp :results silent
+(defun beginning-of-line-dwim ()
+  (interactive)
+  "Move to beginning of indentation, if there move to beginning of line."
+  (if (= (point) (progn (back-to-indentation) (point)))
+      (beginning-of-line)))
+
+(global-set-key (kbd "C-a") 'beginning-of-line-dwim)
+#+END_SRC
+*** Increase or decrease font size across all buffers
+:PROPERTIES:
+:CUSTOM_ID: Increase or decrease font size across all buffers
+:END:
+Extracted from a file in [[https://github.com/purcell/emacs.d][Steve Purcell's Emacs configuration]], it is possible to
+use this functions to increase or decrease the text scale in all Emacs.
+Specially useful for presentations, demos and other shows alike.
+#+begin_src emacs-lisp
+(defun font-name-replace-size (font-name new-size)
+  (let ((parts (split-string font-name "-")))
+    (setcar (nthcdr 7 parts) (format "%d" new-size))
+    (mapconcat 'identity parts "-")))
+(defun increment-default-font-height (delta)
+  "Adjust the default font height by DELTA on every frame.
+   The pixel size of the frame is kept (approximately) the same.
+   DELTA should be a multiple of 10, in the units used by the
+:height face attribute."
+  (let* ((new-height (+ (face-attribute 'default :height) delta))
+         (new-point-height (/ new-height 10)))
+    (dolist (f (frame-list))
+      (with-selected-frame f
+        ;; Latest 'set-frame-font supports a "frames" arg, but
+        ;; we cater to Emacs 23 by looping instead.
+        (set-frame-font (font-name-replace-size (face-font 'default)
+                                                new-point-height)
+                        t)))
+    (set-face-attribute 'default nil :height new-height)
+    (message "default font size is now %d" new-point-height)))
+(defun increase-default-font-height ()
+  (interactive)
+  (increment-default-font-height 10))
+(defun decrease-default-font-height ()
+  (interactive)
+  (increment-default-font-height -10))
+(global-set-key (kbd "C-M-=") 'increase-default-font-height)
+(global-set-key (kbd "C-M--") 'decrease-default-font-height)
+(if nec/measure-time
+          (nec/timer "Increase/Decrease font   "))
+#+end_src
+** misc
+*** Crux
+#+begin_src emacs-lisp
+(use-package crux
+  :straight t
+  :bind
+  (("C-a" . crux-move-beginning-of-line)
+   ("C-x 4 t" . crux-transpose-windows)
+   ("C-x K" . crux-kill-other-buffers)
+   ("M-o" . crux-smart-open-line)
+   ("C-c D" . crux-delete-file-and-buffer)
+   ("C-c e i" . crux-find-user-init-file)
+   ("C-k" . crux-smart-kill-line))
+  :config
+  (crux-with-region-or-buffer indent-region)
+  (crux-with-region-or-buffer untabify)
+  (crux-with-region-or-point-to-eol kill-ring-save)
+  (defalias 'rename-file-and-buffer #'crux-rename-file-and-buffer))
+#+end_src
+*** Disk Usage
+:PROPERTIES:
+:CUSTOM_ID: Disk Usage
+:END:
+#+begin_src emacs-lisp
+(use-package disk-usage
+  :straight t
+  :commands (disk-usage))
+(if nec/measure-time
+          (nec/timer "Disk usage   "))
+#+end_src
+*** hostname
+:PROPERTIES:
+:CUSTOM_ID: hostname
+:END:
+#+begin_src emacs-lisp
+(use-package s
+  :straight t)
+(defun hostname ()
+  (cadr (s-match (rx (group (+? nonl)) (? "-" (+ digit)) (? ".local") eos)
+                 (downcase (system-name)))))
+(setq system-name (car (split-string system-name "\\.")))
+(defcustom nec/system-name system-name
+  "getting our system name (withpot .local)"
+  :group 'nec
+  :type 'string)
+;; to use for server/client
+;;(setq server-name  (format "/Users/niels/.emacs.d/private/%d" (system-name)))
+(message (concat "** ** Hostname : " system-name))
+(if nec/measure-time
+          (nec/timer "Hostname   "))
+#+end_src
+*** PATH and env (from OS)
+:PROPERTIES:
+:CUSTOM_ID: PATH and env (from OS)
+:END:
+#+begin_src emacs-lisp
+;;; Environment fixup
+(use-package exec-path-from-shell
+  :straight t
+  :if (and (eq system-type 'darwin) (display-graphic-p))
+  :config
+  (progn
+    ;; For debugging
+    (when nil
+      (message "path: %s, setup: %s" (getenv "PATH")
+               (getenv "ENVIRONMENT_SETUP_DONE"))
+      (setq exec-path-from-shell-debug t))
+    (setq exec-path-from-shell-arguments (list "-l"))
+    (setq exec-path-from-shell-check-startup-files nil)
+    (add-to-list 'exec-path-from-shell-variables "SHELL")
+    (add-to-list 'exec-path-from-shell-variables "GOPATH")
+    (add-to-list 'exec-path-from-shell-variables "ENVIRONMENT_SETUP_DONE")
+    (add-to-list 'exec-path-from-shell-variables "PYTHONPATH")
+    (exec-path-from-shell-initialize)))
+
+(if nec/measure-time (nec/timer "set PATH and env "))
+#+end_src
+*** server Mode
+:PROPERTIES:
+:CUSTOM_ID: server Mode
+:END:
+Start Emacs as a server process: new files can be visited via
+=emacsclient= (instead of parallel =emacs= instances). Therefore, I
+don't have to run multiple instances (which occupies RAM storage) and
+I am able to open new files instantly.
+
+From Sacha Chua:
+=(server-start)= permits the use of =emacsclient=, =emacsclientw=, and
+=org-protocol=. I used to start a server as part of my config. Now I'm
+switching to using =emacs --daemon=, which starts a server
+automatically. Anyway, with =--daemon=, Emacs doesn't start off in a
+graphical environment, so the frames that =emacsclient -c= creates
+don't get the theme applied. This fixes that:
+
+#+begin_src emacs-lisp 
+(defun my/setup-color-theme ()
+  (interactive)
+  (when (display-graphic-p) 
+     (color-theme-solarized))
+  (set-background-color "black")
+  (set-face-foreground 'secondary-selection "darkblue")
+  (set-face-background 'secondary-selection "lightblue")
+  (set-face-background 'font-lock-doc-face "black")
+  (set-face-foreground 'font-lock-doc-face "wheat")
+  (set-face-background 'font-lock-string-face "black"))
+
+;;(setq server-socket-dir (format "/Users/niels/.emacs.d/private/%d" (system-name)))
+
+(add-hook 'after-make-frame-functions
+        (lambda (frame)
+        (select-frame frame)
+        (my/setup-color-theme)))
+(if nec/measure-time (nec/timer "part 1 of emacs server "))
+
+(require 'server)
+(unless (server-running-p) (server-start)(server-start))
+#+END_SRC
+*** Time stamp / large file warning
+:PROPERTIES:
+:CUSTOM_ID: Time stamp / large file warning
+:END:
+Append and update for =Time-stamp: <>= in file headers:
+#+begin_src emacs-lisp
+(add-hook 'write-file-hooks 'time-stamp)
+#+end_src
+Set warning of opening large files to 100MB
+#+begin_src emacs-lisp
+(setq-default large-file-warning-threshold 100000000)
+#+end_src
+Truncate lines, and who need 2 spaces on the lines,
+visual line mode and stretch the cursor
+#+begin_src emacs-lisp
+(setq default-directory (concat (getenv "HOME") "/"))
+(setq-default truncate-lines t)
+(setq-default sentence-end-double-space nil)
+(setq-default global-visual-line-mode t)
+(setq x-stretch-cursor t)
+(if nec/measure-time (nec/timer "Time stamp "))
+#+end_src
+*** Copy ID
+:PROPERTIES:
+:CUSTOM_ID: Copy ID
+:END:
+#+begin_src emacs-lisp
+(defun my/copy-id-to-clipboard() "Copy the ID property value to killring,
+if no ID is there then create a new unique ID. 
+This function works only in org-mode buffers.
+ 
+The purpose of this function is to easily construct id:-links to 
+org-mode items. If its assigned to a key it saves you marking the
+text and copying to the killring."
+       (interactive)
+       (when (eq major-mode 'org-mode) ; do this only in org-mode buffers
+	 (setq mytmpid (funcall 'org-id-get-create))
+	 (kill-new mytmpid)
+	 (message "Copied %s to killring (clipboard)" mytmpid)
+       ))
+ 
+(global-set-key (kbd "<f5>") 'my/copy-id-to-clipboard)
+(if nec/measure-time (nec/timer "Copy ID  "))
+#+end_src
+*** list-environment
+:PROPERTIES:
+:CUSTOM_ID: list-environment
+:END:
+#+BEGIN_SRC emacs-lisp
+(straight-use-package-lazy 'list-environment)
+(if nec/measure-time (nec/timer "List environment  "))
+#+END_SRC
+*** running on a macOS mashine
+:PROPERTIES:
+:CUSTOM_ID: running on a macOS mashine
+:END:
+**** Key Bindings
+:PROPERTIES:
+:CUSTOM_ID:  Key Bindings
+:END:
+#+BEGIN_SRC emacs-lisp
+;;; OS X support
+  (straight-use-package-lazy '(ns-win :type built-in))
+
+  (setq ns-pop-up-frames nil            ; Don't pop up new frames from the workspace
+        mac-option-modifier 'meta       ; Option is simply the natural Meta
+        mac-command-modifier 'meta      ; But command is a lot easier to hit
+        mac-right-command-modifier 'left
+        mac-right-option-modifier 'none ; Keep right option for accented input
+        ;; Just in case we ever need these keys
+        mac-function-modifier 'hyper)
+
+(require 'nec-osx)
+
+(if nec/measure-time (nec/timer "if a macOS" ))
+#+END_SRC
+  Once upon a time, I thought I would get confused and hit a
+  Mac-specific keybinding with the "Command" key in Emacs, so I used
+  the =mac-key-mode= to turn a standard Emacs into a more
+  Macintosh-specific application. However, I find my fingers behaving
+  the exact opposite, as I often hit =Option-b= to jump back a word when
+  typing in the search bar in my browser.
+
+  #+BEGIN_SRC elisp
+    ;; Command-Q is awful (too easy to hit) ... especially next to
+    ;; the more benign key binding to close a window: Cmd-W
+    (bind-key "A-q" 'dont-kill-emacs)
+  #+END_SRC
+
+**** Ligatures in Code
+:PROPERTIES:
+:CUSTOM_ID:  Ligatures in Code
+:END:
+
+  With font that has symbolic ligatures, we can either use a prebuilt
+  Mac Port (see [[https://lists.gnu.org/archive/html/emacs-devel/2015-08/msg00882.html][this message]]) or [[https://github.com/tonsky/FiraCode/wiki/Emacs-instructions][use this code]] to set up particular
+  programming symbols to trigger those symbols.
+
+  #+BEGIN_SRC elisp
+    (if (fboundp 'mac-auto-operator-composition-mode)
+        (mac-auto-operator-composition-mode)
+      (let ((alist '((33 . ".\\(?:\\(?:==\\)\\|[!=]\\)")
+                     (35 . ".\\(?:[(?[_{]\\)")
+                     (38 . ".\\(?:\\(?:&&\\)\\|&\\)")
+                     (43 . ".\\(?:\\(?:\\+\\+\\)\\|\\+\\)")
+                     (45 . ".\\(?:\\(?:-[>-]\\|<<\\|>>\\)\\|[<>}~-]\\)")
+                     (47 . ".\\(?:\\(?:\\*\\*\\|//\\|==\\)\\|[*/=>]\\)")
+                     (58 . ".\\(?:[:=]\\)")
+                     (59 . ".\\(?:;\\)")
+                     (60 . ".\\(?:\\(?:!--\\)\\|\\(?:\\$>\\|\\*>\\|\\+>\\|--\\|<[<=-]\\|=[<=>]\\||>\\)\\|[/<=>|-]\\)")
+                     (61 . ".\\(?:\\(?:/=\\|:=\\|<<\\|=[=>]\\|>>\\)\\|[<=>~]\\)")
+                     (62 . ".\\(?:\\(?:=>\\|>[=>-]\\)\\|[=>-]\\)")
+                     (63 . ".\\(?:[:=?]\\)")
+                     (92 . ".\\(?:\\(?:\\\\\\\\\\)\\|\\\\\\)")
+                     (94 . ".\\(?:=\\)")
+                     (123 . ".\\(?:-\\)")
+                     (124 . ".\\(?:\\(?:|[=|]\\)\\|[=>|]\\)")
+                     (126 . ".\\(?:[=@~-]\\)"))))
+        (dolist (char-regexp alist)
+          (set-char-table-range composition-function-table (car char-regexp)
+                                `([,(cdr char-regexp) 0 font-shape-gstring])))))
+  #+END_SRC
+  These symbols are more prominent in all languages, as well as being
+  a /single character symbol/ (well, until you hit backspace on it):
+  [[https://github.com/tonsky/FiraCode/raw/master/showcases/all_ligatures.png]]
+**** Dash
+:PROPERTIES:
+:CUSTOM_ID:  Dash
+:END:
+
+   The [[http://kapeli.com/][Dash product]] is nice, and [[https://github.com/Kapeli/dash-at-point][this project]] allows Emacs to open
+   Dash for documentation of anything with a =C-c d= keystroke:
+
+   #+BEGIN_SRC emacs-lisp
+     (use-package dash-at-point
+       :straight t
+       :bind ("C-c d d" . dash-at-point-with-docset)
+       :config
+       (add-to-list 'dash-at-point-mode-alist '(clojure-mode . "clojure"))
+       (add-to-list 'dash-at-point-mode-alist '(ruby-mode . "ruby"))
+       (add-to-list 'dash-at-point-mode-alist '(python-mode . "python3"))
+       (add-to-list 'dash-at-point-mode-alist '(sh-mode . "bash"))
+       (add-to-list 'dash-at-point-mode-alist '(emacs-lisp-mode . "elisp")))
+   #+END_SRC
+**** Brew and ls
+:PROPERTIES:
+:CUSTOM_ID:  Brew and ls
+:END:
+  Since the default ls for the Mac isn't so good, I always have the
+  GNU ls version available in =/usr/local/bin/gls=.
+**** Notifications
+:PROPERTIES:
+:CUSTOM_ID:  Notifications
+:END:
+  Looking at making some processes a bit more obvious, for instance,
+  when a command kicked off in the eshell takes too much time, I need
+  it to beep when it is done. For this, I simply shell out to Mac's
+  notification center using the [[https://github.com/alloy/terminal-notifier][terminal-notifier]]. To install, do:
+  #+BEGIN_EXAMPLE
+  brew install terminal-notifier
+  #+END_EXAMPLE
+
+  The =beep= command can either be typed at the end of a command
+  (after a semi-colon), or at the beginning, since anything following
+  is executed first, and the notification follows.
+
+  #+BEGIN_SRC elisp
+    (defun eshell/beep (&rest args)
+      "Send a Mac notification message when the command given has
+    completed."
+
+      (let ((comment (if args
+                         (concat "Process has completed: " (car args))
+                       "Process has completed.")))
+        (if args
+            (eshell-plain-command (car args) (cdr args)))
+
+        (shell-command-to-string
+         (concat "terminal-notifier -message '"
+                 comment
+                 "' -title 'Emacs' -subtitle 'Eshell Process Completed'"
+                 " -sound default -sender org.gnu.Emacs"))))
+  #+END_SRC
+*** line numbers, I like them all over the places
+:PROPERTIES:
+:CUSTOM_ID: line numbers, I like them all over the places
+:END:
+#+begin_src emacs-lisp
+
+(require 'display-line-numbers)
+(defcustom display-line-numbers-exempt-modes '(vterm-mode eshell-mode pdf-view-mode 
+                                               shell-mode term-mode ansi-term-mode)
+  "Major modes on which to disable the linum mode, exempts them from global requirement"
+  :group 'display-line-numbers
+  :type 'list
+  :version "green")
+
+(defun display-line-numbers--turn-on ()
+  "turn on line numbers but excempting certain majore modes defined in `display-line-numbers-exempt-modes'"
+  (if (and
+       (not (member major-mode display-line-numbers-exempt-modes))
+       (not (minibufferp)))
+      (display-line-numbers-mode)))
+
+(global-display-line-numbers-mode)
+
+(when (version<= "26.0.50" emacs-version )
+  (global-display-line-numbers-mode))
+
+(global-hl-line-mode 1)
+(if nec/measure-time (nec/timer "Linenum   "))
+#+end_src
+*** Keyfreq
+:PROPERTIES:
+:CUSTOM_ID: Keyfreq
+:END:
+#+begin_src emacs-lisp
+;; Keyfreq
+;; https://github.com/dacap/keyfreq
+(defcustom nec/keyfreq nil
+ "counting frequency of commands"
+  :group 'nec
+  :type 'boolean)
+
+(use-package keyfreq
+  :straight t
+  :config
+  (progn
+    (setq keyfreq-file       "~/.emacs.d/private/keyfreq")
+    (setq keyfreq-file-lock  "~/.emacs.d/private/keyfreq.lock")
+    (keyfreq-mode nil)
+    (keyfreq-autosave-mode 1)))
+
+  (setq keyfreq-excluded-commands
+      '(self-insert-command
+        ace-jump-done
+        ace-jump-move
+        ace-window
+        avy-goto-line
+        backward-char
+        backward-kill-word
+        backward-word
+        clipboard-kill-ring-save
+        comint-previous-input
+        comint-send-input
+        company-complete-common
+        company-complete-number
+        company-complete-selection
+        company-ignore
+        delete-backward-char
+        describe-variable
+        dired ; nothing to optimize in dired
+        dired-do-async-shell-command
+        dired-find-file
+        diredp-next-line
+        diredp-previous-line
+        electric-pair-delete-pair
+        erase-visible-buffer
+        eval-buffer
+        forward-char
+        org-self-insert-command 
+        org-delete-backward-char
+        right-char
+        mouse-drag-region
+        mouse-set-point
+        ivy-backward-delete-char
+        ivy-backward-kill-word
+        ivy-done
+        ivy-next-line
+        ivy-occur
+        ivy-occur-next-line
+        ivy-occur-press-and-switch
+        ivy-occur-previous-line
+        ivy-previous-line
+        ivy-wgrep-change-to-wgrep-mode
+        js-mode
+        js2-line-break
+        keyboard-escape-quit
+        keyboard-quit
+        keyfreq-mode
+        keyfreq-save-now
+        keyfreq-show
+        kill-sentence
+        left-char
+        markdown-exdent-or-delete
+        markdown-outdent-or-delete
+        minibuffer-complete
+        minibuffer-complete-and-exit
+        minibuffer-keyboard-quit
+        move-beginning-of-line
+        move-end-of-line
+        mwheel-scroll
+        my-setup-develop-environment
+        newline-and-indent
+        next-history-element
+        next-line
+        org-beginning-of-line
+        org-ctrl-c-ctrl-c
+        org-cycle
+        org-delete-backward-char
+        org-end-of-line
+        org-force-self-insert
+        org-return
+        org-self-insert-command
+        org-todo
+        orgtbl-self-insert-command
+        package-menu-execute
+        paredit-backward-delete
+        paredit-backward-kill-word
+        paredit-close-round
+        paredit-doublequote
+        paredit-newline
+        paredit-open-round
+        paredit-semicolon
+        pcomplete
+        previous-history-element
+        previous-line
+        push-button
+        pwd
+        quit-window
+        right-char
+        rjsx-electric-gt
+        rjsx-electric-lt
+        save-buffer
+        save-buffers-kill-terminal
+        scroll-down-command
+        scroll-up-command
+        select-window-0
+        select-window-1
+        select-window-2
+        select-window-3
+        select-window-4
+        select-window-5
+        select-window-6
+        select-window-7
+        select-window-8
+        select-window-9
+        self-insert-command
+        smarter-move-beginning-of-line
+        suspend-frame
+        term-send-raw
+        turnon-keyfreq-mode
+        undefined ;; lambda function
+        undo-tree-redo
+        undo-tree-undo
+        w3m-goto-url
+        w3m-next-anchor
+        w3m-view-this-url
+        web-mode
+        web-mode-complete
+        web-mode-jshint
+        web-mode-navigate
+        web-mode-part-beginning
+        web-mode-reload
+        web-mode-reveal
+        web-mode-surround
+        web-mode-tag-beginning
+        web-mode-test
+        wgrep-finish-edit
+        xterm-paste
+        yank
+        yas-compile-directory
+        yas-expand
+        yas-next-field-or-maybe-expand
+        left-char
+        dired-next-line
+        mwheel-scroll 
+        previous-line
+        next-line))
+
+(defun nec/keyfreq-save-html ()
+"Save the table of frequently used commands (and their associated bindings
+to an html file in `user-emacs-directory'"
+  (interactive)
+  (keyfreq-html (locate-user-emacs-file "keyfreq.html")))
+(if nec/measure-time (nec/timer "Keyfreq   "))
+#+end_src
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     
+*** grep and find file
+:PROPERTIES:
+:CUSTOM_ID: grep and find file
+:END:
+#+begin_src emacs-lisp
+
+(use-package grep                       ; Control grep from Emacs
+  :straight t
+  :config
+  (when-let (gnu-find (and (eq system-type 'darwin)
+                           (executable-find "gfind")))
+    (setq find-program gnu-find))
+
+  (when-let (gnu-xargs (and (eq system-type 'darwin)
+                            (executable-find "gxargs")))
+    (setq xargs-program gnu-xargs)))
+
+(use-package locate                     ; Search files on the system
+  :straight t
+  :config
+  ;; Use mdfind as locate substitute on OS X, to utilize the Spotlight database
+  (when-let (mdfind (and (eq system-type 'darwin) (executable-find "mdfind")))
+    (setq locate-command mdfind)))
+
+#+end_src
+** emacs interface
+:PROPERTIES:
+:CUSTOM_ID:  emacs interface
+:END:
+*** AC Jump
+:PROPERTIES:
+:CUSTOM_ID: AC Jump
+:END:
+#+BEGIN_SRC emacs-lisp
+(use-package ace-window
+    :straight t
+    :config
+    (global-set-key (kbd "C-x o") 'ace-window))
+(use-package ace-jump-mode
+  :straight t
+  :bind
+  ("C-c SPC" . ace-jump-mode))
+(if nec/measure-time (nec/timer "AC jump   "))
+#+END_SRC
+*** term
+:PROPERTIES:
+:CUSTOM_ID: term
+:END:
+As I started to use Emacs, my use of the terminal was drastically reduced: most
+of my workflow was indeed moved to Emacs bindings, one way or another: =git=,
+=ag=, compiling and running... Everything could be done without using a
+terminal! I kept a binding to =eshell=, just because it was kind of cute and
+useful to have it laying around.
+
+However, growing up in Linux means getting your hands dirtier and becoming
+geekier every time.  
+However, the defaults were far from intuitive, and although it
+came close, some rough corners still felt off. Through a [[https://lobste.rs/s/whaez0/emacs_everywhere#c_i7cq7w][comment in Lobsters]] by
+its author, [[https://lobste.rs/u/adamrt][adamrt]], I discovered =sane-term=: a group of convenience functions
+that restore basic sanity to the Emacs =ansi-term= and provides the closer to a
+proper shell in Emacs!
+
+#+BEGIN_SRC emacs-lisp 
+  (use-package sane-term
+    :straight t
+    :config
+    (defun set-up-sane-term ()
+      "Fix yanking and prepare for sane-term-mode."
+      (setq-local global-hl-line-mode nil)
+      (define-key
+        term-raw-map
+        (kbd "C-y")
+        (lambda ()
+          (interactive)
+          (term-line-mode)
+          (yank)
+          (term-char-mode))))
+
+    :hook (term-mode . set-up-sane-term)
+    :bind (("C-c t" . sane-term)
+           ("C-c T" . sane-term-create)
+           ("C-c C-j" . sane-term-mode-toggle)))
+#+END_SRC
+*** all-the-icons
+:PROPERTIES:
+:CUSTOM_ID: all-the-icons
+:END:
+#+begin_src emacs-lisp
+;; Download icons
+
+(use-package all-the-icons
+  :straight t)
+
+(defcustom is-all-the-icons-installed nil
+  "DO NOT EDIT. Checks if all-the-icons fonts are installed yet."
+  :group 'nec
+  :type 'boolean)
+
+(unless is-all-the-icons-installed
+  (all-the-icons-install-fonts)
+  (customize-save-variable 'is-all-the-icons-installed t))
+
+(use-package counsel
+  :straight t)
+
+(use-package all-the-icons-ivy
+  :straight t
+  :config
+  (all-the-icons-ivy-setup))
+
+(use-package all-the-icons-ivy-rich
+  :straight t
+  :init (all-the-icons-ivy-rich-mode 1))
+
+(use-package ivy-rich
+  :straight t
+  :init (ivy-rich-mode 1))
+
+(if nec/measure-time (nec/timer "all the icons   "))
+#+end_src
+*** Helm
+:PROPERTIES:
+:CUSTOM_ID: Helm
+:END:
+#+BEGIN_SRC emacs-lisp
+(use-package helm
+  :straight t 
+  :diminish " "
+  :config   (require 'helm-config))   
+;(require 'bind-keys)  
+(bind-keys :map global-map  
+              ("M-x" . helm-M-x)
+              ("C-x C-m" . helm-M-x)
+              ("C-x C-f" . helm-find-files)
+              ("C-x v"   . helm-projectile)
+              ("C-x c o" . helm-occur)
+              ("C-x c p" . helm-projectile-ag)
+              ("C-x c k" . helm-show-kill-ring)
+;;         :map helm-map
+;;              ("<tab>" . helm-execute-persistent-action)))
+)   
+
+  (setq helm-split-window-in-side-p t
+        helm-split-window-default-side 'below
+	helm-idle-delay 0.0
+	helm-input-idle-delay 0.01
+	helm-quick-update t
+	helm-ff-skip-boring-files t)
+;;  (helm-mode 1)
+;;
+(straight-use-package-lazy 'helm-ag)
+;;
+(straight-use-package-lazy 'helm-org)
+;;
+(straight-use-package-lazy 'helm-git-grep)
+;;
+(straight-use-package-lazy 'helm-projectile)
+;;
+(use-package helm-swoop
+  :straight t
+  :bind
+  ("C-x c s" . helm-swoop))
+(if nec/measure-time (nec/timer "Helm "))
+#+END_SRC
+*** Yasnippet
+#+begin_src emacs-lisp
+;;; init-yasnippet.el --- -*- lexical-binding: t -*-
+;;
+;; Filename: init-yasnippet.el
+;; Description: Initialize YASnippet
+;; Author: Mingde (Matthew) Zeng
+;; Copyright (C) 2019 Mingde (Matthew) Zeng
+;; Created: Tue Apr 23 23:08:17 2019 (-0400)
+;; Version: 2.0.0
+;; Last-Updated: Sat Apr 18 12:40:38 2020 (+0200)
+;;           By: Niels Søndergaard
+;; URL: https://github.com/MatthewZMD/.emacs.d
+;; Keywords: M-EMACS .emacs.d yasnippet
+;; Compatibility: emacs-version >= 26.1
+;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;
+;;; Commentary:
+;;
+;; This initializes YASnippet
+;;
+;;; Code:
+(use-package yasnippet
+  :straight t
+  :diminish yas-minor-mode
+  :init
+;;  (use-package yasnippet-snippets :after yasnippet)
+  :hook ((prog-mode LaTeX-mode org-mode) . yas-minor-mode)
+  :bind
+  (:map yas-minor-mode-map ("C-c C-n" . yas-expand-from-trigger-key))
+  (:map yas-keymap
+        (("TAB" . smarter-yas-expand-next-field)
+         ([(tab)] . smarter-yas-expand-next-field)))
+  :config   (yas-reload-all)
+  (setq yas-snippet-dirs "~/.emacs.d/snippets/")
+  (defun smarter-yas-expand-next-field ()
+    "Try to `yas-expand' then `yas-next-field' at current cursor position."
+    (interactive)
+    (let ((old-point (point))
+          (old-tick (buffer-chars-modified-tick)))
+      (yas-expand)
+      (when (and (eq old-point (point))
+                 (eq old-tick (buffer-chars-modified-tick)))
+        (ignore-errors (yas-next-field))))))
+(provide 'init-yasnippet)
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; init-yasnippet.el ends here
+#+end_src
+*** IDO
+:PROPERTIES:
+:CUSTOM_ID: IDO
+:END:
+#+begin_src emacs-lisp
+(require 'ido)
+(setq ido-save-directory-list-file "~/.emacs.d/private/ido.last")
+(setq ido-show-dot-for-dired t)
+(setq ido-use-faces nil)
+(straight-use-package  'flx)
+(straight-use-package  'flx-ido)
+(ido-mode 1)
+(ido-everywhere 1)
+(flx-ido-mode 1)
+;; disable ido faces to see flx highlights.
+ (setq ido-enable-flex-matching t)
+;; (setq ido-use-faces nil)
+ (straight-use-package  'flx-isearch)
+ (global-set-key (kbd "C-M-s") #'flx-isearch-forward)
+ (global-set-key (kbd "C-M-r") #'flx-isearch-backward)
+(if nec/measure-time (nec/timer "IDO  "))
+#+end_src
+*** Smartparens
+:PROPERTIES:
+:CUSTOM_ID: Smartparens
+:END:
+#+begin_src emacs-lisp
+;;
+(use-package smartparens
+  :straight t
+  :config 
+  (progn
+    (require 'smartparens-config) 
+    (smartparens-global-mode t)
+    (show-smartparens-global-mode t))
+    (setq sp-highlight-pair-overlay t)
+    (setq sp-show-pair-from-inside t)
+  :diminish 'smartparens-mode)
+;; Always start smartparens mode in js-mode.
+(add-hook 'js-mode-hook #'smartparens-mode)
+(add-hook 'emacs-lisp #'smartparens-mode)
+(show-paren-mode 1)
+;;
+(if nec/measure-time (nec/timer "Smartparns "))
+#+end_src
+*** Set danish calendar data
+:PROPERTIES:
+:CUSTOM_ID: Set danish calendar data
+:END:
+We're not even close to define calendar, but the values are far more vide used
+than the calendar, the date is really used many places.
+#+begin_src emacs-lisp
+;;; Code:
+;; Week starts on monday
+(setq calendar-week-start-day 1)
+;; Use european date style, i.e. date/month
+(setq european-calendar-style 'european)
+;; Date format
+(setq calendar-date-display-form
+      '((if dayname
+            (concat dayname ", "))
+        day " " monthname " " year))
+
+;; 24 hour clock format
+(setq calendar-time-display-form
+      '(24-hours ":" minutes))
+
+;; Weekday names
+(setq calendar-day-name-array
+      ["søndag" "mandag" "tirsdag" "onsdag" "torsdag" "fredag" "lørdag"])
+(setq calendar-day-abbrev-array
+      ["søn" "man" "tirs" "ons" "tors" "fre" "lør"])
+(setq calendar-day-header-array
+      ["sø" "ma" "ti" "on" "to" "fr" "lø"])
+
+;; Month names
+(setq calendar-month-name-array
+      ["januar" "februar" "marts" "april" "maj" "juni"
+       "juli" "august" "september" "oktober" "november" "december"])
+(setq calendar-month-abbrev-array
+      ["jan" "feb" "mar" "apr" "maj" "jun" "jul" "aug" "sep" "okt" "nov" "dec"])
+
+:; Equinoxes/solstices names
+;; http://www.dmi.dk/dmi/nyd_aarets_laengste_dag_-_sommersolhverv
+(eval-after-load "solar"
+  '(progn
+     (setq solar-n-hemi-seasons
+           '("Forårsjævndøgn" "Sommersolhverv"
+             "Efterårsjævndøgn" "Vintersolhverv"))
+     (setq solar-s-hemi-seasons
+           '("Efterårsjævndøgn" "Vintersolhverv"
+             "Forårsjævndøgn" "Sommersolhverv"))))
+
+;; Moon phace names
+(defadvice lunar-phase-name (around da-lunar-phase-name activate)
+  "Phases of the moon in danish."
+  (setq ad-return-value
+        (let ((phase (ad-get-arg 0)))
+          (cond ((= 0 phase) "Nymåne")
+                ((= 1 phase) "Tiltagende Halvmåne")
+                ((= 2 phase) "Fuldmåne")
+                ((= 3 phase) "Aftagende Halvmåne")))))
+
+
+;; Sunrise and sunset
+(defadvice solar-sunrise-sunset-string (around da-solar-sunrise-sunset-string
+                                               activate)
+  "Sunrise and sunset in danish."
+  (setq ad-return-value
+        (let ((l (solar-sunrise-sunset date)))
+          (format
+           "%s, %s i %s (%s timers dagslys)"
+           (if (car l)
+               (concat "Sol op " (apply 'solar-time-string (car l)))
+             "Ingen solopgang")
+           (if (car (cdr l))
+               (concat "ned " (apply 'solar-time-string (car (cdr l))))
+             "ingen solnedgang")
+           (eval calendar-location-name)
+           (car (cdr (cdr l)))))))
+
+
+;; Adapted from http://stackoverflow.com/questions/21364948/how-to-align-the-calendar-with-week-number-as-the-intermonth-text
+(setq calendar-intermonth-text
+      '(propertize
+        (format "%2d"
+                (car
+                 (calendar-iso-from-absolute
+                  (calendar-absolute-from-gregorian (list month day year)))))
+        'font-lock-face 'font-lock-doc-face))
+
+;; Week numbers are very common and there's no two-letter abreviation for it,
+;; Thus I'm not added a header. It could be added using this (ug=ugenummer):
+;;
+;; (setq calendar-intermonth-header nil)
+;;       (propertize "un" 'font-lock-face 'font-lock-keyword-face))
+(if nec/measure-time (nec/timer "Danish calendar data "))
+#+end_src
+*** calculate eastern sunday
+:PROPERTIES:
+:CUSTOM_ID: calculate eastern sunday
+:END:
+#+begin_src emacs-lisp
+;; Calculation of easter, the fix point for many holidays (taken from
+;; sv-kalender.el, originally from holiday-easter-etc)
+(defun easter (year)
+  "Calculate the date for Easter in YEAR."
+  (let* ((century (1+ (/ year 100)))
+         (shifted-epact (% (+ 14 (* 11 (% year 19))
+                              (- (/ (* 3 century) 4))
+                              (/ (+ 5 (* 8 century)) 25)
+                              (* 30 century))
+                           30))
+         (adjusted-epact (if (or (= shifted-epact 0)
+                                 (and (= shifted-epact 1)
+                                      (< 10 (% year 19))))
+                             (1+ shifted-epact)
+                           shifted-epact))
+         (paschal-moon (- (calendar-absolute-from-gregorian
+                           (list 4 19 year))
+                          adjusted-epact)))
+    (calendar-dayname-on-or-before 0 (+ paschal-moon 7))))
+#+end_src
+*** Danish hollidays
+:PROPERTIES:
+:CUSTOM_ID: Danish hollidays
+:END:
+#+begin_src emacs-lisp
+(setq general-holidays
+      '((holiday-fixed 1 1 "Nytårsdag")
+        (holiday-fixed 1 6 "Hellige 3 konger")
+
+        ;; Easter and Pentecost
+        (holiday-filter-visible-calendar
+         (mapcar
+          (lambda (dag)
+            (list (calendar-gregorian-from-absolute
+                   (+ (easter displayed-year) (car dag)))
+                  (cadr dag)))
+          '(( -49 "Fastelavn")
+            (  -7 "Palmesøndag")
+            (  -3 "Skærtorsdag")
+            (  -2 "Langfredag")
+            (   0 "Påskedag")
+            (  +1 "Anden påskedag")
+            ( +26 "Store bededag")
+            ( +39 "Kristi himmelfartsdag")
+            ( +49 "Pinsedag")
+            ( +50 "Anden pinsedag"))))
+
+        (holiday-fixed 12 24 "Juleaften")
+        (holiday-fixed 12 25 "Juledag")
+        (holiday-fixed 12 26 "Anden juledag")
+        (holiday-fixed 12 31 "Nytårsaften")))
+
+(setq other-holidays
+      '((holiday-fixed 3 8 "Kvindernes internationale kampdag")
+        (holiday-fixed 4 16 "Dronning Margrethe")
+        (holiday-fixed 5 1 "Arbejdernes internationale kampdag")
+        (holiday-fixed 5 4 "Danmarks befrielse")
+        (holiday-float 5 0 2 "Mors dag")
+        (holiday-fixed 6 5 "Grundlovsdag")
+        (holiday-fixed 6 5 "Fars dag")
+        (holiday-fixed 6 15 "Valdemarsdag (Dannebrog)")
+        (holiday-fixed 6 24 "Skt. Hans dag")))
+
+(setq calendar-holidays
+      (append general-holidays other-holidays))
+;; helt lokalt, her bor jeg:
+(setq calendar-date-style 'european)
+
+;; other global calendar database
+(setq calendar-date-style 'european)
+(setq diary-date-forms
+   '((month "/" day "[^/0-9]")
+     (month "/" day "/" year "[^0-9]")
+     (monthname " *" day "[^,0-9]")
+     (monthname " *" day ", *" year "[^0-9]")
+     (dayname "\\W")))
+
+(if nec/measure-time (nec/timer "Insert Danish calendar "))
+#+end_src
+ace
+*** Rainbow
+:PROPERTIES:
+:CUSTOM_ID: Rainbow
+:END:
+#+begin_src emacs-lisp :results silent
+(use-package rainbow-delimiters
+  :straight t
+  :hook (prog-mode . rainbow-delimiters-mode))
+(if nec/measure-time (nec/timer "Rainbow   "))
+#+end_src
+*** Company
+:PROPERTIES:
+:CUSTOM_ID: Company
+:END:
+Company is a text completion framework for Emacs. The name stands for
+"complete anything". It uses pluggable back-ends and front-ends to
+retrieve and display completion candidates.
+#+begin_src emacs-lisp
+(use-package company
+  :straight t
+  :diminish " 🄲"
+  :init
+   (setq company-show-numbers t
+         company-dabbrev-downcase nil
+         company-dabbrev-ignore-case t
+         company-tooltip-limit 10
+         company-minimum-prefix-length 2
+         company-require-match 'never
+         company-tooltip-align-annotations t
+         company-transformers '(company-sort-by-occurrence)
+         company-idle-delay 0.5)
+  :config (global-company-mode t))
+
+(defun add-yas-to-company-backends (backend)
+  "Add yasnippet suggestions to the `company-mode' backend BACKEND.
+
+  Returns an alist of (BACKEND :with company-yasnippet)."
+  (if (or (eq backend 'company-yasnippet)
+          (and (listp backend) (member 'company-yasnippet backend)))
+      ;; do nothing
+      backend
+    ;; else append :with company-yasnippet
+    (append (if (consp backend) backend (list backend))
+            '(:with company-yasnippet))))
+;; set the backends if wanted---not right now
+;; (setq company-backends (mapcar #'add-yas-to-company-backends my-company-backends))
+
+(if nec/measure-time (nec/timer "Company   "))
+#+end_src
+*** Company-box
+:PROPERTIES:
+:CUSTOM_ID: Company-box
+:END:
+#+begin_src emacs-lisp
+(use-package company-box
+  :straight t      
+  :after company
+  :diminish
+  :hook (company-mode . company-box-mode))
+(add-hook 'after-init-hook 'global-company-mode)
+;;
+(setq company-box-icons-unknown 'fa_question_circle)
+
+(setq company-box-icons-elisp
+   '((fa_tag :face font-lock-function-name-face) ;; Function
+     (fa_cog :face font-lock-variable-name-face) ;; Variable
+     (fa_cube :face font-lock-constant-face)     ;; Feature
+     (md_color_lens :face font-lock-doc-face)))  ;; Face
+
+(setq company-box-icons-yasnippet 'fa_bookmark)
+
+(setq company-box-icons-lsp
+      '((1 . fa_text_height) ;; Text
+        (2 . (fa_tags :face font-lock-function-name-face)) ;; Method
+        (3 . (fa_tag :face font-lock-function-name-face)) ;; Function
+        (4 . (fa_tag :face font-lock-function-name-face)) ;; Constructor
+        (5 . (fa_cog :foreground "#FF9800")) ;; Field
+        (6 . (fa_cog :foreground "#FF9800")) ;; Variable
+        (7 . (fa_cube :foreground "#7C4DFF")) ;; Class
+        (8 . (fa_cube :foreground "#7C4DFF")) ;; Interface
+        (9 . (fa_cube :foreground "#7C4DFF")) ;; Module
+        (10 . (fa_cog :foreground "#FF9800")) ;; Property
+        (11 . md_settings_system_daydream) ;; Unit
+        (12 . (fa_cog :foreground "#FF9800")) ;; Value
+        (13 . (md_storage :face font-lock-type-face)) ;; Enum
+        (14 . (md_closed_caption :foreground "#009688")) ;; Keyword
+        (15 . md_closed_caption) ;; Snippet
+        (16 . (md_color_lens :face font-lock-doc-face)) ;; Color
+        (17 . fa_file_text_o) ;; File
+        (18 . md_refresh) ;; Reference
+        (19 . fa_folder_open) ;; Folder
+        (20 . (md_closed_caption :foreground "#009688")) ;; EnumMember
+        (21 . (fa_square :face font-lock-constant-face)) ;; Constant
+        (22 . (fa_cube :face font-lock-type-face)) ;; Struct
+        (23 . fa_calendar) ;; Event
+        (24 . fa_square_o) ;; Operator
+        (25 . fa_arrows)) ;; TypeParameter
+      )
+(use-package company-lsp
+  :straight t
+  :config
+(setq compnay-lsp-enable-snippet t)
+(push 'company-lsp company-backends))
+(if nec/measure-time (nec/timer "Company-box   "))
+#+end_src
+*** Hippie Expand
+:PROPERTIES:
+:CUSTOM_ID: Hippie Expand
+:END:
+[[https://www.emacswiki.org/emacs/HippieExpand][Hippie Expand]] is a more feature complete completion engine than the
+default dabbrev engine. The main feature I use over =dabbrev= is
+that is supports a wide range of backends for finding completions -
+=dabbrev= only looks at currently open buffers.
+
+#+begin_src emacs-lisp
+     (setq hippie-expand-try-functions-list
+	   '(try-expand-dabbrev
+	     try-expand-dabbrev-all-buffers
+	     try-expand-dabbrev-from-kill
+	     try-complete-file-name-partially
+	     try-complete-file-name
+	     try-expand-all-abbrevs
+	     try-expand-list
+	     try-expand-line
+	     try-complete-lisp-symbol-partially
+	     try-complete-lisp-symbol))
+
+;;Then we override =dabbrev-expand='s keybinding to use
+;;=hippie-expand= instead.
+ (define-key (current-global-map) [remap dabbrev-expand] 'hippie-expand)
+(if nec/measure-time (nec/timer "Hippie Expand   "))
+#+end_src
+*** Hydra
+:PROPERTIES:
+:CUSTOM_ID: Hydra
+:END:
+#+begin_src emacs-lisp
+(use-package hydra
+  :straight t
+  :config
+  (progn
+    ;; (setq hydra-lv nil)
+    (set-face-attribute 'hydra-face-red      nil :foreground "Red"        :bold t)
+    (set-face-attribute 'hydra-face-blue     nil :foreground "RoyalBlue3" :bold t)
+    (set-face-attribute 'hydra-face-amaranth nil :foreground "#e52b50"    :bold t)
+    (set-face-attribute 'hydra-face-pink     nil :foreground "HotPink1"   :bold t)
+    (set-face-attribute 'hydra-face-teal     nil :foreground "#367588"    :bold t)
+    (hydra-add-font-lock)))
+;;
+(straight-use-package-lazy 'major-mode-hydra)
+;;
+(straight-use-package-lazy 'use-package-hydra)
+;;
+(if nec/measure-time (nec/timer "Hydra   "))
+#+end_src
+
+*** Show face under cursor
+:PROPERTIES:
+:CUSTOM_ID: Show face under cursor
+:END:
+#+begin_src emacs-lisp
+(defun what-face (pos)
+  "Show the name of face under point."
+  (interactive "d")
+  (let ((face (or (get-char-property (point) 'read-face-name)
+                  (get-char-property (point) 'face))))
+    (if face (message "Face: %s" face) (message "No face at %d" pos))))
+(if nec/measure-time (nec/timer "What-face "))
+#+end_src
+*** Set emacs up to have color on terminal
+:PROPERTIES:
+:CUSTOM_ID: Set emacs up to have color on terminal
+:END:
+#+BEGIN_SRC emacs-lisp 
+;;(autoload 'color-theme-approximate-on color-themes-modern)
+(straight-use-package 'color-theme-approximate)
+;;(require 'color-theme-approximate-on)
+;;(color-theme-approximate-on()))
+#+END_SRC
+
+*** Auto Super Save
+:PROPERTIES:
+:CUSTOM_ID: Auto Super Save
+:END:
+#+begin_src emacs-lisp
+;;(unless (package-installed-p 'super-save)
+;;  (package-refresh-contents)
+;;  (package-install 'super-save))
+;;(setq super-save-remote-files nil)
+;;(super-save-mode nil)
+;;(setq super-save-auto-save-when-idle t)
+(setq auto-save-default nil)
+(setq auto-save-list-file-prefix "~/.emacs.d/private/auto-save-list/.saves")
+(setq-default indent-tabs-mode nil)
+(if nec/measure-time (nec/timer "Auto save org-files   "))
+#+end_src
+*** Keys
+:PROPERTIES:
+:CUSTOM_ID: Keys
+:END:
+bindings
+Put all keybindings here (with doc)
+#+begin_src emacs-lisp
+(global-set-key (kbd "C-x w") 'elfeed)                   ;; key to ger elfeed
+(global-set-key (kbd "C-+") 'text-scale-increase)
+(global-set-key (kbd "C--") 'text-scale-decrease)
+;;rust bindings
+(global-set-key "\C-c\C-c\C-b" 'cargo-build)
+(global-set-key "\C-c\C-c\C-r" 'cargo-run)
+(global-set-key "\C-c\C-c\C-t" 'cargo-test)
+(global-set-key (kbd "C-c q") 'auto-fill-mode)
+(global-set-key (kbd "C-c l") 'org-store-link)
+(global-set-key (kbd "C-c a") 'org-agenda)
+(global-set-key (kbd "C-c c") 'org-capture)
+(if nec/measure-time
+          (nec/timer "Global key bindings   "))
+#+end_src
+
+** User interface
+*** Never loose the cursor
+:PROPERTIES:
+:CUSTOM_ID: Never-loose-the-cursor
+:END:
+Let's have the entire line containing the cursour be slightly highlighted.
+Make it very easy to see the line with the cursor.
+Moreover, we reduce the mental strain of locating the cursour when navigation happens:
+When we switch windows or scroll, for example, we get a wave of light near the cursor.
+#+begin_src emacs-lisp
+(use-package beacon
+  :straight t
+  :diminish
+  :config (setq beacon-color "#666600"))
+(beacon-mode 1)
+#+end_src
+*** Dimming Unused Windows
+:PROPERTIES:
+:CUSTOM_ID: Dimming-Unused-Windows
+:END:
+Let's dim windows, and even the whole Emacs frame, when not in use.
+#+BEGIN_SRC emacs-lisp
+(use-package dimmer
+  :straight t
+  :diminish 
+  :config (dimmer-mode))
+#+END_SRC
+*** Ask before killing emacs
+:PROPERTIES:
+:CUSTOM_ID: Ask before killing emacs
+:END:
+No body wants to, but at time you have to...
+#+begin_src emacs-lisp
+(defun ask-before-closing ()
+  "Prompt for confirmation for emacsclient(not daemon) like confirm-kill-emacs for running Emacs without daemon."
+  (interactive)
+  (if (y-or-n-p (format "Really exit Emacs? "))
+          (save-buffers-kill-terminal)
+        (message "Canceled frame close!")))
+
+  (global-set-key (kbd "C-x C-c") 'ask-before-closing)
+(if nec/measure-time (nec/timer "Really?  stop emacs "))
+#+end_src
+*** Modeline
+:PROPERTIES:
+:CUSTOM_ID: Modeline
+:END:
+The ‘modeline’ is a part near the bottom of Emacs that gives information about
+the current mode, as well as other matters ---such as time & date, for example.
+
+Let's have it also show remaining battery life, coloured green if charging
+and coloured yellow otherwise. It is important to note that
+this package is no longer maintained. It works on my machine.
+#+BEGIN_SRC emacs-lisp
+
+(setq display-time-day-and-date t)
+(display-time)
+;; (display-battery-mode -1)
+;; Nope; let's use a fancy indicator …
+(use-package fancy-battery
+  ;straight t
+  :diminish
+  :custom (fancy-battery-show-percentage  t)
+          (battery-update-interval       15)
+  :config (fancy-battery-mode))
+#+END_SRC
+
+Likewise, let's have the modeline display column numbers, but not line numbers.
+Instead, let's have line numbers on the side of the buffer; moreover let's have
+a uniform width for displaying line numbers, rather than having the width grow
+as necessary.
+#+BEGIN_SRC emacs-lisp
+;; Following two taken care of in the spaceline package, below.
+(column-number-mode t)
+;; (line-number-mode  t)
+(setq display-line-numbers-width-start t)
+;;(global-display-line-numbers-mode      t)
+#+END_SRC
+
+I may not use the spacemacs [[https://www.emacswiki.org/emacs/StarterKits][starter kit]], since I find spacemacs to “hide things”
+from me ---whereas Emacs “encourages” me to learn more---, however it is a
+configuration and I enjoy reading Emacs configs in order to improve my own
+setup. From Spacemacs I've adopted Helm for list completion, its sleek light &
+dark themes, and its modified powerline setup.
+
+#+BEGIN_SRC emacs-lisp
+
+;; When using helm & info & default, mode line looks prettier.
+(use-package spaceline
+  :straight  t
+  :custom (spaceline-buffer-encoding-abbrev-p nil)
+          ;; Use an arrow to seperate modeline information
+          (powerline-default-separator 'arrow)
+          ;; Show “line-number : column-number” in modeline.
+          (spaceline-line-column-p t)
+          ;; Use two colours to indicate whether a buffer is modified or not.
+          (spaceline-highlight-face-func 'spaceline-highlight-face-modified)
+  :config (custom-set-faces '(spaceline-unmodified ((t (:foreground "black" :background "gold")))))
+          (custom-set-faces '(spaceline-modified   ((t (:foreground "black" :background "red")))))
+          (format-time-string " %a, %e. %b %Y - %H:%M ")
+          (set-face-attribute 'mode-line t :font "OpenDyslexic" :background "#2d334a")
+          (set-face-attribute 'mode-line-inactive t :font "OpenDyslexic" )
+          (require 'spaceline-config)
+          (spaceline-helm-mode)
+          (spaceline-info-mode)
+          (spaceline-emacs-theme))
+#+end_src
+
+
+;; DOOM Modeline
+(straight-use-package 'powerline)
+(straight-use-package 'doom-modeline)
+(doom-modeline-mode 1)
+;;
+;; How tall the mode-line should be. It's only respected in GUI.
+;; If the actual char height is larger, it respects the actual height.
+(setq doom-modeline-height 25)
+
+;; How wide the mode-line bar should be. It's only respected in GUI.
+(setq doom-modeline-bar-width 3)
+
+;; The limit of the window width.
+;; If `window-width' is smaller than the limit, some information won't be displayed.
+;;(setq doom-modeline-window-width-limit fill-column
+
+;; How to detect the project root.
+;; The default priority of detection is `ffip' > `projectile' > `project'.
+;; nil means to use `default-directory'.
+;; The project management packages have some issues on detecting project root.
+;; e.g. `projectile' doesn't handle symlink folders well, while `project' is unable
+;; to hanle sub-projects.
+;; You can specify one if you encounter the issue.
+(setq doom-modeline-project-detection 'project)
+
+;; Determines the style used by `doom-modeline-buffer-file-name'.
+;;
+;; Given ~/Projects/FOSS/emacs/lisp/comint.el
+;;   auto => emacs/lisp/comint.el (in a project) or comint.el
+;;   truncate-upto-project => ~/P/F/emacs/lisp/comint.el
+;;   truncate-from-project => ~/Projects/FOSS/emacs/l/comint.el
+;;   truncate-with-project => emacs/l/comint.el
+;;   truncate-except-project => ~/P/F/emacs/l/comint.el
+;;   truncate-upto-root => ~/P/F/e/lisp/comint.el
+;;   truncate-all => ~/P/F/e/l/comint.el
+;;   truncate-nil => ~/Projects/FOSS/emacs/lisp/comint.el
+;;   relative-from-project => emacs/lisp/comint.el
+;;   relative-to-project => lisp/comint.el
+;;   file-name => comint.el
+;;   buffer-name => comint.el<2> (uniquify buffer name)
+;;
+;; If you are experiencing the laggy issue, especially while editing remote files
+;; with tramp, please try `file-name' style.
+;; Please refer to https://github.com/bbatsov/projectile/issues/657.
+(setq doom-modeline-buffer-file-name-style 'auto)
+
+;; Whether display icons in the mode-line.
+;; While using the server mode in GUI, should set the value explicitly.
+(setq doom-modeline-icon (display-graphic-p))
+
+;; Whether display the icon for `major-mode'. It respects `doom-modeline-icon'.
+(setq doom-modeline-major-mode-icon t)
+
+;; Whether display the colorful icon for `major-mode'.
+;; It respects `all-the-icons-color-icons'.
+(setq doom-modeline-major-mode-color-icon t)
+
+;; Whether display the icon for the buffer state. It respects `doom-modeline-icon'.
+(setq doom-modeline-buffer-state-icon t)
+
+;; Whether display the modification icon for the buffer.
+;; It respects `doom-modeline-icon' and `doom-modeline-buffer-state-icon'.
+(setq doom-modeline-buffer-modification-icon t)
+
+;; Whether to use unicode as a fallback (instead of ASCII) when not using icons.
+(setq doom-modeline-unicode-fallback nil)
+
+;; Whether display the minor modes in the mode-line.
+(setq doom-modeline-minor-modes t)
+
+;; If non-nil, a word count will be added to the selection-info modeline segment.
+(setq doom-modeline-enable-word-count nil)
+
+;; Major modes in which to display word count continuously.
+;; Also applies to any derived modes. Respects `doom-modeline-enable-word-count'.
+;; If it brings the sluggish issue, disable `doom-modeline-enable-word-count' or
+;; remove the modes from `doom-modeline-continuous-word-count-modes'.
+(setq doom-modeline-continuous-word-count-modes '(markdown-mode gfm-mode org-mode))
+
+;; Whether display the buffer encoding.
+(setq doom-modeline-buffer-encoding t)
+
+;; Whether display the indentation information.
+(setq doom-modeline-indent-info nil)
+
+;; If non-nil, only display one number for checker information if applicable.
+(setq doom-modeline-checker-simple-format t)
+
+;; The maximum number displayed for notifications.
+(setq doom-modeline-number-limit 99)
+
+;; The maximum displayed length of the branch name of version control.
+(setq doom-modeline-vcs-max-length 12)
+
+;; Whether display the workspace name. Non-nil to display in the mode-line.
+(setq doom-modeline-workspace-name t)
+
+;; Whether display the perspective name. Non-nil to display in the mode-line.
+(setq doom-modeline-persp-name t)
+
+;; If non nil the default perspective name is displayed in the mode-line.
+(setq doom-modeline-display-default-persp-name nil)
+
+;; If non nil the perspective name is displayed alongside a folder icon.
+(setq doom-modeline-persp-icon t)
+
+;; Whether display the `lsp' state. Non-nil to display in the mode-line.
+(setq doom-modeline-lsp t)
+
+;; Whether display the GitHub notifications. It requires `ghub' package.
+(setq doom-modeline-github nil)
+
+;; The interval of checking GitHub.
+(setq doom-modeline-github-interval (* 30 60))
+
+;; Whether display the modal state icon.
+;; Including `evil', `overwrite', `god', `ryo' and `xah-fly-keys', etc.
+(setq doom-modeline-modal-icon nil)
+
+;; Whether display the mu4e notifications. It requires `mu4e-alert' package.
+(setq doom-modeline-mu4e nil)
+
+;; Whether display the gnus notifications.
+(setq doom-modeline-gnus nil)
+
+;; Wheter gnus should automatically be updated and how often (set to 0 or smaller than 0 to disable)
+(setq doom-modeline-gnus-timer 0)
+
+;; Wheter groups should be excludede when gnus automatically being updated.
+(setq doom-modeline-gnus-excluded-groups '("dummy.group"))
+
+;; Whether display the IRC notifications. It requires `circe' or `erc' package.
+(setq doom-modeline-irc t)
+
+;; Function to stylize the irc buffer names.
+(setq doom-modeline-irc-stylize 'identity)
+
+;; Whether display the environment version.
+(setq doom-modeline-env-version t)
+;; Or for individual languages
+(setq doom-modeline-env-enable-python t)
+(setq doom-modeline-env-enable-ruby t)
+(setq doom-modeline-env-enable-perl t)
+(setq doom-modeline-env-enable-go nil)
+(setq doom-modeline-env-enable-elixir nil)
+(setq doom-modeline-env-enable-rust t)
+
+;; Change the executables to use for the language version string
+(setq doom-modeline-env-python-executable "python") ; or `python-shell-interpreter'
+(setq doom-modeline-env-ruby-executable "ruby")
+(setq doom-modeline-env-perl-executable "perl")
+;;(setq doom-modeline-env-go-executable "go")
+;;(setq doom-modeline-env-elixir-executable "iex")
+(setq doom-modeline-env-rust-executable "rustc")
+
+;; What to dispaly as the version while a new one is being loaded
+(setq doom-modeline-env-load-string "...")
+
+;; Hooks that run before/after the modeline version string is updated
+(setq doom-modeline-before-update-env-hook nil)
+(setq doom-modeline-after-update-env-hook nil)
+
+(setq doom-modeline-height 1)
+;; (set-face-attribute 'mode-line nil :family "Noto Sans" :height 100)
+;; (set-face-attribute 'mode-line-inactive nil :family "Noto Sans" :height 100)
+(set-face-attribute 'mode-line t :font "OpenDyslexic" :background "#2d334a")
+(set-face-attribute 'mode-line-inactive t :font "OpenDyslexic" )
+
+#+begin_src emacs-lisp
+(if nec/measure-time (nec/timer "mode line "))
+#+end_src
+
+*** Theme
+:PROPERTIES:
+:CUSTOM_ID: Theme
+:END:
+#+begin_src emacs-lisp
+;; Treat all themes as safe; no query before use.
+(setf custom-safe-themes t)
+(require 'powerline)
+;;
+(use-package doom-themes
+  :straight t
+  :config
+  ;; Global settings (defaults)
+  (setq doom-themes-enable-bold t    ; if nil, bold is universally disabled
+        doom-themes-enable-italic t) ; if nil, italics is universally disabled
+ ;; Enable flashing mode-line on errors
+  (doom-themes-visual-bell-config))
+(straight-use-package 'moe-theme)
+  ;; CHANGE THE THEME HERE!
+(straight-use-package '(moe-theme-auto-switch :type git :flavor melpa :host github :repo "kuanyui/moe-theme"))
+(straight-use-package '(powerline-moe-theme :type git :flavor melpa :host github :repo "kuanyui/moe-theme"))
+
+(load-theme 'afternoon t)
+
+(defun my/set-initial-frame ()
+  (let* ((base-factor nec-frame-size)
+         (a-width (* (display-pixel-width) base-factor))
+         (a-height (* (display-pixel-height) base-factor))
+         (a-left (truncate (/ (- (display-pixel-width) a-width) 2)))
+         (a-top (truncate (/ (- (display-pixel-height) a-height) 5))))
+    (set-frame-position (selected-frame) a-left a-top)
+    (set-frame-size (selected-frame) (truncate a-width)  (truncate a-height) t)))
+(setq frame-resize-pixelwise t)
+(my/set-initial-frame)
+;; Line spacing
+(setq-default line-spacing nec-line-spacing)
+;; Extra config
+(setq x-select-enable-clipboard t
+      x-select-enable-primary t
+      save-interprogram-paste-before-kill t
+      apropos-do-all t
+      mouse-yank-at-point t)
+(blink-cursor-mode t)
+(set-cursor-color "#cccccc")
+(setq ring-bell-function 'ignore)
+;; doom-modeline for bottom status bar
+;;(use-package doom-modeline
+;;      :ensure t
+;;      :hook (after-init . doom-modeline-mode)
+;;      :config
+;;      ;; Don’t compact font caches during GC. Improves performance
+;;      (setq inhibit-compacting-font-caches t)
+;;      ;; Fix symlink bug for emacs
+;;      (setq find-file-visit-truename t))
+
+(if nec/measure-time
+          (nec/timer "Theme   "))
+#+end_src
+*** Term
+:PROPERTIES:
+:CUSTOM_ID: Term
+:END:
+#+begin_src emacs-lisp
+  (defun term/shell (program &optional new-buffer-name)
+        "Start a terminal-emulator in a new buffer.
+
+      With a prefix argument, it prompts the user for the shell
+      executable.
+
+      If there is already existing buffer with the same name, switch to
+      that buffer, otherwise it creates new buffer.
+
+      Like `shell', it loads `~/.emacs_SHELLNAME' if exists, or
+      `~/.emacs.d/init_SHELLNAME.sh'.
+
+      The shell file name (sans directories) is used to make a symbol
+      name such as `explicit-bash-args'.  If that symbol is a variable,
+      its value is used as a list of arguments when invoking the
+      shell."
+        (interactive (let ((default-prog (or explicit-shell-file-name
+                                             (getenv "ESHELL")
+                                             shell-file-name
+                                             (getenv "SHELL")
+                                             "/bin/zsh")))
+                       (list (if (or (null default-prog)
+                                     current-prefix-arg)
+                                 (read-from-minibuffer "Run program: " default-prog)
+                               default-prog))))
+
+        ;; Pick the name of the new buffer.
+        (setq term-ansi-buffer-name
+              (if new-buffer-name
+                  new-buffer-name
+                (if term-ansi-buffer-base-name
+                    (if (eq term-ansi-buffer-base-name t)
+                        (file-name-nondirectory program)
+                      term-ansi-buffer-base-name)
+                  "shell/term")))
+
+        (setq term-ansi-buffer-name (concat "*" term-ansi-buffer-name "*"))
+
+        ;; In order to have more than one term active at a time
+        ;; I'd like to have the term names have the *term-ansi-term<?>* form,
+        ;; for now they have the *term-ansi-term*<?> form but we'll see...
+        (when current-prefix-arg
+          (setq term-ansi-buffer-name 
+                (generate-new-buffer-name term-ansi-buffer-name)))
+
+        (let* ((name (file-name-nondirectory program))
+               (startfile (concat "~/.emacs_" name))
+               (xargs-name (intern-soft (concat "explicit-" name "-args"))))
+          (unless (file-exists-p startfile)
+            (setq startfile (concat user-emacs-directory "init_" name ".sh")))
+
+          (setq term-ansi-buffer-name
+                (apply 'term-ansi-make-term term-ansi-buffer-name program
+                       (if (file-exists-p startfile) startfile)
+                       (if (and xargs-name (boundp xargs-name))
+                           ;; `term' does need readline support.
+                           (remove "--noediting" (symbol-value xargs-name))
+                         '("-i")))))
+        (straight-use-package 'eterm-256color
+          :hook (term-mode))
+        
+        (set-buffer term-ansi-buffer-name)
+        (term-mode)
+        (term-line-mode)                      ; (term-char-mode) if you want
+
+        ;; I wanna have find-file on C-x C-f -mm
+        ;; your mileage may definitely vary, maybe it's better to put this in your
+        ;; .emacs ...
+
+        (term-set-escape-char ?\C-x)
+
+        (switch-to-buffer term-ansi-buffer-name))
+
+      (global-set-key "\C-t" 'term/shell)
+#+end_src
+*** Edit command
+:PROPERTIES:
+:CUSTOM_ID: Edit command
+:END:
+#+begin_src emacs-lisp
+  (use-package move-text
+    :straight t
+    :bind (("M-<up>" .  move-text-up)
+           ("M-<down>" .  move-text-down)))
+
+  (define-key global-map (kbd "RET") 'newline-and-indent)
+
+  ;; Remember line when you revisit a file
+  (setq-default save-place t)
+  (setq save-place-file (concat user-emacs-directory "places"))
+  (setq delete-active-region t)
+
+  ;; Fix for emacs killing text to kill-ring when using M-Backspace and C-Backspace
+  (defun delete-word (arg)
+    "Delete characters forward until encountering the end of a word.
+  With argument ARG, do this that many times."
+    (interactive "p")
+    (delete-region (point) (progn (forward-word arg) (point))))
+
+  (defun backward-delete-word (arg)
+    "Delete characters backward until encountering the beginning of a word.
+  With argument ARG, do this that many times."
+    (interactive "p")
+    (delete-word (- arg)))
+
+  (global-set-key (kbd "<M-backspace>") 'backward-delete-word)
+  (global-set-key (kbd "<C-backspace>") 'backward-delete-word)
+  (if nec/measure-time (nec/timer "editing   "))
+#+end_src
+*** Dired filefinder
+:PROPERTIES:
+:CUSTOM_ID: Dired filefinder
+:END:
+#+begin_src emacs-lisp
+
+ (straight-use-package '(dired :type built-in)
+;;    :bind (:map dired-mode-map
+;;          ("C-c C-p" . wdired-change-to-wdired-mode))
+      :config
+      (setq dired-dwim-target t)
+      (setq dired-recursive-deletes 'always)
+      (setq dired-recursive-copies 'always))
+ (when sys/macp
+ ;; Suppress the warning: `ls does not support --dired'.
+   (setq dired-use-ls-dired nil))
+ (when (executable-find "gls")
+ ;; Use GNU ls as `gls' from `coreutils' if available.
+   (setq insert-directory-program "gls"))
+    ;;  (when (or (and sys/macp (executable-find "gls"))
+    ;;            (and (not sys/macp) (executable-find "ls")))
+    ;; Using `insert-directory-program'
+    ;;  (setq ls-lisp-use-insert-directory-program t)
+  (setq dired-listing-switches "-alh --group-directories-first")
+    ;; Quick sort dired buffers via hydra
+  (use-package dired-quick-sort
+    :bind (:map dired-mode-map
+                ("S" . hydra-dired-quick-sort/body)))
+    ;; Show git info in dired
+      (use-package dired-git-info
+        :straight t
+        :bind (:map dired-mode-map
+               (")" . dired-git-info-mode)))
+    ;; Allow rsync from dired buffers
+      (use-package dired-rsync
+        :straight t
+        :bind (:map dired-mode-map
+               ("C-c C-r" . dired-rsync)))
+    ;; Colourful dired
+      (use-package diredfl
+        :straight t
+        :init (diredfl-global-mode 1))
+   (straight-use-package 'dired-filter)
+   (use-package dired-filter
+      :after    dired
+      :bind (:map dired-mode-map
+                  ("/" . dired-filter-map))
+      :hook ((dired-mode . dired-filter-mode)
+             (dired-mode . dired-filter-group-mode))
+      :init (gsetq dired-filter-revert 'never
+                   dired-filter-group-saved-groups
+                   '(("default"
+                      ("Git"
+                       (directory . ".git")
+                       (file . ".gitignore"))
+                      ("Directory"
+                       (directory))
+                      ("PDF"
+                       (extension . "pdf"))
+                      ("LaTeX"
+                       (extension "tex" "bib"))
+                      ("Source"
+                       (extension "c" "cpp" "hs" "rb" "py" "r" "cs" "el" "lisp" "html" "js" "css"))
+                      ("Doc"
+                       (extension "md" "rst" "txt"))
+                      ("Org"
+                       (extension . "org"))
+                      ("Archives"
+                       (extension "zip" "rar" "gz" "bz2" "tar"))
+                      ("Images"
+                       (extension "jpg" "JPG" "webp" "png" "PNG" "jpeg" "JPEG" "bmp" "BMP" "TIFF" "tiff" "gif" "GIF"))))))
+  ;;(setcar (cdr (assq 'dired-filter-mode minor-mode-alist)) " ")
+
+  (straight-use-package 'dired-rainbow)
+    (use-package dired-rainbow
+      :after dired
+      :config
+      (dired-rainbow-define-chmod directory "#6cb2eb" "d.*")
+      (dired-rainbow-define html        "#eb5286" ("css" "less" "sass" "scss" "htm" "html" "jhtm" "mht" "eml" "mustache" "xhtml"))
+      (dired-rainbow-define xml         "#f2d024" ("xml" "xsd" "xsl" "xslt" "wsdl" "bib" "json" "msg" "pgn" "rss" "yaml" "yml" "rdata"))
+      (dired-rainbow-define document    "#9561e2" ("docm" "doc" "docx" "odb" "odt" "pdb" "pdf" "ps" "rtf" "djvu" "epub" "odp" "ppt" "pptx"))
+      (dired-rainbow-define markdown    "#ffed4a" ("org" "etx" "info" "markdown" "md" "mkd" "nfo" "pod" "rst" "tex" "textfile" "txt"))
+      (dired-rainbow-define database    "#6574cd" ("xlsx" "xls" "csv" "accdb" "db" "mdb" "sqlite" "nc"))
+      (dired-rainbow-define media       "#de751f" ("mp3" "mp4" "MP3" "MP4" "avi" "mpeg" "mpg" "flv" "ogg" "mov" "mid" "midi" "wav" "aiff" "flac"))
+      (dired-rainbow-define image       "#f66d9b" ("tiff" "tif" "cdr" "gif" "ico" "jpeg" "jpg" "png" "psd" "eps" "svg"))
+      (dired-rainbow-define log         "#c17d11" ("log"))
+      (dired-rainbow-define shell       "#f6993f" ("awk" "bash" "bat" "sed" "sh" "zsh" "vim"))
+      (dired-rainbow-define interpreted "#38c172" ("py" "ipynb" "rb" "pl" "t" "msql" "mysql" "pgsql" "sql" "r" "clj" "cljs" "scala" "js"))
+      (dired-rainbow-define compiled    "#4dc0b5" ("asm" "cl" "lisp" "el" "c" "h" "c++" "h++" "hpp" "hxx" "m" "cc" "cs" "cp" "cpp" "go" "f" "for" "ftn" "f90" "f95" "f03" "f08" "s" "rs" "hi" "hs" "pyc" ".java"))
+      (dired-rainbow-define executable  "#8cc4ff" ("exe" "msi"))
+      (dired-rainbow-define compressed  "#51d88a" ("7z" "zip" "bz2" "tgz" "txz" "gz" "xz" "z" "Z" "jar" "war" "ear" "rar" "sar" "xpi" "apk" "xz" "tar"))
+      (dired-rainbow-define packaged    "#faad63" ("deb" "rpm" "apk" "jad" "jar" "cab" "pak" "pk3" "vdf" "vpk" "bsp"))
+      (dired-rainbow-define encrypted   "#ffed4a" ("gpg" "pgp" "asc" "bfe" "enc" "signature" "sig" "p12" "pem"))
+      (dired-rainbow-define fonts       "#6cb2eb" ("afm" "fon" "fnt" "pfb" "pfm" "ttf" "otf"))
+      (dired-rainbow-define partition   "#e3342f" ("dmg" "iso" "bin" "nrg" "qcow" "toast" "vcd" "vmdk" "bak"))
+      (dired-rainbow-define vc          "#0074d9" ("git" "gitignore" "gitattributes" "gitmodules"))
+      (dired-rainbow-define-chmod executable-unix "#38c172" "-.*x.*"))
+   (setq dired-after-readin-hook '(dired-omit-expunge dired-filter--apply))
+   (setq dired-always-read-filesystem t)
+   (setq dired-create-destination-dirs 'ask)
+   (setq dired-dwim-target t)
+   (setq dired-listing-switches "-alh --group-directories-first")
+   (setq dired-use-ls-dired nil)
+
+    (use-package all-the-icons-dired
+      :straight t
+      :diminish " "
+      :hook (dired-mode . all-the-icons-dired-mode))
+
+    ;;(use-package dired-sidebar
+    ;;  :straight t
+    ;;  :bind (("C-c s" . dired-sidebar-toggle-sidebar)))
+
+    (if nec/measure-time (nec/timer "Dired   "))
+#+end_src
+*** Games
+:PROPERTIES:
+:CUSTOM_ID: Games
+:END:
+#+begin_src emacs-lisp
+(use-package tetris
+  :straight t
+  :commands (tetris)
+  :bind
+  (:map tetris-mode-map
+        ("C-p" . tetris-rotate-prev)
+        ("C-n" . tetris-rotate-down)
+        ("C-b" . tetris-move-left)
+        ("C-f" . tetris-move-right)
+        ("C-SPC" . tetris-move-bottom))
+  :config
+  (defadvice tetris-end-game (around zap-scores activate)
+    (save-window-excursion ad-do-it)))
+;; -TetrisConfig
+
+;; SpeedTypePac
+(straight-use-package-lazy 'speed-type)
+
+(straight-use-package-lazy '2048-game)
+
+#+end_src
+*** Flyckeck
+:PROPERTIES:
+:CUSTOM_ID: Flyckeck
+:END:
+#+begin_src emacs-lisp
+(use-package flycheck
+  :straight t
+  :hook
+  (prog-mode . flycheck-mode)
+  (text-mode . flycheck-mode)
+  :config (diminish 'flycheck-mode " Ⓕ"))
+(if nec/measure-time (nec/timer "flycheck   "))
+#+end_src
+*** Dashboard
+:PROPERTIES:
+:CUSTOM_ID: Dashboard
+:END:
+We want a Dashboard, which demand Page Break Line 
+#+begin_src emacs-lisp
+(use-package page-break-lines
+  :straight t 
+  :diminish
+  :init (global-page-break-lines-mode))
+#+end_src
+
+#+begin_src emacs-lisp
+(use-package dashboard
+  :straight t
+  :demand t
+  :diminish (dashboard-mode page-break-lines-mode)
+  :bind ("<f2>" . open-dashboard)
+  :custom
+  (dashboard-banner-logo-title "Open EMACS for a new world...")
+  ;(dashboard-startup-banner "~/.emacs.d/images/garfield.png")
+  ;(dashboard-startup-banner "~/.emacs.d/images/hands.png")
+  (dashboard-startup-banner "~/.emacs.d/images/ohands.png")
+  ;(dashboard-startup-banner "~/.emacs.d/images/gnu.png")
+  ;(dashboard-startup-banner "~/.emacs.d/images/Verdensmaal.png")
+  ;(dashboard-startup-banner "~/.emacs.d/images/ognu.png")
+  (dashboard-items '( (bookmarks . 5) (agenda . 9)))
+  (initial-buffer-choice (lambda () (get-buffer dashboard-buffer-name)))
+  (dashboard-set-heading-icons t)
+  (dashboard-set-navigator t)
+  (dashboard-navigator-buttons
+   '(((#("" 0 1
+         (rear-nonsticky t display
+                         (raise -0.06)
+                         font-lock-face
+                         (:family "github-octicons" :height 1.32)
+                         face
+                         (:family "github-octicons" :height 1.32)))
+       "ALGON" "Browse ALGON Homepage"
+       (lambda
+         (&rest _)
+         (browse-url "https://algon.dk"))))))
+ :custom-face
+  (dashboard-banner-logo-title ((t (:family "Love LetterTW" :height 123))))
+ :config
+  (dashboard-modify-heading-icons '((recents . "file-text")
+                                    (bookmarks . "book")))
+  (setq dashboard-center-content t)
+  (setq show-week-agenda-p t)
+  (dashboard-setup-startup-hook)
+
+(defun open-dashboard ()
+    "Open the *dashboard* buffer and jump to the first widget."
+    (interactive)
+    (if (get-buffer dashboard-buffer-name)
+        (kill-buffer dashboard-buffer-name))
+    (dashboard-insert-startupify-lists)
+    (switch-to-buffer dashboard-buffer-name)
+    (goto-char (point-min))
+    (delete-other-windows)))
+(if nec/measure-time (nec/timer "Dashboard   "))
+#+end_src
+* org and friends
+*** org general settings
+:PROPERTIES:
+:CUSTOM_ID: org general settings
+:END:
+Assign file extensions to Org-mode:
+#+BEGIN_SRC emacs-lisp
+(add-to-list 'auto-mode-alist '("\\.\\(org\\|org_archive\\|txt\\)$" . org-mode))
+(setq org-babel-safe-header-args nil)
+;; expire org-files
+(require 'org-expiry)
+#+END_SRC
+«This will make it that any file without an auto-mode alist entry gets
+associated with org-mode by default.»
+#+BEGIN_SRC emacs-lisp
+(add-to-list 'auto-mode-alist '("'" . org-mode) t)
+#+END_SRC
+Might cause performance issues; http://orgmode.org/manual/Clean-view.html
+#+BEGIN_SRC emacs-lisp
+  (setq org-startup-indented t)
+  (setq org-enforce-todo-dependencies t)
+  (setq org-insert-heading-respect-content nil)
+  (setq org-reverse-note-order nil)
+  (setq org-show-following-heading t)
+  (setq org-show-hierarchy-above t)
+  (setq org-show-siblings nil)
+  (setq org-deadline-warning-days 7)
+  (setq org-blank-before-new-entry (quote ((heading . t)
+                                           (plain-list-item . nil))))
+#+END_SRC
+#+BEGIN_SRC emacs-lisp
+  (setq org-return-follows-link t)
+  (setq org-remove-highlights-with-change nil)
+  (setq org-read-date-prefer-future nil)
+  (setq org-list-demote-modify-bullet (quote (("+" . "-")
+                                              ("*" . "-")
+                                              ("1." . "-")
+                                              ("1)" . "-"))))
+;;  (setq split-width-threshold 9999);; Minimum width for splitting windows sensibly.
+
+  (setq require-final-newline nil)
+  (setq org-adapt-indentation nil);; do not indent drawers/body according to heading level
+#+END_SRC
+Set the timestamps of =expiry.el= to inactive ones:
+http://comments.gmane.org/gmane.emacs.orgmode/20934
+#+BEGIN_SRC emacs-lisp
+  (setq org-expiry-inactive-timestamps t)
+#+END_SRC
+
+Prevent accidental deleting of hole subtrees or similar
+  - http://orgmode.org/Changes.html -> New option org-catch-invisible-edits
+#+BEGIN_SRC emacs-lisp
+  (setq org-catch-invisible-edits "smart")
+#+END_SRC
+
+Use IDO for target completion:
+#+BEGIN_SRC emacs-lisp
+  (setq org-completion-use-ido t)
+#+END_SRC
+Disable property inheritance (in order to seed up)
+- https://www.gnu.org/software/emacs/manual/html_node/org/Property-inheritance.html
+#+BEGIN_SRC emacs-lisp
+  (setq org-use-property-inheritance nil)
+#+END_SRC
+
+#+begin_src emacs-lisp
+    (use-package pretty-hydra
+      :straight t)
+
+    (defvar org-default-notes-file "~/Dropbox/org/personal/Notes.org")
+    (defvar org-default-tasks-file "~/Dropbox/org/agenda/organizer.org")
+    (setq org-startup-intended t)
+    (setq org-id-locations-file "~/.emacs.d/private/.org-id-locations")
+
+    (use-package org
+      :straight org-plus-contrib
+  ;;    :custom-face (org-ellipsis ((t (:foreground nil))))
+      :mode  ("\\.org\\'" . org-mode)
+      :preface
+      (defun hot-expand (str &optional mod)
+        "Expand org template.
+    STR is a structure template string recognised by org like <s. MOD is a
+    string with additional parameters to add the begin line of the
+    structure element. HEADER string includes more parameters that are
+    prepended to the element after the #+HEADER: tag."
+        (let (text)
+          (when (region-active-p)
+            (setq text (buffer-substring (region-beginning) (region-end)))
+            (delete-region (region-beginning) (region-end)))
+          (insert str)
+          (if (fboundp 'org-try-structure-completion)
+              (org-try-structure-completion)
+             (progn
+              ;; New template expansion since org 9
+              (require 'org-tempo nil t)
+              (org-tempo-complete-tag)))
+          (when mod (insert mod) (forward-line))
+          (when text (insert text))))
+      :pretty-hydra
+      ((:title "Org Template" 
+        :color blue :quit-key "q")
+       ("Basic"
+        (("a" (hot-expand "<a") "ascii")
+         ("c" (hot-expand "<c") "center")
+         ("C" (hot-expand "<C") "comment")
+         ("e" (hot-expand "<e") "example")
+         ("E" (hot-expand "<E") "export")
+         ("h" (hot-expand "<h") "html")
+         ("l" (hot-expand "<l") "latex")
+         ("n" (hot-expand "<n") "note")
+         ("o" (hot-expand "<q") "quote")
+         ("v" (hot-expand "<v") "verse"))
+        "Head"
+        (("i" (hot-expand "<i") "index")
+         ("A" (hot-expand "<A") "ASCII")
+         ("I" (hot-expand "<I") "INCLUDE")
+         ("H" (hot-expand "<H") "HTML")
+         ("L" (hot-expand "<L") "LaTeX"))
+        "Source"
+        (("s" (hot-expand "<s") "src")
+         ("m" (hot-expand "<s" "emacs-lisp") "emacs-lisp")
+         ("y" (hot-expand "<s" "python :results output") "python")
+         ("p" (hot-expand "<s" "perl") "perl")
+         ("r" (hot-expand "<s" "ruby") "ruby")
+         ("S" (hot-expand "<s" "sh") "sh")
+         ("g" (hot-expand "<s" "go :imports '\(\"fmt\"\)") "golang"))
+        "Misc"
+        (("u" (hot-expand "<s" "plantuml :file CHANGE.png") "plantuml")
+         ("Y" (hot-expand "<s" "ipython :session :exports both :results raw drawer\n$0") "ipython")
+         ("P" (progn
+                (insert "#+HEADERS: :results output :exports both :shebang \"#!/usr/bin/env perl\"\n")
+                (hot-expand "<s" "perl")) "Perl tangled")
+         ("<" self-insert-command "ins"))))
+      :bind (:map org-mode-map
+             ("<" . (lambda ()
+                      "Insert org template."
+                      (interactive)
+                      (if (or (region-active-p) (looking-back "^\s*" 1))
+                          (org-hydra/body)
+                        (self-insert-command 1)))))
+      :hook ((org-mode . (lambda ()
+                           "Beautify org symbols."
+                           (setq prettify-symbols-alist nec-prettify-symbols-alist)
+                           (prettify-symbols-mode 1)))
+             (org-indent-mode . (lambda()
+                                  (diminish 'org-indent-mode)
+                                  ;; WORKAROUND: Prevent text moving around while using brackets
+                                  ;; @see https://github.com/seagle0128/.emacs.d/issues/88
+                                  (make-variable-buffer-local 'show-paren-mode)
+                                  (setq show-paren-mode nil))))
+      :config
+      ;; To speed up startup, don't put to init section
+      (require 'org-capture)
+      (require 'org-agenda)
+      (setq org-directory "~/Dropbox/org/"
+            org-agenda-files "~/Dropbox/org/org-files"
+            org-todo-keywords
+            '((sequence "TODO(t)" "DOING(i)" "SOMEDAY(s)" "PHONE(p!)" "MEETING(m!)" "|" "DONE(d!)" "CANCEL(c@)"))
+            org-priority-faces '((?A . error)
+                                 (?B . warning)
+                                 (?C . success))
+            org-tags-column -80
+            org-log-done 'time
+            org-catch-invisible-edits 'smart
+            org-ellipsis (if (char-displayable-p ?) " ⤵" nil)
+            org-pretty-entities t
+            org-hide-emphasis-markers t)
+      ;;(setq org-agenda-include-diary t)
+      ;; Add new template
+      (add-to-list 'org-structure-template-alist '("n" . "note"))
+
+      ;; Use embedded webkit browser if possible
+      (when (featurep 'xwidget-internal)
+        (push '("\\.\\(x?html?\\|pdf\\)\\'"
+                .
+                (lambda (file _link)
+                  (xwidget-webkit-browse-url (concat "file://" file))
+                  (let ((buf (xwidget-buffer (xwidget-webkit-current-session))))
+                    (when (buffer-live-p buf)
+                      (and (eq buf (current-buffer)) (quit-window))
+                      (pop-to-buffer buf)))))
+              org-file-apps))
+
+      (require 'ox-extra)
+      (ox-extras-activate '(latex-header-blocks ignore-headlines))
+      ;; Add gfm/md backends
+      (use-package ox-gfm
+        :straight t)
+      (add-to-list 'org-export-backends 'md)
+
+      (with-eval-after-load 'counsel
+        (bind-key [remap org-set-tags-command] #'counsel-org-tag org-mode-map))
+
+      (use-package org-fancy-priorities
+        :straight t
+        :diminish
+        :hook (org-mode . org-fancy-priorities-mode)
+        :init (setq org-fancy-priorities-list
+                    (if (char-displayable-p ?⯀)
+                        '(" "   " "   " "  " ")
+                      '("HIGH" "MEDIUM" "LOW" "OPTIONAL"))))
+
+      ;; Babel
+      (setq org-confirm-babel-evaluate nil
+            org-src-fontify-natively t
+            org-src-tab-acts-natively t)
+
+      (defvar load-language-list '((emacs-lisp . t)
+                                   (perl . t)
+                                   (python . t)
+                                   (ruby . t)
+                                   (js . t)
+                                   (shell . t)
+                                   (css . t)
+                                   (ledger . t)
+                                   ;;(sass . t)
+                                   (C . t)
+                                   (java . t)
+                                   (dot . t)
+                                   (plantuml . t)))
+      (use-package ob-go
+        :straight t
+        :init (cl-pushnew '(go . t) load-language-list))
+
+      (use-package ob-rust
+        :straight t
+        :init (cl-pushnew '(rust . t) load-language-list))
+
+      (use-package ob-ipython
+        :straight t
+        :if (executable-find "jupyter")     ; DO NOT remove
+        :init (cl-pushnew '(ipython . t) load-language-list))
+
+      (use-package ob-mermaid
+        :straight t
+        :init (cl-pushnew '(mermaid . t) load-language-list))
+
+      (org-babel-do-load-languages 'org-babel-load-languages
+                                   load-language-list)
+
+      ;; Rich text clipboard
+      (use-package org-rich-yank
+        :straight t
+        :bind (:map org-mode-map
+               ("C-M-y" . org-rich-yank)))
+
+      ;; Table of contents
+      (use-package toc-org
+        :straight t
+        :hook (org-mode . toc-org-mode)
+              (markdown-mode-hook . toc-org-mode))
+
+      ;; Export text/html MIME emails
+      (use-package org-mime
+        :straight t
+        :bind (:map message-mode-map
+               ("C-c M-o" . org-mime-htmlize)
+               :map org-mode-map
+               ("C-c M-o" . org-mime-org-buffer-htmlize)))
+
+      ;; Preview
+      (use-package org-preview-html
+        :straight t
+        :diminish)
+
+      ;; Presentation
+      (use-package org-tree-slide
+        :straight t
+        :diminish
+        :functions (org-display-inline-images
+                    org-remove-inline-images)
+        :bind (:map org-mode-map
+               ("C-<f7>" . org-tree-slide-mode)
+               :map org-tree-slide-mode-map
+               ("<left>" . org-tree-slide-move-previous-tree)
+               ("<right>" . org-tree-slide-move-next-tree)
+               ("S-SPC" . org-tree-slide-move-previous-tree)
+               ("SPC" . org-tree-slide-move-next-tree))
+        :hook ((org-tree-slide-play . (lambda ()
+                                        (text-scale-increase 4)
+                                        (org-display-inline-images)
+                                        (read-only-mode 1)))
+               (org-tree-slide-stop . (lambda ()
+                                        (text-scale-increase 0)
+                                        (org-remove-inline-images)
+                                        (read-only-mode -1))))
+        :config
+        (org-tree-slide-simple-profile)
+        (setq org-tree-slide-skip-outline-level 2))
+
+      ;; Pomodoro
+      (use-package org-pomodoro
+        :straight t
+        :custom-face
+        (org-pomodoro-mode-line ((t (:inherit warning))))
+        (org-pomodoro-mode-line-overtime ((t (:inherit error))))
+        (org-pomodoro-mode-line-break ((t (:inherit success))))
+        :bind (:map org-agenda-mode-map
+               ("P" . org-pomodoro))))
+
+  (if nec/measure-time (nec/timer "org "))
+#+end_src
+*** org bullets
+:PROPERTIES:
+:CUSTOM_ID: org bullets
+:END:
+#+begin_src emacs-lisp 
+;; Prettify UI
+
+(require 'pretty-symbols)
+
+(use-package org-bullets
+  :straight t
+  :hook (org-mode . org-bullets-mode)
+  :init (setq org-bullets-bullet-list '(  "☢" "✿"  "❀"  "✸" "○" "◆" "◇"  )))
+(if nec/measure-time (nec/timer "org bullets" ))
+#+end_src
+*** Refiling Setup
+:PROPERTIES:
+:CUSTOM_ID: Refiling Task
+:ID:       8A75E393-5AE3-4D52-9A7C-29BFB81700F9
+:END:
+#+begin_src emacs-lisp
+; Targets include this file and any file contributing to the agenda - up to 9 levels deep
+(setq org-refile-targets (quote ((nil :maxlevel . 7)
+                                 (org-agenda-files :maxlevel . 7))))
+
+; Use full outline paths for refile targets - we file directly with IDO
+(setq org-refile-use-outline-path t)
+
+; Targets complete directly with IDO
+(setq org-outline-path-complete-in-steps nil)
+
+; Allow refile to create parent tasks with confirmation
+(setq org-refile-allow-creating-parent-nodes (quote confirm))
+
+; Use IDO for both buffer and file completion and ido-everywhere to t
+(setq org-completion-use-ido t)
+(setq ido-everywhere t)
+(setq ido-max-directory-size 100000)
+(ido-mode (quote both))
+; Use the current window when visiting files and buffers with ido
+(setq ido-default-file-method 'selected-window)
+(setq ido-default-buffer-method 'selected-window)
+; Use the current window for indirect buffer display
+(setq org-indirect-buffer-display 'current-window)
+
+;;;; Refile settings
+; Exclude DONE state tasks from refile targets
+(defun bh/verify-refile-target ()
+  "Exclude todo keywords with a done state from refile targets"
+  (not (member (nth 2 (org-heading-components)) org-done-keywords)))
+
+(setq org-refile-target-verify-function 'bh/verify-refile-target)
+(if nec/measure-time (nec/timer "Refiling "))
+#+end_src
+
+*** org contact
+:PROPERTIES:
+:CUSTOM_ID: org contact
+:END:
+The best solution to maintain your contacts. I tend to use =org-contacts.
+Be careful that to install it, this one is available with =org-plus-contrib=.
+#+begin_src emacs-lisp
+(straight-use-package '(org-agenda :type git :repo "https://code.orgmode.org/bzg/org-mode.git" :local-repo "org/lisp")) 
+;;  (straight-use-package '(org-contacts :type git 
+;;          :repo "https://github.com/tkf/org-mode/blob/master/contrib/lisp/org-contacts.el" ))
+  (setq org-contacts-files '("~/Dropbox/org/agenda/contacts.org"))
+(if nec/measure-time (nec/timer "org-contact"))
+#+end_src
+
+*** org-journal
+:PROPERTIES:
+:CUSTOM_ID: org-journal
+:END:
+#+begin_src emacs-lisp
+(use-package org-journal
+      :straight t
+      :bind
+      ("C-c n j" . org-journal-new-entry)
+      :custom
+      (org-journal-dir "~/Dropbox/org/journal/")
+      (org-journal-date-prefix "#+TITLE: ")
+      (org-journal-file-format "%Y-%m-%d.org")
+      (org-journal-date-format "%A, %d %B %Y"))
+    (setq org-journal-enable-agenda-integration t)
+(if nec/measure-time (nec/timer "org-journal "))
+
+#+end_src
+
+*** doct
+
+[[https://github.com/progfolio/doct][doct]] provies “Declarative Org-mode Capture Templates” for Emacs. I
+find them a little easier to reason about than the standard form.
+
+#+BEGIN_SRC emacs-lisp
+
+(straight-use-package '(doct :type git :host github :repo "progfolio/doct"))
+(eval-when-compile (require 'subr-x))
+
+(defun doct-org-roam-convert (groups)
+  "Convert GROUPS of templates to `org-roam' compatible templates."
+  (setq doct-templates
+        (mapcar (lambda (template)
+                  (if-let* ((props (nthcdr (if (= (length template) 4) 2 5) template))
+                            (org-roam-props (plist-get (plist-get props :doct) :org-roam)))
+                      `(,@template ,@org-roam-props)
+                    template))
+                (doct-flatten-lists-in groups))))
+
+(defun doct-org-roam (declarations)
+"Convert DECLARATIONS to `org-roam-capture-templates'.
+DECLARATIONS must be of the same form that `doct' expects with
+one addition: the :org-roam keyword.
+The :org-roam keyword's value must be a plist mapping `org-roam''s
+template syntax extensions (e.g. :file-name :head) to their appropriate values.
+Note this does validate the :org-roam plist's values or keywords."
+
+;;TODO: we should preserve doct-after-conversion-functions
+;;in case user already has other functions set.
+(let ((doct-after-conversion-functions (append '(doct-org-roam-convert)
+                                               doct-after-conversion-functions)))
+  (doct declarations)))
+
+(if nec/measure-time (nec/timer "doct "))
+
+#+END_SRC
+*** org capture
+:PROPERTIES:
+:CUSTOM_ID: org capture
+:ID:        878127F7-023F-44F7-AE70-039F58DEEDCE
+:END:
+
+#+begin_src emacs-lisp
+(defvar org-default-notes-file "~/Dropbox/org/personal/Notes.org")
+(defvar org-default-tasks-file "~/Dropbox/org/agenda/organizer.org")
+
+(defun org-journal-find-location ()
+      ;; Open today's journal, but specify a non-nil prefix argument in order to
+      ;; inhibit inserting the heading; org-capture will insert the heading.
+      (org-journal-new-entry t)
+      ;; Position point on the journal's top-level heading so that org-capture
+      ;; will add the new entry as a child entry.
+      (goto-char (point-min)))
+#+end_src
+A shortcut for a simple heading with keyword =NEXT= which will be used
+multiple times below:
+#+BEGIN_SRC emacs-lisp
+(setq my-capture-template-next "* NEXT %?\n:PROPERTIES:\n:CREATED: %U\n:END:\n\n")
+(setq my-capture-properties ":PROPERTIES:\n:CREATED: %U\n:END:\n")
+(straight-use-package '(org-capture :type git :repo "https://code.orgmode.org/bzg/org-mode.git" :local-repo "org/lisp/capture.el") 
+    :config  (setq org-capture-bookmark nil) 
+    :preface (defvar my/org-basic-task-template "* TODO %^{Task}
+      :PROPERTIES:
+      :Effort: %^{effort|1:00|0:05|0:15|0:30|2:00|4:00|6:00}
+      :END:
+       Captured %<%Y-%m-%d %H:%M>" "Template for basic task."))
+#+END_SRC
+
+#+begin_src emacs-lisp
+    (straight-use-package 'seq)
+    (straight-use-package 'doct)
+    (setq org-capture-templates
+      (doct '(("Aftale" 
+         :keys "a"
+         :file "~/Dropbox/org/agenda/organizer.org"
+         :type entry
+         :headline "Aftaler"
+         :template ("* TODO %?              :AFTALE: %^G "
+                    "  SCHEDULED:  %^T"
+                            "  :PROPERTIES:"               
+                            "  :STED:  "
+                            "  :EMNE:  "
+                            "  :CREATED: %U"
+                            "  :SRC: %a"
+                            "  :END:"))
+               ("Noter"
+                  :keys "n"
+                  :file org-default-notes-file
+                  :type entry
+                  :headline "Noter"
+                  :template ("* %? "
+                             "  %i "
+                             "  see: %a"))
+               ("Opgave"
+                 :keys "o"
+                 :file "~/Dropbox/org/agenda/organizer.org"
+                 :type entry
+                 :headline "Opgaver"
+                 :template ("* TODO %?             :OPGAVE:  %^G "
+                            "  SCHEDULED:  %^T"
+                            "  :PROPERTIES:"               
+                            "  :STED:  "
+                            "  :EMNE:  "
+                            "  :CREATED: %U"
+                            "  :SRC: %a"
+                            "  :END:"))
+               ("Dagbog"
+                 :keys "j"
+                 :type entry
+                 :function org-journal-find-location
+                 :template ("* %(format-time-string org-journal-time-format)%^{Title}"
+                            "  %?"
+                            "  %i"))
+               ("Tickler"
+                  :keys "T"
+                  :type entry
+                  :file "~/Dropbox/org/agenda/tickler.org"
+                  :headline "Husk"
+                  :template ("* TODO %?              %^G  :HUSK:"
+                            "  SCHEDULED:  %^T"
+                            "  :PROPERTIES:"               
+                            "  :STED:  "
+                            "  :EMNE:  "
+                            "  :CREATED: %U"
+                            "  :SRC: %a"
+                            "  :END:")) 
+               ("Kontakt"
+                 :keys "K"
+                 :file "~/Dropbox/org/agenda/contacts.org"
+                 :type entry
+                 :headline "Kontakter"
+                 :template ("* KONTAKT %?              :KONTAKT:"
+                            "  :PROPERTIES:   "
+                            "  :ADDRESS:      "
+                            "  :TELEFON:      "
+                            "  :EMAIL:        "
+                            "  :FØDSELSDAG:   "
+                            "  :NOTE:         "
+                            "  :END:          "))                          
+               ("kommunikation" 
+                 :keys "k"
+                 :file "~/Dropbox/org/agenda/organizer.org"
+                 :children
+                   ((:group "Tid"
+                     :clock-in t
+                     :children 
+                       (("Telefon"
+                          :keys "t"
+                          :template "* Telefon med %?")
+                        ("Møde"
+                          :keys "m"
+                          :template "* Møde med %?")))
+                    ("Browsing" 
+                      :keys "b"
+                      :template "* Browsing %x"))))))
+(if nec/measure-time (nec/timer "org-capture "))
+#+end_src
+*** org-roam
+:PROPERTIES:
+:CUSTOM_ID: org-roam
+:END:
+#+begin_src emacs-lisp
+
+  (use-package org-roam
+      :straight t
+      :diminish " "
+      ;; :ensure-system-package
+      ;; ((sqlite3)
+      ;;  (graphviz))
+      :commands (org-roam-mode)
+      :bind
+      (:map org-roam-mode-map
+       (("C-c n l" . org-roam)
+        ("C-c n f" . org-roam-find-file)
+        ("C-c n g" . org-roam-graph-show))
+       :map org-mode-map
+       (("C-c n i" . org-roam-insert))
+       (("C-c n I" . org-roam-insert-immediate)))
+       :config
+      (setq org-roam-directory "~/Dropbox/org/roam/")
+      (setq org-roam-graph-node-extra-config '(("shape" . "ellipse")
+                                             ("style" . "rounded,filled")
+                                             ("fillcolor" . "#EFEFFF")
+                                             ("color" . "#DEDEFF")
+                                             ("fontcolor" . "#111111"))))
+
+  (setq org-roam-graph-viewer nil)
+
+ 
+
+      (setq org-roam-capture-templates
+        (doct-org-roam '(("default" 
+                           :keys "d"
+                           :warn (:not unbound)
+                           :type plain
+                           :function org-roam-capture--get-point
+                                    :template "%?"
+                                    :org-roam ( :file-name "%<%Y%m%d%H%M%S>-${slug}"
+                                                :head "#+TITLE: ${title}\n"
+                           :unnarrowed t))
+                          ("ref" 
+                            :keys "r"
+                            :warn (:not unbound)
+                            :type plain
+                            :function org-roam-capture--get-point
+                                   :template ""
+                                   :org-roam ( :file-name "${slug}"
+                                               :head "#+TITLE: ${title}\n"
+                            :unnarrowed t)))))
+(if nec/measure-time (nec/timer "org roam "))
+ #+end_src
+*** org-roam-server
+ #+begin_src emacs-lisp 
+  (use-package org-roam-server
+    :straight t
+    :config
+    (setq org-roam-server-host "127.0.0.1"
+          org-roam-server-port 8080
+          org-roam-server-authenticate nil
+          org-roam-server-export-inline-images t
+          org-roam-server-serve-files nil
+          org-roam-server-served-file-extensions '("pdf" "mp4" "ogv")
+          org-roam-server-network-poll t
+          org-roam-server-network-arrows nil
+          org-roam-server-label-truncate t
+          org-roam-server-label-truncate-length 60
+          org-roam-server-label-wrap-length 20))
+ 
+(org-roam-server-mode nil)
+
+  (setq org-roam-completion-system 'default)
+
+  (require 'org-roam-protocol)
+
+  (use-package deft
+    :straight t
+    :after org
+    :bind ("C-c n d" . deft)
+    :custom
+    (deft-recursive t)
+    (deft-use-filter-string-for-filename t)
+    (deft-default-extension "org")
+    (deft-directory "~/Dropbox/org/roam/"))
+
+  (use-package org-roam-bibtex
+    :straight t
+    :diminish
+    :after org-roam
+    :hook (org-roam-mode . org-roam-bibtex-mode))
+
+  (use-package company-org-roam
+    :straight t
+    :config
+    (push 'company-org-roam company-backends))
+ 
+(require 'bind-key)
+  (bind-keys :map org-roam-mode-map
+                ("C-c n l" . org-roam)
+                ("C-c n b" . org-roam-switch-to-buffer)
+                ("C-c n f" . org-roam-find-file)
+                ("C-c n g" . org-roam-graph))
+  (bind-keys :map org-mode-map
+               ("C-c n a" . orb-note-actions)
+               ("C-c n i" . org-roam-insert))
+ 
+
+    (if nec/measure-time (nec/timer "org roam server" ))
+#+end_src
+*** org agenda 
+:PROPERTIES:
+:CUSTOM_ID: org agenda 
+:END:
+#+begin_src emacs-lisp 
+
+(setq diary-file "~/.emacs.d/diary")
+;;(require 'org-mac-iCal)
+;;(org-mac-iCal)
+;;(straight-use-package-lazy '(org-agenda :type git :repo "https://code.orgmode.org/bzg/org-mode.git" :local-repo "org/lisp"))    
+  (setq org-agenda-dim-blocked-tasks t)
+  (setq org-agenda-inhibit-startup t)
+  (setq org-agenda-show-log t)
+  (setq org-agenda-span 14)
+  (setq org-agenda-include-diary t)
+  (setq org-agenda-start-on-weekday 1)
+  (setq org-agenda-sticky nil)
+  (setq org-agenda-tags-column -100)
+  (setq org-agenda-time-grid '((daily today require-timed)))
+  (setq org-agenda-use-tag-inheritance t)
+  (setq org-columns-default-format "%14SCHEDULED %Effort{:} %1PRIORITY %TODO %50ITEM %TAGS")
+  (setq org-default-notes-file "~/Dropbox/org/personal/Notes.org")
+  (setq org-directory "~/Dropbox/org/")
+  (setq org-habit-completed-glyph ?✓)
+  (setq org-habit-graph-column 80)
+  (setq org-habit-show-habits-only-for-today nil)
+  (setq org-habit-today-glyph ?‖)
+  (setq org-track-ordered-property-with-tag t)
+
+(bind-keys :map org-agenda-mode-map
+                ("X" . my/org-agenda-mark-done-and-add-followup)
+                ("x" . my/org-agenda-done))
+
+(straight-use-package-lazy 'org-super-agenda) 
+(setq org-super-agenda-groups
+      '((:name "Aftaler"
+               :time-grid t)
+        (:name "Møder"
+               :time-grid t)
+        (:name "Vigtigt"
+               :priority "A")
+        (:name "Hurtig"
+               :effort< "0:30")
+        (:priority<= "B"
+                     :scheduled future
+                     :order 1)))
+
+;;(straight-use-package 'org-caldav)
+;;(setq org-caldav-url "http://p33-caldav.icloud.com/published/2/MjkxNzk4MDAxMjkxNzk4MOfvDoutpX6HTnT2-woO9G7Hxkz0TWTjGxqHawdu7zmyH36jxSvvEk8YzK_Ww0jxNN59hJoHIPhgSaRHj1Rrvjg"
+;;      org-caldav-calendar-id "niels"
+;;      org-caldav-uuid-extension ".ics" 
+;;      org-caldav-files '("~/org/agenda/appointments.org")
+;;      org-caldav-debug-level 2)
+
+;;(org-caldav-sync)
+(if nec/measure-time (nec/timer "org agenda" ))
+#+end_src
+
+*** org-brain
+[[https://github.com/Kungsgeten/org-brain][org-brain]] provides Org-mode wiki + concept-mapping.
+
+## #+BEGIN_SRC emacs-lisp 
+;; Load org-brain after my personal org settings...
+(straight-use-package 'org-brain
+  :init
+  (setq org-brain-path "~/Dropbox/Org/brain")
+  :config
+  (setq org-id-track-globally t)
+  (setq org-id-locations-file "~/.emacs.d/private/.org-id-locations")
+
+  (push (car doct '(("Brain" :keys "b"
+                      :type plain
+                      :function org-brain-goto-end
+                      :template "** %i%?"))))
+        org-capture-templates)
+
+;  (push '("b" "Brain" plain (function org-brain-goto-end)
+;          "* %i%?" :empty-lines 1)
+;        org-capture-templates)
+
+;  (push (doct '(("Brain" :keys "b"
+;         :type plain
+;         :function org-brain-goto-end
+;         :template "** %i%?")))
+;         org-capture-templates)
+
+  (setq org-brain-visualize-default-choices 'all)
+  (setq org-brain-title-max-length 12)
+  (setq org-brain-include-file-entries nil)
+  (setq org-brain-file-entries-use-title nil))
+## #+END_SRC
+*** org-manage and header
+:PROPERTIES:
+:CUSTOM_ID: org-manage and header
+:END:
+#+begin_src emacs-lisp
+(require 'org-manage)
+(if nec/measure-time (nec/timer "org manage "))
+#+end_src
+*** Calendar
+
+:PROPERTIES:
+:CUSTOM_ID: Calendar
+:END:
+#+begin_src emacs-lisp
+  
+(require 'cl-lib)
+(if (not (featurep 'appt))(require 'appt))   
+;; initiate diary
+(setq view-diary-entries-initially t
+      mark-diary-entries-in-calendar t
+      number-of-diary-entries 7)
+(add-hook 'diary-display-hook 'fancy-diary-display)
+(add-hook 'today-visible-calendar-hook 'calendar-mark-today)
+;;;;;;;;
+(defun alt-clean-equal-signs ()
+  "This function makes lines of = signs invisible."
+  (goto-char (point-min))
+  (let ((state buffer-read-only))
+    (when state (setq buffer-read-only nil))
+    (while (not (eobp))
+      (search-forward-regexp "^=+$" nil 'move)
+      (add-text-properties (match-beginning 0)
+                           (match-end 0)
+                           '(invisible t)))
+    (when state (setq buffer-read-only t))))
+(add-hook 'fancy-diary-display-mode-hook '(lambda () (alt-clean-equal-signs)))
+
+;;;;
+
+(defun diary-save-hook ()
+  "Stuff to do when saving the diary files."
+  (appt-initialize))
+(defun add-diary-save-hook ()
+  "find-file-hooks hook to add the diary-save-hook when appropriate"
+  (if (string-match "diary" (buffer-name))
+      (add-hook 'after-save-hook 'diary-save-hook)))
+(add-hook 'find-file-hooks 'add-diary-save-hook)
+
+(if nec/measure-time (nec/timer "initiate diary "))
+
+;;
+;; ---great bit of code from Jeff Miller to highlight appointments in red on modeline---
+(defface appt-face
+  '((t (:foreground "red" :background "white")))
+  "Face to indicate a current appointment."
+  :group 'appt)
+
+(defadvice appt-disp-window (before appt-hilite-more activate)
+  (when appt-mode-string
+    (put-text-property 1 (- (length appt-mode-string) 1)
+                       'face 'appt-face appt-mode-string)))
+
+(defadvice appt-check (after appt-hilite activate)
+  (when appt-mode-string
+    (put-text-property 1 (- (length appt-mode-string) 1)
+                       'face 'appt-face appt-mode-string)
+    (force-mode-line-update)))
+
+;; ---------------------------------
+;; compatability - we don't really miss the aliases appt defines anyway.
+;; there's no need for this in xemacs or emacs 21.3+
+(when (not (fboundp 'defvaralias))
+  (defun defvaralias (&rest args)))
+
+(when (require 'appt nil t)
+  (setq appt-msg-countdown-list '(10 5 1 0)
+        appt-audible (cons 3 .5)
+        appt-check-time-syntax nil
+        appt-announce-method 'appt-persistant-message-announce
+        appt-display-duration 360)
+
+  ;; ding takes a different number of args in gnu emacs - eventually i'll
+  ;; redefine this to use my soundcard anyway
+  (when (not (featurep 'xemacs))
+    (defun appt-beep (&rest args)))
+
+  (defun diary-save-hook ()
+    "Stuff to do when saving the diary files."
+    (appt-activate 1))
+
+  (defun add-diary-save-hook ()
+    "find-file-hooks hook to add the diary-save-hook when appropriate"
+    (let* ((diary-file-components (split-string diary-file "/"))
+           (diary-buffer-name
+            (nth (1- (length diary-file-components)) diary-file-components)))
+      (if (string= (buffer-name) diary-buffer-name)
+          (add-hook (make-variable-buffer-local 'after-save-hook)
+                    'diary-save-hook))))
+
+  (add-hook 'find-file-hooks 'add-diary-save-hook))
+(if nec/measure-time (nec/timer "initiate appt/diary "))
+  
+
+  (declare-function cfw:open-calendar-buffer "calfw")
+  (declare-function cfw:refresh-calendar-buffer "calfw")
+  (declare-function cfw:org-create-source "calfw-org")
+  (declare-function cfw:cal-create-source "calfw-cal")
+
+  (defun my-calendar ()
+      (interactive)
+      (let ((buf (get-buffer "*cfw-calendar*")))
+        (if buf
+            (pop-to-buffer buf nil)
+          (cfw:open-calendar-buffer
+           :contents-sources
+           (list (cfw:org-create-source "Dark Orange")
+                 (cfw:cal-create-source "Green"))
+           :view 'month))))
+    ;; `org-autolist` makes org-mode lists behave more like lists in non-programming
+    ;; editors such as Google Docs, MS Word, and OS X Notes.
+  (use-package org-autolist
+      :straight t
+      :after org
+      :bind ("<C-f12>" . my-calendar)
+      :commands cfw:open-calendar-buffer
+                org-autolist-mode)
+
+    (use-package calfw
+      :straight t
+      :bind ("C-c A" . my-calendar)
+      :init
+      (progn
+        (use-package calfw-cal
+          :straight t)
+        (use-package calfw-org
+          :straight t)
+        (bind-key "M-n" 'cfw:navi-next-month-command cfw:calendar-mode-map)
+        (bind-key "M-p" 'cfw:navi-previous-month-command cfw:calendar-mode-map))
+      :config
+      (progn
+        ;; Unicode characters
+        (setq cfw:fchar-junction ?╋
+              cfw:fchar-vertical-line ?┃
+              cfw:fchar-horizontal-line ?━
+              cfw:fchar-left-junction ?┣
+              cfw:fchar-right-junction ?┫
+              cfw:fchar-top-junction ?┯
+              cfw:fchar-top-left-corner ?┏
+              cfw:fchar-top-right-corner ?┓)
+        (bind-key "j" 'cfw:navi-goto-date-command cfw:calendar-mode-map)
+        (bind-key "g" 'cfw:refresh-calendar-buffer cfw:calendar-mode-map)))
+  (if nec/measure-time (nec/timer "Writing calendar "))
+    (defadvice org-refile-get-location (before clear-refile-history activate)
+      "Fit the Org Agenda to its buffer."
+      (setq org-refile-history nil))
+
+    (defun jump-to-org-agenda ()
+      (interactive)
+      (let ((recordings-dir "~/Dropbox/org/agenda"))
+        (ignore-errors
+          (if (directory-files recordings-dir nil "\\`[^.]")
+              (find-file recordings-dir))))
+      (let ((buf (get-buffer "*Org Agenda*"))
+            wind)
+        (if buf
+            (if (setq wind (get-buffer-window buf))
+                (when (called-interactively-p 'any)
+                  (select-window wind)
+                  (org-fit-window-to-buffer))
+              (if (called-interactively-p 'any)
+                  (progn
+                    (select-window (display-buffer buf t t))
+                    (org-fit-window-to-buffer))
+                (with-selected-window (display-buffer buf)
+                  (org-fit-window-to-buffer))))
+          (call-interactively 'org-agenda-list))))
+
+    (defun org-get-global-property (name)
+      (save-excursion
+        (goto-char (point-min))
+        (and (re-search-forward (concat "#\\+PROPERTIES: " name " \\(.*\\)") nil t)
+             (match-string 1))))
+
+    (if nec/measure-time (nec/timer "calendar part 1  "))
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    (defun save-org-mode-files ()
+      (dolist (buf (buffer-list))
+        (with-current-buffer buf
+          (when (eq major-mode 'org-mode)
+            (if (and (buffer-modified-p) (buffer-file-name))
+                (save-buffer))))))
+
+    (run-with-idle-timer 25 t 'save-org-mode-files)
+    ;;** Example 12: org-agenda-view
+    (defun org-agenda-cts ()
+      (and (eq major-mode 'org-agenda-mode)
+           (let ((args (get-text-property
+                        (min (1- (point-max)) (point))
+                        'org-last-args)))
+             (nth 2 args))))
+
+    (defhydra hydra-org-agenda-view (:hint none)
+      "
+    _d_: ?d? day        _g_: time grid=?g?  _a_: arch-trees
+    _w_: ?w? week       _[_: inactive       _A_: arch-files
+    _t_: ?t? fortnight  _f_: follow=?f?     _r_: clock report=?r?
+    _m_: ?m? month      _e_: entry text=?e? _D_: include diary=?D?
+    _y_: ?y? year       _q_: quit           _L__l__c_: log = ?l?"
+      ("SPC" org-agenda-reset-view)
+      ("d" org-agenda-day-view (if (eq 'day (org-agenda-cts)) "[x]" "[ ]"))
+      ("w" org-agenda-week-view (if (eq 'week (org-agenda-cts)) "[x]" "[ ]"))
+      ("t" org-agenda-fortnight-view (if (eq 'fortnight (org-agenda-cts)) "[x]" "[ ]"))
+      ("m" org-agenda-month-view (if (eq 'month (org-agenda-cts)) "[x]" "[ ]"))
+      ("y" org-agenda-year-view (if (eq 'year (org-agenda-cts)) "[x]" "[ ]"))
+      ("l" org-agenda-log-mode (format "% -3S" org-agenda-show-log))
+      ("L" (org-agenda-log-mode '(4)))
+      ("c" (org-agenda-log-mode 'clockcheck))
+      ("f" org-agenda-follow-mode (format "% -3S" org-agenda-follow-mode))
+      ("a" org-agenda-archives-mode)
+      ("A" (org-agenda-archives-mode 'files))
+      ("r" org-agenda-clockreport-mode (format "% -3S" org-agenda-clockreport-mode))
+      ("e" org-agenda-entry-text-mode (format "% -3S" org-agenda-entry-text-mode))
+      ("g" org-agenda-toggle-time-grid (format "% -3S" org-agenda-use-time-grid))
+      ("D" org-agenda-toggle-diary (format "% -3S" org-agenda-include-diary))
+      ("!" org-agenda-toggle-deadlines)
+      ("[" (let ((org-agenda-include-inactive-timestamps t))
+             (org-agenda-check-type t 'timeline 'agenda)
+             (org-agenda-redo)
+             (message "Display now includes inactive timestamps as well")))
+      ("q" (message "Abort") :exit t)
+      ("v" nil))
+
+    ;; Recommended binding:
+    (define-key org-agenda-mode-map "v" 'hydra-org-agenda-view/body)
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ; Erase all reminders and rebuilt reminders for today from the agenda
+    (defun nec/org-agenda-to-appt ()
+      (interactive)
+      (setq appt-time-msg-list nil)
+      (org-agenda-to-appt))
+
+    ; Rebuild the reminders everytime the agenda is displayed
+    (add-hook 'org-agenda-finalize-hook 'nec/org-agenda-to-appt 'append)
+
+    ; This is at the end of my .emacs - so appointments are set up when Emacs starts
+    (nec/org-agenda-to-appt)
+
+    ; Activate appointments so we get notifications
+    (appt-activate t)
+
+      ; If we leave Emacs running overnight - reset the appointments one minute after midnight
+    (run-at-time "24:01" nil 'nec/org-agenda-to-appt)
+
+    
+    (setq zoneinfo-style-world-list '(("America/Los_Angeles" "Seattle")
+                                      ("America/New_York" "New York")
+                                      ("Europe/London" "London")
+                                      ("Europa/København" "København")
+                                      ("Asia/Calcutta" "Bangalore")
+                                      ("Asia/Tokyo" "Tokyo")))
+
+    (if nec/measure-time (nec/timer "Calendar part 2 "))
+#+end_src
+*** org-pdftools
+:PROPERTIES:
+:CUSTOM_ID: org-pdftools
+:END:
+Let's install the [[https://github.com/politza/pdf-tools][pdf-tools]] library for viewing PDFs in Emacs.
+#+begin_src emacs-lisp
+(use-package pdf-tools
+  :straight t
+  :magic ("%PDF" . pdf-view-mode)
+  ; :init   (system-packages-ensure "pdf-tools")
+  :custom (pdf-tools-handle-upgrades nil)
+          (pdf-info-epdfinfo-program "/usr/local/bin/epdfinfo")
+  :config (pdf-tools-install)
+          (setq pdf-annot-activate-created-annotations t))
+
+(use-package org-pdftools
+  :straight t
+  :commands org-pdftools-export
+  :init
+    (org-link-set-parameters (or (bound-and-true-p org-pdftools-link-prefix) "pdf")
+                             :follow #'org-pdftools-open
+                             :complete #'org-pdftools-complete-link
+                             :store #'org-pdftools-store-link
+                             :export #'org-pdftools-export)
+    (add-hook 'org-open-link-functions
+      (defun +org-open-legacy-pdf-links-fn (link)
+        "Open pdftools:* and pdfviews:* links as if they were pdf:* links."
+        (let ((regexp "^pdf\\(?:tools\\|view\\):"))
+          (when (string-match-p regexp link)
+            (org-pdftools-open (replace-regexp-in-string regexp "" link))
+            t)))))
+
+
+(use-package org-pdfview
+  :straight t)
+;;(add-hook 'pdf-view-mode-hook (lambda() (linum-mode -1)))
+(eval-after-load 'org '(require 'org-pdfview))
+(add-to-list 'org-file-apps
+             '("\\.pdf\\'" . (lambda (file link)
+                                (org-pdfview-open link))))
+  
+(bind-keys :map pdf-view-mode-map
+            ("C-s" . isearch-forward)
+	    ("d" . pdf-annot-delete)
+	    ("h" . pdf-annot-add-highlight-markup-annotation)
+	    ("t" . pdf-annot-add-text-annotation))
+(setq pdf-view-display-size 'fit-page)
+(setq pdf-view-resize-factor 1.1)
+(setq pdf-view-use-unicode-ligther nil)   
+;;;;;; postscript printing to PDF;;;;;;;
+(defun print-to-pdf ()
+ (interactive)
+ (ps-spool-buffer-with-faces)
+ (switch-to-buffer "*handwritten1*")
+ (write-file "tmp.ps")
+ (kill-buffer "tmp.ps")
+ (setq cmd (concat "pstopdf tmp.ps -o " (buffer-name) ".pdf"))
+ (shell-command cmd)
+ (shell-command "rm tmp.ps")
+ (message (concat "File printed in : "(buffer-name) ".pdf"))
+ )
+(if nec/measure-time (nec/timer "pdf tools" ))
+#+end_src
+
+* Languages
+*** Python
+:PROPERTIES:
+:CUSTOM_ID: Python
+:END:
+#+begin_src emacs-lisp
+(use-package elpy
+    :straight t
+    :diminish "  "
+    :bind
+    (:map elpy-mode-map
+          ("C-M-n" . elpy-nav-forward-block)
+          ("C-M-p" . elpy-nav-backward-block))
+    :hook ((elpy-mode . flycheck-mode)
+           (elpy-mode . (lambda ()
+                          (set (make-local-variable 'company-backends)
+                               '((elpy-company-backend :with company-yasnippet))))))
+    :init
+    (elpy-enable)
+    :config
+    (setq elpy-modules (delq 'elpy-module-flymake elpy-modules))
+    ; fix for MacOS, see https://github.com/jorgenschaefer/elpy/issues/1550
+    (setq elpy-shell-echo-output nil)
+    (setq elpy-rpc-python-command "python3")
+    (setq elpy-rpc-timeout 2))
+;;
+(with-eval-after-load 'python
+  (defun python-shell-completion-native-try ()
+    "Return non-nil if can trigger native completion."
+    (let ((python-shell-completion-native-enable t)
+          (python-shell-completion-native-output-timeout
+           python-shell-completion-native-try-output-timeout))
+      (python-shell-completion-native-get-completions
+       (get-buffer-process (current-buffer))
+       nil "_"))))
+
+;;
+(use-package company
+  :straight t
+  :diminish company-mode
+  :init
+  (global-company-mode)
+  :config
+  ;; set default `company-backends'
+  (setq company-backends
+        '((company-files          ; files & directory
+           company-keywords       ; keywords
+           company-capf)  ; completion-at-point-functions
+          (company-abbrev company-dabbrev)
+          ))
+(use-package company-statistics
+    :straight t
+    :init
+    (company-statistics-mode))
+(use-package company-web
+    :straight t)
+(use-package company-try-hard
+    :straight t
+    :bind
+    (("C-<tab>" . company-try-hard)
+     :map company-active-map
+     ("C-<tab>" . company-try-hard)))
+(use-package company-quickhelp
+    :straight t
+    :config
+    (company-quickhelp-mode))
+)
+
+(use-package buftra
+    :straight (:host github :repo "humitos/buftra.el"))
+(use-package py-pyment
+    :straight (:host github :repo "humitos/py-cmd-buffer.el")
+    :config
+    (setq py-pyment-options '("--output=numpydoc")))
+(use-package py-isort
+    :straight (:host github :repo "humitos/py-cmd-buffer.el")
+    :hook (python-mode . py-isort-enable-on-save)
+    :config
+    (setq py-isort-options '("--lines=88" "-m=3" "-tc" "-fgw=0" "-ca")))
+(use-package py-autoflake
+    :straight (:host github :repo "humitos/py-cmd-buffer.el")
+    :hook (python-mode . py-autoflake-enable-on-save)
+    :config
+    (setq py-autoflake-options '("--expand-star-imports")))
+(use-package py-docformatter
+    :straight (:host github :repo "humitos/py-cmd-buffer.el")
+    :hook (python-mode . py-docformatter-enable-on-save)
+    :config
+    (setq py-docformatter-options '("--wrap-summaries=88" "--pre-summary-newline")))
+(use-package blacken
+    :straight t
+    :hook (python-mode . blacken-mode)
+    :config
+    (setq blacken-line-length '88))
+(use-package python-docstring
+    :straight t
+    :diminish "  仝"
+    :hook (python-mode . python-docstring-mode))
+(use-package lsp-python-ms
+    :straight t
+    :after lsp-mode
+    :init (setq lsp-python-ms-auto-install-server t))
+
+  (use-package lpy
+    :straight t
+    :hook (python-mode . (lambda () (lpy-mode))))
+
+(if nec/measure-time (nec/timer "python  "))
+#+end_src
+
+*** Projectile
+:PROPERTIES:
+:CUSTOM_ID: Projectile
+:END:
+#+BEGIN_SRC emacs-lisp
+(use-package projectile
+  :straight t
+  :diminish " "
+  :custom
+  (projectile-project-search-path (f-directories "~/projects/"))
+  ;; Open magit when switching project
+  (projectile-switch-project-action
+   (lambda ()
+     (let ((magit-display-buffer-function
+            'magit-display-buffer-same-window-except-diff-v1))
+       (magit))))
+  ;; Do not include straight repos (emacs packages) to project list
+  (projectile-ignored-project-function
+   (lambda (project-root)
+     (when (string-prefix-p (expand-file-name "straight" user-emacs-directory)
+                            project-root)
+       t)))
+  :config
+  (require 'tramp)  ; TEMP: error: "Symbol's value as variable is void tramp-methods"
+  (projectile-mode))
+#+END_SRC
+*** Rust
+:PROPERTIES:
+:CUSTOM_ID: Rust
+:END:
+#+begin_src emacs-lisp
+(defcustom *rust* (or (executable-find "rustc")
+  		    (executable-find "cargo")
+  		    (executable-find "rustup"))
+  "The Rust path.  If nil, will not use Rust."
+  :group 'nec
+  :type 'string)
+(if nec/measure-time (nec/timer "Rust "))
+#+end_src
+#+begin_src emacs-lisp
+;;(straight-use-package 'rust-mode
+;;  :config (add-hook 'rust-mode-hook
+;;            (lambda () (setq indent-tabs-mode nill))))
+;;(setq rust-format-on-save t)
+;;(define-key rust-mode-map (kbd "C-c C-c") 'rust-run)
+
+#+end_src
+*** LaTeX
+:PROPERTIES:
+:CUSTOM_ID: LaTeX
+:END:
+#+begin_src emacs-lisp
+    (straight-use-package-lazy 'auctex)
+    ;; (straight-use-package 'preview)
+    (setq TeX-auto-save t)
+    (setq TeX-parse-self t)
+    (setq-default TeX-master nil)
+    (setq TeX-PDF-mode t)
+    (setq reftex-plug-into-AUCTeX t)
+    (setq TeX-save-query nil)
+    (setq LaTeX-amsmath-label "eq:")
+    (setq LaTeX-label-function 'reftex-label)
+    (setq TeX-engine 'luatex)
+    (setq TeX-error-overview-open-after-TeX-run t )
+    (setq-default TeX-command-extra-options "--shell-escape")
+    (setq TeX-error-overview-open-after-TeX-run t)
+    (setq TeX-electric-math '("$" . "$"))
+    (setq TeX-electric-sub-and-superscript t)
+    ;; fix for company completion
+    ;; (define-key TeX-mode-map (kbd "TAB") 'tab-indent-or-complete)
+    ;; (define-key TeX-mode-map [tab] 'tab-indent-or-complete)
+    ;; (require 'font-latex)
+    ;; (set-face-attribute 'font-latex-sectioning-5-face nil :family "CMU Bright")
+    ;; (setq font-latex-fontify-sectioning 1.2)
+    ;; (font-latex-update-sectioning-faces)
+    (setq-default LaTeX-fill-break-at-separators (quote (\\\( \\\[ \\\])))
+    (add-hook 'LaTeX-mode-hook 'visual-line-mode)
+    (add-hook 'LaTeX-mode-hook 'flyspell-mode)
+    (add-hook 'LaTeX-mode-hook 'LaTeX-math-mode)
+    (add-hook 'LaTeX-mode-hook 'turn-on-reftex)
+    ;; (add-to-list 'TeX-command-list '("XeLaTeX" "%`lualatex %(extraopts)%(mode)%' %t" TeX-run-TeX nil t))
+
+    (if nec/measure-time (nec/timer "LaTeX / AUCTeX "))
+    ;; Setup the compiler and the PDF process
+    (setq org-latex-compiler "lualatex")
+    ;;(setq org-latex-pdf-process
+    ;;      (list (concat "latexmk -"
+    ;;                    org-latex-compiler 
+    ;;                    " -recorder -synctex=1 -bibtex-cond %b")))
+    ;; Use lstlstings
+    (setq org-latex-listings t)
+    ;; The docs for org-latex-default-packages-alist suggest that
+    ;; it shouldn't be changed because it's used for more than one
+    ;; backend. How it's used for non-LaTeX backends, I don't know.
+    ;; Anyway, I've removed "inputenc" and "fontenc" from it because
+    ;; I want to replace those with "fontspec".
+    ;; (setq org-latex-default-packages-alist
+  ;;;;         '(("" "graphicx" t)
+  ;;;;           ("" "grffile" t)
+  ;;;;           ("" "longtable" nil)
+  ;;;;           ("" "wrapfig" nil)
+  ;;;;           ("" "rotating" nil)
+  ;;;;           ("normalem" "ulem" t)
+  ;;;;           ("" "amsmath" t)
+  ;;;;           ("" "textcomp" t)
+  ;;;;           ("" "amssymb" t)
+  ;;;;           ("" "capt-of" nil)
+  ;;          ("" "hyperref" nil)))
+      
+     (with-eval-after-load 'org
+       (require 'ox-latex)
+       (require 'ox-koma-letter))
+     (setq org-latex-classes
+         '(("default-koma-letter" "\\documentclass[11pt]{scrlttr2}")
+           ("report" "\\documentclass[11pt]{report}"
+            ("\\part{%s}" . "\\part*{%s}")
+            ("\\chapter{%s}" . "\\chapter*{%s}")
+            ("\\section{%s}" . "\\section*{%s}")
+            ("\\subsection{%s}" . "\\subsection*{%s}")
+            ("\\subsubsection{%s}" . "\\subsubsection*{%s}"))
+           ("beamer" "\\documentclass[11pt]{beamer}"
+            ("\\section{%s}" . "\\section*{%s}")
+            ("\\subsection{%s}" . "\\subsection*{%s}")
+            ("\\subsubsection{%s}" . "\\subsubsection*{%s}"))
+           ("book" "\\documentclass[11pt]{book}"
+            ("\\part{%s}" . "\\part*{%s}")
+            ("\\chapter{%s}" . "\\chapter*{%s}")
+            ("\\section{%s}" . "\\section*{%s}")
+            ("\\subsection{%s}" . "\\subsection*{%s}")
+            ("\\subsubsection{%s}" . "\\subsubsection*{%s}"))
+           ("memoir" "\\documentclass[12pt]{memoir}
+             [NO-DEFAULT-PACKAGES]
+             [PACKAGES]
+             [EXTRA]"
+            ("\\section{%s}" . "\\section*{%s}")
+            ("\\subsection{%s}" . "\\subsection*{%s}")
+            ("\\subsubsection{%s}" . "\\subsubsection*{%s}"))
+  ("article"
+     "\\RequirePackage{fix-cm}
+      \\PassOptionsToPackage{svgnames}{xcolor}
+      \\documentclass[11pt]{article}
+      \\usepackage[a4paper,margin=1in,left=1in]{geometry}
+      \\usepackage{fontspec}
+      \\setmainfont{Verdana}
+      \\setsansfont[Scale=MatchLowercase]{Raleway}
+      \\setmonofont[Scale=MatchLowercase]{Operator Mono SSm}
+      \\usepackage{sectsty}
+      \\allsectionsfont{\\sffamily}
+      \\usepackage{enumitem}
+      \\setlist[description]{style=unboxed,font=\\sffamily\\bfseries}
+      \\usepackage{listings}
+      \\lstset{frame=single,aboveskip=1em,
+            framesep=.5em,backgroundcolor=\\color{AliceBlue},
+            rulecolor=\\color{LightSteelBlue},framerule=1pt}
+      \\usepackage{xcolor}
+      \\colorlet{punct}{red!60!black}
+      \\definecolor{background}{HTML}{EEEEEE}
+      \\definecolor{delim}{RGB}{20,105,176}
+      \\colorlet{numb}{magenta!60!black}
+      \\newcommand\\basicdefault[1]{\\scriptsize\\color{Black}\\ttfamily#1}
+      \\lstdefinelanguage{json}{
+            basicstyle=\\normalfont\\ttfamily,
+            numbers=left,
+            numberstyle=\\scriptsize,
+            stepnumber=1,
+            numbersep=8pt,
+            showstringspaces=false,
+            breaklines=true,
+            frame=lines,
+            backgroundcolor=\\color{background},
+            literate=
+               ,*{0}{{{\\color{numb}0}}}{1}
+                 {1}{{{\\color{numb}1}}}{1}
+                 {2}{{{\\color{numb}2}}}{1}
+                 {3}{{{\\color{numb}3}}}{1}
+                 {4}{{{\\color{numb}4}}}{1}
+                 {5}{{{\\color{numb}5}}}{1}
+                 {6}{{{\\color{numb}6}}}{1}
+                 {7}{{{\\color{numb}7}}}{1}
+                 {8}{{{\\color{numb}8}}}{1}
+                 {9}{{{\\color{numb}9}}}{1}
+                 {:}{{{\\color{punct}{:}}}}{1}
+                 {,}{{{\\color{punct}{,}}}}{1}
+                 {\\{}{{{\\color{delim}{\\{}}}}{1}
+                 {\\}}{{{\\color{delim}{\\}}}}}{1}
+                 {[}{{{\\color{delim}{[}}}}{1}
+                 {]}{{{\\color{delim}{]}}}}{1},
+           }
+      \\lstset{basicstyle=\\basicdefault{\\spaceskip1em}}
+      \\lstset{literate=
+                  {§}{{\\S}}1
+                  {©}{{\\raisebox{.125ex}{\\copyright}\\enspace}}1
+                  {«}{{\\guillemotleft}}1
+                  {»}{{\\guillemotright}}1
+                  {Á}{{\\'A}}1
+                  {Ä}{{\\\"A}}1
+                  {É}{{\\'E}}1
+                  {Í}{{\\'I}}1
+                  {Ó}{{\\'O}}1
+                  {Ö}{{\\\"O}}1
+                  {Ú}{{\\'U}}1
+                  {Ü}{{\\\"U}}1
+                  {ß}{{\\ss}}2
+                  {à}{{\\`a}}1
+                  {á}{{\\'a}}1
+                  {ä}{{\\\"a}}1
+                  {é}{{\\'e}}1
+                  {í}{{\\'i}}1
+                  {ó}{{\\'o}}1
+                  {ö}{{\\\"o}}1
+                  {ú}{{\\'u}}1
+                  {ü}{{\\\"u}}1
+                  {¹}{{\\textsuperscript1}}1
+                  {²}{{\\textsuperscript2}}1
+                  {³}{{\\textsuperscript3}}1
+                  {ı}{{\\i}}1
+                  {—}{{---}}1
+                  {’}{{'}}1
+                  {…}{{\\dots}}1
+                  {⮠}{{$\\hookleftarrow$}}1
+                  {␣}{{\\textvisiblespace}}1,
+                  keywordstyle=\\color{DarkGreen}\\bfseries,
+                  identifierstyle=\\color{DarkRed},
+                  commentstyle=\\color{Gray}\\upshape,
+                  stringstyle=\\color{DarkBlue}\\upshape,
+                  emphstyle=\\color{Chocolate}\\upshape,
+                  showstringspaces=false,
+                  columns=fullflexible,
+                  keepspaces=true}
+
+      \\usepackage{parskip}
+      \\makeatletter
+      \\renewcommand{\\maketitle}{%
+      \\begingroup\\parindent0pt
+      \\sffamily
+      \\Huge{\\bfseries\\@title}\\par\\bigskip
+      \\LARGE{\\bfseries\\@author}\\par\\medskip
+      \\normalsize\\@date\\par\\bigskip
+      \\endgroup\\@afterindentfalse\\@afterheading}
+      \\makeatother
+      [NO-DEFAULT-PACKAGES]
+      \\AtBeginDocument{\\renewcommand{\\UrlFont}{\\ttfamily}}
+      \\thispagestyle{empty}"
+              ("\\section{%s}" . "\\section*{%s}")
+              ("\\subsection{%s}" . "\\subsection*{%s}")
+              ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
+              ("\\paragraph{%s}" . "\\paragraph*{%s}")
+              ("\\subparagraph{%s}" . "\\subparagraph*{%s}"))))
+
+
+      (if nec/measure-time (nec/timer "LaTeX / koma, beamer article and memoir" ))
+#+end_src
+*** PHP
+:PROPERTIES:
+:CUSTOM_ID: PHP
+:END:
+#+begin_src emacs-lisp
+(straight-use-package-lazy 'ac-php)
+
+(use-package php-mode
+  :straight t
+  :mode
+  (("\\.php\\'" . php-mode))
+  :config
+  (add-hook 'php-mode-hook
+	    '(lambda ()
+	       (require 'company-php)
+	       (company-mode t)
+	       (add-to-list 'company-backends 'company-ac-php-backend))))
+
+(use-package phpunit
+  :straight t
+  :mode
+  (("\\.php\\'" . phpunit-mode)))
+(if nec/measure-time (nec/timer "PHP "))
+#+end_src
+*** DAP (debug adapter protocol)
+#+begin_src emacs-lisp
+(straight-use-package 'dap-mode)
+(dap-mode 1)
+;; The modes below are optional
+(dap-ui-mode 1)
+;; enables mouse hover support
+(dap-tooltip-mode 1)
+;; use tooltips for mouse hover
+;; if it is not enabled `dap-mode' will use the minibuffer.
+(tooltip-mode 1)
+;; displays floating panel with debug buttons
+;; requies emacs 26+
+(dap-ui-controls-mode 1)
+(require 'dap-python)
+(require 'dap-php)
+
+(if nec/measure-time (nec/timer "dap-mode "))
+#+end_src
+*** MarkDown
+:PROPERTIES:
+:CUSTOM_ID: MarkDown
+:END:
+#+begin_src emacs-lisp
+(straight-use-package-lazy 'markdown-mode)
+(use-package markdown-mode
+  :straight t
+  :mode ("INSTALL\\'"
+         "CONTRIBUTORS\\'"
+         "LICENSE\\'"
+         "README\\'"
+         "\\.markdown\\'"
+         "\\.md"
+         "\\.mdown$"
+         "\\.md$\\'"))
+(add-hook 'markdown-mode-hook
+          (lambda ()
+            (visual-line-mode t)
+;;            (writegood-mode t
+            (flyspell-mode t)))
+(setq markdown-command "pandoc --smart -f markdown -t html")
+(setq markdown-css-paths `(,(expand-file-name "markdown.css" "private/md-dir")))
+(if nec/measure-time (nec/timer "MarkDown "))
+#+end_src
+*** template-test
+#+begin_src emacs-lisp
+(defun ndw/minutes-template ()
+  "Insert a minutes template."
+  (interactive)
+  (let* ((repos    (string-match "/20[12][0-9]/[0-9][0-9]/[0-9][0-9]-" (buffer-file-name)))
+         (date     (if repos
+                       (let ((year  (string-to-number
+                                     (substring (buffer-file-name) (1+ repos) (+ repos 5))))
+                             (month (string-to-number
+                                     (substring (buffer-file-name) (+ repos 6) (+ repos 8))))
+                             (day   (string-to-number
+                                     (substring (buffer-file-name) (+ repos 9) (+ repos 11)))))
+                         (encode-time 0 0 12 day month year))
+                     (current-time)))
+         (lastmtg  nil) ;; date of last meeting
+         (prev     (let ((weeks 1)
+                         (minutes nil))
+                     (while (and repos (< weeks 7)) ;; look back 6 weeks
+                       (let* ((lastweek (time-add date (- (* 60 60 24 7 weeks))))
+                              (lwd      (decode-time lastweek))
+                              (pagenda  (concat
+                                         (substring (buffer-file-name) 0 repos)
+                                         (format "/%04d/%02d/%02d-" (nth 5 lwd) (nth 4 lwd) (nth 3 lwd))
+                                         (substring (buffer-file-name) (+ repos 12)))))
+                         (if (file-exists-p pagenda)
+                             (progn
+                               (setq lastmtg lastweek)
+                               (setq minutes
+                                     (let ((apos  (string-match "-agenda.org$" pagenda)))
+                                       (if apos
+                                           (concat (substring pagenda 0 apos) "-minutes.org")
+                                         pagenda)))
+                               (setq weeks 999))) ;; escape the loop
+                         (setq weeks (1+ weeks))))
+                     minutes))
+         (title    (read-string "Meeting title: "))
+         (tags     (read-string "Tags: "))
+         (number   (if prev
+                       (with-temp-buffer
+                         (insert-file-contents prev)
+                         (goto-char 0)
+                         (if (re-search-forward "^#\\+MEETING: *")
+                             (if (looking-at "[0-9]+")
+                                 (match-string 0))))))
+         (actions  (if prev
+                     (with-temp-buffer
+                       (insert-file-contents prev)
+                       (goto-char 0)
+                       (org-mode)
+                       (let* ((ast  (org-element-parse-buffer))
+                              (revh (org-element-map ast 'headline
+                                      (lambda (hl)
+                                        (and (string-equal (org-element-property :raw-value hl)
+                                                           "Review of open action items")
+                                             hl))
+                                      nil t))
+                              (newh (org-element-map ast 'headline
+                                      (lambda (hl)
+                                        (and (string-equal (org-element-property :raw-value hl)
+                                                           "Summary of new action items")
+                                             hl))
+                                      nil t)))
+                         (concat
+                          ""
+                          (if revh
+                              (buffer-substring
+                               (org-element-property :contents-begin revh)
+                               (org-element-property :contents-end revh)))
+                          (if newh
+                              (buffer-substring
+                               (org-element-property :contents-begin newh)
+                               (org-element-property :contents-end newh))))))
+                     "")))
+  (insert "#+TITLE: ")
+  (insert title)
+  (insert ", ")
+  (insert (format-time-string "%d %B %Y" date))
+  (insert "\n")
+  (insert "#+DATE: ")
+  (insert (format-time-string "%Y-%m-%d" date))
+  (insert "\n")
+  (insert "#+AUTHOR: Norman Tovey-Walsh
+#+STARTUP: showeverything\n")
+  (if (not (string-equal "" tags))
+      (progn
+        (insert "#+FILETAGS: ")
+        (dolist (elt (split-string tags))
+          (progn
+            (if (not (string-match-p "^:" elt))
+                (insert ":"))
+            (insert elt)))
+        (if (not (string-match-p ":$" tags))
+            (insert ":"))
+        (insert "\n")))
+  (insert "#+MEETING: ")
+  (if number
+      (insert (format "%03d" (1+ (string-to-number number))))
+    (insert "???"))
+  (insert "\n\n")
+  (insert "* Minutes
+
+   + Present: Norm, 
+     + Regrets:
+   + Scribe: Norm
+   + Accept the agenda?
+     + No objections
+   + Accept the minutes of the previous meeting
+     + No objections")
+  (if prev
+      (progn 
+        (insert ": ")
+        (insert (format-time-string "%d %B %Y" lastmtg))))
+  (insert "?
+   + Next meeting: ")
+  (insert (format-time-string "%d %B %Y" (time-add date (* 60 60 24 7))))
+  (insert "
+   + Review of open action items
+   + Status updates
+   + Any other business
+
+Review of open action items\n\n")
+  (insert actions)
+  (insert "
+
+\n")
+  (goto-char 0)
+  ))
+#+end_src
+* Applications
+*** Header for emacs-lisp files
+:PROPERTIES:
+:CUSTOM_ID: Header for emacs-lisp files
+:END:
+We want to give all nye (and old) emacs-lisp files a header)
+#+begin_src emacs-lisp
+(require 'header2)
+(setq header-copyright-notice (concat "Copyright (C) 2020, " (user-full-name) "\n"))
+(add-to-list 'write-file-functions 'auto-update-file-header)
+(add-hook 'emacs-lisp-mode-hook 'auto-make-header)
+(straight-use-package-lazy 'autoinsert)
+  (setq auto-insert-query nil)
+  (setq auto-insert-directory "~/Dropbox/org/include/")
+  (auto-insert-mode 1)
+  (add-hook 'find-file-hook 'auto-insert)  
+  (define-auto-insert "\\.org?$" "default-header.org")
+(if nec/measure-time
+          (nec/timer "App: header on files  "))
+#+end_src
+*** Magit
+:PROPERTIES:
+:CUSTOM_ID: Magit
+:END:
+#+BEGIN_SRC emacs-lisp
+
+(use-package magit
+  :straight t
+  :bind
+  ;; Magic
+  ("C-x g s" . magit-status)
+  ("C-x g x" . magit-checkout)
+  ("C-x g c" . magit-commit)
+  ("C-x g p" . magit-push)
+  ("C-x g u" . magit-pull)
+  ("C-x g e" . magit-ediff-resolve)
+  ("C-x g r" . magit-rebase-interactive))
+
+(setq magit-status-margin
+  '(t "%Y-%m-%d %H:%M " magit-log-margin-width t 18))
+
+(use-package git-gutter
+  :straight t
+  :diminish " "
+  :init
+  (setq git-gutter:deleted-sign "▁")
+  (setq git-gutter:added-sign "▌")
+  (setq git-gutter:modified-sign "▌"))
+  
+  (global-git-gutter-mode +1)
+    
+
+(global-set-key (kbd "M-g M-g") 'hydra-git-gutter/body)
+
+
+(straight-use-package 'git-timemachine)
+  (defhydra hydra-git-gutter (:body-pre (git-gutter-mode 1)
+                              :hint nil)
+    "
+  Git gutter:
+    _j_: next hunk        _s_tage hunk     _q_uit
+    _k_: previous hunk    _r_evert hunk    _Q_uit and deactivate git-gutter
+    ^ ^                   _p_opup hunk
+    _h_: first hunk
+    _l_: last hunk        set start _R_evision
+  "
+    ("j" git-gutter:next-hunk)
+    ("k" git-gutter:previous-hunk)
+    ("h" (progn (goto-char (point-min))
+                (git-gutter:next-hunk 1)))
+    ("l" (progn (goto-char (point-min))
+                (git-gutter:previous-hunk 1)))
+    ("s" git-gutter:stage-hunk)
+    ("r" git-gutter:revert-hunk)
+    ("p" git-gutter:popup-hunk)
+    ("R" git-gutter:set-start-revision)
+    ("q" nil :color blue)
+    ("Q" (progn (git-gutter-mode -1)
+                ;; git-gutter-fringe doesn't seem to
+                ;; clear the markup right away
+                (sit-for 0.1)
+                (git-gutter:clear))
+         :color blue))
+
+;;(setq magit-view-git-manual-method 'man)
+(straight-use-package 'ghub)
+;; (use-package magit-popup)
+(if nec/measure-time (nec/timer "App: magit   "))
+#+END_SRC
+
+*** Remember mode
+:PROPERTIES:
+:CUSTOM_ID: h:8044df56-9819-4c61-abe6-43d352087211
+:END:
+
+=remember= is built into Emacs.  It is a fairly and flexible lightweight
+solution for writing notes.  Obviously Org can handle that task like a
+champion, but there still are cases where you need something quick
+without the approximately one bajillion extras that Org furnishes.
+
+What I have here works, though I consider it a /work in progress/ (as of
+2020-08-16).
+
+#+begin_src emacs-lisp
+(use-package remember
+  :config
+  (setq remember-data-file "~/.emacs.d/private/remember")
+  (setq remember-data-directory "~/.emacs.d/private/remember-files/")
+  (setq remember-notes-buffer-name "*remember*")
+  (setq remember-leader-text "** ")
+  (setq remember-time-format "%F %T")
+  (setq remember-directory-file-name-format "%F_%T")
+  (setq remember-notes-bury-on-kill nil) ; kill means kill
+  (setq remember-notes-initial-major-mode 'text-mode)
+  (setq remember-handler-functions '(remember-append-to-file))
+  (setq remember-all-handler-functions t)
+  (setq remember-save-after-remembering t)
+  (setq remember-annotation-functions '(buffer-file-name))
+
+  (defun prot/remember-header-line ()
+    "Add `header-line-format' information to `remember' buffers.
+Call this from `remember-mode-hook'."
+    (when (eq major-mode 'remember-mode)
+      (setq-local header-line-format
+                  (format "Type %s to confirm, %s to cancel"
+                          (propertize "C-c C-c" 'face 'bold)
+                          (propertize "C-c C-k" 'face 'bold)))))
+
+  (defun prot/remember (&optional arg)
+    "Produce a buffer to capture a `remember' note.
+With prefix \\[universal-argument], switch to the buffer defined
+by `remember-notes-buffer-name'."
+    (interactive "P")
+    (if arg
+        (remember-notes t)
+      (remember nil)))
+
+  :hook ((remember-mode-hook . prot/remember-header-line)
+         (remember-notes-mode-hook . prot/outline-minor-mode))
+  :bind ("<f12>" . prot/remember))
+#+end_src
+*** Tæl ord
+:PROPERTIES:
+:CUSTOM_ID: Tæl ord
+:END:
+#+begin_src emacs-lisp
+;; most-used-words.el --- Display most used words in buffer
+;;; -*- lexical-binding: t; -*-
+;;; Commentary:
+;; Identify the most frequently used words in a buffer.
+;;
+;; The command
+;;   M-x most-used-words-buffer
+;; goes through the current buffer keeping a count of words, as defined
+;; by the default syntax table.  Once done, it displays a buffer of the
+;; most frequently used words.
+;;
+;; I wrote the following functions, and the wonderful posters at
+;; gnu.emacs.help reviewed it.
+;; Part of a discussion thread on gnu.emacs.help follows the
+;; development:
+;; https://groups.google.com/d/topic/gnu.emacs.help/nC8IsIuNeek/discussion
+;;
+;; Special thanks are due to Stefan Monnier and Eric Abrahamsen, who
+;; made suggestions that greatly improved performance; Emmanuel Berg
+;; reminded me to prefix functions from CL-LIB; Bob Proulx,
+;; Ben Bacarisse, Nick Dokos, Eli Zaretskii shared of their Unix wisdom
+;; and experience; and Bob Newell tested it for his purposes.
+
+;;; Code:
+
+(require 'cl-lib)
+
+(cl-defmacro most-used-words-with-view-buffer (buffer &body body)
+  `(progn
+     (with-current-buffer ,buffer
+       ,@body)
+     (view-buffer-other-window ,buffer
+			       nil
+			       #'kill-buffer)))
+
+(defun most-used-words-buffer-1 (n)
+  "Make a list of the N most used words in buffer."
+  (let ((counts (make-hash-table :test #'equal))
+	sorted-counts
+	start
+	end)
+    (save-excursion
+      (goto-char (point-min))
+      (skip-syntax-forward "^w")
+      (setf start (point))
+      (cl-loop until (eobp)
+	 do
+	   (skip-syntax-forward "w")
+	   (setf end (point))
+	   (cl-incf (gethash (buffer-substring start end) counts 0))
+	   (skip-syntax-forward "^w")
+	   (setf start (point))))
+    (cl-loop for word being the hash-keys of counts
+       using (hash-values count)
+       do
+	 (push (list word count) sorted-counts)
+       finally (setf sorted-counts (cl-sort sorted-counts #'>
+					  :key #'cl-second)))
+    (mapcar #'cl-first (cl-subseq sorted-counts 0 n))))
+
+;;;###autoload
+(defun most-used-words-buffer (&optional n)
+  "Show the N (default 3) most used words in the current buffer."
+  (interactive (list (completing-read
+		      "How many words? (default 3) "
+		      nil
+		      nil
+		      nil
+		      nil
+		      nil
+		      3
+		      nil)))
+  (unless (numberp n)
+    (setf n (string-to-number n)))
+  (let ((most-used-words-buffer (get-buffer-create "*Most used words*"))
+	(most-used (most-used-words-buffer-1 n)))
+    (most-used-words-with-view-buffer most-used-words-buffer
+      (dolist (word most-used)
+	(insert (format "%s" word))
+	(newline)))))
+
+(provide 'most-used-words)
+
+;;; most-used-words.el ends here
+#+end_src
+*** elgantt
+:PROPERTIES:
+:CUSTOM_ID: elgantt
+:END:
+#+begin_src emacs-lisp
+;; from : https://github.com/alphapapa/org-ql
+(straight-use-package-lazy '(org-ql :type git :flavor melpa :host github :repo "alphapapa/org-ql"))
+(straight-use-package-lazy '(ts :type git :flavor melpa :host github :repo "alphapapa/ts.el"))
+(straight-use-package-lazy '(s :type git :flavor melpa :files ("s.el" "s-pkg.el") :host github :repo "magnars/s.el"))
+(straight-use-package-lazy '(dash :type git :flavor melpa :files ("dash.el" "dash.texi" "dash-pkg.el") :host github :repo "magnars/dash.el"))
+;;;;;;
+(require 'elgantt)
+(setq elgantt-user-set-color-priority-counter 0)
+(elgantt-create-display-rule draw-scheduled-to-deadline
+  :parser ((elgantt-color . ((when-let ((colors (org-entry-get (point) "ELGANTT-COLOR")))
+                               (s-split " " colors)))))
+  :args (elgantt-scheduled elgantt-color elgantt-org-id)
+  :body ((when elgantt-scheduled
+           (let ((point1 (point))
+                 (point2 (save-excursion
+                           (elgantt--goto-date elgantt-scheduled)
+                           (point)))
+                 (color1 (or (car elgantt-color)
+                             "black"))
+                 (color2 (or (cadr elgantt-color)
+                             "red")))
+             (when (/= point1 point2)
+               (elgantt--draw-gradient 
+                color1
+                color2
+                (if (< point1 point2) point1 point2) ;; Since cells are not necessarily linked in 
+                (if (< point1 point2) point2 point1) ;; chronological order, make sure they are sorted
+                nil
+                `(priority ,(setq elgantt-user-set-color-priority-counter
+                                  (1- elgantt-user-set-color-priority-counter))
+                           ;; Decrease the priority so that earlier entries take
+                           ;; precedence over later ones (note: it doesn’t matter if the number is negative)
+                           :elgantt-user-overlay ,elgantt-org-id)))))))
+
+(setq elgantt-header-type 'outline
+      elgantt-insert-blank-line-between-top-level-header t
+      elgantt-startup-folded nil
+      elgantt-show-header-depth t
+      elgantt-draw-overarching-headers t)
+
+
+#+end_src
+*** gnus
+#+begin_src emacs-lisp
+(require 'gnus)
+(setq nnml-directory "~/Mail")
+(setq message-directory "~/Mail")
+(setq gnus-ignored-newsgroups "^to\\.\\|^[0-9. ]+\\( \\|$\\)\\|^[\”]\”[#’()]")
+
+(setq gnus-select-method '(nntp "dr.dk/nyheder/service/feeds/viden"))
+    (add-to-list 'gnus-secondary-select-methods '(nnml ""))
+;;(setq gnus-select-method
+;;      '(nnimap "algon"
+;;               (nnimap-address "mail.algon.dk")
+;;               (nnimap-server-port 143)))
+                 
+(setq mail-sources '((imap :server "mail.algon.dk"
+                           :user "nisoni"
+                           :password "baldur2780")))
+
+(setq send-mail-function 'smtpmail-send-it)
+(setq message-send-mail-function 'smtpmail-send-it)
+
+(setq smtpmail-smtp-server "mail.algon.dk"
+      smtpmail-smtp-service 587
+      gnus-ignored-newsgroups "^to\\.\\|^[0-9. ]+\\( \\|$\\)\\|^[\"]\"[#'()]")
+;;
+;; Fancy icons for Emacs
+;; Only do this once:
+(use-package all-the-icons 
+  :straight t)
+  ; :config (all-the-icons-install-fonts 'install-without-asking)
+
+;; Make mail look pretty
+(use-package all-the-icons-gnus
+  :straight t
+  :config (all-the-icons-gnus-setup))
+;;
+(setq gnus-sum-thread-tree-vertical        "│"
+      gnus-sum-thread-tree-leaf-with-other "├─► "
+      gnus-sum-thread-tree-single-leaf     "╰─► "
+      gnus-summary-line-format
+      (concat
+       "%0{%U%R%z%}"
+       "%3{│%}" "%1{%d%}" "%3{│%}"
+       "  "
+       "%4{%-20,20f%}"
+       "  "
+       "%3{│%}"
+       " "
+       "%1{%B%}"
+       "%s\n"))
+  (add-hook 'gnus-group-mode-hook 'gnus-topic-mode)
+#+end_src
+*** zone
+:PROPERTIES:
+:CUSTOM_ID: zone
+:END:
+#+begin_src emacs-lisp
+(straight-use-package 'zone
+  :config (setq zone-when-idle 180)) ; in seconds
+#+end_src
+*** smog
+:PROPERTIES:
+:CUSTOM_ID: smog
+:END:
+#+begin_src emacs-lisp
+(straight-use-package 'smog
+  :config (setq smog-command "style -l 23"))
+#+end_src
+
+*** elfeed 
+:PROPERTIES:
+:CUSTOM_ID: elfeed 
+:END:
+Next step after reading mail in Emacs, is to read more things. Down the rabbit
+hole, we can see =elfeed=, a RSS reader. This configuration also uses an org
+file to store the subscriptions (which is darn fine for me).
+
+#+BEGIN_SRC emacs-lisp :results silent
+(use-package elfeed
+  :straight t
+  :config
+  (setq elfeed-db-directory "~/.elfeed"))
+
+(use-package elfeed-org
+  :straight t
+  :after elfeed
+  :config
+  (elfeed-org)
+  (setq rmh-elfeed-org-files (list "~/Dropbox/org/elfeed/elfeed.org")))
+
+(use-package elfeed-goodies
+  :straight t
+  :after elfeed
+  :config (elfeed-goodies/setup))
+(if nec/measure-time (nec/timer "elfeed" ))
+
+#+END_SRC
+* The end
+*** time uses
+:PROPERTIES:
+:CUSTOM_ID: time uses
+:END:
+#+begin_src emacs-lisp
+(setq frame-title-format '("" "%b - Living The Dream (•̀ᴗ•́)و"))
+(defun display-startup-echo-area-message ()
+  "The message that is shown after ‘user-init-file’ is loaded."
+  (message
+      (concat "Welcome "      user-full-name
+              "! Emacs "      emacs-version
+              "; Org-mode "   org-version
+              "; System "     (system-name)
+              "; Time "       (emacs-init-time))))
+(message "→★★★ Total time for configuration  %.2fs"  (float-time (time-subtract (current-time) nec/total-time)))
+(message "      T H E   E N D")
+#+end_src
