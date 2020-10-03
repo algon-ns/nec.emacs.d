@@ -1,9 +1,10 @@
-Pconfig.el
+config.el
 diary
 private
+personal
 snippets
 straight
-transien
+transient
 url
 games
 elpa
