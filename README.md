@@ -45,7 +45,7 @@ A few to mention:
 
 ***Dennis Ogbe***
 
-***Terencio Agozzino
+***Terencio Agozzino***
 
 ***Karl Voit,*** but also configurations like purcell, doom, centaur and many more
 has been the foundation for this.
@@ -53,5 +53,5 @@ has been the foundation for this.
 The base for my emacs configuration, is the config comming from ___Ryan’s Minimal Emacs___ by ***Ryan Hajianpour***, but I don’t think there is anything left by now.
 
 If you wonder, where You found this file….        
-[Git Repo](github.com/algon-ns/.emacs.d)
+[Git Repo](github.com/algon-ns/nec.emacs.d)
 
