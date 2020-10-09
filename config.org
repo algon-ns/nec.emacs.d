@@ -418,7 +418,7 @@ NAME and ARGS are as in `use-package'."
     - [[#auto-super-save][Auto Super Save]]
     - [[#keys][Keys]]
   - [[#user-interface][User interface]]
-    - [[#never-loose-the-cursor][Never loose the cursor]]
+    - [[#never-loose-the-cursorbeacon-mode][Never loose the cursorBeacon Mode]]
     - [[#dimming-unused-windows][Dimming Unused Windows]]
     - [[#ask-before-killing-emacs][Ask before killing emacs]]
     - [[#modeline][Modeline]]
@@ -433,6 +433,8 @@ NAME and ARGS are as in `use-package'."
 - [[#org-and-friends][org and friends]]
     - [[#org-general-settings][org general settings]]
     - [[#org-bullets][org bullets]]
+    - [[#org-context][org-context]]
+    - [[#org-cliplink][org-cliplink]]
     - [[#refiling-setup][Refiling Setup]]
     - [[#org-contact][org contact]]
     - [[#org-journal][org-journal]]
@@ -440,6 +442,7 @@ NAME and ARGS are as in `use-package'."
     - [[#org-capture][org capture]]
     - [[#org-roam][org-roam]]
     - [[#org-roam-server][org-roam-server]]
+    - [[#org-mac-ical][org-mac-iCal]]
     - [[#org-agenda][org agenda]]
     - [[#super-agenda][Super Agenda]]
     - [[#org-brain][org-brain]]
@@ -480,6 +483,7 @@ First the basics for running emacs
 :PROPERTIES:
 :CUSTOM_ID: Fundamental constants and functions
 :END:
+
 *** Version and full stop
 :PROPERTIES:
 :CUSTOM_ID: Version and full stop
@@ -525,6 +529,7 @@ something does not seem to work as intended it is easy to edit
 :PROPERTIES:
 :CUSTOM_ID: h:af691a31-917e-4d9b-aee6-5744b1173999
 :END:
+ [[https://github.com/abo-abo/hydra][Hydra]] - Make bindings that stick around.
 
 A "hydra" is an ad-hoc mode for mapping commands to a group of more
 convenient key bindings.  In an active hydra, all of its keys---the
@@ -1102,6 +1107,7 @@ function to check if this setup is properly done:
 :PROPERTIES:
 :CUSTOM_ID: SMEX
 :END:
+ [[https://github.com/nonsequitur/smex/][smex]] - A smart M-x enhancement for Emacs.
 #+begin_src emacs-lisp
 (use-package smex
   :straight t
@@ -2034,6 +2040,8 @@ proper shell in Emacs!
 :PROPERTIES:
 :CUSTOM_ID: Helm
 :END:
+ [[https://github.com/emacs-helm/helm][Helm]] - (Formerly 'Anything') A powerful completion and selection narrowing 
+         framework. ( External Guides [[http://tuhdo.github.io/helm-intro.html][1]] )
 #+BEGIN_SRC emacs-lisp
 (use-package helm
   :straight t 
@@ -2127,6 +2135,7 @@ proper shell in Emacs!
 :PROPERTIES:
 :CUSTOM_ID: IDO
 :END:
+[[https://www.emacswiki.org/emacs/InteractivelyDoThings][IDO]] - =[built-in]= Interactively do things with buffers and files.
 #+begin_src emacs-lisp
 (require 'ido)
 (setq ido-save-directory-list-file "~/.emacs.d/private/ido.last")
@@ -2542,10 +2551,11 @@ Put all keybindings here (with doc)
 #+end_src
 
 ** User interface
-*** Never loose the cursor
+*** Never loose the cursorBeacon Mode
 :PROPERTIES:
 :CUSTOM_ID: Never-loose-the-cursor
 :END:
+ [[https://github.com/Malabarba/beacon][beacon]] - Never lose your cursor again.
 Let's have the entire line containing the cursour be slightly highlighted.
 Make it very easy to see the line with the cursor.
 Moreover, we reduce the mental strain of locating the cursour when navigation happens:
@@ -2556,17 +2566,20 @@ When we switch windows or scroll, for example, we get a wave of light near the c
   :diminish
   :config (setq beacon-color "#666600"))
 (beacon-mode 1)
+(if nec/measure-time (nec/timer "Beacon-mode "))
 #+end_src
 *** Dimming Unused Windows
 :PROPERTIES:
 :CUSTOM_ID: Dimming-Unused-Windows
 :END:
+ [[https://github.com/gonewest818/dimmer.el][dimmer.el]] - Interactively highlight which buffer is active by dimming the others.
 Let's dim windows, and even the whole Emacs frame, when not in use.
 #+BEGIN_SRC emacs-lisp
 (use-package dimmer
   :straight t
   :diminish 
   :config (dimmer-mode))
+(if nec/measure-time (nec/timer "Dimming windows "))
 #+END_SRC
 *** Ask before killing emacs
 :PROPERTIES:
@@ -2835,12 +2848,14 @@ blocks! Love this one ^_^
   ("t" origami-toggle-all-nodes  "Toggle buffer")
   ("n" origami-next-fold "Next")
   ("p" origami-previous-fold "Previous"))
+(if nec/measure-time (nec/timer "Origami "))
 #+END_SRC
 
 *** Dired filefinder
 :PROPERTIES:
 :CUSTOM_ID: Dired filefinder
 :END:
+ [[https://www.emacswiki.org/emacs/DiredMode][Dired]] - =[built-in]= *Dir* ectory *Ed* itor. A customizable great file manager.
 #+begin_src emacs-lisp
 
  (straight-use-package '(dired :type built-in)
@@ -2976,7 +2991,7 @@ blocks! Love this one ^_^
 (straight-use-package-lazy 'speed-type)
 
 (straight-use-package-lazy '2048-game)
-
+(if nec/measure-time (nec/timer "Games "))
 #+end_src
 *** Flyckeck
 :PROPERTIES:
@@ -2995,6 +3010,8 @@ blocks! Love this one ^_^
 :PROPERTIES:
 :CUSTOM_ID: Dashboard
 :END:
+ [[https://github.com/emacs-dashboard/emacs-dashboard][Dashboard]] - A startup dashboard which provides certain information 
+             about your recent Emacs activities.
 We want a Dashboard, which demand Page Break Line 
 #+begin_src emacs-lisp
 (use-package page-break-lines
@@ -3058,6 +3075,7 @@ We want a Dashboard, which demand Page Break Line
 :PROPERTIES:
 :CUSTOM_ID: org general settings
 :END:
+ [[https://orgmode.org/][Org]] - =[built-in]= Write notes, GTD, authoring, publish and wash dishes.
 Assign file extensions to Org-mode:
 #+BEGIN_SRC emacs-lisp
 (add-to-list 'auto-mode-alist '("\\.\\(org\\|org_archive\\|txt\\)$" . org-mode))
@@ -3263,8 +3281,8 @@ Disable property inheritance (in order to seed up)
       (defvar load-language-list '((emacs-lisp . t)
                                    (perl . t)
                                    (python . t)
-                                   (ruby . t)
-                                   (js . t)
+                                   ;;(ruby . t)
+                                   ;;(js . t)
                                    (shell . t)
                                    (css . t)
                                    (ledger . t)
@@ -3353,12 +3371,13 @@ Disable property inheritance (in order to seed up)
         :bind (:map org-agenda-mode-map
                ("P" . org-pomodoro))))
 
-  (if nec/measure-time (nec/timer "org "))
+  (if nec/measure-time (nec/timer "general org "))
 #+end_src
 *** org bullets
 :PROPERTIES:
 :CUSTOM_ID: org bullets
 :END:
+ [[https://github.com/sabof/org-bullets][org-bullets]] - Shows org-mode bullets as pretty UTF-8 characters.
 #+begin_src emacs-lisp 
 ;; Prettify UI
 
@@ -3370,6 +3389,23 @@ Disable property inheritance (in order to seed up)
   :init (setq org-bullets-bullet-list '(  "☢" "✿"  "❀"  "✸" "○" "◆" "◇"  )))
 (if nec/measure-time (nec/timer "org bullets" ))
 #+end_src
+
+*** org-context
+
+[[https://github.com/thisirs/org-context][org-context]] provides contextual agenda and capture for Org-mode.
+
+#+NAME: package-org-context
+#+BEGIN_SRC emacs-lisp
+(straight-use-package 'org-context)
+#+END_SRC
+
+*** org-cliplink
+
+[[https://github.com/rexim/org-cliplink][org-cliplink]] inserts Org-mode links from the clipboard.
+#+NAME: package-org-cliplink)
+#+BEGIN_SRC emacs-lisp
+  (straight-use-package 'org-cliplink)
+#+END_SRC
 *** Refiling Setup
 :PROPERTIES:
 :CUSTOM_ID: Refiling Task
@@ -3516,7 +3552,7 @@ multiple times below:
     (straight-use-package 'seq)
     (straight-use-package 'doct)
     (setq org-capture-templates
-      (doct '(("Aftale" 
+      (doct '(("Aftale"
          :keys "a"
          :file "~/Dropbox/org/agenda/organizer.org"
          :type entry
@@ -3712,6 +3748,32 @@ multiple times below:
 
     (if nec/measure-time (nec/timer "org roam server" ))
 #+end_src
+*** org-mac-iCal
+
+[[https://github.com/ndw/org-mac-iCal][org-mac-iCal]] allows you to imports events from iCal.app to the Emacs diary.
+
+#+NAME: package-org-mac-iCal
+#+BEGIN_SRC emacs-lisp
+
+(require 'org-mac-iCal)
+(setq org-mac-iCal-import-exchange t)
+(setq org-mac-iCal-calendar-names
+      '("nisoni" "niels" "lilian" "Søndergaard"))
+(add-hook 'org-agenda-cleanup-fancy-diary-hook
+       (lambda ()
+         (goto-char (point-min))
+         (save-excursion
+           (while (re-search-forward "^[a-z]" nil t)
+             (goto-char (match-beginning 0))
+             (insert "0:00-24:00 ")))
+         (while (re-search-forward "^ [a-z]" nil t)
+           (goto-char (match-beginning 0))
+           (save-excursion
+             (re-search-backward "^[0-9]+:[0-9]+-[0-9]+:[0-9]+ " nil t))
+           (insert (match-string 0)))))
+(if nec/measure-time (nec/timer "org Mac iCal "))
+#+END_SRC
+
 *** org agenda 
 :PROPERTIES:
 :CUSTOM_ID: org agenda 
@@ -3775,7 +3837,7 @@ multiple times below:
 :PROPERTIES:
 :CUSTOM_ID: Super-Agenda
 :END:
-
+ [[https://github.com/alphapapa/org-super-agenda][org-super-agenda]] - Help organize your agenda items into tidy groups.
 Org agenda is an interactive tool for generating summary reports from Org data
 ---e.g., commonly, the weekly task list is generated from todo tasks.
 
@@ -3792,7 +3854,7 @@ Let's setup the basics of our agenda.
 (setq org-agenda-tags-column -10)
 
 ;; How many days ahead the default agenda view should look
-(setq org-agenda-span 'week)
+(setq org-agenda-span 'fortnight)
 ;; May be any number; the larger the slower it takes to generate the view.
 ;; One day is thus the fastest ^_^
 
@@ -3847,6 +3909,7 @@ parent heading. Of-course, the top-most grouping, the important tasks, should be
 pulled out of their group and placed at the top.
 #+BEGIN_SRC emacs-lisp
   (use-package org-super-agenda
+    :straight t
     :hook (org-agenda-mode . origami-mode) ;; Easily fold groups via TAB.
     :bind (:map org-super-agenda-header-map ("<tab>" . origami-toggle-node))
     :config
@@ -4455,35 +4518,40 @@ Let's install the [[https://github.com/politza/pdf-tools][pdf-tools]] library fo
   ;;;;           ("" "amssymb" t)
   ;;;;           ("" "capt-of" nil)
   ;;          ("" "hyperref" nil)))
-      
-     (with-eval-after-load 'org
-       (require 'ox-latex)
-       (require 'ox-koma-letter))
-     (setq org-latex-classes
-         '(("default-koma-letter" "\\documentclass[11pt]{scrlttr2}")
+
+
+(require 'ox-latex)
+(require 'ox-koma-letter)
+(require 'ox-beamer)
+
+(setq org-latex-classes
+  '(("memoir" 
+      "\\documentclass[11pt]{memoir}
+       [NO-DEFAULT-PACKAGES]
+       [PACKAGES]
+       [EXTRA]"
+       ("\\section{%s}" . "\\section*{%s}")
+       ("\\subsection{%s}" . "\\subsection*{%s}")
+       ("\\subsubsection{%s}" . "\\subsubsection*{%s}"))
+    ("default-koma-letter" "\\documentclass[11pt]{scrlttr2}")
            ("report" "\\documentclass[11pt]{report}"
             ("\\part{%s}" . "\\part*{%s}")
             ("\\chapter{%s}" . "\\chapter*{%s}")
             ("\\section{%s}" . "\\section*{%s}")
             ("\\subsection{%s}" . "\\subsection*{%s}")
             ("\\subsubsection{%s}" . "\\subsubsection*{%s}"))
-           ("beamer" "\\documentclass[11pt]{beamer}"
+           ("beamer" "\\documentclass[11pt,presentation]{beamer}"
             ("\\section{%s}" . "\\section*{%s}")
             ("\\subsection{%s}" . "\\subsection*{%s}")
             ("\\subsubsection{%s}" . "\\subsubsection*{%s}"))
-           ("book" "\\documentclass[11pt]{book}"
-            ("\\part{%s}" . "\\part*{%s}")
-            ("\\chapter{%s}" . "\\chapter*{%s}")
-            ("\\section{%s}" . "\\section*{%s}")
-            ("\\subsection{%s}" . "\\subsection*{%s}")
-            ("\\subsubsection{%s}" . "\\subsubsection*{%s}"))
-           ("memoir" "\\documentclass[12pt]{memoir}
-             [NO-DEFAULT-PACKAGES]
-             [PACKAGES]
-             [EXTRA]"
-            ("\\section{%s}" . "\\section*{%s}")
-            ("\\subsection{%s}" . "\\subsection*{%s}")
-            ("\\subsubsection{%s}" . "\\subsubsection*{%s}"))
+    ("book" 
+     "\\documentclass[11pt]{book}"
+      ("\\part{%s}" . "\\part*{%s}")
+      ("\\chapter{%s}" . "\\chapter*{%s}")
+      ("\\section{%s}" . "\\section*{%s}")
+      ("\\subsection{%s}" . "\\subsection*{%s}")
+      ("\\subsubsection{%s}" . "\\subsubsection*{%s}"))
+  
   ("article"
      "\\RequirePackage{fix-cm}
       \\PassOptionsToPackage{svgnames}{xcolor}
@@ -4595,8 +4663,6 @@ Let's install the [[https://github.com/politza/pdf-tools][pdf-tools]] library fo
               ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
               ("\\paragraph{%s}" . "\\paragraph*{%s}")
               ("\\subparagraph{%s}" . "\\subparagraph*{%s}"))))
-
-
       (if nec/measure-time (nec/timer "LaTeX / koma, beamer article and memoir" ))
 #+end_src
 *** PHP

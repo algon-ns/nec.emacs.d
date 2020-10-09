@@ -1,4 +1,4 @@
-;;; org-mac-iCal.el --- Imports events from iCal.app to the Emacs diary
+;;; org-mac-iCal.el --- Imports events from iCal.app to the Emacs iCalDiary
 ;; 
 ;; Filename: org-mac-iCal.el
 ;; Description: 
@@ -6,9 +6,9 @@
 ;; Copyright (C) 2020, Niels Søndergaard
 ;; Created: Tue Jul 28 15:42:26 2020 (+0200)
 ;; Version: 
-;; Last-Updated: Tue Jul 28 20:42:47 2020 (+0200)
+;; Last-Updated: Mon Oct  5 10:00:42 2020 (+0200)
 ;;           By: Niels Søndergaard
-;;     Update #: 1
+;;     Update #: 5
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; 
 ;;; Commentary:
@@ -16,25 +16,6 @@
 ;; Copyright (C) 2009-2014 Christopher Suckling
 ;; Author: Christopher Suckling <suckling at gmail dot com>
 ;; Version: 0.1057.104
-;; 
-;; 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; 
-;;; Change Log:
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; 
-;; This program is free software: you can redistribute it and/or modify
-;; it under the terms of the GNU General Public License as published by
-;; the Free Software Foundation, either version 3 of the License, or (at
-;; your option) any later version.
-;; 
-;; This program is distributed in the hope that it will be useful, but
-;; WITHOUT ANY WARRANTY; without even the implied warranty of
-;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-;; General Public License for more details.
-;; 
-;; You should have received a copy of the GNU General Public License
-;; along with GNU Emacs.  If not, see <https://www.gnu.org/licenses/>.
 ;; 
 ;; ********************************************************************************
 ;; ndw edited the sw_vers regex to make it work with 10.10+
@@ -62,22 +43,22 @@
 ;;; Commentary:
 ;;
 ;; This file provides the import of events from Mac OS X 10.5 iCal.app
-;; into the Emacs diary (it is not compatible with OS X < 10.5). The
+;; into the Emacs iCalDiary (it is not compatible with OS X < 10.5). The
 ;; function org-mac-iCal will import events in all checked iCal.app
 ;; calendars for the date range org-mac-iCal-range months, centered
 ;; around the current date.
 ;;
 ;; CAVEAT: This function is destructive; it will overwrite the current
-;; contents of the Emacs diary.
+;; contents of the Emacs iCalDiary.
 ;;
 ;; Installation: add (require 'org-mac-iCal) to your .emacs.
 ;;
-;; If you view Emacs diary entries in org-agenda, the following hook
+;; If you view Emacs iCalDiary entries in org-agenda, the following hook
 ;; will ensure that all-day events are not orphaned below TODO items
 ;; and that any supplementary fields to events (e.g. Location) are
 ;; grouped with their parent event
 ;;
-;; (add-hook 'org-agenda-cleanup-fancy-diary-hook
+;; (add-hook 'org-agenda-cleanup-fancy-iCalDiary-hook
 ;;        (lambda ()
 ;;          (goto-char (point-min))
 ;;          (save-excursion
@@ -94,7 +75,7 @@
 
 (defcustom org-mac-iCal-range 2
   "The range in months to import iCal.app entries into the Emacs
-diary. The import is centered around today's date; thus a value
+iCalDiary. The import is centered around today's date; thus a value
 of 2 imports entries for one month before and one month after
 today's date"
   :group 'org-time
@@ -107,7 +88,7 @@ Exchange handles repeating/duplicated/declined events.
 Sometimes the Exchange .ics file contains several events with the
 same UID. Sometimes they have different SEQUENCE numbers. It's
 unclear how these are supposed to be handled. At present, they
-sometimes occur multiple times in the diary."
+sometimes occur multiple times in the iCalDiary."
   :group 'org-time
   :type 'boolean)
 
@@ -119,19 +100,21 @@ calendar plist file does not seem to be reliable."
   :group 'org-time
   :type '(repeat string))
 
+(setq iCAlDiary-file "~/.emacs/iCalDiary")
+
 (defun org-mac-iCal ()
   "Selects checked calendars in iCal.app and imports them into
-the the Emacs diary"
+the the Emacs iCalDiary"
   (interactive)
 
-  ;; kill diary buffers then empty diary files to avoid duplicates
+  ;; kill iCalDiary buffers then empty iCalDiary files to avoid duplicates
   (setq currentBuffer (buffer-name))
   (setq openBuffers (mapcar (function buffer-name) (buffer-list)))
-  (omi-kill-diary-buffer openBuffers)
+  (omi-kill-iCalDiary-buffer openBuffers)
   (with-temp-buffer
-    (insert-file-contents diary-file)
+    (insert-file-contents iCalDiary-file)
     (delete-region (point-min) (point-max))
-    (write-region (point-min) (point-max) diary-file))
+    (write-region (point-min) (point-max) iCalDiary-file))
 
   ;; determine available calendars
   (setq caldav-folders (directory-files "~/Library/Calendars" 1 ".*caldav$"))
@@ -209,7 +192,7 @@ individual event files into a single ics file"
    list))
 
 (defun omi-import-ics (string)
-  "Imports an ics file into the Emacs diary. First tidies up the
+  "Imports an ics file into the Emacs iCalDiary. First tidies up the
 ics file so that it is suitable for import and selects a sensible
 date range so that Emacs calendar view doesn't grind to a halt"
   (with-temp-buffer
@@ -271,12 +254,12 @@ date range so that Emacs calendar view doesn't grind to a halt"
     (goto-line 1)
     (write-region (point-min) (point-max) string))
 
-  (icalendar-import-file string diary-file))
+  (icalendar-import-file string "iCalDiary"))
 
-(defun omi-kill-diary-buffer (list)
+(defun omi-kill-iCalDiary-buffer (list)
   (mapc
    (lambda (x)
-     (if (string-match "^diary" x)
+     (if (string-match "^iCalDiary" x)
          (kill-buffer x)))
    list))
 
