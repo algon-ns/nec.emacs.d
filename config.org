@@ -483,7 +483,6 @@ First the basics for running emacs
 :PROPERTIES:
 :CUSTOM_ID: Fundamental constants and functions
 :END:
-
 *** Version and full stop
 :PROPERTIES:
 :CUSTOM_ID: Version and full stop
@@ -495,8 +494,8 @@ as I started this in version 27.0.90
 (setq frame-title-format '("" "%b - Som i en Drømmeverden (•̀ᴗ•́)و"))
 (setq emacs/ emacs-version)
 ;; Startup message: Emacs & Org versions:4 ends here
-(when (version< emacs/ "26")
-  (warning "This requires Emacs 26 and above!"))
+(when (version< emacs/ "27")
+  (warning "This requires Emacs 27 and above!"))
 (if nec/measure-time (nec/timer "version control "))
 #+end_src
 *** load custom file
@@ -579,7 +578,7 @@ Also check [[https://github.com/abo-abo/hydra][the project's source]] for more i
   :straight t
   :config
   (progn
-    ;; (setq hydra-lv nil)
+  ;; (setq hydra-lv nil)
     (set-face-attribute 'hydra-face-red      nil :foreground "Red"        :bold t)
     (set-face-attribute 'hydra-face-blue     nil :foreground "RoyalBlue3" :bold t)
     (set-face-attribute 'hydra-face-amaranth nil :foreground "#e52b50"    :bold t)
@@ -673,14 +672,13 @@ Here we read the Users wishes for the configuration
   :config (diminish 'org-indent-mode " ➣")
           (diminish 'org-mode " ")
           (diminish 'blacken-mode " ")
-          (diminish 'auto-fill-mode " ⚮")
+          (diminish 'auto-fill-function " ⚮")
           (diminish 'ctrlf-mode " ")
-;;          (diminish 'gcmh-mode " ")
           (diminish 'dired-filter-mode " ")
           (diminish 'rainbow-delimiters-mode " ♼")
           (diminish 'flx-ido " "))
 ;;
-(straight-use-package-lazy '(delight :type git :host github :repo "emacs-straight/delight" :files ("*" (:exclude ".git"))))
+(straight-use-package '(delight :type git :host github :repo "emacs-straight/delight" :files ("*" (:exclude ".git"))))
 (delight 'gcmh " ")
 (delight 'auto-fill-mode " ⚮")
 
@@ -3557,7 +3555,7 @@ multiple times below:
          :file "~/Dropbox/org/agenda/organizer.org"
          :type entry
          :headline "Aftaler"
-         :template ("* TODO %?              :AFTALE: %^G "
+         :template ("* TODO %?                     %^G:AFTALE:"
                     "  SCHEDULED:  %^T"
                             "  :PROPERTIES:"               
                             "  :STED:  "
@@ -3578,10 +3576,7 @@ multiple times below:
                  :file "~/Dropbox/org/agenda/organizer.org"
                  :type entry
                  :headline "Opgaver"
-                 :template ("* TODO %?             :OPGAVE:  %^G "
-                            "  SCHEDULED:  %^T"
-                            "  :PROPERTIES:"               
-                            "  :STED:  "
+                 :template ("* TODO %?                   %^G:OPGAVE:"
                             "  :EMNE:  "
                             "  :CREATED: %U"
                             "  :SRC: %a"
@@ -3598,7 +3593,7 @@ multiple times below:
                   :type entry
                   :file "~/Dropbox/org/agenda/tickler.org"
                   :headline "Husk"
-                  :template ("* TODO %?              %^G  :HUSK:"
+                  :template ("* TODO %?                :HUSK:%^G"
                             "  SCHEDULED:  %^T"
                             "  :PROPERTIES:"               
                             "  :STED:  "
@@ -3794,7 +3789,8 @@ multiple times below:
   (setq org-agenda-tags-column -100)
   (setq org-agenda-time-grid '((daily today require-timed)))
   (setq org-agenda-use-tag-inheritance t)
-  (setq org-columns-default-format "%14SCHEDULED %Effort{:} %1PRIORITY %TODO %50ITEM %TAGS")
+;;  (setq org-columns-default-format "%14SCHEDULED %Effort{:} %1PRIORITY %TODO %50ITEM %TAGS")
+  (setq org-columns-default-format "%TODO %32ITEM  %3PRIORITY %14SCHEDULED %TAGS")
   (setq org-default-notes-file "~/Dropbox/org/personal/Notes.org")
   (setq org-directory "~/Dropbox/org/")
   (setq org-habit-completed-glyph ?✓)
@@ -4892,7 +4888,7 @@ We want to give all nye (and old) emacs-lisp files a header)
   :straight t
   :bind
   ;; Magic
-  ("C-x g s" . magit-status)
+  ("C-c g" . magit-status)
   ("C-x g x" . magit-checkout)
   ("C-x g c" . magit-commit)
   ("C-x g p" . magit-push)
@@ -5099,7 +5095,7 @@ by `remember-notes-buffer-name'."
 :END:
 #+begin_src emacs-lisp
 ;; from : https://github.com/alphapapa/org-ql
-(straight-use-package-lazy '(org-ql :type git :flavor melpa :host github :repo "alphapapa/org-ql"))
+(straight-use-package '(org-ql :type git :flavor melpa :host github :repo "alphapapa/org-ql"))
 (straight-use-package-lazy '(ts :type git :flavor melpa :host github :repo "alphapapa/ts.el"))
 (straight-use-package-lazy '(s :type git :flavor melpa :files ("s.el" "s-pkg.el") :host github :repo "magnars/s.el"))
 (straight-use-package-lazy '(dash :type git :flavor melpa :files ("dash.el" "dash.texi" "dash-pkg.el") :host github :repo "magnars/dash.el"))
