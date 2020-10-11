@@ -23,15 +23,16 @@ I’ve been using emacs for many years, but never went into any configuration, j
 
 So the expierience were not really good, but I’ve now for about half a year been playing with configuring my emacs.
 
-I’m using an old iMAC 27” (Mid 2011 and High Sierra), this machine is more than 10 years by now, and can’t be upgraded, however it suits me well, so I hesitate buying a new.
+I’m using an old iMAC 27” (Mid 2011 and High Sierra), this machine is about 10 years by now, and can’t be upgraded, however it suits me well, so I hesitate buying a new.
 
 By the way, I’m a Dane from Denmark, born in 1945, and educated a Master of Science (Chemical engineering, with speciality in quantum mechanical theory and computer simulations of chemical reactions).
+I'm not expecting to get a Nobel Prize, as my work still have not reached the mainstream industry, but I believe it will some day in the future :-)
 
 ## about this file
 
 Thanks to at lot of people, I’ve had a lot of inspiration reading and trying to figure out, what they did and why they did it..
 
-Insert witty quote about imitation, theft, and plagiarism here. Many of the ideas in this file are stolen from inspired by the works of others:
+Insert a witty quote about imitation, theft, and plagiarism here. Many of the ideas in this file are ~stolen from~ inspired by the works of others:
 
 A few to mention:
 
