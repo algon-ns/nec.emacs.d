@@ -168,12 +168,7 @@ If you wonder, where You found this file....
   (message  (concat  "→ ★ " tekst "  %.2fs" )  (float-time (time-subtract (current-time) nec/nutid)))
   (setq nec/nutid (current-time)))
 
-;; Prevent the glimpse of un-styled Emacs by disabling these UI elements early.
-(setq-default inhibit-startup-screen t)
-(menu-bar-mode -1)
-(push '(menu-bar-lines . 0) default-frame-alist)
-(push '(tool-bar-lines . 0) default-frame-alist)
-(push '(vertical-scroll-bars) default-frame-alist)
+
 
 ;; Resizing the Emacs frame can be a terribly expensive part of changing the
 ;; font. By inhibiting this, we easily halve startup times with fonts that are
@@ -351,6 +346,7 @@ NAME and ARGS are as in `use-package'."
     - [[#initel-not-tested-with-emacs-version-271][init.el (not tested with emacs version< 27.1)]]
 - [[#basic-emacs][Basic emacs]]
   - [[#fundamental-constants-and-functions][Fundamental constants and functions]]
+    - [[#better-defaults][Better Defaults]]
     - [[#version-and-full-stop][Version and full stop]]
     - [[#load-custom-file][load custom file]]
     - [[#fundamentals-for-hydras][Fundamentals for Hydras]]
@@ -360,8 +356,6 @@ NAME and ARGS are as in `use-package'."
     - [[#bind-key][bind key]]
     - [[#variables-and-defaults][Variables and Defaults]]
     - [[#backup][Backup]]
-    - [[#y-instead-of-the-much-longer-yes]['y' instead of the much longer 'yes']]
-    - [[#disable-tabs-forever-and-fix-indentation-offset][Disable tabs *forever* and fix indentation offset]]
     - [[#create-missing-directory-for-find-file][create missing directory for find-file]]
     - [[#ctrl-s--isearch][ctrl-s  (isearch)]]
     - [[#making-emacs-secure][Making emacs secure]]
@@ -379,6 +373,7 @@ NAME and ARGS are as in `use-package'."
     - [[#unfill-a-paragraph][Unfill a paragraph]]
     - [[#auto-fill-mode][Auto fill mode]]
     - [[#move-to-indentation-or-beginning-of-the-line][Move to indentation or beginning of the line]]
+    - [[#tab-bar][Tab-bar]]
     - [[#increase-or-decrease-font-size-across-all-buffers][Increase or decrease font size across all buffers]]
   - [[#misc][misc]]
     - [[#crux][Crux]]
@@ -483,6 +478,97 @@ First the basics for running emacs
 :PROPERTIES:
 :CUSTOM_ID: Fundamental constants and functions
 :END:
+*** Better Defaults
+Here are what I consider better defaults as per my own experience.
+
+#+BEGIN_SRC emacs-lisp
+(setq-default
+ ad-redefinition-action 'accept                   ; Silence warnings for redefinition
+ auto-save-list-file-prefix nil                   ; Prevent tracking for auto-saves
+ cursor-in-non-selected-windows nil               ; Hide the cursor in inactive windows
+ delete-by-moving-to-trash t                      ; Delete files to trash
+;  display-line-numbers 'relative                   ; Display relative line numbers on the left
+;  display-line-numbers-current-absolute nil        ; Current line is 0
+ display-time-default-load-average nil            ; Don't display load average
+ display-time-format "%H:%M"                      ; Format the time string
+ fill-column 80                                   ; Set width for automatic line breaks
+ help-window-select t                             ; Focus new help windows when opened
+ inhibit-startup-screen t                         ; Disable start-up screen
+ initial-scratch-message ""                       ; Empty the initial *scratch* buffer
+ mouse-yank-at-point t                            ; Yank at point rather than pointer
+ mouse-wheel-progressive-speed nil                ; Disable mouse wheel acceleration
+ mouse-wheel-scroll-amount '(2 ((control) . 5))   ; Customize mouse wheel scroll steps
+ recenter-positions '(5 top bottom)               ; Set re-centering positions
+ scroll-conservatively most-positive-fixnum       ; Always scroll by one line
+ scroll-margin 4                                  ; Add a margin when scrolling vertically
+ select-enable-clipboard t                        ; Merge system's and Emacs' clipboard
+ sentence-end-double-space nil                    ; End a sentence after a dot and a space
+ show-help-function nil                           ; Disable help messages
+ show-trailing-whitespace nil                     ; Display trailing whitespaces
+;; split-height-threshold nil                       ; Disable vertical window splitting
+;; split-width-threshold nil                        ; Disable horizontal window splitting
+ tab-width 4                                      ; Set width for tabs
+ uniquify-buffer-name-style 'forward              ; Uniquify buffer names
+ window-combination-resize t                      ; Resize windows proportionally
+ x-stretch-cursor t)                              ; Stretch cursor to the glyph width
+(cd "~/")                                         ; Move to the user directory
+(delete-selection-mode 1)                         ; Replace region when inserting text
+(display-time-mode 1)                             ; Enable time in the mode-line
+(fringe-mode 0)                                   ; Disable fringes
+(fset 'yes-or-no-p 'y-or-n-p)                     ; Replace yes/no prompts with y/n
+(global-subword-mode 1)                           ; Iterate through CamelCase words
+(menu-bar-mode 0)                                 ; Disable the menu bar
+(mouse-avoidance-mode 'exile)                     ; Avoid collision of mouse with point
+(put 'downcase-region 'disabled nil)              ; Enable downcase-region
+(put 'upcase-region 'disabled nil)                ; Enable upcase-region
+(set-default-coding-systems 'utf-8)               ; Default to utf-8 encoding
+(setq-default indent-tabs-mode nil)
+(push '(menu-bar-lines . 0) default-frame-alist)
+(setq scroll-bar-mode nil)
+(push '(tool-bar-lines . 0) default-frame-alist)
+(setq tool-bar-mode nil)
+(push '(vertical-scroll-bars) default-frame-alist)
+(setq use-file-dialog t)   
+(setq use-dialog-box t)               ; only for mouse events
+(setq visible-bell t)             ;; Get rid of the beeps
+
+(defun ask-before-closing ()
+  "Prompt for confirmation for emacsclient(not daemon) like confirm-kill-emacs for running Emacs without daemon."
+    (interactive)
+    (if (y-or-n-p (format "Really exit Emacs? "))
+            (save-buffers-kill-terminal)
+          (message "Canceled frame close!")))
+
+#+END_SRC
+I only ever write/read in Latin and Greek alphabets.  So, while I
+  appreciate the fact that Emacs can natively handle other scripts, I have
+  no use for that particular feature.  Setting the default directionality
+  to what my languages use can help improve the responsiveness of Emacs in
+  some cases.
+Consistent performance is the reason to also enable global-so-long-mode,
+  built into Emacs versions >= 27, which allows the active major mode to
+  gracefully adapt to buffers with very long lines.  What “very long”
+  means is, of course, configurable: M-x find-library so-long covers
+  several customisation options, though I find that the defaults require
+  no further intervention from my part.
+The code below is a minor adaptation of the insights of Alain M. Lafon
+  in the Comprehensive guide on handling long lines in Emacs (2020-09-29).
+  #+begin_src emacs-lisp
+(use-package emacs
+  :straight t 
+  :config
+  (setq-default bidi-paragraph-direction 'left-to-right)
+  (setq bidi-inhibit-bpa t))
+
+(use-package so-long
+  :straight t  
+  :config
+  (global-so-long-mode 1))
+  
+(if nec/measure-time (nec/timer "Better default "))
+#+end_src
+
+
 *** Version and full stop
 :PROPERTIES:
 :CUSTOM_ID: Version and full stop
@@ -988,37 +1074,6 @@ If Non-nil, use dashboard, otherwise will restore previous session."
           backup-by-copying t)
 (if nec/measure-time (nec/timer "Backup   "))
 #+end_src
-*** 'y' instead of the much longer 'yes'
-:PROPERTIES:
-:CUSTOM_ID: 'y' instead of the much longer 'yes'
-:END:
-For some reason, there are different types of confirmation prompts in
-Emacs. One of them forces you to write "yes" and the other one only to press
-"y", so I disable the first type.
-#+begin_src emacs-lisp
-(fset 'yes-or-no-p 'y-or-n-p)
-(if nec/measure-time
-          (nec/timer "y/yes problem   "))
-#+end_src
-*** Disable tabs *forever* and fix indentation offset
-:PROPERTIES:
-:CUSTOM_ID: Disable tabs *forever* and fix indentation offset
-:END:
-I know, everyone has a strong opinion about it. I just hate them.
-#+begin_src emacs-lisp
-(setq-default indent-tabs-mode nil)
-#+end_src
-Related to this, it is important to fix two settings: the indentation offset
-and the tab width. Since eventually I will open a file, I want Emacs to be able
-to handle them properly. However, the defaults state that the tab width is 8
-characters and the indentation offset is 2. That is a problem over there, and
-we will use the solomonic solution: set both to 4.
-#+begin_src emacs-lisp
-(setq tab-width 4)
-;;(defvaralias 'c-basic-offset 'tab-width)
-(defvaralias 'cperl-indent-level 'tab-width)
-(if nec/measure-time (nec/timer "Ban TAB   "))
-#+end_src
 *** create missing directory for find-file
 :PROPERTIES:
 :CUSTOM_ID: create missing directory for find-file
@@ -1380,6 +1435,81 @@ you to the absolute beginning of the line.
 
 (global-set-key (kbd "C-a") 'beginning-of-line-dwim)
 #+END_SRC
+*** DISABLE Tab-bar DISABLE
+Starting with version 27.1, Emacs has built-in support for two distinct
+  concepts of “tabs”:
+
+  Work spaces that contain windows in any given layout.
+  A list of buffers presented as buttons at the top of the window.
+
+The former, represented by the tab-bar library, is best understood as
+  the equivalent of “virtual desktops”, as these are used in most desktop
+  environments or window managers.
+All settings I configure here are meant to work in accordance with this
+  abstract conception of “tabs are work spaces”.  Here are the main key
+  chords for tab-bar (they will all work properly if you keep the mode
+  active):
+
+  
+Key          Description
+C-x t b      Open a buffer in a new tab
+C-x t d      Open a directory in a new tab
+C-x t f      Open a file in a new tab
+C-x t 0      Close current tab
+C-x t 1      Close all other tabs
+C-x t 2      Open current buffer in new tab
+
+These are consistent with the standard commands for handling windows and
+  accessing buffers/files in the “other window” (the C-x 4 KEY pattern).
+  There is also a command for giving a name to the current tab, accessed
+  via C-x t r, though I find I do not use it.
+##-#+begin_src emacs-lisp
+(straight-use-package 'tab-bar
+  :config
+  (setq tab-bar-close-button-show nil)
+  (setq tab-bar-close-last-tab-choice 'tab-bar-mode-disable)
+  (setq tab-bar-close-tab-select 'recent)
+  (setq tab-bar-new-tab-choice t)
+  (setq tab-bar-new-tab-to 'right)
+  (setq tab-bar-position nil)
+  (setq tab-bar-show nil)
+  (setq tab-bar-tab-hints nil)
+  (setq tab-bar-tab-name-function 'tab-bar-tab-name-all)
+
+  (tab-bar-mode -1)
+  (tab-bar-history-mode -1)
+
+  (defun prot/tab-bar-select-tab-dwim ()
+    "Do-What-I-Mean function for getting to a `tab-bar-mode' tab.
+If no other tab exists, create one and switch to it.  If there is
+one other tab (so two in total) switch to it without further
+questions.  Else use completion to select the tab to switch to."
+    (interactive)
+    (let ((tabs (mapcar (lambda (tab)
+                          (alist-get 'name tab))
+                        (tab-bar--tabs-recent))))
+      (cond ((eq tabs nil)
+             (tab-new))
+            ((eq (length tabs) 1)
+             (tab-next))
+            (t
+             (icomplete-vertical-do ()
+               (tab-bar-switch-to-tab
+                (completing-read "Select tab: " tabs nil t)))))))
+
+  :bind (("C-x t t" . prot/tab-bar-select-tab-dwim)
+         ("s-t" . prot/tab-bar-select-tab-dwim)
+         ("<s-tab>" . tab-next)
+         ("<S-s-iso-lefttab>" . tab-previous)))
+
+;; This is only included as a reference.
+(straight-use-package 'tab-line
+  :disabled
+  :commands (tab-line-mode global-tab-line-mode)
+  :config
+  (global-tab-line-mode -1))
+##-#+end_src
+
 *** Increase or decrease font size across all buffers
 :PROPERTIES:
 :CUSTOM_ID: Increase or decrease font size across all buffers
@@ -2585,12 +2715,7 @@ Let's dim windows, and even the whole Emacs frame, when not in use.
 :END:
 No body wants to, but at time you have to...
 #+begin_src emacs-lisp
-(defun ask-before-closing ()
-  "Prompt for confirmation for emacsclient(not daemon) like confirm-kill-emacs for running Emacs without daemon."
-  (interactive)
-  (if (y-or-n-p (format "Really exit Emacs? "))
-          (save-buffers-kill-terminal)
-        (message "Canceled frame close!")))
+
 
   (global-set-key (kbd "C-x C-c") 'ask-before-closing)
 (if nec/measure-time (nec/timer "Really?  stop emacs "))

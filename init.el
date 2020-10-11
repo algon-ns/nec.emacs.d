@@ -6,9 +6,9 @@
 ;; Author: Niels Søndergaard
 ;; Created: Fri Jun 12 10:49:04 2020 (+0200)
 ;; Version: 1.0
-;; Last-Updated: Mon Oct  5 09:31:31 2020 (+0200)
+;; Last-Updated: Søn Okt 11 11:07:21 2020 (+0200)
 ;;           By: Niels Søndergaard
-;;     Update #: 23
+;;     Update #: 26
 ;; Keywords:
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -67,10 +67,12 @@
 ;;;;Effectively replace use-package with straight-use-package
 ;;; https://github.com/raxod502/straight.el/blob/develop/README.md#integration-with-use-package
 (straight-use-package 'use-package)
+
 (setq straight-use-package-by-default t)
 ;; Key Chord functionality in use-package
 (use-package use-package-chords
   :config (key-chord-mode 1))
+
 (require 'server)
 (unless (server-running-p)
   (server-start))

@@ -5,9 +5,9 @@
 ;; Author: Niels Søndergaard
 ;; Created: Wed Apr 21 10:49:04 2020 (+0200)
 ;; Version: 1.0
-;; Last-Updated: Sat Sep 19 21:02:42 2020 (+0200)
+;; Last-Updated: Søn Okt 11 09:49:03 2020 (+0200)
 ;;           By: Niels Søndergaard
-;;     Update #: 16
+;;     Update #: 18
 ;; Keywords:
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -101,13 +101,6 @@
 (defun nec/timer (tekst)
   (message  (concat  "→ ★ " tekst "  %.2fs" )  (float-time (time-subtract (current-time) nec/nutid)))
   (setq nec/nutid (current-time)))
-
-;; Prevent the glimpse of un-styled Emacs by disabling these UI elements early.
-(setq-default inhibit-startup-screen t)
-(menu-bar-mode -1)
-(push '(menu-bar-lines . 0) default-frame-alist)
-(push '(tool-bar-lines . 0) default-frame-alist)
-(push '(vertical-scroll-bars) default-frame-alist)
 
 ;; Resizing the Emacs frame can be a terribly expensive part of changing the
 ;; font. By inhibiting this, we easily halve startup times with fonts that are
