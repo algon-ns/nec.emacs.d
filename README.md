@@ -1,4 +1,4 @@
-# Emacs configuration file
+P# Emacs configuration file
 
 ![Dashboard](images/forside.jpeg)
 

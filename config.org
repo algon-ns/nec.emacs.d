@@ -351,7 +351,6 @@ NAME and ARGS are as in `use-package'."
     - [[#load-custom-file][load custom file]]
     - [[#fundamentals-for-hydras][Fundamentals for Hydras]]
     - [[#typeface-suitability-test][Typeface suitability test]]
-    - [[#read-the-users-onfiguration-file][Read the users onfiguration file]]
     - [[#diminish-modes][Diminish modes]]
     - [[#bind-key][bind key]]
     - [[#variables-and-defaults][Variables and Defaults]]
@@ -373,7 +372,7 @@ NAME and ARGS are as in `use-package'."
     - [[#unfill-a-paragraph][Unfill a paragraph]]
     - [[#auto-fill-mode][Auto fill mode]]
     - [[#move-to-indentation-or-beginning-of-the-line][Move to indentation or beginning of the line]]
-    - [[#tab-bar][Tab-bar]]
+    - [[#disable-tab-bar-disable][DISABLE Tab-bar DISABLE]]
     - [[#increase-or-decrease-font-size-across-all-buffers][Increase or decrease font size across all buffers]]
   - [[#misc][misc]]
     - [[#crux][Crux]]
@@ -439,9 +438,8 @@ NAME and ARGS are as in `use-package'."
     - [[#org-roam-server][org-roam-server]]
     - [[#org-mac-ical][org-mac-iCal]]
     - [[#org-agenda][org agenda]]
-    - [[#super-agenda][Super Agenda]]
     - [[#org-brain][org-brain]]
-    - [[#org-manage-and-header][org-manage and header]]
+    - [[#org-manage][org-manage]]
     - [[#calendar][Calendar]]
     - [[#org-pdftools][org-pdftools]]
 - [[#languages][Languages]]
@@ -540,7 +538,7 @@ Here are what I consider better defaults as per my own experience.
           (message "Canceled frame close!")))
 
 #+END_SRC
-I only ever write/read in Latin and Greek alphabets.  So, while I
+I only ever write/read in Latin alphabet.  So, while I
   appreciate the fact that Emacs can natively handle other scripts, I have
   no use for that particular feature.  Setting the default directionality
   to what my languages use can help improve the responsiveness of Emacs in
@@ -567,7 +565,6 @@ The code below is a minor adaptation of the insights of Alain M. Lafon
   
 (if nec/measure-time (nec/timer "Better default "))
 #+end_src
-
 
 *** Version and full stop
 :PROPERTIES:
@@ -724,30 +721,6 @@ abcdefghijklmnopqrstuvwxyzæøå
 αβγδεζηθικλμνξοπρστυφχψω
 #+end_example
 
-*** Read the users onfiguration file
-:PROPERTIES:
-:CUSTOM_ID: Read the users onfiguration file
-:END:
-Here we read the Users wishes for the configuration
- ** not implemented yet **
-# ! # #+begin_src emacs-lisp
-(defvar konf-file "~/.emacs.d/user_config.el"
-  "Set name for the user-configuration file, feature is under construction"
-  :group 'nec
-  :type 'string )
-
-(unless (file-exists-p konf-file)
-  (write-region "use-tabbar by NS" nil konf-file))
-;;; Load user_config file. Don't hide errors. Hide success message
-(defvar use-tabbar nil
-  "If not nil, then use tab for buffers, if nill, don't use tab"
-  :group 'nec
-  :type 'boolean)
-
-(load konf-file nil t)
-(if nec/measure-time
-          (nec/timer "Load konf-file.el   "))
-#+end_src
 *** Diminish modes
 :PROPERTIES:
 :CUSTOM_ID: Diminish modes
@@ -771,13 +744,13 @@ Here we read the Users wishes for the configuration
 ;;
 (if nec/measure-time (nec/timer "Diminish   "))
 #+end_src
-;;
+
 *** bind key
 :PROPERTIES:
 :CUSTOM_ID: bind key
 :END:
 #+begin_src emacs-lisp
-;;
+
 (straight-use-package '(bind-key :type git :flavor melpa :files ("bind-key.el" "bind-key-pkg.el") 
                          :host github :repo "jwiegley/use-package"))
 ;; Have a thick ruler between vertical windows
@@ -1644,6 +1617,9 @@ graphical environment, so the frames that =emacsclient -c= creates
 don't get the theme applied. This fixes that:
 
 #+begin_src emacs-lisp 
+(require 'server)
+(unless (server-running-p) (server-start)(server-start))
+
 (defun my/setup-color-theme ()
   (interactive)
   (when (display-graphic-p) 
@@ -1663,8 +1639,6 @@ don't get the theme applied. This fixes that:
         (my/setup-color-theme)))
 (if nec/measure-time (nec/timer "part 1 of emacs server "))
 
-(require 'server)
-(unless (server-running-p) (server-start)(server-start))
 #+END_SRC
 *** Time stamp / large file warning
 :PROPERTIES:
@@ -3829,7 +3803,7 @@ multiple times below:
           org-roam-server-label-wrap-length 20))
  
 (org-roam-server-mode nil)
-
+(if nec/measure-time (nec/timer "org roam server ini "))
   (setq org-roam-completion-system 'default)
 
   (require 'org-roam-protocol)
@@ -3843,7 +3817,7 @@ multiple times below:
     (deft-use-filter-string-for-filename t)
     (deft-default-extension "org")
     (deft-directory "~/Dropbox/org/roam/"))
-
+(if nec/measure-time (nec/timer "org protocol and deft "))
   (use-package org-roam-bibtex
     :straight t
     :diminish
@@ -3866,7 +3840,7 @@ multiple times below:
                ("C-c n i" . org-roam-insert))
  
 
-    (if nec/measure-time (nec/timer "org roam server" ))
+    (if nec/measure-time (nec/timer "org roam server finish" ))
 #+end_src
 *** org-mac-iCal
 
@@ -3925,39 +3899,10 @@ multiple times below:
   (setq org-track-ordered-property-with-tag t)
 
 (bind-keys :map org-agenda-mode-map
-                ("X" . my/org-agenda-mark-done-and-add-followup)
-                ("x" . my/org-agenda-done))
-
-(straight-use-package-lazy 'org-super-agenda) 
-(setq org-super-agenda-groups
-      '((:name "Aftaler"
-               :time-grid t)
-        (:name "Møder"
-               :time-grid t)
-        (:name "Opgaver")
-        (:name "Vigtigt"
-               :priority "A")
-        (:name "Hurtig"
-               :effort< "0:30")
-        (:priority<= "B"
-                     :scheduled future
-                     :order 1)))
-
-
-;;(straight-use-package 'org-caldav)
-;;(setq org-caldav-url "http://p33-caldav.icloud.com/published/2/MjkxNzk4MDAxMjkxNzk4MOfvDoutpX6HTnT2-woO9G7Hxkz0TWTjGxqHawdu7zmyH36jxSvvEk8YzK_Ww0jxNN59hJoHIPhgSaRHj1Rrvjg"
-;;      org-caldav-calendar-id "niels"
-;;      org-caldav-uuid-extension ".ics" 
-;;      org-caldav-files '("~/org/agenda/appointments.org")
-;;      org-caldav-debug-level 2)
-
-;;(org-caldav-sync)
-(if nec/measure-time (nec/timer "org agenda" ))
+                ("X" . org-agenda-Quit)
+                ("x" . org-agenda-exit))
 #+end_src
-*** Super Agenda
-:PROPERTIES:
-:CUSTOM_ID: Super-Agenda
-:END:
+
  [[https://github.com/alphapapa/org-super-agenda][org-super-agenda]] - Help organize your agenda items into tidy groups.
 Org agenda is an interactive tool for generating summary reports from Org data
 ---e.g., commonly, the weekly task list is generated from todo tasks.
@@ -4029,34 +3974,24 @@ under appropriate parent headings, I want entries to be shown according to their
 parent heading. Of-course, the top-most grouping, the important tasks, should be
 pulled out of their group and placed at the top.
 #+BEGIN_SRC emacs-lisp
-  (use-package org-super-agenda
-    :straight t
-    :hook (org-agenda-mode . origami-mode) ;; Easily fold groups via TAB.
-    :bind (:map org-super-agenda-header-map ("<tab>" . origami-toggle-node))
-    :config
-    (org-super-agenda-mode)
-    (setq org-super-agenda-groups
-          '((:name "Important" :priority "A")
-            (:name "Aftaler"
-                 :time-grid t)
-            (:name "Møder"
-                 :time-grid t)
-            (:name "Opgaver")
-            (:name "Vigtigt"
-                 :priority "A") 
-            ;; For everything else, nicely display their heading hierarchy list.
-            (:auto-map (lambda (e) (org-format-outline-path (org-get-outline-path)))))))
+;; (require 'origami)
+;; (use-package org-super-agenda)
+;;    :straight t 
+;;    :hook (org-agenda-mode . origami-mode) ;; Easily fold groups via TAB.
+;;    :bind (:map org-super-agenda-header-map ("<tab>" . origami-toggle-node))
+;;    :config
+;;     (org-super-agenda-mode)
+;;     (setq org-super-agenda-groups
+;;           '((:name "Vigtigt" :priority "A")
+;;             (:name "Aftaler"
+;;                  :time-grid t)
+;;             (:name "Møder"
+;;                  :time-grid t)
+;;             (:name "Opgaver")
+;;             ;; For everything else, nicely display their heading hierarchy list.
+;;             (:auto-map (lambda (e) (org-format-outline-path (org-get-outline-path)))))))
 
-  ;; MA: No noticable effect when using org-super-agenda :/
-  ;;
-  ;; Leave new line at the end of an entry.
-  ;; (setq org-blank-before-new-entry '((heading . t) (plain-list-item . t)))
 #+END_SRC
-
-+ Origami mode ---see below in [[Text Folding with Origami-mode]]---
-  works well with super-agenda. Just ~M-x origami-mode~ then ~C-c f~ to
-  enable the folding hydra.
-
 The [[https://github.com/alphapapa/org-super-agenda][org-super-agenda]] homepage shows complex configurations and pleasant
 screenshots contrasting with and without the system.
 E.g., you can change how entries in particular headings are displayed and coloured.
@@ -4094,7 +4029,7 @@ E.g., you can change how entries in particular headings are displayed and colour
   (setq org-brain-include-file-entries nil)
   (setq org-brain-file-entries-use-title nil))
 ## #+END_SRC
-*** org-manage and header
+*** org-manage
 :PROPERTIES:
 :CUSTOM_ID: org-manage and header
 :END:
