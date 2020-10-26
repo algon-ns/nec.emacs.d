@@ -1,4 +1,5 @@
-;; -*-no-byte-compile: t; -*- initial file for NEC configurtion
+;;; -*- lexical-binding: t; -*-
+;;; -*-no-byte-compile: t; -*- initial file for NEC configurtion
 ;;;init.el ---  main init file for emacs configuration
 ;;
 ;; Filename: init.el
@@ -6,9 +7,9 @@
 ;; Author: Niels Søndergaard
 ;; Created: Fri Jun 12 10:49:04 2020 (+0200)
 ;; Version: 1.0
-;; Last-Updated: Søn Okt 11 11:07:21 2020 (+0200)
+;; Last-Updated: Man Okt 26 17:47:58 2020 (+0100)
 ;;           By: Niels Søndergaard
-;;     Update #: 26
+;;     Update #: 27
 ;; Keywords:
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -57,10 +58,26 @@
 ;; =M-x straight-normalize-all=: restore all packages (remove local edits)
 ;;=M-x straight-freeze-versions= and =M-x straight-thaw-versions= are like =pip
 ;;  freeze requirements.txt= and =pip install -r requirements.txt=
+
+(setq straight-use-package-by-default t)
+(straight-use-package 'use-package)
+(use-package git) ;; ensure we can install from git sources
+
+;; The following package dependencies are used throughout the rest of the configuration.
+;; They provide contemporary APIs for working with various elisp data structures.
+(require 'cl-lib)
+(use-package f :demand t)          ;; files
+(use-package dash :demand t)       ;; lists
+(use-package ht :demand t)         ;; hash-tables
+(use-package s :demand t)          ;; strings
+(use-package a :demand t)          ;; association lists
+(use-package anaphora :demand t)   ;; anaphora
+;; (eval `(use-package ecl :demand t :straight (ecl :type git :local-repo ,(my/project-directory "ecl"))))
+
 ;;  To tell straight.el that you want to use the version of Org shipped with
 ;;  Emacs, rather than cloning the upstream repository:
 (straight-use-package 'org
-  :diminish " O")
+   :diminish " O")
 (straight-use-package 'org-plus-contrib)
 ;; need to get hold of org a soon as possible
 (setq org-export-backends '(ascii beamer html icalendar latex md odt koma-letter))

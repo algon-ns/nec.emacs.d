@@ -100,7 +100,7 @@ Karl Voit have adapted its code and write additional features.
 
 If you wonder, where You found this file....
 - Git Repo :: [[https://github.com/algon-ns/.emacs.d][github.com/algon-ns/.emacs.d]]                
-** early_init.el and init.Elisp
+** early_init.el and init.el
 *** early_init.el (require emacs version > 27.0)
 #+begin_example emacs-lisp
 (setq enable-local-variables :safe)
@@ -177,7 +177,6 @@ If you wonder, where You found this file....
 #+end_example
 *** init.el (not tested with emacs version< 27.1)
 #+begin_example emacs-lisp
-
 (defvar bootstrap-version)
 (let ((bootstrap-file
        (expand-file-name "straight/repos/straight.el/bootstrap.el" user-emacs-directory))
@@ -194,21 +193,26 @@ If you wonder, where You found this file....
 ;; edited (with Emacs) or manually invoke =straight-check-all= command, instead of
 ;; checking modifications at startup.
 (setq straight-check-for-modifications '(check-on-save find-when-checking))
-
 ;; =M-x straight-pull-all=: update all packages.
 ;; =M-x straight-normalize-all=: restore all packages (remove local edits)
 ;;=M-x straight-freeze-versions= and =M-x straight-thaw-versions= are like =pip
 ;;  freeze requirements.txt= and =pip install -r requirements.txt=
 ;;  To tell straight.el that you want to use the version of Org shipped with
 ;;  Emacs, rather than cloning the upstream repository:
-(straight-use-package 'org)
+(straight-use-package 'org
+  :diminish " O")
 (straight-use-package 'org-plus-contrib)
 ;; need to get hold of org a soon as possible
 (setq org-export-backends '(ascii beamer html icalendar latex md odt koma-letter))
 ;;;;Effectively replace use-package with straight-use-package
 ;;; https://github.com/raxod502/straight.el/blob/develop/README.md#integration-with-use-package
 (straight-use-package 'use-package)
+
 (setq straight-use-package-by-default t)
+;; Key Chord functionality in use-package
+(use-package use-package-chords
+  :config (key-chord-mode 1))
+
 (require 'server)
 (unless (server-running-p)
   (server-start))
@@ -333,24 +337,27 @@ NAME and ARGS are as in `use-package'."
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (put 'dired-find-alternate-file 'disabled nil)
+
 #+end_example
-* Contents                                                            :TOC_5:
+* Contents                                                               :TOC_5:
 :PROPERTIES:
 :CUSTOM_ID: Contents
 :END:
 - [[#preface][Preface]]
   - [[#about-me][about me]]
   - [[#about-this-file][about this file]]
-  - [[#early_initel-and-initelisp][early_init.el and init.Elisp]]
+  - [[#early_initel-and-initel][early_init.el and init.el]]
     - [[#early_initel-require-emacs-version--270][early_init.el (require emacs version > 27.0)]]
     - [[#initel-not-tested-with-emacs-version-271][init.el (not tested with emacs version< 27.1)]]
 - [[#basic-emacs][Basic emacs]]
   - [[#fundamental-constants-and-functions][Fundamental constants and functions]]
     - [[#better-defaults][Better Defaults]]
+    - [[#helpers][Helpers]]
     - [[#version-and-full-stop][Version and full stop]]
     - [[#load-custom-file][load custom file]]
     - [[#fundamentals-for-hydras][Fundamentals for Hydras]]
     - [[#typeface-suitability-test][Typeface suitability test]]
+    - [[#read-the-users-onfiguration-file][Read the users onfiguration file]]
     - [[#diminish-modes][Diminish modes]]
     - [[#bind-key][bind key]]
     - [[#variables-and-defaults][Variables and Defaults]]
@@ -372,7 +379,7 @@ NAME and ARGS are as in `use-package'."
     - [[#unfill-a-paragraph][Unfill a paragraph]]
     - [[#auto-fill-mode][Auto fill mode]]
     - [[#move-to-indentation-or-beginning-of-the-line][Move to indentation or beginning of the line]]
-    - [[#disable-tab-bar-disable][DISABLE Tab-bar DISABLE]]
+    - [[#tab-bar][Tab-bar]]
     - [[#increase-or-decrease-font-size-across-all-buffers][Increase or decrease font size across all buffers]]
   - [[#misc][misc]]
     - [[#crux][Crux]]
@@ -438,8 +445,9 @@ NAME and ARGS are as in `use-package'."
     - [[#org-roam-server][org-roam-server]]
     - [[#org-mac-ical][org-mac-iCal]]
     - [[#org-agenda][org agenda]]
+    - [[#super-agenda][Super Agenda]]
     - [[#org-brain][org-brain]]
-    - [[#org-manage][org-manage]]
+    - [[#org-manage-and-header][org-manage and header]]
     - [[#calendar][Calendar]]
     - [[#org-pdftools][org-pdftools]]
 - [[#languages][Languages]]
@@ -538,7 +546,7 @@ Here are what I consider better defaults as per my own experience.
           (message "Canceled frame close!")))
 
 #+END_SRC
-I only ever write/read in Latin alphabet.  So, while I
+I only ever write/read in Latin and Greek alphabets.  So, while I
   appreciate the fact that Emacs can natively handle other scripts, I have
   no use for that particular feature.  Setting the default directionality
   to what my languages use can help improve the responsiveness of Emacs in
@@ -566,6 +574,119 @@ The code below is a minor adaptation of the insights of Alain M. Lafon
 (if nec/measure-time (nec/timer "Better default "))
 #+end_src
 
+<<<<<<< HEAD
+*** Helpers
+These macros are conveinent shorthands.
+:function
+Make non-interactive functions out of forms or a symbol.
+e.g. (:function (message "Hello world.") e.g. (:function foobar)
+#+begin_src emacs-lisp
+(defmacro :function (&rest body)
+  (if (->> body length (< 1))
+      `(lambda () ,@body)
+    (pcase (car body)
+      ;; command symbol
+      ((and v (pred commandp))
+       `(lambda () (call-interactively (quote ,v))))
+      ;; function symbol
+      ((and v (pred symbolp))
+       `(lambda () (,v)))
+      ;; quoted command symbol
+      ((and v (pred consp) (guard (eq 'quote (car v))) (pred commandp (cadr v)))
+       `(lambda () (call-interactively ,v)))
+      ;; quoted function symbol
+      ((and v (pred consp) (guard (eq 'quote (car v))))
+       `(lambda () (,(cadr v))))
+      ;; body forms
+      (_ `(lambda () ,@body) ))))
+#+end_src
+:command
+Make interactive commands out of forms or a symbol.
+e.g. (:command (message "Hello world.")) e.g. (:command foobar)
+#+begin_src emacs-lisp
+(defmacro :command (&rest body)
+  (if (->> body length (< 1))
+      `(lambda () (interactive) ,@body)
+    (pcase (car body)
+      ;; command symbol
+      ((and v (pred commandp))
+       `(lambda () (interactive) (call-interactively (quote ,v))))
+      ;; function symbol
+      ((and v (pred symbolp))
+       `(lambda () (interactive) (,v)))
+      ;; quoted command symbol
+      ((and v (pred consp) (guard (eq 'quote (car v))) (pred commandp (cadr v)))
+       `(lambda () (interactive) (call-interactively ,v)))
+      ;; quoted function symbol
+      ((and v (pred consp) (guard (eq 'quote (car v))))
+       `(lambda () (interactive) (,(cadr v))))
+      ;; body forms
+      (_ `(lambda () (interactive) ,@body) ))))
+#+end_src
+:after
+Defer some forms until the given package is loaded.
+e.g. (:after org (message "Hello world"))
+#+begin_src emacs-lisp
+(defmacro :after (package &rest body)
+  "A simple wrapper around `with-eval-after-load'."
+  (declare (indent defun))
+  `(with-eval-after-load ',package ,@body))
+#+end_src
+:hook
+Register some forms or a symbol with a hook.
+e.g. (:hook org-mode (message "hello world") e.g. (:hook org-mode foobar)
+#+begin_src emacs-lisp
+(defmacro :hook (hook-name &rest body)
+  "A simple wrapper around `add-hook'"
+  (declare (indent defun))
+  (let* ((hook-name (format "%s-hook" (symbol-name hook-name)))
+         (hook-sym (intern hook-name))
+         (first (car body))
+         (local (eq :local first))
+         (body (if local (cdr body) body))
+         (first (car body))
+         (body (if (consp first)
+                   (if (eq (car first) 'quote)
+                       first
+                     `(lambda () ,@body))
+                 `',first)))
+    `(add-hook ',hook-sym ,body nil ,local)))
+#+end_src
+:push
+A wrapper around add-to-list.
+e.g. (:push some-list 1 2 3)
+#+begin_src emacs-lisp
+(defmacro :push (sym &rest body)
+  (declare (indent defun))
+  (if (consp body)
+      `(setq ,sym (-snoc ,sym ,@body))
+    `(add-to-list ,sym ,body)))
+#+end_src
+:bind
+Bind some forms or a symbol to a key.
+e.g. (:bind "C-m" (message "Hello world." e.g. (:bind org-mode "C-m" (message "Hello world."))
+#+begin_src emacs-lisp
+(defmacro :bind (key &rest body)
+  (declare (indent defun))
+  (pcase key
+    ;; kbd string resolving symbol
+    ((and k (pred symbolp) (pred boundp) (guard (stringp (eval key))))
+     `(global-set-key (kbd ,(eval key)) ,(eval `(:command ,@body))))
+    ;; partial mode symbol
+    ((pred symbolp)
+     (let ((mode (intern (format "%s-map" key)))
+           (key (eval (car body)))
+           (body (eval `(:command ,@(cdr body)))))
+       `(define-key ,mode (kbd ,key) ,body)))
+    ;; global binding
+    (_ `(global-set-key (kbd ,key) ,(eval `(:command ,@body))))))
+#+end_src
+#+begin_src emacs-lisp
+(if nec/measure-time (nec/timer "Helpers "))
+#+end_src
+=======
+
+>>>>>>> parent of a41d2f1... Tidy up, removed nonused functions
 *** Version and full stop
 :PROPERTIES:
 :CUSTOM_ID: Version and full stop
@@ -721,6 +842,30 @@ abcdefghijklmnopqrstuvwxyzæøå
 αβγδεζηθικλμνξοπρστυφχψω
 #+end_example
 
+*** Read the users onfiguration file
+:PROPERTIES:
+:CUSTOM_ID: Read the users onfiguration file
+:END:
+Here we read the Users wishes for the configuration
+ ** not implemented yet **
+# ! # #+begin_src emacs-lisp
+(defvar konf-file "~/.emacs.d/user_config.el"
+  "Set name for the user-configuration file, feature is under construction"
+  :group 'nec
+  :type 'string )
+
+(unless (file-exists-p konf-file)
+  (write-region "use-tabbar by NS" nil konf-file))
+;;; Load user_config file. Don't hide errors. Hide success message
+(defvar use-tabbar nil
+  "If not nil, then use tab for buffers, if nill, don't use tab"
+  :group 'nec
+  :type 'boolean)
+
+(load konf-file nil t)
+(if nec/measure-time
+          (nec/timer "Load konf-file.el   "))
+#+end_src
 *** Diminish modes
 :PROPERTIES:
 :CUSTOM_ID: Diminish modes
@@ -744,13 +889,13 @@ abcdefghijklmnopqrstuvwxyzæøå
 ;;
 (if nec/measure-time (nec/timer "Diminish   "))
 #+end_src
-
+;;
 *** bind key
 :PROPERTIES:
 :CUSTOM_ID: bind key
 :END:
 #+begin_src emacs-lisp
-
+;;
 (straight-use-package '(bind-key :type git :flavor melpa :files ("bind-key.el" "bind-key-pkg.el") 
                          :host github :repo "jwiegley/use-package"))
 ;; Have a thick ruler between vertical windows
@@ -1325,6 +1470,12 @@ Non-null optional arg FILES-ONLY means mention only file buffers."
     ;; Don't suspend frame on C-z, let it undo
     (global-set-key (kbd "C-z") 'undo)
 
+(if ( version< "27.0" emacs-version ) ; )
+    (set-fontset-font "fontset-default" 'unicode "Apple Color Emoji" nil 'prepend)
+  (warn "This Emacs version is too old to properly support emoji."))
+
+
+
     ;; set a default font
      (when (member "DejaVu Sans Mono" (font-family-list))
       (set-face-attribute 'default nil :font "DejaVu Sans Mono"))
@@ -1617,9 +1768,6 @@ graphical environment, so the frames that =emacsclient -c= creates
 don't get the theme applied. This fixes that:
 
 #+begin_src emacs-lisp 
-(require 'server)
-(unless (server-running-p) (server-start)(server-start))
-
 (defun my/setup-color-theme ()
   (interactive)
   (when (display-graphic-p) 
@@ -1639,6 +1787,8 @@ don't get the theme applied. This fixes that:
         (my/setup-color-theme)))
 (if nec/measure-time (nec/timer "part 1 of emacs server "))
 
+(require 'server)
+(unless (server-running-p) (server-start)(server-start))
 #+END_SRC
 *** Time stamp / large file warning
 :PROPERTIES:
@@ -2462,9 +2612,51 @@ ace
 :CUSTOM_ID: Rainbow
 :END:
 #+begin_src emacs-lisp :results silent
-(use-package rainbow-delimiters
-  :straight t
-  :hook (prog-mode . rainbow-delimiters-mode))
+(require 'color)
+(defun gen-col-list (length s v &optional hval)
+  (cl-flet ( (random-float () (/ (random 10000000000) 10000000000.0))
+          (mod-float (f) (- f (ffloor f))) )
+    (unless hval
+      (setq hval (random-float)))
+    (let ((golden-ratio-conjugate (/ (- (sqrt 5) 1) 2))
+          (h hval)
+          (current length)
+          (ret-list '()))
+      (while (> current 0)
+        (setq ret-list
+              (append ret-list
+                      (list (apply 'color-rgb-to-hex (color-hsl-to-rgb h s v)))))
+        (setq h (mod-float (+ h golden-ratio-conjugate)))
+        (setq current (- current 1)))
+      ret-list)))
+
+(defun set-random-rainbow-colors (s l &optional h)
+  ;; Output into message buffer in case you get a scheme you REALLY like.
+  ;; (message "set-random-rainbow-colors %s" (list s l h))
+  (interactive)
+  (rainbow-delimiters-mode t)
+
+  ;; Show mismatched braces in bright red.
+  (set-face-background 'rainbow-delimiters-unmatched-face "red")
+
+  ;; Rainbow delimiters based on golden ratio
+  (let ( (colors (gen-col-list 9 s l h))
+         (i 1) )
+    (let ( (length (length colors)) )
+      ;;(message (concat "i " (number-to-string i) " length " (number-to-string length)))
+      (while (<= i length)
+        (let ( (rainbow-var-name (concat "rainbow-delimiters-depth-" (number-to-string i) "-face"))
+               (col (nth i colors)) )
+          ;; (message (concat rainbow-var-name " => " col))
+          (set-face-foreground (intern rainbow-var-name) col))
+        (setq i (+ i 1))))))
+
+(use-package rainbow-delimiters :commands rainbow-delimiters-mode :hook ...
+  :init
+  (setq rainbow-delimiters-max-face-count 16)
+  (set-random-rainbow-colors 0.6 0.7 0.5)
+  (:hook prog-mode 'rainbow-delimiters-mode))
+
 (if nec/measure-time (nec/timer "Rainbow   "))
 #+end_src
 *** Company
@@ -3022,6 +3214,9 @@ blocks! Love this one ^_^
                        (extension "jpg" "JPG" "webp" "png" "PNG" "jpeg" "JPEG" "bmp" "BMP" "TIFF" "tiff" "gif" "GIF"))))))
   ;;(setcar (cdr (assq 'dired-filter-mode minor-mode-alist)) " ")
 
+(straight-use-package 'dired-git)
+;;(add-hook 'dired-mode-hook 'dired-git-mode)
+
   (straight-use-package 'dired-rainbow)
     (use-package dired-rainbow
       :after dired
@@ -3205,7 +3400,15 @@ Might cause performance issues; http://orgmode.org/manual/Clean-view.html
   (setq org-list-demote-modify-bullet (quote (("+" . "-")
                                               ("*" . "-")
                                               ("1." . "-")
-                                              ("1)" . "-"))))
+                                              ("1)" . "-")
+                                              ("A)" . "-")
+                                              ("B)" . "-")
+                                              ("a)" . "-")
+                                              ("b)" . "-")
+                                              ("A." . "-")
+                                              ("B." . "-")
+                                              ("a." . "-")
+                                              ("b." . "-"))))
 ;;  (setq split-width-threshold 9999);; Minimum width for splitting windows sensibly.
 
   (setq require-final-newline nil)
@@ -3320,6 +3523,9 @@ Disable property inheritance (in order to seed up)
                                   (setq show-paren-mode nil))))
       :config
       ;; To speed up startup, don't put to init section
+      (require 'org-element)
+      (require 'org-compat)
+      (require 'org-checklist)
       (require 'org-capture)
       (require 'org-agenda)
       (setq org-directory "~/Dropbox/org/"
@@ -3803,7 +4009,7 @@ multiple times below:
           org-roam-server-label-wrap-length 20))
  
 (org-roam-server-mode nil)
-(if nec/measure-time (nec/timer "org roam server ini "))
+
   (setq org-roam-completion-system 'default)
 
   (require 'org-roam-protocol)
@@ -3817,7 +4023,7 @@ multiple times below:
     (deft-use-filter-string-for-filename t)
     (deft-default-extension "org")
     (deft-directory "~/Dropbox/org/roam/"))
-(if nec/measure-time (nec/timer "org protocol and deft "))
+
   (use-package org-roam-bibtex
     :straight t
     :diminish
@@ -3840,7 +4046,7 @@ multiple times below:
                ("C-c n i" . org-roam-insert))
  
 
-    (if nec/measure-time (nec/timer "org roam server finish" ))
+    (if nec/measure-time (nec/timer "org roam server" ))
 #+end_src
 *** org-mac-iCal
 
@@ -3899,10 +4105,39 @@ multiple times below:
   (setq org-track-ordered-property-with-tag t)
 
 (bind-keys :map org-agenda-mode-map
-                ("X" . org-agenda-Quit)
-                ("x" . org-agenda-exit))
-#+end_src
+                ("X" . my/org-agenda-mark-done-and-add-followup)
+                ("x" . my/org-agenda-done))
 
+(straight-use-package-lazy 'org-super-agenda) 
+(setq org-super-agenda-groups
+      '((:name "Aftaler"
+               :time-grid t)
+        (:name "Møder"
+               :time-grid t)
+        (:name "Opgaver")
+        (:name "Vigtigt"
+               :priority "A")
+        (:name "Hurtig"
+               :effort< "0:30")
+        (:priority<= "B"
+                     :scheduled future
+                     :order 1)))
+
+
+;;(straight-use-package 'org-caldav)
+;;(setq org-caldav-url "http://p33-caldav.icloud.com/published/2/MjkxNzk4MDAxMjkxNzk4MOfvDoutpX6HTnT2-woO9G7Hxkz0TWTjGxqHawdu7zmyH36jxSvvEk8YzK_Ww0jxNN59hJoHIPhgSaRHj1Rrvjg"
+;;      org-caldav-calendar-id "niels"
+;;      org-caldav-uuid-extension ".ics" 
+;;      org-caldav-files '("~/org/agenda/appointments.org")
+;;      org-caldav-debug-level 2)
+
+;;(org-caldav-sync)
+(if nec/measure-time (nec/timer "org agenda" ))
+#+end_src
+*** Super Agenda
+:PROPERTIES:
+:CUSTOM_ID: Super-Agenda
+:END:
  [[https://github.com/alphapapa/org-super-agenda][org-super-agenda]] - Help organize your agenda items into tidy groups.
 Org agenda is an interactive tool for generating summary reports from Org data
 ---e.g., commonly, the weekly task list is generated from todo tasks.
@@ -3974,24 +4209,55 @@ under appropriate parent headings, I want entries to be shown according to their
 parent heading. Of-course, the top-most grouping, the important tasks, should be
 pulled out of their group and placed at the top.
 #+BEGIN_SRC emacs-lisp
-;; (require 'origami)
-;; (use-package org-super-agenda)
-;;    :straight t 
+<<<<<<< HEAD
+
+ (straight-use-package 'origami)
+ (use-package org-super-agenda
+    :straight t 
 ;;    :hook (org-agenda-mode . origami-mode) ;; Easily fold groups via TAB.
 ;;    :bind (:map org-super-agenda-header-map ("<tab>" . origami-toggle-node))
-;;    :config
-;;     (org-super-agenda-mode)
-;;     (setq org-super-agenda-groups
-;;           '((:name "Vigtigt" :priority "A")
-;;             (:name "Aftaler"
-;;                  :time-grid t)
-;;             (:name "Møder"
-;;                  :time-grid t)
-;;             (:name "Opgaver")
-;;             ;; For everything else, nicely display their heading hierarchy list.
-;;             (:auto-map (lambda (e) (org-format-outline-path (org-get-outline-path)))))))
+    :config
+     (org-super-agenda-mode)
+     (setq org-super-agenda-groups
+           '((:name "Vigtigt" :priority "A")
+             (:name "Aftaler"
+                  :time-grid t)
+             (:name "Møder"
+                  :time-grid t)
+             (:name "Opgaver")
+             ;; For everything else, nicely display their heading hierarchy list.
+             (:auto-map (lambda (e) (org-format-outline-path (org-get-outline-path)))))))
 
+=======
+  (use-package org-super-agenda
+    :straight t
+    :hook (org-agenda-mode . origami-mode) ;; Easily fold groups via TAB.
+    :bind (:map org-super-agenda-header-map ("<tab>" . origami-toggle-node))
+    :config
+    (org-super-agenda-mode)
+    (setq org-super-agenda-groups
+          '((:name "Important" :priority "A")
+            (:name "Aftaler"
+                 :time-grid t)
+            (:name "Møder"
+                 :time-grid t)
+            (:name "Opgaver")
+            (:name "Vigtigt"
+                 :priority "A") 
+            ;; For everything else, nicely display their heading hierarchy list.
+            (:auto-map (lambda (e) (org-format-outline-path (org-get-outline-path)))))))
+
+  ;; MA: No noticable effect when using org-super-agenda :/
+  ;;
+  ;; Leave new line at the end of an entry.
+  ;; (setq org-blank-before-new-entry '((heading . t) (plain-list-item . t)))
+>>>>>>> parent of a41d2f1... Tidy up, removed nonused functions
 #+END_SRC
+
++ Origami mode ---see below in [[Text Folding with Origami-mode]]---
+  works well with super-agenda. Just ~M-x origami-mode~ then ~C-c f~ to
+  enable the folding hydra.
+
 The [[https://github.com/alphapapa/org-super-agenda][org-super-agenda]] homepage shows complex configurations and pleasant
 screenshots contrasting with and without the system.
 E.g., you can change how entries in particular headings are displayed and coloured.
@@ -4029,7 +4295,7 @@ E.g., you can change how entries in particular headings are displayed and colour
   (setq org-brain-include-file-entries nil)
   (setq org-brain-file-entries-use-title nil))
 ## #+END_SRC
-*** org-manage
+*** org-manage and header
 :PROPERTIES:
 :CUSTOM_ID: org-manage and header
 :END:
