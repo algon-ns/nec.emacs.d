@@ -379,7 +379,7 @@ NAME and ARGS are as in `use-package'."
     - [[#unfill-a-paragraph][Unfill a paragraph]]
     - [[#auto-fill-mode][Auto fill mode]]
     - [[#move-to-indentation-or-beginning-of-the-line][Move to indentation or beginning of the line]]
-    - [[#tab-bar][Tab-bar]]
+    - [[#disable-tab-bar-disable][DISABLE Tab-bar DISABLE]]
     - [[#increase-or-decrease-font-size-across-all-buffers][Increase or decrease font size across all buffers]]
   - [[#misc][misc]]
     - [[#crux][Crux]]
@@ -684,9 +684,6 @@ e.g. (:bind "C-m" (message "Hello world." e.g. (:bind org-mode "C-m" (message "H
 #+begin_src emacs-lisp
 (if nec/measure-time (nec/timer "Helpers "))
 #+end_src
-=======
-
->>>>>>> parent of a41d2f1... Tidy up, removed nonused functions
 *** Version and full stop
 :PROPERTIES:
 :CUSTOM_ID: Version and full stop
@@ -4209,8 +4206,6 @@ under appropriate parent headings, I want entries to be shown according to their
 parent heading. Of-course, the top-most grouping, the important tasks, should be
 pulled out of their group and placed at the top.
 #+BEGIN_SRC emacs-lisp
-<<<<<<< HEAD
-
  (straight-use-package 'origami)
  (use-package org-super-agenda
     :straight t 
@@ -4228,7 +4223,6 @@ pulled out of their group and placed at the top.
              ;; For everything else, nicely display their heading hierarchy list.
              (:auto-map (lambda (e) (org-format-outline-path (org-get-outline-path)))))))
 
-=======
   (use-package org-super-agenda
     :straight t
     :hook (org-agenda-mode . origami-mode) ;; Easily fold groups via TAB.
@@ -4251,7 +4245,6 @@ pulled out of their group and placed at the top.
   ;;
   ;; Leave new line at the end of an entry.
   ;; (setq org-blank-before-new-entry '((heading . t) (plain-list-item . t)))
->>>>>>> parent of a41d2f1... Tidy up, removed nonused functions
 #+END_SRC
 
 + Origami mode ---see below in [[Text Folding with Origami-mode]]---

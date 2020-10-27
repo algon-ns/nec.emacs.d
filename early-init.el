@@ -5,9 +5,9 @@
 ;; Author: Niels Søndergaard
 ;; Created: Wed Apr 21 10:49:04 2020 (+0200)
 ;; Version: 1.0
-;; Last-Updated: Søn Okt 11 09:49:03 2020 (+0200)
+;; Last-Updated: Tir Okt 27 21:41:17 2020 (+0100)
 ;;           By: Niels Søndergaard
-;;     Update #: 18
+;;     Update #: 19
 ;; Keywords:
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -87,7 +87,8 @@
 (cd my-user-emacs-directory)
 (setq default-directory my-user-emacs-directory)
 (setq user-emacs-directory my-user-emacs-directory)
-
+(add-to-list 'load-path              "~/.emacs.d/themes")
+(add-to-list 'custom-theme-load-path "/.emacs.d/themes")
 (defvar my-init-el-start-time (current-time) "Time when init.el was started")
 ;; from http://ergoemacs.org/emacs/elisp_datetime.html
 (setq my-config-el-start-time-iso (concat
