@@ -2973,6 +2973,9 @@ dark themes, and its modified powerline setup.
   ;; CHANGE THE THEME HERE!
 (straight-use-package '(moe-theme-auto-switch :type git :flavor melpa :host github :repo "kuanyui/moe-theme"))
 (straight-use-package '(powerline-moe-theme :type git :flavor melpa :host github :repo "kuanyui/moe-theme"))
+(straight-use-package '(solarized-theme :type git :flavor melpa :host github :repo "bbatsov/solarized-emacs"))
+(straight-use-package '(color-theme-sanityinc-tomorrow :type git :flavor melpa :host github :repo "purcell/color-theme-sanityinc-tomorrow"))
+
 
 (load-theme 'afternoon t)
 
@@ -5542,8 +5545,72 @@ file to store the subscriptions (which is darn fine for me).
   :straight t
   :after elfeed
   :config
-  (elfeed-org)
   (setq rmh-elfeed-org-files (list "~/Dropbox/org/elfeed/elfeed.org")))
+(elfeed-org)
+(defun concatenate-authors (authors-list)
+  "Given AUTHORS-LIST, list of plists; return string of all authors
+concatenated."
+  (mapconcat
+   (lambda (author) (plist-get author :name))
+   authors-list ", "))
+(defun my-search-print-fn (entry)
+  "Print ENTRY to the buffer."
+  (let* ((date (elfeed-search-format-date (elfeed-entry-date entry)))
+	 (title (or (elfeed-meta entry :title)
+		    (elfeed-entry-title entry) ""))
+	 (title-faces (elfeed-search--faces (elfeed-entry-tags entry)))
+	 (feed (elfeed-entry-feed entry))
+	 (feed-title
+	  (when feed
+	    (or (elfeed-meta feed :title) (elfeed-feed-title feed))))
+	 (entry-authors (concatenate-authors
+			 (elfeed-meta entry :authors)))
+	 (tags (mapcar #'symbol-name (elfeed-entry-tags entry)))
+	 (tags-str (mapconcat
+		    (lambda (s) (propertize s 'face
+					    'elfeed-search-tag-face))
+		    tags ","))
+	 (title-width (- (window-width) 10
+			 elfeed-search-trailing-width))
+	 (title-column (elfeed-format-column
+			title (elfeed-clamp
+			       elfeed-search-title-min-width
+			       title-width
+			       elfeed-search-title-max-width)
+			:left))
+	 (authors-width 135)
+	 (authors-column (elfeed-format-column
+			entry-authors (elfeed-clamp
+			       elfeed-search-title-min-width
+			       authors-width
+			       131)
+			:left)))
+
+    (insert (propertize date 'face 'elfeed-search-date-face) " ")
+
+    (insert (propertize title-column
+			'face title-faces 'kbd-help title) " ")
+
+    (insert (propertize authors-column
+			'face 'elfeed-search-date-face
+			'kbd-help entry-authors) " ")
+
+    ;; (when feed-title
+    ;;   (insert (propertize entry-authors
+    ;; 'face 'elfeed-search-feed-face) " "))
+
+    (when entry-authors
+      (insert (propertize feed-title
+			  'face 'elfeed-search-feed-face) " "))
+
+    ;; (when tags
+    ;;   (insert "(" tags-str ")"))
+
+    )
+  )
+(setq elfeed-search-print-entry-function #'my-search-print-fn)
+
+
 
 (use-package elfeed-goodies
   :straight t
