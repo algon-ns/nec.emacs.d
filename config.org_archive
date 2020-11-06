@@ -1,0 +1,76 @@
+
+Archived entries from file /Users/niels/.emacs.d/config.org
+
+
+* org-roam
+:PROPERTIES:
+:ARCHIVE_TIME: 2020-10-31 Lør 23:26
+:ARCHIVE_FILE: ~/.emacs.d/config.org
+:ARCHIVE_OLPATH: org and friends
+:ARCHIVE_CATEGORY: Emacs configuratione files
+:END:
+#+begin_src emacs-lisp
+(use-package org-roam
+  :straight t
+  ;; :ensure-system-package
+  ;; ((sqlite3)
+  ;;  (graphviz))
+  :commands (org-roam-mode)
+  :bind
+  (:map org-roam-mode-map
+   (("C-c n l" . org-roam)
+    ("C-c n f" . org-roam-find-file)
+    ("C-c n g" . org-roam-graph-show))
+   :map org-mode-map
+   (("C-c n i" . org-roam-insert))
+   (("C-c n I" . org-roam-insert-immediate)))
+  :config
+  (setq org-roam-directory "~/Dropbox/org/roam/")
+  (setq org-roam-index-file "Index.org")
+  (setq org-roam-graph-node-extra-config '(("shape" . "ellipse")
+					 ("style" . "rounded,filled")
+					 ("fillcolor" . "#EFEFFF")
+					 ("color" . "#DEDEFF")
+					 ("fontcolor" . "#111111")))
+  (setq org-roam-graph-viewer nil)
+ 
+(defun my-find-file-hook ()
+  (when (and (string= major-mode "nxml-mode")
+             (save-excursion
+               (and (re-search-forward "<[a-z]" 1024 t)
+                    (progn (backward-char)
+                           (looking-at "svg[\n >]")))))
+    (global-set-key "\C-c\C-c" 'image-mode)))
+(add-hook 'find-file-hook 'my-find-file-hook) 
+
+(setq org-roam-capture-templates (list `("d" "default" plain #'org-roam--capture-get-point
+					   "%?"
+					   :file-name "%<%Y%m%d%H%M%S>-${slug}"
+					   :head ,(concat "#+title: ${title}\n"
+						   "#+author: Niels Søndergaard\n"
+						   "#+date: <%<%Y-%m-%d>>\n"
+                                             " :PROPPORTIES: \n"
+                                             " :ID:   \nn"
+                                             " :END: \n" )
+					   :unnarrowed t))))
+
+(use-package org-roam-protocol
+  :straight (:type built-in)
+  :after org-roam)
+
+(use-package org-roam-server
+  :straight t
+  :commands (org-roam-server-mode)
+  :config
+  (setq org-roam-server-host "0.0.0.0"
+	org-roam-server-port 8082
+	org-roam-server-export-inline-images t
+	org-roam-server-authenticate nil
+	org-roam-server-network-poll t
+	org-roam-server-network-arrows nil
+	org-roam-server-network-label-truncate t
+	org-roam-server-network-label-truncate-length 60
+	org-roam-server-network-label-wrap-length 20))
+
+#+end_src
+

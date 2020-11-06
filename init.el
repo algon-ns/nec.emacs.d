@@ -7,19 +7,16 @@
 ;; Author: Niels Søndergaard
 ;; Created: Fri Jun 12 10:49:04 2020 (+0200)
 ;; Version: 1.0
-;; Last-Updated: Man Okt 26 17:47:58 2020 (+0100)
+;; Last-Updated: Fre Nov  6 13:02:09 2020 (+0100)
 ;;           By: Niels Søndergaard
-;;     Update #: 27
+;;     Update #: 6
 ;; Keywords:
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;
 ;;; Commentary:
 ;;
-;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;
 ;; This program is free software: you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License as published by
 ;; the Free Software Foundation, either version 3 of the License, or (at
@@ -66,28 +63,36 @@
 ;; The following package dependencies are used throughout the rest of the configuration.
 ;; They provide contemporary APIs for working with various elisp data structures.
 (require 'cl-lib)
-(use-package f :demand t)          ;; files
-(use-package dash :demand t)       ;; lists
-(use-package ht :demand t)         ;; hash-tables
-(use-package s :demand t)          ;; strings
-(use-package a :demand t)          ;; association lists
-(use-package anaphora :demand t)   ;; anaphora
-;; (eval `(use-package ecl :demand t :straight (ecl :type git :local-repo ,(my/project-directory "ecl"))))
+;; Summary: A modern list library for Emacs
+;; Homepage: https://elpa.gnu.org/packages/dash.html
+(straight-use-package '(dash :type git :flavor melpa :files ("dash.el" "dash.texi" "dash-pkg.el") :host github :repo "magnars/dash.el"))   
+;; Summary: Modern API for working with files and directories
+;; Requires: s-1.7.0, dash-2.2.0
+;; Homepage: http://github.com/rejeep/f.el
+(straight-use-package '(f :type git :flavor melpa :files ("f.el" "f-pkg.el") :host github :repo "rejeep/f.el"))          ;; files
+       ;; lists
+(use-package ht
+   :straight t)           ;; hash-tables
+(use-package s
+   :straight t)           ;; strings
+(straight-use-package '(emacsql-sqlite3 :type git :flavor melpa :host github :repo "cireu/emacsql-sqlite3"))
+(use-package a
+   :straight t)           ;; association lists
+;; Anaphoric expressions implicitly create one or more temporary
+;; variables which can be referred to during the expression.  This
+;; technique can improve clarity in certain cases.  It also enables
+;; recursion for anonymous functions.
+;; (use-package anaphora
+;;    :straight t)           ;; anaphora
 
-;;  To tell straight.el that you want to use the version of Org shipped with
-;;  Emacs, rather than cloning the upstream repository:
-(straight-use-package 'org
+(straight-use-package '(org :type git :repo "https://code.orgmode.org/bzg/org-mode.git" :local-repo "org")
    :diminish " O")
-(straight-use-package 'org-plus-contrib)
+(straight-use-package '(org-contrib :type git :repo "https://code.orgmode.org/bzg/org-mode.git" :local-repo "org" :files (:defaults "contrib/lisp/*.el")))
 ;; need to get hold of org a soon as possible
 (setq org-export-backends '(ascii beamer html icalendar latex md odt koma-letter))
-;;;;Effectively replace use-package with straight-use-package
-;;; https://github.com/raxod502/straight.el/blob/develop/README.md#integration-with-use-package
-(straight-use-package 'use-package)
-
-(setq straight-use-package-by-default t)
 ;; Key Chord functionality in use-package
 (use-package use-package-chords
+  :straight t
   :config (key-chord-mode 1))
 
 (require 'server)
@@ -115,16 +120,6 @@ NAME and ARGS are as in `use-package'."
   (defalias 'gsetq-local #'general-setq-local)
   (defalias 'gsetq-default #'general-setq-default))
 
-;;(straight-use-package 'gcmh)
-;;(use-package gcmh
-;;  :straight t
-;;  :init
-;;  (setq gcmh-verbose           nil
-;;      gcmh-lows-cons-threshold #x800000
-;;      gcmh-high-cons-threshold #x1600000
-;;      gcmh-idle-delay          3600)
-;;  :config
-;;  (gcmh-mode))
 (setq garbage-collection-messages nil)
 ;;
 (defvar current-date-time-format "%a %b %d %Y-%m-%dT%H:%M:%S "
@@ -142,7 +137,6 @@ NAME and ARGS are as in `use-package'."
 ;;; so package-list-packages includes them
 (require 'package)
 (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/"))
-
 ;;; get and untangle the config.org file
 (defun my-tangle-config-org ()
   "This function will write all source blocks from =config.org= into =config.el= that are ...

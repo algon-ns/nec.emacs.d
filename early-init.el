@@ -5,19 +5,16 @@
 ;; Author: Niels Søndergaard
 ;; Created: Wed Apr 21 10:49:04 2020 (+0200)
 ;; Version: 1.0
-;; Last-Updated: Tir Okt 27 21:41:17 2020 (+0100)
+;; Last-Updated: Tor Nov  5 10:23:15 2020 (+0100)
 ;;           By: Niels Søndergaard
-;;     Update #: 19
+;;     Update #: 20
 ;; Keywords:
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;
 ;;; Commentary:
 ;;
-;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;
 ;; This program is free software: you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License as published by
 ;; the Free Software Foundation, either version 3 of the License, or (at
@@ -30,9 +27,7 @@
 ;;
 ;; You should have received a copy of the GNU General Public License
 ;; along with GNU Emacs.  If not, see <https://www.gnu.org/licenses/>.
-;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;
 ;;; Code:
 ;; Meausure time will take for the entire startup appr. 1 second,
 ;;
@@ -85,8 +80,6 @@
 (setq user-emacs-directory my-user-emacs-directory)
 ;; goto my base
 (cd my-user-emacs-directory)
-(setq default-directory my-user-emacs-directory)
-(setq user-emacs-directory my-user-emacs-directory)
 (add-to-list 'load-path              "~/.emacs.d/themes")
 (add-to-list 'custom-theme-load-path "/.emacs.d/themes")
 (defvar my-init-el-start-time (current-time) "Time when init.el was started")
@@ -102,7 +95,6 @@
 (defun nec/timer (tekst)
   (message  (concat  "→ ★ " tekst "  %.2fs" )  (float-time (time-subtract (current-time) nec/nutid)))
   (setq nec/nutid (current-time)))
-
 ;; Resizing the Emacs frame can be a terribly expensive part of changing the
 ;; font. By inhibiting this, we easily halve startup times with fonts that are
 ;; larger than the system default.
