@@ -358,6 +358,7 @@ NAME and ARGS are as in `use-package'."
     - [[#fundamentals-for-hydras][Fundamentals for Hydras]]
     - [[#typeface-suitability-test][Typeface suitability test]]
     - [[#diminish-modes][Diminish modes]]
+    - [[#free-keys][Free Keys]]
     - [[#bind-key][bind key]]
     - [[#variables-and-defaults][Variables and Defaults]]
     - [[#setting-my-favorite-theme][Setting my favorite theme]]
@@ -405,7 +406,7 @@ NAME and ARGS are as in `use-package'."
     - [[#ac-jump][AC Jump]]
     - [[#term][term]]
     - [[#all-the-icons][all-the-icons]]
-    - [[#all-the-icons-1][All-the-icons]]
+    - [[#ivy][Ivy]]
     - [[#helm][Helm]]
     - [[#yasnippet][Yasnippet]]
     - [[#ido][IDO]]
@@ -422,7 +423,8 @@ NAME and ARGS are as in `use-package'."
     - [[#auto-super-save][Auto Super Save]]
     - [[#keys][Keys]]
   - [[#user-interface][User interface]]
-    - [[#never-loose-the-cursorbeacon-mode][Never loose the cursorBeacon Mode]]
+    - [[#never-loose-the-cursor][Never loose the cursor]]
+    - [[#beaconmode][BeaconMode]]
     - [[#dimming-unused-windows][Dimming Unused Windows]]
     - [[#ask-before-killing-emacs][Ask before killing emacs]]
     - [[#modeline][Modeline]]
@@ -455,7 +457,7 @@ NAME and ARGS are as in `use-package'."
     - [[#org-capture][org capture]]
     - [[#org-agenda][org agenda]]
     - [[#super-agenda][Super Agenda]]
-    - [[#roam][Roam]]
+    - [[#org-roam][Org Roam]]
     - [[#org-mac-ical][org-mac-iCal]]
     - [[#org-brain][org-brain]]
     - [[#org-manage][Org-manage]]
@@ -471,12 +473,13 @@ NAME and ARGS are as in `use-package'."
     - [[#template-test][template-test]]
 - [[#applications][Applications]]
     - [[#calendar][Calendar]]
-    - [[#header-for-emacs-lisp-files][Header for emacs-lisp files]]
+    - [[#header-for-new-files][Header for new files]]
     - [[#magit][Magit]]
     - [[#remember-mode][Remember mode]]
     - [[#tæl-ord][Tæl ord]]
     - [[#elgantt][elgantt]]
     - [[#gnus][gnus]]
+    - [[#elfeed][Elfeed]]
     - [[#zone][zone]]
     - [[#smog][smog]]
 - [[#the-end][The end]]
@@ -873,6 +876,13 @@ abcdefghijklmnopqrstuvwxyzæøå
 (if nec/measure-time (nec/timer "Diminish   "))
 #+end_src
 ;;
+*** Free Keys
+#+BEGIN_SRC emacs-lisp
+  (use-package free-keys
+    :straight t
+    :bind (:map help-map
+                ("C-k" . free-keys)))
+#+END_SRC
 *** bind key
 :PROPERTIES:
 :CUSTOM_ID: bind key
@@ -2326,10 +2336,12 @@ proper shell in Emacs!
 
 (if nec/measure-time (nec/timer "all the icons   "))
 #+end_src
-*** All-the-icons
+*** Ivy
 
 #+begin_src elisp
-
+(straight-usr-package '(ivy :type git :flavor melpa 
+   :files (:defaults (:exclude "swiper.el" "counsel.el" "ivy-hydra.el" "ivy-avy.el") "doc/ivy-help.org" "ivy-pkg.el") 
+   :host github :repo "abo-abo/swiper"))
  
 #+end_src
 
@@ -2365,9 +2377,11 @@ proper shell in Emacs!
 	helm-ff-skip-boring-files t)
 ;;  (helm-mode 1)
 ;;
-(straight-use-package-lazy 'helm-ag)
+(straight-use-package-lazy '(helm-bibtex :type git :flavor melpa :files ("helm-bibtex.el" "helm-bibtex-pkg.el") :host github :repo "tmalsburg/helm-bibtex"))
 ;;
-(straight-use-package-lazy 'helm-org)
+(straight-use-package-lazy '(helm-ag :type git :flavor melpa :host github :repo "emacsorphanage/helm-ag"))
+;;
+(straight-use-package-lazy '(helm-org :type git :flavor melpa :files ("helm-org.el" "helm-org-pkg.el") :host github :repo "emacs-helm/helm-org"))
 ;;
 (straight-use-package-lazy 'helm-git-grep)
 ;;
@@ -2908,12 +2922,16 @@ Put all keybindings here (with doc)
 (global-set-key (kbd "C-c l") 'org-store-link)
 (global-set-key (kbd "C-c a") 'org-agenda)
 (global-set-key (kbd "C-c c") 'org-capture)
+;; org-roam 
+(global-set-key (kbd "C-c n l")  'org-roam)
+(global-set-key (kbd "C-c n f")  'org-roam-find-file)
 (if nec/measure-time
-          (nec/timer "Global key bindings   "))
+    (nec/timer "Global key bindings   "))
 #+end_src
 
 ** User interface
-*** Never loose the cursorBeacon Mode
+*** Never loose the cursor
+*** BeaconMode
 :PROPERTIES:
 :CUSTOM_ID: Never-loose-the-cursor
 :END:
@@ -2926,8 +2944,9 @@ When we switch windows or scroll, for example, we get a wave of light near the c
 (use-package beacon
   :straight t
   :diminish
-  :config (setq beacon-color "#666600"))
-(beacon-mode 1)
+  :config (setq beacon-color "#666600")
+          (setq beacon-blink-when-focused t))
+(beacon-mode t)
 (if nec/measure-time (nec/timer "Beacon-mode "))
 #+end_src
 *** Dimming Unused Windows
@@ -4550,7 +4569,10 @@ The [[https://github.com/alphapapa/org-super-agenda][org-super-agenda]] homepage
 screenshots contrasting with and without the system.
 E.g., you can change how entries in particular headings are displayed and
 coloured.
-*** Roam
+*** Org Roam
+:PROPERTIES:
+:ID:       8466BEB6-E457-430E-8706-0E4ADF617681
+:END:
 #+BEGIN_SRC emacs-lisp
   (use-package org-roam
     :straight t
@@ -4575,15 +4597,38 @@ coloured.
                                            ("color" . "#DEDEFF")
                                            ("fontcolor" . "#111111")))
     (setq org-roam-graph-viewer nil)
-    (setq org-roam-capture-templates (list `("d" "default" plain #'org-roam--capture-get-point
-                                             "%?"
-                                             :file-name "%<%Y%m%d%H%M%S>-${slug}"
-                                             :head ,(concat "#+title: ${title}\n"
+    (add-hook 'after-init-hook 'org-mode-roam)
+    (setq org-roam-capture-templates (list `(("d" "default" plain #'org-roam--capture-get-point
+                                              "%?"
+                                               :file-name "%<%Y%m%d%H%M%S>-${slug}"
+                                               :head ,(concat "#+title: ${title}\n"
                                                      "#+author: Niels Søndergaard\n"
-                                                     "#+date: <%<%Y-%m-%d>>\n")
-                                             :unnarrowed t))))
+                                                     "#+date: <%<%Y-%m-%d>>\n"
+                                                     "#+ROAM_KEY:   \n"
+                                                     "EMNE:  \n")
+                                               :unnarrowed t))))
 
-  (use-package org-roam-protocol
+(setq org-roam-tag-sources '(prop last-directory)))
+
+  (straight-use-package '(org-ref :type git :flavor melpa :files (:defaults "org-ref.org" "org-ref.bib" "citeproc" "org-ref-pkg.el") 
+     :host github :repo "jkitchin/org-ref"))
+  (setq reftex-default-bibliography '("~/Dropbox/org/bibliography/references.bib"))
+;; see org-ref for use of these variables
+  (setq org-ref-bibliography-notes "~/Dropbox/org/bibliography/notes.org"
+      org-ref-default-bibliography '("~/Dropbox/org/bibliography/references.bib")
+      org-ref-pdf-directory "~/Dropbox/org/bibliography/bibtex-pdfs/")
+  (setq bibtex-completion-bibliography "~/Dropbox/org/bibliography/references.bib"
+      bibtex-completion-library-path "~/Dropbox/org/bibliography/bibtex-pdfs"
+      bibtex-completion-notes-path "~/Dropbox/org/bibliography/helm-bibtex-notes")
+
+;;; open pdf with system pdf viewer (works on mac)
+;;(setq bibtex-completion-pdf-open-function
+;;  (lambda (fpath)
+;;    (start-process "open" "*open*" "open" fpath)))
+;; alternative
+  (setq bibtex-completion-pdf-open-function 'org-open-file)
+ 
+(use-package org-roam-protocol
     :straight (:type built-in)
     :after org-roam)
 
@@ -4673,13 +4718,19 @@ coloured.
 *** Excellent PDF Viewer
 Let's install the [[https://github.com/politza/pdf-tools][pdf-tools]] library for viewing PDFs in Emacs.
 #+begin_src emacs-lisp
-(use-package pdf-tools
-  :straight t
-  :custom (pdf-tools-handle-upgrades nil)
-          (pdf-info-epdfinfo-program "/usr/local/bin/epdfinfo")
-  :config (pdf-tools-install))
+;; (straight-use-package '(pdf-tools :type git :flavor melpa :files ("lisp/*.el" "README" ("build" "Makefile") ("build" "server") 
+;; (:exclude "lisp/tablist.el" "lisp/tablist-filter.el") "pdf-tools-pkg.el") :host github :repo "politza/pdf-tools"))
+;; (setq pdf-info-epdfinfo-program "/usr/local/bin/epdfinfo")
+;; (pdf-tools-install)
 
-;; Now PDFs opened in Emacs are in pdfview-mode.
+;; to use pdfview with auctex
+ (setq TeX-view-program-selection '((output-pdf "PDF Tools"))
+    TeX-view-program-list '(("PDF Tools" TeX-pdf-tools-sync-view))
+    TeX-source-correlate-start-server t) ;; not sure if last line is neccessary
+
+ ;; to have the buffer refresh after compilation
+ (add-hook 'TeX-after-compilation-finished-functions
+        #'TeX-revert-document-buffer)
 (if nec/measure-time (nec/timer "PDF-Tools "))
 #+end_src
 
@@ -4753,7 +4804,7 @@ easier on the eyes. For more, see the brief [[https://www.dailymotion.com/video/
   :straight t
   :diminish " "
   :custom
-  (projectile-project-search-path (f-directories "~/projects/"))
+  (projectile-project-search-path (f-directories "~/Projects/"))
   ;; Open magit when switching project
   (projectile-switch-project-action
    (lambda ()
@@ -4769,6 +4820,7 @@ easier on the eyes. For more, see the brief [[https://www.dailymotion.com/video/
   :config
   (require 'tramp)  ; TEMP: error: "Symbol's value as variable is void tramp-methods"
   (projectile-mode))
+(if nec/measure-time (nec/timer "Projectile "))
 #+END_SRC
 *** Rust
 :PROPERTIES:
@@ -4885,7 +4937,6 @@ easier on the eyes. For more, see the brief [[https://www.dailymotion.com/video/
       ("\\section{%s}" . "\\section*{%s}")
       ("\\subsection{%s}" . "\\subsection*{%s}")
       ("\\subsubsection{%s}" . "\\subsubsection*{%s}"))
-  
   ("article"
      "\\RequirePackage{fix-cm}
       \\PassOptionsToPackage{svgnames}{xcolor}
@@ -5148,7 +5199,7 @@ easier on the eyes. For more, see the brief [[https://www.dailymotion.com/video/
   (insert "#+DATE: ")
   (insert (format-time-string "%Y-%m-%d" date))
   (insert "\n")
-  (insert "#+AUTHOR: Norman Tovey-Walsh
+  (insert "#+AUTHOR: Niels Søndergaard
 #+STARTUP: showeverything\n")
   (if (not (string-equal "" tags))
       (progn
@@ -5451,7 +5502,7 @@ Review of open action items\n\n")
 
     (if nec/measure-time (nec/timer "Calendar part 2 "))
 #+end_src
-*** Header for emacs-lisp files
+*** Header for new files
 :PROPERTIES:
 :CUSTOM_ID: Header for emacs-lisp files
 :END:
@@ -5686,12 +5737,7 @@ by `remember-notes-buffer-name'."
 :CUSTOM_ID: elgantt
 :END:
 #+begin_src emacs-lisp
-;; from : https://github.com/alphapapa/org-ql
-(straight-use-package '(org-ql :type git :flavor melpa :host github :repo "alphapapa/org-ql"))
-(straight-use-package-lazy '(ts :type git :flavor melpa :host github :repo "alphapapa/ts.el"))
-(straight-use-package-lazy '(s :type git :flavor melpa :files ("s.el" "s-pkg.el") :host github :repo "magnars/s.el"))
-(straight-use-package-lazy '(dash :type git :flavor melpa :files ("dash.el" "dash.texi" "dash-pkg.el") :host github :repo "magnars/dash.el"))
-;;;;;;
+
 (require 'elgantt)
 (setq elgantt-user-set-color-priority-counter 0)
 (elgantt-create-display-rule draw-scheduled-to-deadline
@@ -5779,6 +5825,83 @@ by `remember-notes-buffer-name'."
        "%1{%B%}"
        "%s\n"))
   (add-hook 'gnus-group-mode-hook 'gnus-topic-mode)
+#+end_src
+*** Elfeed
+This document is irregularly published and lives in different locations:
+- available on github :: https://github.com/mrvdb/emacs-config
+In an attempt to do even more in emacs, i've installed `elfeed' and imported my feeds from RSSyl
+#+begin_src emacs-lisp
+  (use-package notifications
+  :straight t)
+
+  (use-package elfeed
+    :straight t
+    :after notifications
+    :commands elfeed
+    :bind (("C-c f" . 'elfeed)
+           :map elfeed-show-mode-map
+           ("w" . 'mrb/elfeed-show-toggle-watchlater)
+           ("v" . 'mrb/elfeed-play-with-mpv)
+           :map elfeed-search-mode-map
+           ("w" . 'mrb/elfeed-search-toggle-watchlater))
+    :init
+    (setf url-queue-timeout 30
+          elfeed-db-directory "~/.emacs.d/private/.elfeed")
+
+    :config
+    (defun mrb/elfeed-search-toggle-tag(tag)
+      (let ((entries (elfeed-search-selected)))
+        (cl-loop for entry in entries do
+                 (if (elfeed-tagged-p tag entry)
+                     (elfeed-untag entry tag)
+                   (elfeed-tag entry tag)))
+        (mapc #'elfeed-search-update-entry entries)
+        (unless (use-region-p) (forward-line))))
+
+    (defun mrb/elfeed-search-togggle-watchlater()
+      (mrb/elfeed-search-toggle-tag 'watchlater))
+
+    (defun mrb/elfeed-show-toggle-tag(tag)
+      (interactive)
+      (if (elfeed-tagged-p tag elfeed-show-entry)
+          (elfeed-show-untag tag)
+        (elfeed-show-tag tag)))
+
+    (defun mrb/elfeed-show-togggle-watchlater()
+      (mrb/elfeed-show-toggle-tag 'watchlater))
+
+    ;; TODO: mrb/elfeed-enqueue-video
+    (defun mrb/elfeed-play-with-mpv ()
+      "Play elfeed link in mpv"
+      (interactive)
+      (notifications-notify
+       :title "Elfeed action"
+       :body "Playing video with MPV"
+       :app-name "Elfeed")
+
+      (start-process "elfeed-mpv" nil
+                     "umpv"
+                     (elfeed-entry-link elfeed-show-entry)))
+
+
+    ;; New entry hook allows meta information manipulation
+    ;; without directly having to change elfeed-feeds
+    (add-hook 'elfeed-new-entry-hook
+              (elfeed-make-tagger :feed-url "youtube\\.com"
+                                  :add '(video youtube))))
+                                  
+
+#+end_src
+
+Elfeed allows to interactively subscribe to a feed (defaulting to what is in the clipboard. Managing elfeed-feeds as a variable is kinda clumsy, although very flexible. There is a middle ground which fits me even better. At the cost of the bare-bone flexibilith of having the feeds directly in lisp, I'm using an orgmode file to record the feeds i want.
+
+#+begin_src emacs-lisp
+  (use-package elfeed-org
+    :straight t
+    :after elfeed
+    :init
+    (setq rmh-elfeed-org-files (list "~/Dropbox/org/elfeed/elfeed.org"))
+    (elfeed-org))
 #+end_src
 *** zone
 :PROPERTIES:

@@ -3,20 +3,6 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(battery-update-interval 15)
- '(beacon-blink-when-focused t)
- '(beacon-color "#666600")
- '(beacon-mode t)
- '(bookmark-default-file "~/.emacs.d/private/bookmarks")
- '(browse-url-text-browser "safari")
- '(calendar-intermonth-text
-   '(propertize
-     (format "%2d"
-             (car
-              (calendar-iso-from-absolute
-               (calendar-absolute-from-gregorian
-                (list month day year)))))
-     'font-lock-face 'font-lock-doc-face))
  '(comint-terminfo-terminal "xterm-256color")
  '(company-statistics-file "~/.emacs.d/private/company-statistics-cache.el")
  '(company-statistics-size 500)
@@ -33,12 +19,10 @@
  '(is-all-the-icons-installed t)
  '(mouse-wheel-progressive-speed nil)
  '(mouse-yank-at-point t)
- '(nec/keyfreq nil)
  '(nxml-bind-meta-tab-to-complete-flag nil)
  '(org-bookmark-names-plist nil)
  '(org-export-creator-string "\\tiny{Emacs 28.0.50 (Org mode 9.4)}")
  '(org-id-link-to-org-use-id t)
- '(org-journal-date-format "%A, %d %B %Y" t)
  '(org-journal-date-prefix "#+TITLE: " t)
  '(org-journal-dir "~/Dropbox/org/journal/" t)
  '(org-journal-enable-agenda-integration t t)
@@ -54,8 +38,6 @@
  '(smtpmail-smtp-server "mail.algon.dk" t)
  '(smtpmail-smtp-service 587 t)
  '(spaceline-highlight-face-func 'spaceline-highlight-face-modified t)
- '(with-editor-emacsclient-executable "/Applications/Emacs.app/Contents/MacOS/bin/emacsclient -c $1")
- '(with-editor-shell-command-use-emacsclient nil)
  '(xterm-mouse-mode t))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.

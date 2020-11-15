@@ -10,3 +10,7 @@ games
 elpa
 elpy
 org-roam.db
+.DS_Store
+emojis/.DS_Store
+lisp/gemheader.el
+config.org_archive

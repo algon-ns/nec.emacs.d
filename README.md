@@ -28,6 +28,11 @@ I’m using an old iMAC 27” (Mid 2011 and High Sierra), this machine is about 
 By the way, I’m a Dane from Denmark, born in 1945, and educated a Master of Science (Chemical engineering, with speciality in quantum mechanical theory and computer simulations of chemical reactions).
 I'm not expecting to get a Nobel Prize, as my work still have not reached the mainstream industry, but I believe it will some day in the future :-)
 
+## Required
+You need til have 2 fonts: Source Code Pro Medium and OpenDyslexic are required.
+Also You need to have a directory called "~/Projects/", and I have my orgfiles
+desvribed i the file "~/Dropbox/org/org-files".
+
 ## about this file
 
 Thanks to at lot of people, I’ve had a lot of inspiration reading and trying to figure out, what they did and why they did it..

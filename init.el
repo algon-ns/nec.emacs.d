@@ -7,9 +7,9 @@
 ;; Author: Niels Søndergaard
 ;; Created: Fri Jun 12 10:49:04 2020 (+0200)
 ;; Version: 1.0
-;; Last-Updated: Fre Nov  6 13:02:09 2020 (+0100)
+;; Last-Updated: Fre Nov 13 10:47:38 2020 (+0100)
 ;;           By: Niels Søndergaard
-;;     Update #: 6
+;;     Update #: 8
 ;; Keywords:
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -59,25 +59,22 @@
 (setq straight-use-package-by-default t)
 (straight-use-package 'use-package)
 (use-package git) ;; ensure we can install from git sources
-
+;; cask
+;; (straight-use-package '(cask :type git :flavor melpa :files ("cask.el" "cask-bootstrap.el" "cask-pkg.el") :host github :repo "cask/cask"))
+;; (cask-initialize)
 ;; The following package dependencies are used throughout the rest of the configuration.
 ;; They provide contemporary APIs for working with various elisp data structures.
 (require 'cl-lib)
 ;; Summary: A modern list library for Emacs
 ;; Homepage: https://elpa.gnu.org/packages/dash.html
-(straight-use-package '(dash :type git :flavor melpa :files ("dash.el" "dash.texi" "dash-pkg.el") :host github :repo "magnars/dash.el"))   
-;; Summary: Modern API for working with files and directories
-;; Requires: s-1.7.0, dash-2.2.0
-;; Homepage: http://github.com/rejeep/f.el
-(straight-use-package '(f :type git :flavor melpa :files ("f.el" "f-pkg.el") :host github :repo "rejeep/f.el"))          ;; files
-       ;; lists
-(use-package ht
-   :straight t)           ;; hash-tables
-(use-package s
-   :straight t)           ;; strings
+(straight-use-package '(dash :type git :flavor melpa :files ("dash.el" "dash.texi" "dash-pkg.el") :host github :repo "magnars/dash.el"))
+(straight-use-package '(f :type git :flavor melpa :files ("f.el" "f-pkg.el") :host github :repo "rejeep/f.el"))
+(straight-use-package '(ht :type git :flavor melpa :files ("ht.el" "ht-pkg.el") :host github :repo "Wilfred/ht.el"))
+(straight-use-package '(s :type git :flavor melpa :files ("s.el" "s-pkg.el") :host github :repo "magnars/s.el"))
 (straight-use-package '(emacsql-sqlite3 :type git :flavor melpa :host github :repo "cireu/emacsql-sqlite3"))
-(use-package a
-   :straight t)           ;; association lists
+(straight-use-package '(ts :type git :flavor melpa :host github :repo "alphapapa/ts.el"))
+(straight-use-package '(org-ql :type git :flavor melpa :host github :repo "alphapapa/org-ql"))
+(straight-use-package '(a :type git :flavor melpa :host github :repo "plexus/a.el"))
 ;; Anaphoric expressions implicitly create one or more temporary
 ;; variables which can be referred to during the expression.  This
 ;; technique can improve clarity in certain cases.  It also enables

@@ -11,9 +11,9 @@
 ;; Created: Tue Aug  4 17:06:46 1987
 ;; Version: 0
 ;; Package-Requires: ()
-;; Last-Updated: Fre Jun 19 23:41:30 2020 (+0200)
+;; Last-Updated: Man Nov  9 15:54:24 2020 (+0100)
 ;;           By: Niels Søndergaard
-;;     Update #: 2028
+;;     Update #: 2029
 ;; URL: https://www.emacswiki.org/emacs/download/header2.el
 ;; Doc URL: https://emacswiki.org/emacs/AutomaticFileHeaders
 ;; Keywords: tools, docs, maint, abbrev, local
@@ -242,7 +242,7 @@ Don't forget to mention your Emacs and library versions."))
   :link '(emacs-commentary-link :tag "Commentary" "header2")
   )
 
-(defcustom header-max 50000
+(defcustom header-max 5000
   "*Maximum number of chars to examine for header updating."
   :type 'integer :group 'Automatic-File-Header)
 
@@ -273,7 +273,7 @@ t means use local time with timezone; nil means use UTC."
                               header-blank
                               header-file-name
                               header-description
-                              ;;header-status
+                              header-roam
                               header-author
                               ;;header-maintainer
                               header-copyright
@@ -588,6 +588,10 @@ This is normally overwritten with each file save."
 (defsubst header-AFS ()
   "Insert a line to record SHAPE information."
   (insert (concat header-prefix-string "AFSID: $__Header$\n")))
+
+(defsubst header-roam ()
+  "Insert a line to record roam information."
+  (insert (concat header-prefix-string "#+CATEGORI: roam\n")))
 
 (defsubst header-shell ()
   "Insert a kernal shell specifier line.
