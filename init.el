@@ -7,9 +7,9 @@
 ;; Author: Niels Søndergaard
 ;; Created: Fri Jun 12 10:49:04 2020 (+0200)
 ;; Version: 1.0
-;; Last-Updated: Fre Nov 13 10:47:38 2020 (+0100)
+;; Last-Updated: Man Nov 16 16:15:07 2020 (+0100)
 ;;           By: Niels Søndergaard
-;;     Update #: 8
+;;     Update #: 10
 ;; Keywords:
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -67,6 +67,10 @@
 (require 'cl-lib)
 ;; Summary: A modern list library for Emacs
 ;; Homepage: https://elpa.gnu.org/packages/dash.html
+(straight-use-package '(org :type git :repo "https://code.orgmode.org/bzg/org-mode.git" :local-repo "org")
+   :diminish " O")
+(straight-use-package '(org-contrib :type git :repo "https://code.orgmode.org/bzg/org-mode.git" :local-repo "org" :files (:defaults "contrib/lisp/*.el")))
+;; need to get hold of org a soon as possible
 (straight-use-package '(dash :type git :flavor melpa :files ("dash.el" "dash.texi" "dash-pkg.el") :host github :repo "magnars/dash.el"))
 (straight-use-package '(f :type git :flavor melpa :files ("f.el" "f-pkg.el") :host github :repo "rejeep/f.el"))
 (straight-use-package '(ht :type git :flavor melpa :files ("ht.el" "ht-pkg.el") :host github :repo "Wilfred/ht.el"))
@@ -74,18 +78,15 @@
 (straight-use-package '(emacsql-sqlite3 :type git :flavor melpa :host github :repo "cireu/emacsql-sqlite3"))
 (straight-use-package '(ts :type git :flavor melpa :host github :repo "alphapapa/ts.el"))
 (straight-use-package '(org-ql :type git :flavor melpa :host github :repo "alphapapa/org-ql"))
+(straight-use-package '(emacsql :type git :flavor melpa :files ("emacsql.el" "emacsql-compiler.el" "emacsql-system.el" "README.md" "emacsql-pkg.el") :host github :repo "skeeto/emacsql"))
 (straight-use-package '(a :type git :flavor melpa :host github :repo "plexus/a.el"))
+(if nec/measure-time (nec/timer "Load general routines "))
 ;; Anaphoric expressions implicitly create one or more temporary
 ;; variables which can be referred to during the expression.  This
 ;; technique can improve clarity in certain cases.  It also enables
 ;; recursion for anonymous functions.
 ;; (use-package anaphora
 ;;    :straight t)           ;; anaphora
-
-(straight-use-package '(org :type git :repo "https://code.orgmode.org/bzg/org-mode.git" :local-repo "org")
-   :diminish " O")
-(straight-use-package '(org-contrib :type git :repo "https://code.orgmode.org/bzg/org-mode.git" :local-repo "org" :files (:defaults "contrib/lisp/*.el")))
-;; need to get hold of org a soon as possible
 (setq org-export-backends '(ascii beamer html icalendar latex md odt koma-letter))
 ;; Key Chord functionality in use-package
 (use-package use-package-chords

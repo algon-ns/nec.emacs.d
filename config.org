@@ -1,3 +1,4 @@
+
 #+TITLE:   Emacs configuration file
 #+AUTHOR:   Niels Søndergaard
 #+EMAIL:   niels@algon.dk
@@ -1825,10 +1826,7 @@ graphical environment, so the frames that =emacsclient -c= creates
 don't get the theme applied. This fixes that:
 
 #+begin_src emacs-lisp 
-
-
 ;;(setq server-socket-dir (format "/Users/niels/.emacs.d/private/%d" (system-name)))
-
 (add-hook 'after-make-frame-functions
         (lambda (frame)
         (select-frame frame)
@@ -4250,7 +4248,7 @@ find them a little easier to reason about than the standard form.
 
 #+BEGIN_SRC emacs-lisp
 
-(straight-use-package '(doct :type git :host github :repo "progfolio/doct"))
+(straight-use-package '(doct :type git :flavor melpa :host github :repo "progfolio/doct"))
 (eval-when-compile (require 'subr-x))
 
 (defun doct-org-roam-convert (groups)
@@ -4322,8 +4320,7 @@ multiple times below:
 #+END_SRC
 
 #+begin_src emacs-lisp
-    (straight-use-package 'seq)
-    (straight-use-package 'doct)
+;; using doct
     (setq org-capture-templates
       (doct '(("Aftale"
          :keys "a"
@@ -4337,8 +4334,7 @@ multiple times below:
                             "  :EMNE:  "
                             "  :CREATED: %U"
                             "  :SRC: %a"
-                            "  :END:"))
-                   
+                            "  :END:"))          
                ("Møde"
                   :keys "m"
                   :file "~/Dropbox/org/agenda/organizer.org"
@@ -4366,6 +4362,8 @@ multiple times below:
                  :type entry
                  :headline "Opgaver"
                  :template ("* TODO %?                   %^G:OPGAVE:"
+                            "  SCHEDULED:  %^T"
+                            "  DEADLINE:  %^T"
                             "  :EMNE:  "
                             "  :CREATED: %U"
                             "  :SRC: %a"
@@ -4543,14 +4541,10 @@ pulled out of their group and placed at the top.
     :config
     (org-super-agenda-mode)
     (setq org-super-agenda-groups
-          '((:name "Important" :priority "A")
-            (:name "Aftaler"
-                 :time-grid t)
-            (:name "Møder"
-                 :time-grid t)
-            (:name "Opgaver")
-            (:name "Vigtigt"
-                 :priority "A") 
+            '((:name "Aftaler" :time-grid t)
+            (:name "Møder"     :time-grid t) 
+            (:name "Opgaver"   :time-grid t)
+            (:name "Vigtigt"   :priority "A") 
             ;; For everything else, nicely display their heading hierarchy list.
             (:auto-map (lambda (e) (org-format-outline-path (org-get-outline-path)))))))
 
@@ -4627,10 +4621,14 @@ coloured.
 ;;    (start-process "open" "*open*" "open" fpath)))
 ;; alternative
   (setq bibtex-completion-pdf-open-function 'org-open-file)
+
+(nec/timer "start roam server")
  
 (use-package org-roam-protocol
     :straight (:type built-in)
     :after org-roam)
+
+  (add-to-list 'exec-path "/usr/bin/sqlite3")
 
   (use-package org-roam-server
     :straight t
