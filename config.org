@@ -1,4 +1,3 @@
-
 #+TITLE:   Emacs configuration file
 #+AUTHOR:   Niels Søndergaard
 #+EMAIL:   niels@algon.dk
@@ -390,7 +389,6 @@ NAME and ARGS are as in `use-package'."
     - [[#disk-usage][Disk Usage]]
     - [[#hostname][hostname]]
     - [[#path-and-env-from-os][PATH and env (from OS)]]
-    - [[#server-mode][server Mode]]
     - [[#time-stamp--large-file-warning][Time stamp / large file warning]]
     - [[#copy-id][Copy ID]]
     - [[#list-environment][list-environment]]
@@ -450,20 +448,22 @@ NAME and ARGS are as in `use-package'."
     - [[#org-general-settings][org general settings]]
     - [[#org-bullets][org bullets]]
     - [[#org-cliplink][org-cliplink]]
-    - [[#refiling-setup][Refiling Setup]]
-    - [[#org-contact][org contact]]
+    - [[#refiling-setup][refiling Setup]]
     - [[#org-journal][org-journal]]
     - [[#doct][doct]]
     - [[#org-context][org-context]]
     - [[#org-capture][org capture]]
     - [[#org-agenda][org agenda]]
-    - [[#super-agenda][Super Agenda]]
-    - [[#org-roam][Org Roam]]
-    - [[#org-mac-ical][org-mac-iCal]]
-    - [[#org-brain][org-brain]]
-    - [[#org-manage][Org-manage]]
-    - [[#excellent-pdf-viewer][Excellent PDF Viewer]]
+    - [[#org-super-agenda][org super agenda]]
+    - [[#org-contact][org contact]]
+    - [[#org-protocol][org-protocol]]
+    - [[#org-roam][org-roam]]
+    - [[#org-mac-ical][org mac iCal]]
+    - [[#org-brain][org brain]]
+    - [[#org-manage][org manage]]
+    - [[#excellent-pdf-viewer][excellent PDF Viewer]]
 - [[#languages][Languages]]
+    - [[#start-server][start server]]
     - [[#python][Python]]
     - [[#projectile][Projectile]]
     - [[#rust][Rust]]
@@ -514,7 +514,6 @@ Here are what I consider better defaults as per my own experience.
  fill-column 80                                   ; Set width for automatic line breaks
  help-window-select t                             ; Focus new help windows when opened
  inhibit-startup-screen t                         ; Disable start-up screen
- initial-scratch-message ""                       ; Empty the initial *scratch* buffer
  mouse-yank-at-point t                            ; Yank at point rather than pointer
  mouse-wheel-progressive-speed nil                ; Disable mouse wheel acceleration
  mouse-wheel-scroll-amount '(2 ((control) . 5))   ; Customize mouse wheel scroll steps
@@ -1153,9 +1152,7 @@ If Non-nil, use dashboard, otherwise will restore previous session."
     ("#+RESULTS:" . ?)    ("#+RESULTS:" . ?)
     (":LOGBOOK:" . ?▤)
     ( ":PROPERTIES:" . ?⚙)
-    ( ":END:" . ?⏏)
-
-)
+    ( ":END:" . ?⏏))
   "Alist of symbol prettifications for `org-mode'."
   :group 'nec
   :type '(alist :key-type string :value-type (choice character sexp)))
@@ -1195,6 +1192,28 @@ If Non-nil, use dashboard, otherwise will restore previous session."
       	  ((yant/str-to-glyph "♲") org-specific "\\(?:^*+ +\\)\\(\\<HOLD\\>\\)" (org-mode) 1)
       	  ((yant/str-to-glyph "☠D") org-specific "\\<DEADLINE:" (org-mode))
       	  ((yant/str-to-glyph "◴S") org-specific "\\<SCHEDULED:" (org-mode)))))
+(use-package org-pretty-tags
+  :straight t
+  :diminish org-pretty-tags-mode
+  :config
+   (setq org-pretty-tags-surrogate-strings
+         '(("Neato"    . "💡")
+           ("Blog"     . "✍")
+           ("Lyd"    . "♬")
+           ("Video"    . "📺")
+           ("Bog"     . "📚")
+           ("Løb"  . "🏃")
+           ("Spørgsmål" . "❓")
+           ("Kone"     . "💕")
+           ("Tekst"     . "💬") ; 📨 📧
+           ("Venner"  . "👪")
+           ("Mig"     . "🍂")
+           ("Penge" . "💰")
+           ("Bil"      . "🚗") ; 🚙 🚗 🚘
+           ("Haster"   . "🔥"))) ;; 📥 📤 📬
+   (org-pretty-tags-global-mode 1))
+
+
 (if nec/measure-time
           (nec/timer "Variables" ))
 
@@ -1808,34 +1827,6 @@ Specially useful for presentations, demos and other shows alike.
 
 (if nec/measure-time (nec/timer "set PATH and env "))
 #+end_src
-*** server Mode
-:PROPERTIES:
-:CUSTOM_ID: server Mode
-:END:
-Start Emacs as a server process: new files can be visited via
-=emacsclient= (instead of parallel =emacs= instances). Therefore, I
-don't have to run multiple instances (which occupies RAM storage) and
-I am able to open new files instantly.
-
-From Sacha Chua:
-=(server-start)= permits the use of =emacsclient=, =emacsclientw=, and
-=org-protocol=. I used to start a server as part of my config. Now I'm
-switching to using =emacs --daemon=, which starts a server
-automatically. Anyway, with =--daemon=, Emacs doesn't start off in a
-graphical environment, so the frames that =emacsclient -c= creates
-don't get the theme applied. This fixes that:
-
-#+begin_src emacs-lisp 
-;;(setq server-socket-dir (format "/Users/niels/.emacs.d/private/%d" (system-name)))
-(add-hook 'after-make-frame-functions
-        (lambda (frame)
-        (select-frame frame)
-        (my/setup-color-theme)))
-(if nec/measure-time (nec/timer "part 1 of emacs server "))
-
-(require 'server)
-(unless (server-running-p) (server-start)(server-start))
-#+END_SRC
 *** Time stamp / large file warning
 :PROPERTIES:
 :CUSTOM_ID: Time stamp / large file warning
@@ -2696,6 +2687,16 @@ ace
   ;; Show mismatched braces in bright red.
   (set-face-background 'rainbow-delimiters-unmatched-face "red")
 
+(use-package rainbow-delimiters 
+  :straight t
+  :commands rainbow-delimiters-mode 
+  :hook ...
+  :init
+  (setq rainbow-delimiters-max-face-count 16)
+  (set-random-rainbow-colors 0.6 0.7 0.5)
+  (:hook prog-mode 'rainbow-delimiters-mode))
+
+
   ;; Rainbow delimiters based on golden ratio
   (let ( (colors (gen-col-list 9 s l h))
          (i 1) )
@@ -2708,11 +2709,6 @@ ace
           (set-face-foreground (intern rainbow-var-name) col))
         (setq i (+ i 1))))))
 
-(use-package rainbow-delimiters :commands rainbow-delimiters-mode :hook ...
-  :init
-  (setq rainbow-delimiters-max-face-count 16)
-  (set-random-rainbow-colors 0.6 0.7 0.5)
-  (:hook prog-mode 'rainbow-delimiters-mode))
 
 (if nec/measure-time (nec/timer "Rainbow   "))
 #+end_src
@@ -2922,6 +2918,7 @@ Put all keybindings here (with doc)
 (global-set-key (kbd "C-c c") 'org-capture)
 ;; org-roam 
 (global-set-key (kbd "C-c n l")  'org-roam)
+(global-set-key (kbd "C-c n g")  'org-roam-graph)
 (global-set-key (kbd "C-c n f")  'org-roam-find-file)
 (if nec/measure-time
     (nec/timer "Global key bindings   "))
@@ -3762,7 +3759,7 @@ We want a Dashboard, which demand Page Break Line
   (dashboard-banner-logo-title "Open EMACS for a new world...")
   ;(dashboard-startup-banner "~/.emacs.d/images/garfield.png")
   ;(dashboard-startup-banner "~/.emacs.d/images/hands.png")
-  (dashboard-startup-banner "~/.emacs.d/images/ohands.png")
+  (dashboard-startup-banner "/Users/niels/.emacs.d/images/ohands.png")
   ;(dashboard-startup-banner "~/.emacs.d/images/gnu.png")
   ;(dashboard-startup-banner "~/.emacs.d/images/Verdensmaal.png")
   ;(dashboard-startup-banner "~/.emacs.d/images/ognu.png")
@@ -3849,6 +3846,9 @@ associated with org-mode by default.»
 #+END_SRC
 Might cause performance issues; http://orgmode.org/manual/Clean-view.html
 #+BEGIN_SRC emacs-lisp
+  (setq org-bookmark-names-plist nil)
+  (setq org-export-creator-string "\\tiny{Emacs 28.0.50 (Org mode 9.4)}")
+  (setq org-id-link-to-org-use-id t)
   (setq org-startup-indented t)
   (setq org-enforce-todo-dependencies t)
   (setq org-insert-heading-respect-content nil)
@@ -3993,8 +3993,8 @@ Disable property inheritance (in order to seed up)
       (require 'org-element)
       (require 'org-compat)
  ;;     (require 'org-checklist)
-      (require 'org-capture)
-      (require 'org-agenda)
+ ;;     (require 'org-capture)
+ ;;     (require 'org-agenda)
       (setq org-directory "~/Dropbox/org/"
             org-agenda-files "~/Dropbox/org/org-files"
             org-todo-keywords
@@ -4161,14 +4161,13 @@ Disable property inheritance (in order to seed up)
 #+end_src
 
 *** org-cliplink
-
 [[https://github.com/rexim/org-cliplink][org-cliplink]] inserts Org-mode links from the clipboard.
 #+NAME: package-org-cliplink)
 #+BEGIN_SRC emacs-lisp
   (straight-use-package 'org-cliplink)
 (if nec/measure-time (nec/timer "org-cliplink "))
 #+END_SRC
-*** Refiling Setup
+*** refiling Setup
 :PROPERTIES:
 :CUSTOM_ID: Refiling Task
 :ID:       8A75E393-5AE3-4D52-9A7C-29BFB81700F9
@@ -4206,20 +4205,6 @@ Disable property inheritance (in order to seed up)
 
 (setq org-refile-target-verify-function 'bh/verify-refile-target)
 (if nec/measure-time (nec/timer "Refiling "))
-#+end_src
-
-*** org contact
-:PROPERTIES:
-:CUSTOM_ID: org contact
-:END:
-The best solution to maintain your contacts. I tend to use =org-contacts.
-Be careful that to install it, this one is available with =org-plus-contrib=.
-#+begin_src emacs-lisp
-(straight-use-package '(org-agenda :type git :repo "https://code.orgmode.org/bzg/org-mode.git" :local-repo "org/lisp")) 
-;;  (straight-use-package '(org-contacts :type git 
-;;          :repo "https://github.com/tkf/org-mode/blob/master/contrib/lisp/org-contacts.el" ))
-  (setq org-contacts-files '("~/Dropbox/org/agenda/contacts.org"))
-(if nec/measure-time (nec/timer "org-contact"))
 #+end_src
 
 *** org-journal
@@ -4304,6 +4289,10 @@ Note this does validate the :org-roam plist's values or keywords."
       ;; Position point on the journal's top-level heading so that org-capture
       ;; will add the new entry as a child entry.
       (goto-char (point-min)))
+(setq org-journal-date-prefix "#+TITLE: ")
+(setq org-journal-dir "~/Dropbox/org/journal/")
+(setq org-journal-enable-agenda-integration t)
+(setq org-journal-file-format "%Y-%m-%d.org")
 #+end_src
 A shortcut for a simple heading with keyword =NEXT= which will be used
 multiple times below:
@@ -4458,7 +4447,7 @@ multiple times below:
   ;;(org-caldav-sync)
   (if nec/measure-time (nec/timer "org agenda" ))
 #+end_src
-*** Super Agenda
+*** org super agenda
 :PROPERTIES:
 :CUSTOM_ID: Super-Agenda
 :END:
@@ -4478,8 +4467,6 @@ Let's setup the basics of our agenda.
 ;; Display tags really close to their tasks.
 (setq org-agenda-tags-column -10)
 
-;; How many days ahead the default agenda view should look
-(setq org-agenda-span 'fortnight)
 ;; May be any number; the larger the slower it takes to generate the view.
 ;; One day is thus the fastest ^_^
 
@@ -4518,14 +4505,6 @@ The agenda view, like nearly all Emacs entities, is interactive:
 # ;; Easy way to capture tasks when in agenda view.
 # (define-key org-agenda-mode-map "c" #'org-capture)
 
-The agenda view –--even in the 7-days-at-a-time view--– will always begin on the
-current day.  This is important, since while using org-mode as a day planner,
-you never want to think of days gone past. That’s something you do in other
-ways, such as when reviewing completed tasks.
-#+begin_src emacs-lisp
-(setq org-agenda-start-on-weekday nil)
-#+end_src
-
 Instead of having the day's tasks all in one field, org-super-agenda allows us
 to use predicates to group entries together; e.g., by considering an entry's
 =:tags:= or its priority level. Since I'm placing all my tasks in a single file,
@@ -4533,7 +4512,7 @@ under appropriate parent headings, I want entries to be shown according to their
 parent heading. Of-course, the top-most grouping, the important tasks, should be
 pulled out of their group and placed at the top.
 #+BEGIN_SRC emacs-lisp
- (straight-use-package 'origami)
+ (straight-use-package '(origami :type git :flavor melpa :host github :repo "gregsexton/origami.el"))
   (use-package org-super-agenda
     :straight t
     :hook (org-agenda-mode . origami-mode) ;; Easily fold groups via TAB.
@@ -4541,13 +4520,16 @@ pulled out of their group and placed at the top.
     :config
     (org-super-agenda-mode)
     (setq org-super-agenda-groups
-            '((:name "Aftaler" :time-grid t)
-            (:name "Møder"     :time-grid t) 
-            (:name "Opgaver"   :time-grid t)
-            (:name "Vigtigt"   :priority "A") 
+            '((:name "Aftaler"   :time-grid t
+                     :tag "SENIORRÅD"
+                     :tag "4EREN"
+                     :tag "PRIVAT")
+              (:name "Møder"     :time-grid t) 
+              (:name "Opgaver"   :time-grid t)
+              (:name "Vigtigt"   :priority "A") 
             ;; For everything else, nicely display their heading hierarchy list.
-            (:auto-map (lambda (e) (org-format-outline-path (org-get-outline-path)))))))
-
+              (:auto-map (lambda (e) (org-format-outline-path (org-get-outline-path)))))))
+(org-agenda-list)
   ;; MA: No noticable effect when using org-super-agenda :/
   ;;
   ;; Leave new line at the end of an entry.
@@ -4563,90 +4545,79 @@ The [[https://github.com/alphapapa/org-super-agenda][org-super-agenda]] homepage
 screenshots contrasting with and without the system.
 E.g., you can change how entries in particular headings are displayed and
 coloured.
-*** Org Roam
+*** org contact
 :PROPERTIES:
-:ID:       8466BEB6-E457-430E-8706-0E4ADF617681
+:CUSTOM_ID: org contact
 :END:
-#+BEGIN_SRC emacs-lisp
+The best solution to maintain your contacts.
+Be careful that to install it, this one is available with =org-plus-contrib=.
+#+begin_src emacs-lisp
+;; (straight-use-package '(org-agenda :type git :repo "https://code.orgmode.org/bzg/org-mode.git" :local-repo "org/lisp")) 
+(setq org-contacts-files '("~/Dropbox/org/agenda/contacts.org"))
+(if nec/measure-time (nec/timer "org-contact"))
+#+end_src
+*** org-protocol
+#+begin_src emacs-lisp
+(use-package org-roam-protocol
+   :straight (:type built-in)
+   :after org-roam)
+#+end_src
+*** org-roam
+
+It's supposed to ease note-taking and relations between notes. Let's try and see. It
+requires sqlite3. 
+#+begin_src emacs-lisp
   (use-package org-roam
     :straight t
-    ;; :ensure-system-package
-    ;; ((sqlite3)
-    ;;  (graphviz))
-    :commands (org-roam-mode)
-    :bind
-    (:map org-roam-mode-map
-     (("C-c n l" . org-roam)
-      ("C-c n f" . org-roam-find-file)
-      ("C-c n g" . org-roam-graph-show))
-     :map org-mode-map
-     (("C-c n i" . org-roam-insert))
-     (("C-c n I" . org-roam-insert-immediate)))
+    :hook
+    (after-init . org-roam-mode)
+    :custom
+    (org-roam-directory "~/Dropbox/org/roam")
+    :bind (:map org-roam-mode-map
+                (("C-c n l" . org-roam)
+                 ("C-c n f" . org-roam-find-file)
+                 ("C-c n j" . org-roam-jump-to-index)
+                 ("C-c n b" . org-roam-switch-to-buffer)
+                 ("C-c n g" . org-roam-graph))
+      :map org-mode-map
+      (("C-c n i" . org-roam-insert)))
     :config
-    (setq org-roam-directory "~/Dropbox/org/roam/")
-    (setq org-roam-index-file "Index.org")
-    (setq org-roam-graph-node-extra-config '(("shape" . "ellipse")
-                                           ("style" . "rounded,filled")
-                                           ("fillcolor" . "#EFEFFF")
-                                           ("color" . "#DEDEFF")
-                                           ("fontcolor" . "#111111")))
-    (setq org-roam-graph-viewer nil)
-    (add-hook 'after-init-hook 'org-mode-roam)
-    (setq org-roam-capture-templates (list `(("d" "default" plain #'org-roam--capture-get-point
-                                              "%?"
-                                               :file-name "%<%Y%m%d%H%M%S>-${slug}"
-                                               :head ,(concat "#+title: ${title}\n"
-                                                     "#+author: Niels Søndergaard\n"
-                                                     "#+date: <%<%Y-%m-%d>>\n"
-                                                     "#+ROAM_KEY:   \n"
-                                                     "EMNE:  \n")
-                                               :unnarrowed t))))
+    (setq org-roam-buffer-position 'left
+          org-roam-buffer-width 0.25
+          org-roam-index-file "index.org"
+          org-roam-graph-extra-config '(("overlap" . "false"))
+;;          org-roam-graph-exclude-matcher '("archive" "Beruf" "blog" "books" "init" "Journal" "regularly" "tasks" "work" "Einkaufen")
+          org-roam-completion-system 'ivy))    
 
-(setq org-roam-tag-sources '(prop last-directory)))
 
-  (straight-use-package '(org-ref :type git :flavor melpa :files (:defaults "org-ref.org" "org-ref.bib" "citeproc" "org-ref-pkg.el") 
-     :host github :repo "jkitchin/org-ref"))
-  (setq reftex-default-bibliography '("~/Dropbox/org/bibliography/references.bib"))
-;; see org-ref for use of these variables
-  (setq org-ref-bibliography-notes "~/Dropbox/org/bibliography/notes.org"
-      org-ref-default-bibliography '("~/Dropbox/org/bibliography/references.bib")
-      org-ref-pdf-directory "~/Dropbox/org/bibliography/bibtex-pdfs/")
-  (setq bibtex-completion-bibliography "~/Dropbox/org/bibliography/references.bib"
-      bibtex-completion-library-path "~/Dropbox/org/bibliography/bibtex-pdfs"
-      bibtex-completion-notes-path "~/Dropbox/org/bibliography/helm-bibtex-notes")
+   (setq org-roam-graph-viewer nil)
 
-;;; open pdf with system pdf viewer (works on mac)
-;;(setq bibtex-completion-pdf-open-function
-;;  (lambda (fpath)
-;;    (start-process "open" "*open*" "open" fpath)))
-;; alternative
-  (setq bibtex-completion-pdf-open-function 'org-open-file)
-
-(nec/timer "start roam server")
- 
-(use-package org-roam-protocol
-    :straight (:type built-in)
-    :after org-roam)
-
-  (add-to-list 'exec-path "/usr/bin/sqlite3")
-
-  (use-package org-roam-server
-    :straight t
-    :commands (org-roam-server-mode)
-    :config
-    (setq org-roam-server-host "0.0.0.0"
-          org-roam-server-port 8082
-          org-roam-server-export-inline-images t
-          org-roam-server-authenticate nil
-          org-roam-server-network-poll t
-          org-roam-server-network-arrows nil
-          org-roam-server-network-label-truncate t
-          org-roam-server-network-label-truncate-length 60
-          org-roam-server-network-label-wrap-length 20))
-(if nec/measure-time (nec/timer "org-roam "))
-#+END_SRC
-
-*** org-mac-iCal
+  (require 'org-roam-protocol)
+#+end_src
+=company-org-roam= provides completion for the links
+#+begin_src emacs-lisp
+(use-package company-org-roam
+  :straight t
+  :after company
+  :config
+  (push 'company-org-roam company-backends))
+#+end_src
+=org-roam-server= will start a web server on http://127.0.0.1:8080/ to see the nodes and their linking
+#+begin_src emacs-lisp
+(use-package org-roam-server
+  :straight t
+  :config
+  (setq org-roam-server-host "127.0.0.1"
+        org-roam-server-port 8080
+        org-roam-server-export-inline-images t
+        org-roam-server-authenticate nil
+        org-roam-server-network-poll t
+        org-roam-server-network-arrows nil
+        org-roam-server-network-label-truncate t
+        org-roam-server-network-label-truncate-length 60
+        org-roam-server-network-label-wrap-length 20))
+#+end_src
+*** org mac iCal
 
 [[https://github.com/ndw/org-mac-iCal][org-mac-iCal]] allows you to imports events from iCal.app to the Emacs diary.
 
@@ -4672,7 +4643,7 @@ coloured.
 (if nec/measure-time (nec/timer "org-mac-iCal "))
 #+END_SRC
 
-*** org-brain
+*** org brain
 [[https://github.com/Kungsgeten/org-brain][org-brain]] provides Org-mode wiki + concept-mapping.
 
 ## #+BEGIN_SRC emacs-lisp 
@@ -4705,7 +4676,7 @@ coloured.
   (setq org-brain-include-file-entries nil)
   (setq org-brain-file-entries-use-title nil))
 ## #+END_SRC
-*** Org-manage
+*** org manage
 :PROPERTIES:
 :CUSTOM_ID: org-manage and header
 :END:
@@ -4713,7 +4684,7 @@ coloured.
 (require 'org-manage)
 (if nec/measure-time (nec/timer "org manage "))
 #+end_src
-*** Excellent PDF Viewer
+*** excellent PDF Viewer
 Let's install the [[https://github.com/politza/pdf-tools][pdf-tools]] library for viewing PDFs in Emacs.
 #+begin_src emacs-lisp
 ;; (straight-use-package '(pdf-tools :type git :flavor melpa :files ("lisp/*.el" "README" ("build" "Makefile") ("build" "server") 
@@ -4737,6 +4708,15 @@ with a simple mouse right-click, we can even select a ‘midnight’ rendering m
 easier on the eyes. For more, see the brief [[https://www.dailymotion.com/video/x2bc1is][pdf-tools-tourdeforce]] demo.
 
 * Languages
+*** start server
+#+begin_src emacs-lisp
+;; 
+(require 'server)
+(unless (server-running-p)
+  (server-start))
+(require 'org-protocol)
+(if nec/measure-time (nec/timer "start server "))
+#+end_src
 *** Python
 :PROPERTIES:
 :CUSTOM_ID: Python
@@ -5639,6 +5619,7 @@ by `remember-notes-buffer-name'."
   :hook ((remember-mode-hook . prot/remember-header-line)
          (remember-notes-mode-hook . prot/outline-minor-mode))
   :bind ("<f12>" . prot/remember))
+(if nec/measure-time (nec/timer "Remember "))
 #+end_src
 *** Tæl ord
 :PROPERTIES:
@@ -5669,8 +5650,6 @@ by `remember-notes-buffer-name'."
 ;; and experience; and Bob Newell tested it for his purposes.
 
 ;;; Code:
-
-(require 'cl-lib)
 
 (cl-defmacro most-used-words-with-view-buffer (buffer &body body)
   `(progn
@@ -5704,7 +5683,7 @@ by `remember-notes-buffer-name'."
        finally (setf sorted-counts (cl-sort sorted-counts #'>
 					  :key #'cl-second)))
     (mapcar #'cl-first (cl-subseq sorted-counts 0 n))))
-
+(if nec/measure-time (nec/timer "Count words "))
 ;;;###autoload
 (defun most-used-words-buffer (&optional n)
   "Show the N (default 3) most used words in the current buffer."
@@ -5770,7 +5749,7 @@ by `remember-notes-buffer-name'."
       elgantt-show-header-depth t
       elgantt-draw-overarching-headers t)
 
-
+(if nec/measure-time (nec/timer "Elgantt "))
 #+end_src
 *** gnus
 #+begin_src emacs-lisp
@@ -5778,31 +5757,51 @@ by `remember-notes-buffer-name'."
 (setq nnml-directory "~/Mail")
 (setq message-directory "~/Mail")
 (setq gnus-ignored-newsgroups "^to\\.\\|^[0-9. ]+\\( \\|$\\)\\|^[\”]\”[#’()]")
+(setq gnus-add-timestamp-to-message t)
+(setq gnus-add-to-list t)
+(setq gnus-article-truncate-lines nil)
+(setq gnus-auto-center-summary 2)
+(setq gnus-default-charset 'utf-8)
+(setq gnus-default-directory "/Users/niels/.emacs.d/private")
+(setq gnus-default-nntp-server "http://dr.dk/nyheder/service/feeds/viden")
+(setq gnus-group-change-level-function 'gnus-topic-change-level)
+(setq gnus-group-update-tool-bar t)
+(setq gnus-ignored-from-addresses "niels@algon\\.dk")
+(setq gnus-local-domain "algon\\.dk")
+(setq gnus-sum-thread-tree-leaf-with-other "├─► ")
+(setq gnus-sum-thread-tree-single-leaf "╰─► ")
+(setq gnus-sum-thread-tree-vertical "│")
 
 (setq gnus-select-method '(nntp "dr.dk/nyheder/service/feeds/viden"))
     (add-to-list 'gnus-secondary-select-methods '(nnml ""))
-;;(setq gnus-select-method
-;;      '(nnimap "algon"
-;;               (nnimap-address "mail.algon.dk")
-;;               (nnimap-server-port 143)))
+(setq gnus-select-method
+      '(nnimap "algon"
+               (nnimap-address "mail.algon.dk")
+               (nnimap-stream plain)
+               (nnimap-user nisoni)
+               (nni-authenticator login)
+               (nni-authinfo-file "~/.emacs.d/private/gnus-passwd")
+               (nnimap-server-port 143)))
                  
 (setq mail-sources '((imap :server "mail.algon.dk"
                            :user "nisoni"
                            :password "baldur2780")))
 
-(setq send-mail-function 'smtpmail-send-it)
-(setq message-send-mail-function 'smtpmail-send-it)
+;;(setq send-mail-function 'smtpmail-send-it
+;;   smtpmail-smtp-server "mail.algon.dk"
+;;   smtpmail-stream-type 'network
+;;   smtpmail-smtp-service 587
+;;   smtpmail-debug-info t)
+(setq message-send-mail-function 'smtpmail-send-it
+   smtpmail-default-smtp-server "mail.algon.dk"
+   smtpmail-local-domain "algon.dk"
+   smtpmail-smtp-user "nisoni"
+   smtpmail-stream-type 'network
+   smtpmail-smtp-service 587
+   smtpmail-debug-info t)
 
-(setq smtpmail-smtp-server "mail.algon.dk"
-      smtpmail-smtp-service 587
-      gnus-ignored-newsgroups "^to\\.\\|^[0-9. ]+\\( \\|$\\)\\|^[\"]\"[#'()]")
+
 ;;
-;; Fancy icons for Emacs
-;; Only do this once:
-(use-package all-the-icons 
-  :straight t)
-  ; :config (all-the-icons-install-fonts 'install-without-asking)
-
 ;; Make mail look pretty
 (use-package all-the-icons-gnus
   :straight t
@@ -5823,6 +5822,7 @@ by `remember-notes-buffer-name'."
        "%1{%B%}"
        "%s\n"))
   (add-hook 'gnus-group-mode-hook 'gnus-topic-mode)
+(if nec/measure-time (nec/timer "gnus "))
 #+end_src
 *** Elfeed
 This document is irregularly published and lives in different locations:
@@ -5900,6 +5900,7 @@ Elfeed allows to interactively subscribe to a feed (defaulting to what is in the
     :init
     (setq rmh-elfeed-org-files (list "~/Dropbox/org/elfeed/elfeed.org"))
     (elfeed-org))
+(if nec/measure-time (nec/timer "elfeed "))
 #+end_src
 *** zone
 :PROPERTIES:

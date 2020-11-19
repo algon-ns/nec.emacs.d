@@ -7,9 +7,9 @@
 ;; Author: Niels Søndergaard
 ;; Created: Fri Jun 12 10:49:04 2020 (+0200)
 ;; Version: 1.0
-;; Last-Updated: Man Nov 16 16:15:07 2020 (+0100)
+;; Last-Updated: Tir Nov 17 08:05:14 2020 (+0100)
 ;;           By: Niels Søndergaard
-;;     Update #: 10
+;;     Update #: 2
 ;; Keywords:
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -50,21 +50,21 @@
 ;; edited (with Emacs) or manually invoke =straight-check-all= command, instead of
 ;; checking modifications at startup.
 (setq straight-check-for-modifications '(check-on-save find-when-checking))
-
 ;; =M-x straight-pull-all=: update all packages.
 ;; =M-x straight-normalize-all=: restore all packages (remove local edits)
-;;=M-x straight-freeze-versions= and =M-x straight-thaw-versions= are like =pip
+;; =M-x straight-freeze-versions= and =M-x straight-thaw-versions= are like =pip
 ;;  freeze requirements.txt= and =pip install -r requirements.txt=
 
-(setq straight-use-package-by-default t)
-(straight-use-package 'use-package)
-(use-package git) ;; ensure we can install from git sources
+ (setq straight-use-package-by-default t)
+ (straight-use-package 'use-package)
+ (use-package git) ;; ensure we can install from git sources
 ;; cask
 ;; (straight-use-package '(cask :type git :flavor melpa :files ("cask.el" "cask-bootstrap.el" "cask-pkg.el") :host github :repo "cask/cask"))
 ;; (cask-initialize)
 ;; The following package dependencies are used throughout the rest of the configuration.
 ;; They provide contemporary APIs for working with various elisp data structures.
-(require 'cl-lib)
+(if nec/measure-time (nec/timer "After load of straight... "))
+ (require 'cl-lib)
 ;; Summary: A modern list library for Emacs
 ;; Homepage: https://elpa.gnu.org/packages/dash.html
 (straight-use-package '(org :type git :repo "https://code.orgmode.org/bzg/org-mode.git" :local-repo "org")
@@ -75,11 +75,11 @@
 (straight-use-package '(f :type git :flavor melpa :files ("f.el" "f-pkg.el") :host github :repo "rejeep/f.el"))
 (straight-use-package '(ht :type git :flavor melpa :files ("ht.el" "ht-pkg.el") :host github :repo "Wilfred/ht.el"))
 (straight-use-package '(s :type git :flavor melpa :files ("s.el" "s-pkg.el") :host github :repo "magnars/s.el"))
-(straight-use-package '(emacsql-sqlite3 :type git :flavor melpa :host github :repo "cireu/emacsql-sqlite3"))
 (straight-use-package '(ts :type git :flavor melpa :host github :repo "alphapapa/ts.el"))
+(straight-use-package '(a :type git :flavor melpa :host github :repo "plexus/a.el"))
 (straight-use-package '(org-ql :type git :flavor melpa :host github :repo "alphapapa/org-ql"))
 (straight-use-package '(emacsql :type git :flavor melpa :files ("emacsql.el" "emacsql-compiler.el" "emacsql-system.el" "README.md" "emacsql-pkg.el") :host github :repo "skeeto/emacsql"))
-(straight-use-package '(a :type git :flavor melpa :host github :repo "plexus/a.el"))
+(straight-use-package '(emacsql-sqlite3 :type git :flavor melpa :host github :repo "cireu/emacsql-sqlite3"))
 (if nec/measure-time (nec/timer "Load general routines "))
 ;; Anaphoric expressions implicitly create one or more temporary
 ;; variables which can be referred to during the expression.  This
@@ -87,16 +87,18 @@
 ;; recursion for anonymous functions.
 ;; (use-package anaphora
 ;;    :straight t)           ;; anaphora
-(setq org-export-backends '(ascii beamer html icalendar latex md odt koma-letter))
+(setq org-export-backends '(ascii
+                            beamer
+                            html
+                            icalendar
+                            latex
+                            md
+                            odt
+                            koma-letter))
 ;; Key Chord functionality in use-package
 (use-package use-package-chords
   :straight t
   :config (key-chord-mode 1))
-
-(require 'server)
-(unless (server-running-p)
-  (server-start))
-
 (defmacro use-feature (name &rest args)
   "Like `use-package', but with `straight-use-package-by-default' disabled.
 NAME and ARGS are as in `use-package'."

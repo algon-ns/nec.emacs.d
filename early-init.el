@@ -5,9 +5,9 @@
 ;; Author: Niels Søndergaard
 ;; Created: Wed Apr 21 10:49:04 2020 (+0200)
 ;; Version: 1.0
-;; Last-Updated: Tor Nov  5 10:23:15 2020 (+0100)
+;; Last-Updated: Tir Nov 17 07:44:59 2020 (+0100)
 ;;           By: Niels Søndergaard
-;;     Update #: 20
+;;     Update #: 21
 ;; Keywords:
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -59,9 +59,9 @@
      :delight " "
      :init
      (setq gcmh-verbose           nil
-         gcmh-lows-cons-threshold #x800000
-         gcmh-high-cons-threshold #x3200000
-         gcmh-idle-delay          3600)
+           gcmh-lows-cons-threshold #x800000
+           gcmh-high-cons-threshold #x3200000
+           gcmh-idle-delay          3600)
      :config
      (gcmh-mode))
    (setq garbage-collection-messages nil)
@@ -80,14 +80,14 @@
 (setq user-emacs-directory my-user-emacs-directory)
 ;; goto my base
 (cd my-user-emacs-directory)
-(add-to-list 'load-path              "~/.emacs.d/themes")
-(add-to-list 'custom-theme-load-path "/.emacs.d/themes")
+;;(add-to-list 'load-path              "~/.emacs.d/themes")
+(add-to-list 'custom-theme-load-path "~/.emacs.d/themes")
 (defvar my-init-el-start-time (current-time) "Time when init.el was started")
 ;; from http://ergoemacs.org/emacs/elisp_datetime.html
 (setq my-config-el-start-time-iso (concat
- (format-time-string "%Y-%m-%dT%T")
- ((lambda (x) (concat (substring x 0 3) ":" (substring x 3 5)))
-  (format-time-string "%z"))))
+  (format-time-string "%Y-%m-%dT%T")
+  ((lambda (x) (concat (substring x 0 3) ":" (substring x 3 5)))
+    (format-time-string "%z"))))
 
 (setq nec/total-time (current-time))
 (if nec/measure-time (setq nec/nutid (current-time)))
@@ -98,5 +98,6 @@
 ;; Resizing the Emacs frame can be a terribly expensive part of changing the
 ;; font. By inhibiting this, we easily halve startup times with fonts that are
 ;; larger than the system default.
+(nec/timer "Start mesure of load time")
 (setq frame-inhibit-implied-resize t)
 
