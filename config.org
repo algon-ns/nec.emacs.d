@@ -368,11 +368,10 @@ NAME and ARGS are as in `use-package'."
     - [[#create-missing-directory-for-find-file][create missing directory for find-file]]
     - [[#ctrl-s--isearch][ctrl-s  (isearch)]]
     - [[#making-emacs-secure][Making emacs secure]]
-    - [[#smex][SMEX]]
     - [[#registers][Registers]]
   - [[#buffer][Buffer]]
     - [[#utf-8-please][UTF-8 please]]
-    - [[#go-to-scratch-buffer][go to scratch buffer]]
+    - [[#scratch-buffer][scratch buffer]]
     - [[#kill-buffer-and-the-file-associated][kill buffer and the file associated]]
     - [[#rename-current-buffer-and-file-associated][rename current buffer and file associated]]
     - [[#clean-stale-buffers][Clean stale buffers]]
@@ -405,8 +404,9 @@ NAME and ARGS are as in `use-package'."
     - [[#ac-jump][AC Jump]]
     - [[#term][term]]
     - [[#all-the-icons][all-the-icons]]
-    - [[#ivy][Ivy]]
     - [[#helm][Helm]]
+    - [[#ivy][Ivy]]
+    - [[#smex][SMEX]]
     - [[#yasnippet][Yasnippet]]
     - [[#ido][IDO]]
     - [[#smartparens][Smartparens]]
@@ -450,9 +450,8 @@ NAME and ARGS are as in `use-package'."
     - [[#org-cliplink][org-cliplink]]
     - [[#refiling-setup][refiling Setup]]
     - [[#org-journal][org-journal]]
-    - [[#doct][doct]]
     - [[#org-context][org-context]]
-    - [[#org-capture][org capture]]
+    - [[#doct-and-org-capture][doct and org-capture]]
     - [[#org-agenda][org agenda]]
     - [[#org-super-agenda][org super agenda]]
     - [[#org-contact][org contact]]
@@ -1349,25 +1348,7 @@ function to check if this setup is properly done:
 (if nec/measure-time
           (nec/timer "Secure emacs   "))
 #+end_src
-*** SMEX
-:PROPERTIES:
-:CUSTOM_ID: SMEX
-:END:
- [[https://github.com/nonsequitur/smex/][smex]] - A smart M-x enhancement for Emacs.
-#+begin_src emacs-lisp
-(use-package smex
-  :straight t
-  :diminish
-  :init
-  (setq smex-save-file "~/.emacs.d/private/smex-items")
-  (smex-initialize))
-(smex-auto-update 120)
-(global-set-key (kbd "M-x") 'smex)
-(global-set-key (kbd "M-X") 'smex-major-mode-commands)
-;; This is your old M-x.
-(global-set-key (kbd "C-c C-c M-x") 'execute-extended-command)
-(if nec/measure-time (nec/timer "SMEX   "))
-#+end_src
+
 *** Registers
 :PROPERTIES:
 :CUSTOM_ID: Registers
@@ -1437,21 +1418,31 @@ Clean all the registers you saved.
 (setq default-process-coding-system '(utf-8-unix . utf-8-unix))
 (if nec/measure-time (nec/timer "UTF-8   "))
 #+end_src
-*** go to scratch buffer
+*** scratch buffer
+#+begin_src emacs-lisp
+;; Makes *scratch* empty.
+(setq initial-scratch-message "")
 
-    #+BEGIN_SRC emacs-lisp
-      (defun bk/scratch-buffer ()
-        "Function to change buffer to scratch buffer."
-        (interactive)
-        (let ((buf (get-buffer "*scratch*")))
-          (if buf
-              (switch-to-buffer buf)
-            (switch-to-buffer (get-buffer-create "*scratch*"))
-            (lisp-interaction-mode))))
+;; Removes *scratch* from buffer after the mode has been set.
+(defun remove-scratch-buffer ()
+  (if (get-buffer "*scratch*")
+      (kill-buffer "*scratch*")))
+(add-hook 'after-change-major-mode-hook 'remove-scratch-buffer)
 
-      (global-set-key (kbd "C-c b s") #'bk/scratch-buffer)
-    #+END_SRC
 
+
+;; Removes *Completions* from buffer after you've opened a file.
+(add-hook 'minibuffer-exit-hook
+      '(lambda ()
+         (let ((buffer "*Completions*"))
+           (and (get-buffer buffer)
+                (kill-buffer buffer)))))
+
+;; Don't show *Buffer list* when opening multiple files at the same time.
+(setq inhibit-startup-buffer-menu t)
+(setq initial-buffer-choice 'acg-initial-buffer-choice)
+(if nec/measure-time (nec/timer "avoid scratch buffer "))
+#+end_src
 *** kill buffer and the file associated
 
    #+BEGIN_SRC emacs-lisp
@@ -2325,15 +2316,6 @@ proper shell in Emacs!
 
 (if nec/measure-time (nec/timer "all the icons   "))
 #+end_src
-*** Ivy
-
-#+begin_src elisp
-(straight-usr-package '(ivy :type git :flavor melpa 
-   :files (:defaults (:exclude "swiper.el" "counsel.el" "ivy-hydra.el" "ivy-avy.el") "doc/ivy-help.org" "ivy-pkg.el") 
-   :host github :repo "abo-abo/swiper"))
- 
-#+end_src
-
 *** Helm
 :PROPERTIES:
 :CUSTOM_ID: Helm
@@ -2347,8 +2329,6 @@ proper shell in Emacs!
   :config   (require 'helm-config))   
 ;(require 'bind-keys)  
 (bind-keys :map global-map  
-              ("M-x" . helm-M-x)
-              ("C-x C-m" . helm-M-x)
               ("C-x C-f" . helm-find-files)
               ("C-x v"   . helm-projectile)
               ("C-x c o" . helm-occur)
@@ -2382,6 +2362,34 @@ proper shell in Emacs!
   ("C-x c s" . helm-swoop))
 (if nec/measure-time (nec/timer "Helm "))
 #+END_SRC
+*** Ivy
+
+#+begin_src elisp
+(straight-usr-package '(ivy :type git :flavor melpa 
+   :files (:defaults (:exclude "swiper.el" "counsel.el" "ivy-hydra.el" "ivy-avy.el") "doc/ivy-help.org" "ivy-pkg.el") 
+   :host github :repo "abo-abo/swiper"))
+ 
+#+end_src
+
+*** SMEX
+:PROPERTIES:
+:CUSTOM_ID: SMEX
+:END:
+ [[https://github.com/nonsequitur/smex/][smex]] - A smart M-x enhancement for Emacs.
+#+begin_src emacs-lisp
+(use-package smex
+  :straight t
+  :diminish
+  :init
+  (setq smex-save-file "~/.emacs.d/private/smex-items")
+  (smex-initialize))
+(smex-auto-update 120)
+(global-set-key (kbd "M-x") 'smex)
+(global-set-key (kbd "M-X") 'smex-major-mode-commands)
+;; This is your old M-x.
+(global-set-key (kbd "C-c C-c M-x") 'execute-extended-command)
+(if nec/measure-time (nec/timer "SMEX   "))
+#+end_src
 *** Yasnippet
 #+begin_src emacs-lisp
 ;;; init-yasnippet.el --- -*- lexical-binding: t -*-
@@ -4051,7 +4059,7 @@ Disable property inheritance (in order to seed up)
       (defvar load-language-list '((emacs-lisp . t)
                                    (perl . t)
                                    (python . t)
-                                   ;;(ruby . t)
+                                   (ruby . t)
                                    ;;(js . t)
                                    (shell . t)
                                    (css . t)
@@ -4060,6 +4068,9 @@ Disable property inheritance (in order to seed up)
                                    (C . t)
                                    (java . t)
                                    (dot . t)
+                                   (ditaa . t)
+                                   (latex . t)
+                                   (sqlite . t )
                                    (plantuml . t)))
       (use-package ob-go
         :straight t
@@ -4226,43 +4237,6 @@ Disable property inheritance (in order to seed up)
 
 #+end_src
 
-*** doct
-
-[[https://github.com/progfolio/doct][doct]] provies “Declarative Org-mode Capture Templates” for Emacs. I
-find them a little easier to reason about than the standard form.
-
-#+BEGIN_SRC emacs-lisp
-
-(straight-use-package '(doct :type git :flavor melpa :host github :repo "progfolio/doct"))
-(eval-when-compile (require 'subr-x))
-
-(defun doct-org-roam-convert (groups)
-  "Convert GROUPS of templates to `org-roam' compatible templates."
-  (setq doct-templates
-        (mapcar (lambda (template)
-                  (if-let* ((props (nthcdr (if (= (length template) 4) 2 5) template))
-                            (org-roam-props (plist-get (plist-get props :doct) :org-roam)))
-                      `(,@template ,@org-roam-props)
-                    template))
-                (doct-flatten-lists-in groups))))
-
-(defun doct-org-roam (declarations)
-"Convert DECLARATIONS to `org-roam-capture-templates'.
-DECLARATIONS must be of the same form that `doct' expects with
-one addition: the :org-roam keyword.
-The :org-roam keyword's value must be a plist mapping `org-roam''s
-template syntax extensions (e.g. :file-name :head) to their appropriate values.
-Note this does validate the :org-roam plist's values or keywords."
-
-;;TODO: we should preserve doct-after-conversion-functions
-;;in case user already has other functions set.
-(let ((doct-after-conversion-functions (append '(doct-org-roam-convert)
-                                               doct-after-conversion-functions)))
-  (doct declarations)))
-
-(if nec/measure-time (nec/timer "doct "))
-
-#+END_SRC
 *** org-context
 
 [[https://github.com/thisirs/org-context][org-context]] provides contextual agenda and capture for Org-mode.
@@ -4273,13 +4247,18 @@ Note this does validate the :org-roam plist's values or keywords."
 (if nec/measure-time (nec/timer "org-contekst "))
 #+END_SRC
 
-*** org capture
-:PROPERTIES:
-:CUSTOM_ID: org capture
-:ID:        878127F7-023F-44F7-AE70-039F58DEEDCE
-:END:
+*** doct and org-capture
 
-#+begin_src emacs-lisp
+[[https://github.com/progfolio/doct][doct]] provies “Declarative Org-mode Capture Templates” for Emacs. I
+find them a little easier to reason about than the standard form.
+
+#+BEGIN_SRC emacs-lisp
+
+(straight-use-package '(doct :type git :flavor melpa :host github :repo "progfolio/doct"))
+(eval-when-compile (require 'subr-x))
+
+(if nec/measure-time (nec/timer "doct "))
+
 (defvar org-default-tasks-file "~/Dropbox/org/agenda/organizer.org")
 
 (defun org-journal-find-location ()
@@ -4567,12 +4546,15 @@ Be careful that to install it, this one is available with =org-plus-contrib=.
 It's supposed to ease note-taking and relations between notes. Let's try and see. It
 requires sqlite3. 
 #+begin_src emacs-lisp
+;;Set place of database (ns 20. november 2020)
+(setq org-roam-directory "/Users/niels/Dropbox/org/roam/")
+(setq org-roam-db-location "/Users/niels/Dropbox/org/roam/org-roam.db")
   (use-package org-roam
     :straight t
     :hook
     (after-init . org-roam-mode)
-    :custom
-    (org-roam-directory "~/Dropbox/org/roam")
+;;    :custom
+;;    (org-roam-directory "/Users/niels/Dropbox/org/roam")
     :bind (:map org-roam-mode-map
                 (("C-c n l" . org-roam)
                  ("C-c n f" . org-roam-find-file)
@@ -4582,16 +4564,33 @@ requires sqlite3.
       :map org-mode-map
       (("C-c n i" . org-roam-insert)))
     :config
+    (setq org-roam-graph-node-extra-config '(("shape" . "ellipse")
+                                             ("style" . "rounded,filled")
+                                             ("fillcolor" . "#EFEFFF")
+                                             ("color" . "#DEDEFF")
+                                             ("fontcolor" . "#111111")))
     (setq org-roam-buffer-position 'left
           org-roam-buffer-width 0.25
-          org-roam-index-file "index.org"
+          org-roam-index-file "/Users/niels/Dropbox/org/roam/index.org"
           org-roam-graph-extra-config '(("overlap" . "false"))
 ;;          org-roam-graph-exclude-matcher '("archive" "Beruf" "blog" "books" "init" "Journal" "regularly" "tasks" "work" "Einkaufen")
           org-roam-completion-system 'ivy))    
+    
 
 
-   (setq org-roam-graph-viewer nil)
+;;    (setq org-roam-db-location org-roam-directory)
+    (setq org-roam-graph-viewer nil)
 
+    (setq org-roam-capture-templates `(("d" "default" plain #'org-roam-capture--get-point
+                                              "%? "
+                                                :file-name "%<%Y%m%d%H%M%S>-${slug}"
+                                                :head "#+title: ${title}\n#+roam_key:  "
+                                                :unnarrowed t)
+                                         ("r" "ref" plain #'org-roam-capture--get-point
+                                              "%?"
+                                                :file-name "${slug}"
+                                                :head "#+title: ${title}\n#+roam_key: ${ref}"
+                                                :unnarrowed t)))
   (require 'org-roam-protocol)
 #+end_src
 =company-org-roam= provides completion for the links
@@ -4769,6 +4768,8 @@ easier on the eyes. For more, see the brief [[https://www.dailymotion.com/video/
   (use-package lpy
     :straight t
     :hook (python-mode . (lambda () (lpy-mode))))
+;;
+(straight-use-package '(ein :type git :flavor melpa :files ("lisp/*" (:exclude "lisp/zeroein.el") "ein-pkg.el") :host github :repo "millejoh/emacs-ipython-notebook"))
 
 (if nec/measure-time (nec/timer "python  "))
 #+end_src
@@ -5232,7 +5233,6 @@ Review of open action items\n\n")
 :END:
 #+begin_src emacs-lisp
   
-(require 'cl-lib)
 (if (not (featurep 'appt))(require 'appt))   
 ;; initiate diary
 (setq view-diary-entries-initially t
@@ -5934,6 +5934,7 @@ Elfeed allows to interactively subscribe to a feed (defaulting to what is in the
               "; Org-mode "   org-version
               "; System "     (system-name)
               "; Time "       (emacs-init-time))))
+(open-dashboard)
 (message "→★★★ Total time for configuration  %.2fs"  (float-time (time-subtract (current-time) nec/total-time)))
 (message "      T H E   E N D")
 #+end_src

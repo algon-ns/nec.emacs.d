@@ -5,9 +5,9 @@
 ;; Author: Niels Søndergaard
 ;; Created: Wed Apr 21 10:49:04 2020 (+0200)
 ;; Version: 1.0
-;; Last-Updated: Tir Nov 17 07:44:59 2020 (+0100)
+;; Last-Updated: Fre Nov 20 13:41:59 2020 (+0100)
 ;;           By: Niels Søndergaard
-;;     Update #: 21
+;;     Update #: 24
 ;; Keywords:
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -34,7 +34,7 @@
 (setq enable-local-variables :safe)
 ;;
 ;;Some default settings are here
-(setq-default debug-on-error         nil
+(setq-default debug-on-error         t
               message-log-max        t
               ad-redefinition-action 'accept)
 ;;;;;; Set garbage collection threshold
@@ -47,7 +47,7 @@
 (setq file-name-handler-alist nil)
 ;;;;;; Set deferred timer to reset them
 (run-with-idle-timer
- 5 nil
+ 7 nil
  (lambda ()
    (setq gc-cons-threshold gc-cons-threshold-original)
    (setq file-name-handler-alist file-name-handler-alist-original)
@@ -77,7 +77,8 @@
    :group 'nec
    :type 'string)
 (setq default-directory my-user-emacs-directory)
-(setq user-emacs-directory my-user-emacs-directory)
+(setq user-emacs-directory "~/.emacs.d/")
+
 ;; goto my base
 (cd my-user-emacs-directory)
 ;;(add-to-list 'load-path              "~/.emacs.d/themes")

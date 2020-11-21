@@ -7,9 +7,9 @@
 ;; Author: Niels Søndergaard
 ;; Created: Fri Jun 12 10:49:04 2020 (+0200)
 ;; Version: 1.0
-;; Last-Updated: Tir Nov 17 08:05:14 2020 (+0100)
+;; Last-Updated: Fre Nov 20 21:00:39 2020 (+0100)
 ;;           By: Niels Søndergaard
-;;     Update #: 2
+;;     Update #: 4
 ;; Keywords:
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -58,19 +58,15 @@
  (setq straight-use-package-by-default t)
  (straight-use-package 'use-package)
  (use-package git) ;; ensure we can install from git sources
-;; cask
-;; (straight-use-package '(cask :type git :flavor melpa :files ("cask.el" "cask-bootstrap.el" "cask-pkg.el") :host github :repo "cask/cask"))
-;; (cask-initialize)
-;; The following package dependencies are used throughout the rest of the configuration.
-;; They provide contemporary APIs for working with various elisp data structures.
+
 (if nec/measure-time (nec/timer "After load of straight... "))
- (require 'cl-lib)
-;; Summary: A modern list library for Emacs
-;; Homepage: https://elpa.gnu.org/packages/dash.html
+
+
 (straight-use-package '(org :type git :repo "https://code.orgmode.org/bzg/org-mode.git" :local-repo "org")
    :diminish " O")
 (straight-use-package '(org-contrib :type git :repo "https://code.orgmode.org/bzg/org-mode.git" :local-repo "org" :files (:defaults "contrib/lisp/*.el")))
 ;; need to get hold of org a soon as possible
+(straight-use-package 'cl-lib)
 (straight-use-package '(dash :type git :flavor melpa :files ("dash.el" "dash.texi" "dash-pkg.el") :host github :repo "magnars/dash.el"))
 (straight-use-package '(f :type git :flavor melpa :files ("f.el" "f-pkg.el") :host github :repo "rejeep/f.el"))
 (straight-use-package '(ht :type git :flavor melpa :files ("ht.el" "ht-pkg.el") :host github :repo "Wilfred/ht.el"))
