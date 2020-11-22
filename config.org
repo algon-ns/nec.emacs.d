@@ -397,6 +397,7 @@ NAME and ARGS are as in `use-package'."
       - [[#dash][Dash]]
       - [[#brew-and-ls][Brew and ls]]
       - [[#notifications][Notifications]]
+    - [[#start-server][start server]]
     - [[#line-numbers-i-like-them-all-over-the-places][line numbers, I like them all over the places]]
     - [[#keyfreq][Keyfreq]]
     - [[#grep-and-find-file][grep and find file]]
@@ -462,7 +463,6 @@ NAME and ARGS are as in `use-package'."
     - [[#org-manage][org manage]]
     - [[#excellent-pdf-viewer][excellent PDF Viewer]]
 - [[#languages][Languages]]
-    - [[#start-server][start server]]
     - [[#python][Python]]
     - [[#projectile][Projectile]]
     - [[#rust][Rust]]
@@ -1049,7 +1049,7 @@ Source: https://github.com/m-parashar/emax64/issues/5
 (use-package zenburn-theme
   :straight t
   :config
-  (load-theme 'zenburn t)
+  (load-theme 'flatland t)
   (set-face-attribute 'font-lock-comment-face nil :italic t)
   (set-face-attribute 'font-lock-doc-face nil :italic t)
   (zenburn-with-color-variables
@@ -2001,6 +2001,15 @@ text and copying to the killring."
                  "' -title 'Emacs' -subtitle 'Eshell Process Completed'"
                  " -sound default -sender org.gnu.Emacs"))))
   #+END_SRC
+*** start server
+#+begin_src emacs-lisp
+;; 
+(require 'server)
+(unless (server-running-p)
+  (server-start))
+(require 'org-protocol)
+(if nec/measure-time (nec/timer "start server "))
+#+end_src
 *** line numbers, I like them all over the places
 :PROPERTIES:
 :CUSTOM_ID: line numbers, I like them all over the places
@@ -2752,6 +2761,8 @@ retrieve and display completion candidates.
 (use-package company-statistics
     :straight t
     :init
+    (setq company-statistics-file "~/.emacs.d/private/company-statistics-cache.el")
+    (setq company-statistics-size 500)
     (company-statistics-mode))
 (use-package company-web
     :straight t)
@@ -3771,7 +3782,7 @@ We want a Dashboard, which demand Page Break Line
   ;(dashboard-startup-banner "~/.emacs.d/images/gnu.png")
   ;(dashboard-startup-banner "~/.emacs.d/images/Verdensmaal.png")
   ;(dashboard-startup-banner "~/.emacs.d/images/ognu.png")
-  (dashboard-items '( (bookmarks . 5) (agenda . 9)))
+  (dashboard-items '( (bookmarks . 6) (agenda . 8)))
   (initial-buffer-choice (lambda () (get-buffer dashboard-buffer-name)))
   (dashboard-set-heading-icons t)
   (dashboard-set-navigator t)
@@ -4548,9 +4559,15 @@ requires sqlite3.
 #+begin_src emacs-lisp
 ;;Set place of database (ns 20. november 2020)
 (setq org-roam-directory "/Users/niels/Dropbox/org/roam/")
+(setq org-roam-index-file "/Users/niels/Dropbox/org/roam/Index.org")
 (setq org-roam-db-location "/Users/niels/Dropbox/org/roam/org-roam.db")
-  (use-package org-roam
+(straight-use-package 
+  '(org-roam :type git :host github :repo "org-roam/org-roam"
+             :fork (:host github
+             :repo "algon-ns/org-roam")))
+(use-package org-roam
     :straight t
+    :diminish " ♨"
     :hook
     (after-init . org-roam-mode)
 ;;    :custom
@@ -4573,7 +4590,8 @@ requires sqlite3.
           org-roam-buffer-width 0.25
           org-roam-index-file "/Users/niels/Dropbox/org/roam/index.org"
           org-roam-graph-extra-config '(("overlap" . "false"))
-;;          org-roam-graph-exclude-matcher '("archive" "Beruf" "blog" "books" "init" "Journal" "regularly" "tasks" "work" "Einkaufen")
+          org-roam-graph-exclude-matcher '("archive" "PRIVAT" "blog" "books" 
+                                           "init" "Journal" "regularly" "tasks" "work")
           org-roam-completion-system 'ivy))    
     
 
@@ -4584,7 +4602,7 @@ requires sqlite3.
     (setq org-roam-capture-templates `(("d" "default" plain #'org-roam-capture--get-point
                                               "%? "
                                                 :file-name "%<%Y%m%d%H%M%S>-${slug}"
-                                                :head "#+title: ${title}\n#+roam_key:  "
+                                                :head "#+title: ${title}\n  "
                                                 :unnarrowed t)
                                          ("r" "ref" plain #'org-roam-capture--get-point
                                               "%?"
@@ -4605,7 +4623,7 @@ requires sqlite3.
 #+begin_src emacs-lisp
 (use-package org-roam-server
   :straight t
-  :config
+  :config  
   (setq org-roam-server-host "127.0.0.1"
         org-roam-server-port 8080
         org-roam-server-export-inline-images t
@@ -4615,6 +4633,7 @@ requires sqlite3.
         org-roam-server-network-label-truncate t
         org-roam-server-network-label-truncate-length 60
         org-roam-server-network-label-wrap-length 20))
+;;  (org-roam-server-mode t)
 #+end_src
 *** org mac iCal
 
@@ -4707,15 +4726,7 @@ with a simple mouse right-click, we can even select a ‘midnight’ rendering m
 easier on the eyes. For more, see the brief [[https://www.dailymotion.com/video/x2bc1is][pdf-tools-tourdeforce]] demo.
 
 * Languages
-*** start server
-#+begin_src emacs-lisp
-;; 
-(require 'server)
-(unless (server-running-p)
-  (server-start))
-(require 'org-protocol)
-(if nec/measure-time (nec/timer "start server "))
-#+end_src
+
 *** Python
 :PROPERTIES:
 :CUSTOM_ID: Python

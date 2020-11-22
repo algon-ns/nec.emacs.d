@@ -4,8 +4,6 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(comint-terminfo-terminal "xterm-256color")
- '(company-statistics-file "~/.emacs.d/private/company-statistics-cache.el")
- '(company-statistics-size 500)
  '(doom-modeline-gnus-timer 0)
  '(eww-bookmarks-directory "~/.emacs.d/private/")
  '(exec-path
@@ -17,14 +15,13 @@
  '(mouse-wheel-progressive-speed nil)
  '(mouse-yank-at-point t)
  '(nxml-bind-meta-tab-to-complete-flag nil)
- '(powerline-default-separator 'arrow)
+ '(org-roam-server-mode t)
+ '(org-roam-server-served-file-extensions '("pdf" "mp4" "ogv"))
  '(preview-TeX-style-dir "/Users/niels/.emacs.d/straight/build/auctex/latex" t)
  '(projectile-known-projects-file "/Users/niels/.emacs.d/private/projectile-bookmarks.eld")
  '(reftex-plug-into-AUCTeX t t)
  '(sane-term-shell-command "/bin/zsh")
  '(set-mark-command-repeat-pop t)
- '(smtpmail-smtp-server "mail.algon.dk" t)
- '(smtpmail-smtp-service 587 t)
  '(spaceline-highlight-face-func 'spaceline-highlight-face-modified t)
  '(xterm-mouse-mode t))
 (custom-set-faces
@@ -38,7 +35,7 @@
  '(lsp-ui-doc-header ((t (:inherit (font-lock-string-face italic)))))
  '(org-journal-calendar-entry-face ((t (:foreground "#ee3b3b" :slant italic))))
  '(org-journal-calendar-scheduled-face ((t (:foreground "#c00000" :slant italic))))
- '(org-link ((t (:foreground "royal blue" :underline t))))
+ '(org-link ((t (:foreground "blue" :underline t))))
  '(org-meta-line ((t (:inherit (font-lock-comment-face fixed-pitch)))))
  '(org-pomodoro-mode-line ((t (:inherit warning))))
  '(org-pomodoro-mode-line-break ((t (:inherit success))))
