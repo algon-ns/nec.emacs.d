@@ -35,7 +35,7 @@
  '(lsp-ui-doc-header ((t (:inherit (font-lock-string-face italic)))))
  '(org-journal-calendar-entry-face ((t (:foreground "#ee3b3b" :slant italic))))
  '(org-journal-calendar-scheduled-face ((t (:foreground "#c00000" :slant italic))))
- '(org-link ((t (:foreground "blue" :underline t))))
+ '(org-link ((t (:foreground "light blue" :underline t))))
  '(org-meta-line ((t (:inherit (font-lock-comment-face fixed-pitch)))))
  '(org-pomodoro-mode-line ((t (:inherit warning))))
  '(org-pomodoro-mode-line-break ((t (:inherit success))))

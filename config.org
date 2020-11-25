@@ -103,80 +103,40 @@ If you wonder, where You found this file....
 ** early_init.el and init.el
 *** early_init.el (require emacs version > 27.0)
 #+begin_example emacs-lisp
-(setq enable-local-variables :safe)
+;;; -*- lexical-binding: t; -*-
+;;; -*-no-byte-compile: t; -*- initial file for NEC configurtion
+;;;init.el ---  main init file for emacs configuration
 ;;
-;;Some default settings are here
-(setq-default debug-on-error         nil
-              message-log-max        t
-              ad-redefinition-action 'accept)
-;;;;;; Set garbage collection threshold
-;; From https://www.reddit.com/r/emacs/comments/3kqt6e/2_easy_little_known_steps_to_speed_up_emacs_start/
-(setq gc-cons-threshold-original gc-cons-threshold)
-(setq gc-cons-threshold (* 1024 1024 10))
-;;;;;; Set file-name-handler-alist
-;; Also from https://www.reddit.com/r/emacs/comments/3kqt6e/2_easy_little_known_steps_to_speed_up_emacs_start/
-(setq file-name-handler-alist-original file-name-handler-alist)
-(setq file-name-handler-alist nil)
-;;;;;; Set deferred timer to reset them
-(run-with-idle-timer
- 5 nil
- (lambda ()
-   (setq gc-cons-threshold gc-cons-threshold-original)
-   (setq file-name-handler-alist file-name-handler-alist-original)
-   (makunbound 'gc-cons-threshold-original)
-   (makunbound 'file-name-handler-alist-original)
-   (straight-use-package 'gcmh)
-   (use-package gcmh
-     :straight t
- ;;    :delight " "
-     :init
-     (setq gcmh-verbose           nil
-         gcmh-lows-cons-threshold #x800000
-         gcmh-high-cons-threshold #x3200000
-         gcmh-idle-delay          3600)
-     :config
-     (gcmh-mode))
-   (setq garbage-collection-messages nil)
-   (message "gc-cons-threshold and file-name-handler-alist restored")))               
-
-(defcustom nec/measure-time t
-  "Do we want to measure time for this startup?"
-  :group 'nec
-  :type 'boolean)
-
-(defcustom my-user-emacs-directory "~/.emacs.d/"
-   "this is my home directory (in emacs)"
-   :group 'nec
-   :type 'string)
-
-;; goto my base
-(cd my-user-emacs-directory)
-(setq default-directory my-user-emacs-directory)
-(setq user-emacs-directory my-user-emacs-directory)
-
-(defvar my-init-el-start-time (current-time) "Time when init.el was started")
-;; from http://ergoemacs.org/emacs/elisp_datetime.html
-(setq my-config-el-start-time-iso (concat
- (format-time-string "%Y-%m-%dT%T")
- ((lambda (x) (concat (substring x 0 3) ":" (substring x 3 5)))
-  (format-time-string "%z"))))
-
-(setq nec/total-time (current-time))
-(if nec/measure-time (setq nec/nutid (current-time)))
-
-(defun nec/timer (tekst)
-  (message  (concat  "→ ★ " tekst "  %.2fs" )  (float-time (time-subtract (current-time) nec/nutid)))
-  (setq nec/nutid (current-time)))
-
-
-
-;; Resizing the Emacs frame can be a terribly expensive part of changing the
-;; font. By inhibiting this, we easily halve startup times with fonts that are
-;; larger than the system default.
-(setq frame-inhibit-implied-resize t)
-#+end_example
-*** init.el (not tested with emacs version< 27.1)
-#+begin_example emacs-lisp
+;; Filename: init.el
+;; Description:
+;; Author: Niels Søndergaard
+;; Created: Fri Jun 12 10:49:04 2020 (+0200)
+;; Version: 1.0
+;; Last-Updated: Ons Nov 25 22:07:49 2020 (+0100)
+;;           By: Niels Søndergaard
+;;     Update #: 29
+;; Keywords:
+;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; Commentary:
+;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; This program is free software: you can redistribute it and/or modify
+;; it under the terms of the GNU General Public License as published by
+;; the Free Software Foundation, either version 3 of the License, or (at
+;; your option) any later version.
+;;
+;; This program is distributed in the hope that it will be useful, but
+;; WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+;; General Public License for more details.
+;;
+;; You should have received a copy of the GNU General Public License
+;; along with GNU Emacs.  If not, see <https://www.gnu.org/licenses/>.
+;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;
+;;; Code:
 (defvar bootstrap-version)
 (let ((bootstrap-file
        (expand-file-name "straight/repos/straight.el/bootstrap.el" user-emacs-directory))
@@ -195,28 +155,49 @@ If you wonder, where You found this file....
 (setq straight-check-for-modifications '(check-on-save find-when-checking))
 ;; =M-x straight-pull-all=: update all packages.
 ;; =M-x straight-normalize-all=: restore all packages (remove local edits)
-;;=M-x straight-freeze-versions= and =M-x straight-thaw-versions= are like =pip
+;; =M-x straight-freeze-versions= and =M-x straight-thaw-versions= are like =pip
 ;;  freeze requirements.txt= and =pip install -r requirements.txt=
-;;  To tell straight.el that you want to use the version of Org shipped with
-;;  Emacs, rather than cloning the upstream repository:
-(straight-use-package 'org
-  :diminish " O")
-(straight-use-package 'org-plus-contrib)
-;; need to get hold of org a soon as possible
-(setq org-export-backends '(ascii beamer html icalendar latex md odt koma-letter))
-;;;;Effectively replace use-package with straight-use-package
-;;; https://github.com/raxod502/straight.el/blob/develop/README.md#integration-with-use-package
-(straight-use-package 'use-package)
 
-(setq straight-use-package-by-default t)
+ (setq straight-use-package-by-default t)
+ (straight-use-package 'use-package)
+ (use-package git) ;; ensure we can install from git sources
+
+(if nec/measure-time (nec/timer "After load of straight... "))
+
+
+(straight-use-package '(org :type git :repo "https://code.orgmode.org/bzg/org-mode.git" :local-repo "org")
+   :diminish " O")
+(straight-use-package '(org-contrib :type git :repo "https://code.orgmode.org/bzg/org-mode.git" :local-repo "org" :files (:defaults "contrib/lisp/*.el")))
+;; need to get hold of org a soon as possible
+(straight-use-package 'cl-lib)
+(straight-use-package '(dash :type git :flavor melpa :files ("dash.el" "dash.texi" "dash-pkg.el") :host github :repo "magnars/dash.el"))
+(straight-use-package '(f :type git :flavor melpa :files ("f.el" "f-pkg.el") :host github :repo "rejeep/f.el"))
+(straight-use-package '(ht :type git :flavor melpa :files ("ht.el" "ht-pkg.el") :host github :repo "Wilfred/ht.el"))
+(straight-use-package '(s :type git :flavor melpa :files ("s.el" "s-pkg.el") :host github :repo "magnars/s.el"))
+(straight-use-package '(ts :type git :flavor melpa :host github :repo "alphapapa/ts.el"))
+(straight-use-package '(a :type git :flavor melpa :host github :repo "plexus/a.el"))
+(straight-use-package '(org-ql :type git :flavor melpa :host github :repo "alphapapa/org-ql"))
+(straight-use-package '(emacsql :type git :flavor melpa :files ("emacsql.el" "emacsql-compiler.el" "emacsql-system.el" "README.md" "emacsql-pkg.el") :host github :repo "skeeto/emacsql"))
+(straight-use-package '(emacsql-sqlite3 :type git :flavor melpa :host github :repo "cireu/emacsql-sqlite3"))
+(if nec/measure-time (nec/timer "Load general routines "))
+;; Anaphoric expressions implicitly create one or more temporary
+;; variables which can be referred to during the expression.  This
+;; technique can improve clarity in certain cases.  It also enables
+;; recursion for anonymous functions.
+;; (use-package anaphora
+;;    :straight t)           ;; anaphora
+(setq org-export-backends '(ascii
+                            beamer
+                            html
+                            icalendar
+                            latex
+                            md
+                            odt
+                            koma-letter))
 ;; Key Chord functionality in use-package
 (use-package use-package-chords
+  :straight t
   :config (key-chord-mode 1))
-
-(require 'server)
-(unless (server-running-p)
-  (server-start))
-
 (defmacro use-feature (name &rest args)
   "Like `use-package', but with `straight-use-package-by-default' disabled.
 NAME and ARGS are as in `use-package'."
@@ -238,16 +219,6 @@ NAME and ARGS are as in `use-package'."
   (defalias 'gsetq-local #'general-setq-local)
   (defalias 'gsetq-default #'general-setq-default))
 
-;;(straight-use-package 'gcmh)
-;;(use-package gcmh
-;;  :straight t
-;;  :init
-;;  (setq gcmh-verbose           nil
-;;      gcmh-lows-cons-threshold #x800000
-;;      gcmh-high-cons-threshold #x1600000
-;;      gcmh-idle-delay          3600)
-;;  :config
-;;  (gcmh-mode))
 (setq garbage-collection-messages nil)
 ;;
 (defvar current-date-time-format "%a %b %d %Y-%m-%dT%H:%M:%S "
@@ -265,7 +236,6 @@ NAME and ARGS are as in `use-package'."
 ;;; so package-list-packages includes them
 (require 'package)
 (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/"))
-
 ;;; get and untangle the config.org file
 (defun my-tangle-config-org ()
   "This function will write all source blocks from =config.org= into =config.el= that are ...
@@ -337,7 +307,6 @@ NAME and ARGS are as in `use-package'."
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (put 'dired-find-alternate-file 'disabled nil)
-
 #+end_example
 * Contents                                      :TOC_5:
 :PROPERTIES:
@@ -348,17 +317,15 @@ NAME and ARGS are as in `use-package'."
   - [[#about-this-file][about this file]]
   - [[#early_initel-and-initel][early_init.el and init.el]]
     - [[#early_initel-require-emacs-version--270][early_init.el (require emacs version > 27.0)]]
-    - [[#initel-not-tested-with-emacs-version-271][init.el (not tested with emacs version< 27.1)]]
 - [[#basic-emacs][Basic emacs]]
   - [[#fundamental-constants-and-functions][Fundamental constants and functions]]
     - [[#better-defaults][Better Defaults]]
     - [[#helpers][Helpers]]
-    - [[#version-and-full-stop][Version and full stop]]
+    - [[#version-and-warning-if-wrong-version][Version and warning if wrong version]]
     - [[#load-custom-file][load custom file]]
     - [[#fundamentals-for-hydras][Fundamentals for Hydras]]
     - [[#typeface-suitability-test][Typeface suitability test]]
     - [[#diminish-modes][Diminish modes]]
-    - [[#free-keys][Free Keys]]
     - [[#bind-key][bind key]]
     - [[#variables-and-defaults][Variables and Defaults]]
     - [[#setting-my-favorite-theme][Setting my favorite theme]]
@@ -371,6 +338,7 @@ NAME and ARGS are as in `use-package'."
     - [[#registers][Registers]]
   - [[#buffer][Buffer]]
     - [[#utf-8-please][UTF-8 please]]
+    - [[#insert-char-preview][insert-char-preview]]
     - [[#scratch-buffer][scratch buffer]]
     - [[#kill-buffer-and-the-file-associated][kill buffer and the file associated]]
     - [[#rename-current-buffer-and-file-associated][rename current buffer and file associated]]
@@ -490,8 +458,7 @@ NAME and ARGS are as in `use-package'."
 :CUSTOM_ID: Basic emacs
 :END:
 I've tried to make this i an orderdly manner, which is not an 
-easy task for me, as the characteristic order is far from my 
-normally behavior.
+easy task for me, as the is far from my normally behavior.
 First the basics for running emacs
 ** Fundamental constants and functions
 :PROPERTIES:
@@ -548,7 +515,7 @@ Here are what I consider better defaults as per my own experience.
 (push '(vertical-scroll-bars) default-frame-alist)
 (setq use-file-dialog t)   
 (setq use-dialog-box t)               ; only for mouse events
-(setq visible-bell t)             ;; Get rid of the beeps
+(setq visible-bell t)                 ;; Get rid of the beeps
 
 (defun ask-before-closing ()
   "Prompt for confirmation for emacsclient(not daemon) like confirm-kill-emacs for running Emacs without daemon."
@@ -558,11 +525,6 @@ Here are what I consider better defaults as per my own experience.
           (message "Canceled frame close!")))
 
 #+END_SRC
-I only ever write/read in Latin and Greek alphabets.  So, while I
-  appreciate the fact that Emacs can natively handle other scripts, I have
-  no use for that particular feature.  Setting the default directionality
-  to what my languages use can help improve the responsiveness of Emacs in
-  some cases.
 Consistent performance is the reason to also enable global-so-long-mode,
   built into Emacs versions >= 27, which allows the active major mode to
   gracefully adapt to buffers with very long lines.  What “very long”
@@ -696,7 +658,7 @@ e.g. (:bind "C-m" (message "Hello world." e.g. (:bind org-mode "C-m" (message "H
 #+begin_src emacs-lisp
 (if nec/measure-time (nec/timer "Helpers "))
 #+end_src
-*** Version and full stop
+*** Version and warning if wrong version
 :PROPERTIES:
 :CUSTOM_ID: Version and full stop
 :END:
@@ -721,10 +683,6 @@ your init file.  In my experience, this is a common source of
 inconsistencies, arising from a conflict between the user's code and
 what is stored in that added =custom= snippet.
 
-As such, I prefer to have all "custom" code stored in a separate,
-disposable file that I do not keep under version control.  When
-something does not seem to work as intended it is easy to edit
-=~/.emacs.d/custom.el= or outright delete it.
 #+begin_src emacs-lisp
 ;;; Offload the custom-set-variables to a separate file
 ;;; This keeps your init.el neater and you have the option
@@ -734,8 +692,7 @@ something does not seem to work as intended it is easy to edit
   (write-region "" nil custom-file))
 ;;; Load custom file. Don't hide errors. Hide success message
 (load custom-file 'noerror)
-(if nec/measure-time
-          (nec/timer "Load custom.el   "))
+(if nec/measure-time (nec/timer "Load custom.el   "))
 #+end_src
 *** Fundamentals for Hydras
 :PROPERTIES:
@@ -748,18 +705,6 @@ convenient key bindings.  In an active hydra, all of its keys---the
 hydra's "heads"---can be typed in any order, keeping the mode active in
 the process (if wanted), while at least one key performs the function of
 exiting the hydra.
-
-In practice, *I do not use hydras as substitutes for mode maps*.  Instead,
-I treat them as complementary to minor modes that offer enhancements to
-a particular major mode but are otherwise not very useful outside that
-niche.  Think of cases such as a code linter (the minor mode) as part of
-a programming session (major mode).
-
-The reason I use hydras this way is due to the official key binding
-conventions that I [generally] follow (as documented in the Emacs
-manual).  The idea of using =C-c [a-z]= for all these minor modes is good
-only if you have a few of them and only if they are more useful outside
-a particular task.  In other words, it does not scale.
 
 I thus employ =C-c h= as a common prefix for all my hydras (knowing that
 it is meant for private use), binding each sequence to the relevant
@@ -874,14 +819,6 @@ abcdefghijklmnopqrstuvwxyzæøå
 ;;
 (if nec/measure-time (nec/timer "Diminish   "))
 #+end_src
-;;
-*** Free Keys
-#+BEGIN_SRC emacs-lisp
-  (use-package free-keys
-    :straight t
-    :bind (:map help-map
-                ("C-k" . free-keys)))
-#+END_SRC
 *** bind key
 :PROPERTIES:
 :CUSTOM_ID: bind key
@@ -920,7 +857,6 @@ abcdefghijklmnopqrstuvwxyzæøå
       calendar-latitude 55.938434
       calendar-longitude 12.489334
       calendar-location-name "Nivå, Denmark")
-
 ;; goto my base
 (defconst sys/w32p  (eq system-type 'windows-nt)
   "Are we running on a WinTel system?")
@@ -936,26 +872,22 @@ abcdefghijklmnopqrstuvwxyzæøå
   "Are we running under X on a GNU/Linux system?")
 (defconst sys/cygwinp (eq system-type 'cygwin)
   "Are we running on a Cygwin system?")
-;;
 (defcustom nec-logo (expand-file-name "images/hands.png" user-emacs-directory)
   "Set nec logo. nil means official logo."
   :group 'nec
   :type 'string)
-
 (defcustom nec-icon (display-graphic-p)
   "Display icons or not."
   :group 'nec
   :type 'boolean)
 ;;
 (setq-default cursor-type 'bar)           ; Line-style cursor similar to other text editors
-(setq initial-scratch-message "Hi, Welcome to emacs")         ; Make *scratch* buffer blank
 (setq-default frame-title-format '("" "%b - Som i en Drømmeverden (•̀ᴗ•́)و"))
 (setq ring-bell-function 'ignore)         ; Disable bell sound
 (fset 'yes-or-no-p 'y-or-n-p)             ; y-or-n-p makes answering questions faster
 (show-paren-mode t)
 (show-paren-mode 'mixed)
 (set-face-attribute 'default nil :family "Iosevka Type" :height 160 )
-
 (straight-use-package  '(bookmark+ :type git :host github :repo "emacsmirror/bookmark-plus"))
 (setq bookmark-default-file "~/.emacs.d/private/bookmarks"
       browse-url-generic-program "safari"
@@ -1020,7 +952,6 @@ abcdefghijklmnopqrstuvwxyzæøå
 (setq recentf-save-file "~/.emacs.d/private/recentf")
 (if nec/measure-time (nec/timer "Set constants "))   
 #+end_src
-
 *** Setting my favorite theme
 #+begin_src emacs-lisp
 ;; Treat all themes as safe; no query before use.
@@ -1211,12 +1142,8 @@ If Non-nil, use dashboard, otherwise will restore previous session."
            ("Bil"      . "🚗") ; 🚙 🚗 🚘
            ("Haster"   . "🔥"))) ;; 📥 📤 📬
    (org-pretty-tags-global-mode 1))
-
-
 (if nec/measure-time
           (nec/timer "Variables" ))
-
-
 #+end_src
 *** Initial frame
 :PROPERTIES:
@@ -1418,6 +1345,14 @@ Clean all the registers you saved.
 (setq default-process-coding-system '(utf-8-unix . utf-8-unix))
 (if nec/measure-time (nec/timer "UTF-8   "))
 #+end_src
+*** insert-char-preview
+Insert Unicode char via insert-char-preview similar to insert-char command, but
+with character preview in completion prompt. from: [[https://gitlab.com/matsievskiysv/insert-char-preview/tree/0e4a62b5407fb1bed8920a4c13cf9a91065e15ad][insert-char-preview]]
+#+begin_src emacs-lisp
+;;(straight-use-package 'insert-char-preview
+;;  :commands insert-char-preview
+;;  :bind ("C-x 8 RET" . insert-char-preview))
+#+end_src
 *** scratch buffer
 #+begin_src emacs-lisp
 ;; Makes *scratch* empty.
@@ -1442,7 +1377,7 @@ Clean all the registers you saved.
 (setq inhibit-startup-buffer-menu t)
 (setq initial-buffer-choice 'acg-initial-buffer-choice)
 (if nec/measure-time (nec/timer "avoid scratch buffer "))
-#+end_src
+#+end_srcstraight
 *** kill buffer and the file associated
 
    #+BEGIN_SRC emacs-lisp
@@ -2377,7 +2312,28 @@ proper shell in Emacs!
 (straight-usr-package '(ivy :type git :flavor melpa 
    :files (:defaults (:exclude "swiper.el" "counsel.el" "ivy-hydra.el" "ivy-avy.el") "doc/ivy-help.org" "ivy-pkg.el") 
    :host github :repo "abo-abo/swiper"))
- 
+ (ivy-mode 1)
+(setq ivy-use-virtual-buffers t)
+(setq enable-recursive-minibuffers t)
+;; enable this if you want `swiper' to use it
+;; (setq search-default-mode #'char-fold-to-regexp)
+(global-set-key "\C-s" 'swiper)
+(global-set-key (kbd "C-c C-r") 'ivy-resume)
+(global-set-key (kbd "<f6>") 'ivy-resume)
+(global-set-key (kbd "M-x") 'counsel-M-x)
+(global-set-key (kbd "C-x C-f") 'counsel-find-file)
+(global-set-key (kbd "<f1> f") 'counsel-describe-function)
+(global-set-key (kbd "<f1> v") 'counsel-describe-variable)
+(global-set-key (kbd "<f1> o") 'counsel-describe-symbol)
+(global-set-key (kbd "<f1> l") 'counsel-find-library)
+(global-set-key (kbd "<f4> i") 'counsel-info-lookup-symbol)
+(global-set-key (kbd "<f4> u") 'counsel-unicode-char)
+(global-set-key (kbd "C-c g") 'counsel-git)
+(global-set-key (kbd "C-c j") 'counsel-git-grep)
+(global-set-key (kbd "C-c k") 'counsel-ag)
+(global-set-key (kbd "C-x l") 'counsel-locate)
+(global-set-key (kbd "C-S-o") 'counsel-rhythmbox)
+(define-key minibuffer-local-map (kbd "C-r") 'counsel-minibuffer-history)
 #+end_src
 
 *** SMEX
@@ -4501,7 +4457,7 @@ to use predicates to group entries together; e.g., by considering an entry's
 under appropriate parent headings, I want entries to be shown according to their
 parent heading. Of-course, the top-most grouping, the important tasks, should be
 pulled out of their group and placed at the top.
-#+BEGIN_SRC emacs-lisp
+### #+BEGIN_SRC emacs-lisp
  (straight-use-package '(origami :type git :flavor melpa :host github :repo "gregsexton/origami.el"))
   (use-package org-super-agenda
     :straight t
@@ -4525,7 +4481,7 @@ pulled out of their group and placed at the top.
   ;; Leave new line at the end of an entry.
   ;; (setq org-blank-before-new-entry '((heading . t) (plain-list-item . t)))
 (if nec/measure-time (nec/timer "org-super-agenda "))
-#+END_SRC
+### #+END_SRC
 
 + Origami mode ---see below in [[Text Folding with Origami-mode]]---
   works well with super-agenda. Just ~M-x origami-mode~ then ~C-c f~ to
@@ -4599,48 +4555,52 @@ requires sqlite3.
 ;;    (setq org-roam-db-location org-roam-directory)
     (setq org-roam-graph-viewer nil)
 
-    (setq org-roam-capture-templates `(("d" "default" plain #'org-roam-capture--get-point
+1   (setq org-roam-capture-templates `(("n" "default" plain #'org-roam-capture--get-point
                                               "%? "
                                                 :file-name "%<%Y%m%d%H%M%S>-${slug}"
                                                 :head "#+title: ${title}\n  "
                                                 :unnarrowed t)
-                                         ("r" "ref" plain #'org-roam-capture--get-point
+                                       ("r" "ref" plain #'org-roam-capture--get-point
                                               "%?"
                                                 :file-name "${slug}"
                                                 :head "#+title: ${title}\n#+roam_key: ${ref}"
                                                 :unnarrowed t)))
-  (require 'org-roam-protocol)
+(require 'org-roam-dailies)
+(setq org-roam-dailies-directory "~/dailies/")
+(setq org-roam-completion-system 'helm)
+(require 'org-roam-protocol)
 #+end_src
-=company-org-roam= provides completion for the links
-#+begin_src emacs-lisp
-(use-package company-org-roam
-  :straight t
-  :after company
-  :config
-  (push 'company-org-roam company-backends))
-#+end_src
+
 =org-roam-server= will start a web server on http://127.0.0.1:8080/ to see the nodes and their linking
 #+begin_src emacs-lisp
 (use-package org-roam-server
   :straight t
+;; :hook (after-init . org-roam-server-mode)
   :config  
   (setq org-roam-server-host "127.0.0.1"
         org-roam-server-port 8080
-        org-roam-server-export-inline-images t
+        org-roam-server-export-inline-images nil
         org-roam-server-authenticate nil
         org-roam-server-network-poll t
         org-roam-server-network-arrows nil
         org-roam-server-network-label-truncate t
         org-roam-server-network-label-truncate-length 60
         org-roam-server-network-label-wrap-length 20))
-;;  (org-roam-server-mode t)
+;;(org-roam-server-mode t)
+(if nec/measure-time (nec/timer "org-roam-server "))
+#+end_src
+=company-org-roam= provides completion for the links
+#+begin_src emacs-lisp
+(use-package company-org-roam
+  :straight t
+  :config (push 'company-org-roam company-backends))
 #+end_src
 *** org mac iCal
 
 [[https://github.com/ndw/org-mac-iCal][org-mac-iCal]] allows you to imports events from iCal.app to the Emacs diary.
 
 #+NAME: package-org-mac-iCal
-#+BEGIN_SRC emacs-lisp
+### #+BEGIN_SRC emacs-lisp
 
 (require 'org-mac-iCal)
 (setq org-mac-iCal-import-exchange t)
@@ -4659,7 +4619,7 @@ requires sqlite3.
              (re-search-backward "^[0-9]+:[0-9]+-[0-9]+:[0-9]+ " nil t))
            (insert (match-string 0)))))
 (if nec/measure-time (nec/timer "org-mac-iCal "))
-#+END_SRC
+### #+END_SRC
 
 *** org brain
 [[https://github.com/Kungsgeten/org-brain][org-brain]] provides Org-mode wiki + concept-mapping.
@@ -4726,7 +4686,6 @@ with a simple mouse right-click, we can even select a ‘midnight’ rendering m
 easier on the eyes. For more, see the brief [[https://www.dailymotion.com/video/x2bc1is][pdf-tools-tourdeforce]] demo.
 
 * Languages
-
 *** Python
 :PROPERTIES:
 :CUSTOM_ID: Python
@@ -4779,10 +4738,11 @@ easier on the eyes. For more, see the brief [[https://www.dailymotion.com/video/
   (use-package lpy
     :straight t
     :hook (python-mode . (lambda () (lpy-mode))))
+(if nec/measure-time (nec/timer "python "))
 ;;
 (straight-use-package '(ein :type git :flavor melpa :files ("lisp/*" (:exclude "lisp/zeroein.el") "ein-pkg.el") :host github :repo "millejoh/emacs-ipython-notebook"))
 
-(if nec/measure-time (nec/timer "python  "))
+(if nec/measure-time (nec/timer "ipython  "))
 #+end_src
 
 *** Projectile
