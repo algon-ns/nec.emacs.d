@@ -112,9 +112,9 @@ If you wonder, where You found this file....
 ;; Author: Niels Søndergaard
 ;; Created: Fri Jun 12 10:49:04 2020 (+0200)
 ;; Version: 1.0
-;; Last-Updated: Ons Nov 25 22:07:49 2020 (+0100)
+;; Last-Updated: Tor Nov 26 17:29:51 2020 (+0100)
 ;;           By: Niels Søndergaard
-;;     Update #: 29
+;;     Update #: 34
 ;; Keywords:
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -319,23 +319,23 @@ NAME and ARGS are as in `use-package'."
     - [[#early_initel-require-emacs-version--270][early_init.el (require emacs version > 27.0)]]
 - [[#basic-emacs][Basic emacs]]
   - [[#fundamental-constants-and-functions][Fundamental constants and functions]]
-    - [[#better-defaults][Better Defaults]]
-    - [[#helpers][Helpers]]
-    - [[#version-and-warning-if-wrong-version][Version and warning if wrong version]]
+    - [[#better-defaults][better Defaults]]
+    - [[#helpers][helpers]]
+    - [[#version-and-warning-if-wrong-version][version and warning if wrong version]]
     - [[#load-custom-file][load custom file]]
-    - [[#fundamentals-for-hydras][Fundamentals for Hydras]]
-    - [[#typeface-suitability-test][Typeface suitability test]]
-    - [[#diminish-modes][Diminish modes]]
+    - [[#fundamentals-for-hydras][fundamentals for Hydras]]
+    - [[#typeface-suitability-test][typeface suitability test]]
+    - [[#diminish-modes][diminish modes]]
     - [[#bind-key][bind key]]
-    - [[#variables-and-defaults][Variables and Defaults]]
-    - [[#setting-my-favorite-theme][Setting my favorite theme]]
-    - [[#pretty-symbols][Pretty Symbols]]
-    - [[#initial-frame][Initial frame]]
-    - [[#backup][Backup]]
+    - [[#variables-and-defaults][variables and Defaults]]
+    - [[#setting-my-favorite-theme][setting my favorite theme]]
+    - [[#pretty-symbols][pretty Symbols]]
+    - [[#initial-frame][initial frame]]
+    - [[#backup][backup]]
     - [[#create-missing-directory-for-find-file][create missing directory for find-file]]
     - [[#ctrl-s--isearch][ctrl-s  (isearch)]]
-    - [[#making-emacs-secure][Making emacs secure]]
-    - [[#registers][Registers]]
+    - [[#making-emacs-secure][making emacs secure]]
+    - [[#registers][registers]]
   - [[#buffer][Buffer]]
     - [[#utf-8-please][UTF-8 please]]
     - [[#insert-char-preview][insert-char-preview]]
@@ -346,7 +346,7 @@ NAME and ARGS are as in `use-package'."
     - [[#list-buffers][List buffers]]
     - [[#save-all-buffer][Save all buffer]]
     - [[#load-misc-fonts][Load misc fonts]]
-    - [[#unfill-a-paragraph][Unfill a paragraph]]
+    - [[#fill-a-paragraph][fill a paragraph]]
     - [[#auto-fill-mode][Auto fill mode]]
     - [[#move-to-indentation-or-beginning-of-the-line][Move to indentation or beginning of the line]]
     - [[#disable-tab-bar-disable][DISABLE Tab-bar DISABLE]]
@@ -464,7 +464,7 @@ First the basics for running emacs
 :PROPERTIES:
 :CUSTOM_ID: Fundamental constants and functions
 :END:
-*** Better Defaults
+*** better Defaults
 Here are what I consider better defaults as per my own experience.
 
 #+BEGIN_SRC emacs-lisp
@@ -549,7 +549,7 @@ The code below is a minor adaptation of the insights of Alain M. Lafon
 #+end_src
 
 <<<<<<< HEAD
-*** Helpers
+*** helpers
 These macros are conveinent shorthands.
 :function
 Make non-interactive functions out of forms or a symbol.
@@ -658,7 +658,7 @@ e.g. (:bind "C-m" (message "Hello world." e.g. (:bind org-mode "C-m" (message "H
 #+begin_src emacs-lisp
 (if nec/measure-time (nec/timer "Helpers "))
 #+end_src
-*** Version and warning if wrong version
+*** version and warning if wrong version
 :PROPERTIES:
 :CUSTOM_ID: Version and full stop
 :END:
@@ -694,7 +694,7 @@ what is stored in that added =custom= snippet.
 (load custom-file 'noerror)
 (if nec/measure-time (nec/timer "Load custom.el   "))
 #+end_src
-*** Fundamentals for Hydras
+*** fundamentals for Hydras
 :PROPERTIES:
 :CUSTOM_ID: h:af691a31-917e-4d9b-aee6-5744b1173999
 :END:
@@ -751,7 +751,7 @@ Also check [[https://github.com/abo-abo/hydra][the project's source]] for more i
 (if nec/measure-time (nec/timer "Hydra   "))
 #+end_src
 
-*** Typeface suitability test
+*** typeface suitability test
 :PROPERTIES:
 :CUSTOM_ID: h:9035a1ed-e988-4731-89a5-0d9e302c3dea
 :END:
@@ -796,7 +796,7 @@ abcdefghijklmnopqrstuvwxyzæøå
 αβγδεζηθικλμνξοπρστυφχψω
 #+end_example
 
-*** Diminish modes
+*** diminish modes
 :PROPERTIES:
 :CUSTOM_ID: Diminish modes
 :END:
@@ -831,7 +831,7 @@ abcdefghijklmnopqrstuvwxyzæøå
 (window-divider-mode)
 (if nec/measure-time (nec/timer "bind key   "))
 #+end_src
-*** Variables and Defaults
+*** variables and Defaults
 :PROPERTIES:
 :CUSTOM_ID: Variables and Defaults
 :END:
@@ -952,7 +952,7 @@ abcdefghijklmnopqrstuvwxyzæøå
 (setq recentf-save-file "~/.emacs.d/private/recentf")
 (if nec/measure-time (nec/timer "Set constants "))   
 #+end_src
-*** Setting my favorite theme
+*** setting my favorite theme
 #+begin_src emacs-lisp
 ;; Treat all themes as safe; no query before use.
 (setf custom-safe-themes t)
@@ -1018,7 +1018,7 @@ Source: https://github.com/m-parashar/emax64/issues/5
 
 (if nec/measure-time (nec/timer "Choose theme "))
 #+end_src
-*** Pretty Symbols
+*** pretty Symbols
 #+begin_src emacs-lisp
 
 (defcustom nec-dashboard t
@@ -1145,7 +1145,7 @@ If Non-nil, use dashboard, otherwise will restore previous session."
 (if nec/measure-time
           (nec/timer "Variables" ))
 #+end_src
-*** Initial frame
+*** initial frame
 :PROPERTIES:
 :CUSTOM_ID: Initial Frame
 :END:
@@ -1176,7 +1176,7 @@ If Non-nil, use dashboard, otherwise will restore previous session."
 (if nec/measure-time
           (nec/timer "Initial Framesize   "))
 #+end_src
-*** Backup
+*** backup
 :PROPERTIES:
 :CUSTOM_ID: Backup
 :END:
@@ -1220,7 +1220,7 @@ If Non-nil, use dashboard, otherwise will restore previous session."
 
 (if nec/measure-time (nec/timer "crtl-s" ))
 #+END_SRC
-*** Making emacs secure
+*** making emacs secure
 :PROPERTIES:
 :CUSTOM_ID: Making emacs secure
 :END:
@@ -1276,7 +1276,7 @@ function to check if this setup is properly done:
           (nec/timer "Secure emacs   "))
 #+end_src
 
-*** Registers
+*** registers
 :PROPERTIES:
 :CUSTOM_ID: Registers
 :END:
@@ -1349,7 +1349,7 @@ Clean all the registers you saved.
 Insert Unicode char via insert-char-preview similar to insert-char command, but
 with character preview in completion prompt. from: [[https://gitlab.com/matsievskiysv/insert-char-preview/tree/0e4a62b5407fb1bed8920a4c13cf9a91065e15ad][insert-char-preview]]
 #+begin_src emacs-lisp
-;;(straight-use-package 'insert-char-preview
+(straight-use-package '(insert-char-preview :type git :flavor melpa :host gitlab :repo "matsievskiysv/insert-char-preview"))
 ;;  :commands insert-char-preview
 ;;  :bind ("C-x 8 RET" . insert-char-preview))
 #+end_src
@@ -1504,7 +1504,7 @@ Non-null optional arg FILES-ONLY means mention only file buffers."
   (if nec/measure-time
             (nec/timer "Load misc fonts   "))
 #+end_src
-*** Unfill a paragraph 
+*** fill a paragraph 
 :PROPERTIES:
 :CUSTOM_ID: Unfill a paragraph 
 :END:
@@ -2895,6 +2895,7 @@ Put all keybindings here (with doc)
 (global-set-key (kbd "C-c n l")  'org-roam)
 (global-set-key (kbd "C-c n g")  'org-roam-graph)
 (global-set-key (kbd "C-c n f")  'org-roam-find-file)
+
 (if nec/measure-time
     (nec/timer "Global key bindings   "))
 #+end_src
@@ -3719,13 +3720,12 @@ blocks! Love this one ^_^
              about your recent Emacs activities.
 We want a Dashboard, which demand Page Break Line 
 #+begin_src emacs-lisp
-(use-package page-break-lines
-  :straight t 
+(straight-use-package '(page-break-lines :type git :flavor melpa :host github :repo "purcell/page-break-lines")
   :diminish
   :init (global-page-break-lines-mode))
-#+end_src
 
-#+begin_src emacs-lisp
+(straight-use-package '(elisp-lint :type git :flavor melpa :host github :repo "gonewest818/elisp-lint"))
+
 (use-package dashboard
   :straight t 
   :diminish
@@ -3738,7 +3738,7 @@ We want a Dashboard, which demand Page Break Line
   ;(dashboard-startup-banner "~/.emacs.d/images/gnu.png")
   ;(dashboard-startup-banner "~/.emacs.d/images/Verdensmaal.png")
   ;(dashboard-startup-banner "~/.emacs.d/images/ognu.png")
-  (dashboard-items '( (bookmarks . 6) (agenda . 8)))
+  (dashboard-items '( (bookmarks . 6) (agenda . 6)))
   (initial-buffer-choice (lambda () (get-buffer dashboard-buffer-name)))
   (dashboard-set-heading-icons t)
   (dashboard-set-navigator t)
