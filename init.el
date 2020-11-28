@@ -7,9 +7,9 @@
 ;; Author: Niels Søndergaard
 ;; Created: Fri Jun 12 10:49:04 2020 (+0200)
 ;; Version: 1.0
-;; Last-Updated: Man Nov 23 20:47:12 2020 (+0100)
+;; Last-Updated: Fre Nov 27 20:19:06 2020 (+0100)
 ;;           By: Niels Søndergaard
-;;     Update #: 5
+;;     Update #: 6
 ;; Keywords:
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -58,7 +58,6 @@
  (use-package git) ;; ensure we can install from git sources
 
 (if nec/measure-time (nec/timer "After load of straight... "))
-
 
 (straight-use-package '(org :type git :repo "https://code.orgmode.org/bzg/org-mode.git" :local-repo "org")
    :diminish " O")

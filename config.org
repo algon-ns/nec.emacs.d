@@ -112,9 +112,9 @@ If you wonder, where You found this file....
 ;; Author: Niels Søndergaard
 ;; Created: Fri Jun 12 10:49:04 2020 (+0200)
 ;; Version: 1.0
-;; Last-Updated: Tor Nov 26 17:29:51 2020 (+0100)
+;; Last-Updated: Lør Nov 28 08:23:49 2020 (+0100)
 ;;           By: Niels Søndergaard
-;;     Update #: 34
+;;     Update #: 51
 ;; Keywords:
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -328,6 +328,7 @@ NAME and ARGS are as in `use-package'."
     - [[#diminish-modes][diminish modes]]
     - [[#bind-key][bind key]]
     - [[#variables-and-defaults][variables and Defaults]]
+    - [[#all-the-icons][all-the-icons]]
     - [[#setting-my-favorite-theme][setting my favorite theme]]
     - [[#pretty-symbols][pretty Symbols]]
     - [[#initial-frame][initial frame]]
@@ -372,7 +373,6 @@ NAME and ARGS are as in `use-package'."
   - [[#emacs-interface][emacs interface]]
     - [[#ac-jump][AC Jump]]
     - [[#term][term]]
-    - [[#all-the-icons][all-the-icons]]
     - [[#helm][Helm]]
     - [[#ivy][Ivy]]
     - [[#smex][SMEX]]
@@ -448,6 +448,7 @@ NAME and ARGS are as in `use-package'."
     - [[#elgantt][elgantt]]
     - [[#gnus][gnus]]
     - [[#elfeed][Elfeed]]
+    - [[#ledger-mode][ledger-mode]]
     - [[#zone][zone]]
     - [[#smog][smog]]
 - [[#the-end][The end]]
@@ -952,6 +953,43 @@ abcdefghijklmnopqrstuvwxyzæøå
 (setq recentf-save-file "~/.emacs.d/private/recentf")
 (if nec/measure-time (nec/timer "Set constants "))   
 #+end_src
+*** all-the-icons
+:PROPERTIES:
+:CUSTOM_ID: all-the-icons
+:END:
+#+begin_src emacs-lisp
+;; Download icons
+
+ (straight-use-package '(all-the-icons :type git :flavor melpa :files (:defaults "data" "all-the-icons-pkg.el") :host github :repo "domtronn/all-the-icons.el")
+    :init (gsetq inhibit-compacting-font-caches t))
+
+(defcustom is-all-the-icons-installed nil
+  "DO NOT EDIT. Checks if all-the-icons fonts are installed yet."
+  :group 'nec
+  :type 'boolean)
+
+(unless is-all-the-icons-installed
+  (all-the-icons-install-fonts)
+  (customize-save-variable 'is-all-the-icons-installed t))
+
+(use-package counsel
+  :straight t)
+
+(use-package all-the-icons-ivy
+  :straight t
+  :config
+  (all-the-icons-ivy-setup))
+
+(use-package all-the-icons-ivy-rich
+  :straight t
+  :init (all-the-icons-ivy-rich-mode 1))
+
+(use-package ivy-rich
+  :straight t
+  :init (ivy-rich-mode 1))
+
+(if nec/measure-time (nec/timer "all the icons   "))
+#+end_src
 *** setting my favorite theme
 #+begin_src emacs-lisp
 ;; Treat all themes as safe; no query before use.
@@ -1102,8 +1140,8 @@ If Non-nil, use dashboard, otherwise will restore previous session."
     (setq pretty-symbol-patterns
 	  (append pretty-symbol-patterns
 		'((?▤ org-specific ":LOGBOOK:" (org-mode))
-            (?⚙ org-specific ":PROPERTIES:" (org-mode))
-      	  (?⏏ org-specific ":END:" (org-mode))
+;;            (?⚙ org-specific ":PROPERTIES:" (org-mode))
+;;            (?⏏ org-specific ":END:" (org-mode))
       	  (?★ org-specific "\\[#A\\]" (org-mode))
       	  ("" org-specific "\\[#B\\]" (org-mode))
       	  (?☕ org-specific "\\[#C\\]" (org-mode))
@@ -2223,43 +2261,6 @@ proper shell in Emacs!
            ("C-c T" . sane-term-create)
            ("C-c C-j" . sane-term-mode-toggle)))
 #+END_SRC
-*** all-the-icons
-:PROPERTIES:
-:CUSTOM_ID: all-the-icons
-:END:
-#+begin_src emacs-lisp
-;; Download icons
-
- (straight-use-package '(all-the-icons :type git :flavor melpa :files (:defaults "data" "all-the-icons-pkg.el") :host github :repo "domtronn/all-the-icons.el")
-    :init (gsetq inhibit-compacting-font-caches t))
-
-(defcustom is-all-the-icons-installed nil
-  "DO NOT EDIT. Checks if all-the-icons fonts are installed yet."
-  :group 'nec
-  :type 'boolean)
-
-(unless is-all-the-icons-installed
-  (all-the-icons-install-fonts)
-  (customize-save-variable 'is-all-the-icons-installed t))
-
-(use-package counsel
-  :straight t)
-
-(use-package all-the-icons-ivy
-  :straight t
-  :config
-  (all-the-icons-ivy-setup))
-
-(use-package all-the-icons-ivy-rich
-  :straight t
-  :init (all-the-icons-ivy-rich-mode 1))
-
-(use-package ivy-rich
-  :straight t
-  :init (ivy-rich-mode 1))
-
-(if nec/measure-time (nec/timer "all the icons   "))
-#+end_src
 *** Helm
 :PROPERTIES:
 :CUSTOM_ID: Helm
@@ -3720,9 +3721,9 @@ blocks! Love this one ^_^
              about your recent Emacs activities.
 We want a Dashboard, which demand Page Break Line 
 #+begin_src emacs-lisp
-(straight-use-package '(page-break-lines :type git :flavor melpa :host github :repo "purcell/page-break-lines")
-  :diminish
-  :init (global-page-break-lines-mode))
+(straight-use-package '(page-break-lines :type git :flavor melpa :host github :repo "purcell/page-break-lines"))
+
+(global-page-break-lines-mode)
 
 (straight-use-package '(elisp-lint :type git :flavor melpa :host github :repo "gonewest818/elisp-lint"))
 
@@ -4134,7 +4135,7 @@ Disable property inheritance (in order to seed up)
 (use-package org-bullets
   :straight t
   :hook (org-mode . org-bullets-mode)
-  :init (setq org-bullets-bullet-list '(  "☢" "✿"  "❀"  "✸" "○" "◆" "◇"  )))
+  :init (setq org-bullets-bullet-list '(  "🔵" "🔴"  "⭐️"  "⚾️" "💢" "🌀" "🔘"  )))
 (if nec/measure-time (nec/timer "org bullets" ))
 #+end_src
 
@@ -4750,26 +4751,13 @@ easier on the eyes. For more, see the brief [[https://www.dailymotion.com/video/
 :CUSTOM_ID: Projectile
 :END:
 #+BEGIN_SRC emacs-lisp
-(use-package projectile
-  :straight t
-  :diminish " "
-  :custom
-  (projectile-project-search-path (f-directories "~/Projects/"))
-  ;; Open magit when switching project
-  (projectile-switch-project-action
-   (lambda ()
-     (let ((magit-display-buffer-function
-            'magit-display-buffer-same-window-except-diff-v1))
-       (magit))))
-  ;; Do not include straight repos (emacs packages) to project list
-  (projectile-ignored-project-function
-   (lambda (project-root)
-     (when (string-prefix-p (expand-file-name "straight" user-emacs-directory)
-                            project-root)
-       t)))
-  :config
-  (require 'tramp)  ; TEMP: error: "Symbol's value as variable is void tramp-methods"
-  (projectile-mode))
+(straight-use-package '(projectile :type git :flavor melpa :files ("projectile.el" "projectile-pkg.el") :host github :repo "bbatsov/projectile")
+  :diminish " 🛠")
+  
+(setq projectile-project-search-path (f-directories "~/Projects/")) 
+(projectile-mode 1)
+(define-key projectile-mode-map (kbd "s-p") 'projectile-command-map)
+(define-key projectile-mode-map (kbd "C-c p") 'projectile-command-map)
 (if nec/measure-time (nec/timer "Projectile "))
 #+END_SRC
 *** Rust
@@ -5801,7 +5789,7 @@ This document is irregularly published and lives in different locations:
 In an attempt to do even more in emacs, i've installed `elfeed' and imported my feeds from RSSyl
 #+begin_src emacs-lisp
   (use-package notifications
-  :straight t)
+    :straight t)
 
   (use-package elfeed
     :straight t
@@ -5816,7 +5804,6 @@ In an attempt to do even more in emacs, i've installed `elfeed' and imported my 
     :init
     (setf url-queue-timeout 30
           elfeed-db-directory "~/.emacs.d/private/.elfeed")
-
     :config
     (defun mrb/elfeed-search-toggle-tag(tag)
       (let ((entries (elfeed-search-selected)))
@@ -5862,16 +5849,26 @@ In an attempt to do even more in emacs, i've installed `elfeed' and imported my 
 
 #+end_src
 
-Elfeed allows to interactively subscribe to a feed (defaulting to what is in the clipboard. Managing elfeed-feeds as a variable is kinda clumsy, although very flexible. There is a middle ground which fits me even better. At the cost of the bare-bone flexibilith of having the feeds directly in lisp, I'm using an orgmode file to record the feeds i want.
+Elfeed allows to interactively subscribe to a feed (defaulting to what is in the
+clipboard. Managing elfeed-feeds as a variable is kinda clumsy, although very
+flexible. There is a middle ground which fits me even better. At the cost of the
+bare-bone flexibilith of having the feeds directly in lisp, I'm using an orgmode
+file to record the feeds i want.
 
 #+begin_src emacs-lisp
-  (use-package elfeed-org
-    :straight t
-    :after elfeed
-    :init
-    (setq rmh-elfeed-org-files (list "~/Dropbox/org/elfeed/elfeed.org"))
-    (elfeed-org))
+(setq rmh-elfeed-org-files (list "~/Dropbox/org/elfeed/elfeed.org"))  
+(straight-use-package '(elfeed-org :type git :flavor melpa 
+                        :host github :repo "remyhonig/elfeed-org"))
 (if nec/measure-time (nec/timer "elfeed "))
+#+end_src
+*** ledger-mode
+Ledger mode for MacBook Air
+#+begin_src emacs-lisp
+(straight-use-package '(ledger-mode :type git :flavor melpa :files (:defaults "ledger-test.el" "ledger-mode-pkg.el") :host github :repo "ledger/ledger-mode"))
+(straight-use-package '(company-ledger :type git :flavor melpa :host github :repo "debanjum/company-ledger"))
+(straight-use-package '(flycheck-ledger :type git :flavor melpa :host github :repo "purcell/flycheck-ledger"))
+(straight-use-package '(dklrt :type git :flavor melpa :files ("*.el" "*.texi" "dir" "*.py" "dklrt-pkg.el") :host github :repo "davidkeegan/dklrt"))
+(straight-use-package '(ledger-import :type git :flavor melpa :host github :repo "DamienCassou/ledger-import"))
 #+end_src
 *** zone
 :PROPERTIES:
