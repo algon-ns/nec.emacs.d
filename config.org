@@ -112,9 +112,9 @@ If you wonder, where You found this file....
 ;; Author: Niels Søndergaard
 ;; Created: Fri Jun 12 10:49:04 2020 (+0200)
 ;; Version: 1.0
-;; Last-Updated: Lør Nov 28 08:23:49 2020 (+0100)
+;; Last-Updated: Man Nov 30 14:53:58 2020 (+0100)
 ;;           By: Niels Søndergaard
-;;     Update #: 51
+;;     Update #: 92
 ;; Keywords:
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -312,6 +312,7 @@ NAME and ARGS are as in `use-package'."
 :PROPERTIES:
 :CUSTOM_ID: Contents
 :END:
+
 - [[#preface][Preface]]
   - [[#about-me][about me]]
   - [[#about-this-file][about this file]]
@@ -360,7 +361,7 @@ NAME and ARGS are as in `use-package'."
     - [[#time-stamp--large-file-warning][Time stamp / large file warning]]
     - [[#copy-id][Copy ID]]
     - [[#list-environment][list-environment]]
-    - [[#running-on-a-macos-mashine][running on a macOS mashine]]
+    - [[#running-on-a-macos][running on a macOS]]
       - [[#key-bindings][Key Bindings]]
       - [[#ligatures-in-code][Ligatures in Code]]
       - [[#dash][Dash]]
@@ -376,13 +377,14 @@ NAME and ARGS are as in `use-package'."
     - [[#helm][Helm]]
     - [[#ivy][Ivy]]
     - [[#smex][SMEX]]
-    - [[#yasnippet][Yasnippet]]
+    - [[#disable-yasnippet-disable][DISABLE Yasnippet DISABLE]]
     - [[#ido][IDO]]
-    - [[#smartparens][Smartparens]]
-    - [[#set-danish-calendar-data][Set danish calendar data]]
+    - [[#parenthesis][parenthesis]]
+    - [[#rainbow][rainbow]]
+    - [[#set-danish-calendar-data][set danish calendar data]]
     - [[#calculate-eastern-sunday][calculate eastern sunday]]
     - [[#danish-hollidays][Danish hollidays]]
-    - [[#rainbow][Rainbow]]
+    - [[#rainbow-1][Rainbow]]
     - [[#company][Company]]
     - [[#company-box][Company-box]]
     - [[#hippie-expand][Hippie Expand]]
@@ -419,12 +421,10 @@ NAME and ARGS are as in `use-package'."
     - [[#org-cliplink][org-cliplink]]
     - [[#refiling-setup][refiling Setup]]
     - [[#org-journal][org-journal]]
-    - [[#org-context][org-context]]
     - [[#doct-and-org-capture][doct and org-capture]]
-    - [[#org-agenda][org agenda]]
+    - [[#org-ag][org ag]]
     - [[#org-super-agenda][org super agenda]]
     - [[#org-contact][org contact]]
-    - [[#org-protocol][org-protocol]]
     - [[#org-roam][org-roam]]
     - [[#org-mac-ical][org mac iCal]]
     - [[#org-brain][org brain]]
@@ -808,6 +808,8 @@ abcdefghijklmnopqrstuvwxyzæøå
           (diminish 'org-mode " ")
           (diminish 'blacken-mode " ")
           (diminish 'auto-fill-function " ⚮")
+          (diminish 'page-break-lines " ⑃")
+          (diminish 'projectile " 🛠")
           (diminish 'ctrlf-mode " ")
           (diminish 'dired-filter-mode " ")
           (diminish 'rainbow-delimiters-mode " ♼")
@@ -1018,7 +1020,7 @@ Source: https://github.com/m-parashar/emax64/issues/5
 (use-package zenburn-theme
   :straight t
   :config
-  (load-theme 'flatland t)
+  (load-theme 'zenburn t)
   (set-face-attribute 'font-lock-comment-face nil :italic t)
   (set-face-attribute 'font-lock-doc-face nil :italic t)
   (zenburn-with-color-variables
@@ -1105,13 +1107,13 @@ If Non-nil, use dashboard, otherwise will restore previous session."
     ("#+DESCRIPTION:" . ?⸙) ("#+description:" . ?⸙)
     ("#+LANGUAGE:" . ?⚑)    ("#+language:" . ?⚑)
     ("#+CATEGORY:" . ?)   ("#+category:" . ?)
-    ("#+EMAIL:" . ?)       ("#+EMAIL:" . ?)   
-    ("#+OPTIONS:" . ?)     ("#+OPTIONS:" . ?)
-    ("#+SETUPFILE:" . ?)    ("#+SETUPFILE:" . ?)
+    ("#+EMAIL:" . ?)       ("#+email:" . ?)   
+    ("#+OPTIONS:" . ?)     ("#+options:" . ?)
+    ("#+SETUPFILE:" . ?)    ("#+setupfile:" . ?)
     ("#+TAGS:" . ?)    ("#+tags:" . ?)
     ("#+LATEX:" . ?)    ("#+latex:" . ?)
     ("#+TITLE:" . ?)    ("#+title:" . ?)
-    ("#+PROPERTIES:" . ?)    ("#+property:" . ?)
+    ("#+PROPERTIES:" . ?💡)    ("#+property:" . ?💡)
     ("#+BEGIN_SRC" . ?✎)    ("#+begin_src" . ?✎)
     ("#+END_SRC" . ?□)    ("#+end_src" . ?□)
     ("#+BEGIN_QUOTE" . ?»)    ("#+begin_quote" . ?»)
@@ -1119,7 +1121,6 @@ If Non-nil, use dashboard, otherwise will restore previous session."
     ("#+HEADERS" . ?)    ("#+HEADERS" . ?)
     ("#+RESULTS:" . ?)    ("#+RESULTS:" . ?)
     (":LOGBOOK:" . ?▤)
-    ( ":PROPERTIES:" . ?⚙)
     ( ":END:" . ?⏏))
   "Alist of symbol prettifications for `org-mode'."
   :group 'nec
@@ -1165,8 +1166,7 @@ If Non-nil, use dashboard, otherwise will restore previous session."
   :diminish org-pretty-tags-mode
   :config
    (setq org-pretty-tags-surrogate-strings
-         '(("Neato"    . "💡")
-           ("Blog"     . "✍")
+         '(("Blog"     . "✍")
            ("Lyd"    . "♬")
            ("Video"    . "📺")
            ("Bog"     . "📚")
@@ -1454,8 +1454,7 @@ with character preview in completion prompt. from: [[https://gitlab.com/matsievs
 :END:
 We do clean, in the middle of the night
 #+begin_src emacs-lisp
-(use-package midnight
-  :straight t)
+(use-package midnight :straight t)
 
 (setq clean-buffer-list-kill-buffer-names (nconc clean-buffer-list-kill-buffer-names
                  '("*buffer-selection*"
@@ -1843,7 +1842,7 @@ text and copying to the killring."
 (straight-use-package-lazy 'list-environment)
 (if nec/measure-time (nec/timer "List environment  "))
 #+END_SRC
-*** running on a macOS mashine
+*** running on a macOS 
 :PROPERTIES:
 :CUSTOM_ID: running on a macOS mashine
 :END:
@@ -2356,8 +2355,8 @@ proper shell in Emacs!
 (global-set-key (kbd "C-c C-c M-x") 'execute-extended-command)
 (if nec/measure-time (nec/timer "SMEX   "))
 #+end_src
-*** Yasnippet
-#+begin_src emacs-lisp
+*** DISABLE Yasnippet DISABLE
+;;#+begin_src emacs-lisp
 ;;; init-yasnippet.el --- -*- lexical-binding: t -*-
 ;;
 ;; Filename: init-yasnippet.el
@@ -2379,32 +2378,32 @@ proper shell in Emacs!
 ;; This initializes YASnippet
 ;;
 ;;; Code:
-(use-package yasnippet
-  :straight t
-  :diminish yas-minor-mode
-  :init
-;;  (use-package yasnippet-snippets :after yasnippet)
-  :hook ((prog-mode LaTeX-mode org-mode) . yas-minor-mode)
-  :bind
-  (:map yas-minor-mode-map ("C-c C-n" . yas-expand-from-trigger-key))
-  (:map yas-keymap
-        (("TAB" . smarter-yas-expand-next-field)
-         ([(tab)] . smarter-yas-expand-next-field)))
-  :config   (yas-reload-all)
-  (setq yas-snippet-dirs "~/.emacs.d/snippets/")
-  (defun smarter-yas-expand-next-field ()
-    "Try to `yas-expand' then `yas-next-field' at current cursor position."
-    (interactive)
-    (let ((old-point (point))
-          (old-tick (buffer-chars-modified-tick)))
-      (yas-expand)
-      (when (and (eq old-point (point))
-                 (eq old-tick (buffer-chars-modified-tick)))
-        (ignore-errors (yas-next-field))))))
-(provide 'init-yasnippet)
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;; init-yasnippet.el ends here
-#+end_src
+;;(use-package yasnippet
+;;  :straight t
+;;  :diminish yas-minor-mode
+;;  :init
+;;;;  (use-package yasnippet-snippets :after yasnippet)
+;;  :hook ((prog-mode LaTeX-mode org-mode) . yas-minor-mode)
+;;  :bind
+;;  (:map yas-minor-mode-map ("C-c C-n" . yas-expand-from-trigger-key))
+;;  (:map yas-keymap
+;;        (("TAB" . smarter-yas-expand-next-field)
+;;         ([(tab)] . smarter-yas-expand-next-field)))
+;;  :config   (yas-reload-all)
+;;  (setq yas-snippet-dirs "~/.emacs.d/snippets/")
+;;  (defun smarter-yas-expand-next-field ()
+;;    "Try to `yas-expand' then `yas-next-field' at current cursor position."
+;;    (interactive)
+;;    (let ((old-point (point))
+;;          (old-tick (buffer-chars-modified-tick)))
+;;      (yas-expand)
+;;      (when (and (eq old-point (point))
+;;                 (eq old-tick (buffer-chars-modified-tick)))
+;;        (ignore-errors (yas-next-field))))))
+;;(provide 'init-yasnippet)
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;; init-yasnippet.el ends here
+;;#+end_src
 *** IDO
 :PROPERTIES:
 :CUSTOM_ID: IDO
@@ -2428,30 +2427,38 @@ proper shell in Emacs!
  (global-set-key (kbd "C-M-r") #'flx-isearch-backward)
 (if nec/measure-time (nec/timer "IDO  "))
 #+end_src
-*** Smartparens
+*** parenthesis
 :PROPERTIES:
 :CUSTOM_ID: Smartparens
 :END:
+Highlight matching ‘parenthesis’ when near one of them.
 #+begin_src emacs-lisp
-;;
-(use-package smartparens
-  :straight t
-  :config 
-  (progn
-    (require 'smartparens-config) 
-    (smartparens-global-mode t)
-    (show-smartparens-global-mode t))
-    (setq sp-highlight-pair-overlay t)
-    (setq sp-show-pair-from-inside t)
-  :diminish 'smartparens-mode)
+(straight-use-package '(smartparens :type git :flavor melpa :host github :repo "Fuco1/smartparens"))
+(require 'smartparens-config)
+(setq show-smartparens-global-mode t)
 ;; Always start smartparens mode in js-mode.
 (add-hook 'js-mode-hook #'smartparens-mode)
-(add-hook 'emacs-lisp #'smartparens-mode)
-(show-paren-mode 1)
+(add-hook 'emacs-lisp-mode-hook #'smartparens-mode)
+;;(add-hook 'emacs-lisp-mode-hook 'show-smartparens-mode)
+;;(add-hook 'emacs-lisp-mode-hook 'turn-on-smartparens-strict-mode)
+;;(add-hook 'prog-mode-hook 'turn-on-smartparens-strict-mode)
+;;(add-hook 'org-mode-hook 'turn-on-smartparens-strict-mode)
+;;(add-hook 'markdown-mode-hook 'turn-on-smartparens-strict-mode)
+
+#+end_src
+*** rainbow
+Colour parens, and other delimiters, depending on their depth.
+Very useful for parens heavy languages like Lisp.
+#+begin_src emacs-lisp
+(use-package rainbow-delimiters
+  :straight t
+  :hook ((org-mode prog-mode text-mode) . rainbow-delimiters-mode))
+#+end_src
+
 ;;
 (if nec/measure-time (nec/timer "Smartparns "))
 #+end_src
-*** Set danish calendar data
+*** set danish calendar data
 :PROPERTIES:
 :CUSTOM_ID: Set danish calendar data
 :END:
@@ -3722,7 +3729,7 @@ blocks! Love this one ^_^
 We want a Dashboard, which demand Page Break Line 
 #+begin_src emacs-lisp
 (straight-use-package '(page-break-lines :type git :flavor melpa :host github :repo "purcell/page-break-lines"))
-
+(setq page-break-lines-lighter " ⩵")
 (global-page-break-lines-mode)
 
 (straight-use-package '(elisp-lint :type git :flavor melpa :host github :repo "gonewest818/elisp-lint"))
@@ -4135,7 +4142,7 @@ Disable property inheritance (in order to seed up)
 (use-package org-bullets
   :straight t
   :hook (org-mode . org-bullets-mode)
-  :init (setq org-bullets-bullet-list '(  "🔵" "🔴"  "⭐️"  "⚾️" "💢" "🌀" "🔘"  )))
+  :init (setq org-bullets-bullet-list '("⭐️" "🔵" "💢" "⚾️" "🔴" "🌀" "🔘")))
 (if nec/measure-time (nec/timer "org bullets" ))
 #+end_src
 
@@ -4205,23 +4212,12 @@ Disable property inheritance (in order to seed up)
 
 #+end_src
 
-*** org-context
-
-[[https://github.com/thisirs/org-context][org-context]] provides contextual agenda and capture for Org-mode.
-
-#+NAME: package-org-context
-#+BEGIN_SRC emacs-lisp
-(straight-use-package 'org-context)
-(if nec/measure-time (nec/timer "org-contekst "))
-#+END_SRC
-
 *** doct and org-capture
 
 [[https://github.com/progfolio/doct][doct]] provies “Declarative Org-mode Capture Templates” for Emacs. I
 find them a little easier to reason about than the standard form.
 
 #+BEGIN_SRC emacs-lisp
-
 (straight-use-package '(doct :type git :flavor melpa :host github :repo "progfolio/doct"))
 (eval-when-compile (require 'subr-x))
 
@@ -4354,8 +4350,11 @@ multiple times below:
                       :keys "b"
                       :template "* Browsing %x"))))))
 (if nec/measure-time (nec/timer "org-capture "))
+
+(if nec/measure-time (nec/timer "doct capture templates "))
 #+end_src
-*** org agenda 
+*** org ag 
+enda
 :PROPERTIES:
 :CUSTOM_ID: org agenda 
 :END:
@@ -4377,7 +4376,7 @@ multiple times below:
     (setq org-agenda-use-tag-inheritance t)
   ;;  (setq org-columns-default-format "%14SCHEDULED %Effort{:} %1PRIORITY %TODO %50ITEM %TAGS")
     (setq org-columns-default-format "%TODO %32ITEM  %3PRIORITY %14SCHEDULED %TAGS")
-  (setq org-default-notes-file "~/Dropbox/org/agenda/Notes.org")
+    (setq org-default-notes-file "~/Dropbox/org/agenda/Notes.org")
     (setq org-track-ordered-property-with-tag t)
 
   ;;(bind-keys :map org-agenda-mode-map
@@ -4503,14 +4502,7 @@ Be careful that to install it, this one is available with =org-plus-contrib=.
 (setq org-contacts-files '("~/Dropbox/org/agenda/contacts.org"))
 (if nec/measure-time (nec/timer "org-contact"))
 #+end_src
-*** org-protocol
-#+begin_src emacs-lisp
-(use-package org-roam-protocol
-   :straight (:type built-in)
-   :after org-roam)
-#+end_src
 *** org-roam
-
 It's supposed to ease note-taking and relations between notes. Let's try and see. It
 requires sqlite3. 
 #+begin_src emacs-lisp
@@ -4569,9 +4561,12 @@ requires sqlite3.
 (require 'org-roam-dailies)
 (setq org-roam-dailies-directory "~/dailies/")
 (setq org-roam-completion-system 'helm)
-(require 'org-roam-protocol)
-#+end_src
+;; (require 'org-roam-protocol)
 
+(use-package org-roam-protocol
+   :straight (:type built-in)
+   :after org-roam)
+#+end_src
 =org-roam-server= will start a web server on http://127.0.0.1:8080/ to see the nodes and their linking
 #+begin_src emacs-lisp
 (use-package org-roam-server
@@ -4752,7 +4747,8 @@ easier on the eyes. For more, see the brief [[https://www.dailymotion.com/video/
 :END:
 #+BEGIN_SRC emacs-lisp
 (straight-use-package '(projectile :type git :flavor melpa :files ("projectile.el" "projectile-pkg.el") :host github :repo "bbatsov/projectile")
-  :diminish " 🛠")
+  :diminish  " ✐")  
+
   
 (setq projectile-project-search-path (f-directories "~/Projects/")) 
 (projectile-mode 1)
@@ -5454,9 +5450,8 @@ We want to give all nye (and old) emacs-lisp files a header)
   (setq auto-insert-directory "~/Dropbox/org/include/")
   (auto-insert-mode 1)
   (add-hook 'find-file-hook 'auto-insert)  
-  (define-auto-insert "\\.org?$" "default-header.org")
-(if nec/measure-time
-          (nec/timer "App: header on files  "))
+  (define-auto-insert "\\.org?$" "std-header.org")
+(if nec/measure-time (nec/timer "App: header on files  "))
 #+end_src
 *** Magit
 :PROPERTIES:

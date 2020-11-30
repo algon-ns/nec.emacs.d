@@ -19,9 +19,12 @@
  '(org-roam-server-served-file-extensions '("pdf" "mp4" "ogv"))
  '(preview-TeX-style-dir "/Users/niels/.emacs.d/straight/build/auctex/latex" t)
  '(projectile-known-projects-file "/Users/niels/.emacs.d/private/projectile-bookmarks.eld")
+ '(projectile-mode-line-prefix " ✐")
  '(reftex-plug-into-AUCTeX t t)
  '(sane-term-shell-command "/bin/zsh")
  '(set-mark-command-repeat-pop t)
+ '(smartparens-global-mode t)
+ '(sp-show-pair-from-inside t)
  '(spaceline-highlight-face-func 'spaceline-highlight-face-modified t)
  '(xterm-mouse-mode t))
 (custom-set-faces
