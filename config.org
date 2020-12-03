@@ -112,9 +112,9 @@ If you wonder, where You found this file....
 ;; Author: Niels Søndergaard
 ;; Created: Fri Jun 12 10:49:04 2020 (+0200)
 ;; Version: 1.0
-;; Last-Updated: Man Nov 30 14:53:58 2020 (+0100)
+;; Last-Updated: Tor Dec  3 09:07:55 2020 (+0100)
 ;;           By: Niels Søndergaard
-;;     Update #: 92
+;;     Update #: 113
 ;; Keywords:
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -326,13 +326,13 @@ NAME and ARGS are as in `use-package'."
     - [[#load-custom-file][load custom file]]
     - [[#fundamentals-for-hydras][fundamentals for Hydras]]
     - [[#typeface-suitability-test][typeface suitability test]]
-    - [[#diminish-modes][diminish modes]]
+    - [[#diminishblackout][diminish/blackout]]
     - [[#bind-key][bind key]]
     - [[#variables-and-defaults][variables and Defaults]]
-    - [[#all-the-icons][all-the-icons]]
-    - [[#setting-my-favorite-theme][setting my favorite theme]]
-    - [[#pretty-symbols][pretty Symbols]]
     - [[#initial-frame][initial frame]]
+    - [[#all-the-icons][all-the-icons]]
+    - [[#pretty-symbols][pretty Symbols]]
+    - [[#setting-my-favorite-theme][setting my favorite theme]]
     - [[#backup][backup]]
     - [[#create-missing-directory-for-find-file][create missing directory for find-file]]
     - [[#ctrl-s--isearch][ctrl-s  (isearch)]]
@@ -427,18 +427,10 @@ NAME and ARGS are as in `use-package'."
     - [[#org-contact][org contact]]
     - [[#org-roam][org-roam]]
     - [[#org-mac-ical][org mac iCal]]
+    - [[#væk-mig][Væk mig]]
     - [[#org-brain][org brain]]
     - [[#org-manage][org manage]]
     - [[#excellent-pdf-viewer][excellent PDF Viewer]]
-- [[#languages][Languages]]
-    - [[#python][Python]]
-    - [[#projectile][Projectile]]
-    - [[#rust][Rust]]
-    - [[#latex][LaTeX]]
-    - [[#php][PHP]]
-    - [[#dap-debug-adapter-protocol][DAP (debug adapter protocol)]]
-    - [[#markdown][MarkDown]]
-    - [[#template-test][template-test]]
 - [[#applications][Applications]]
     - [[#calendar][Calendar]]
     - [[#header-for-new-files][Header for new files]]
@@ -451,6 +443,15 @@ NAME and ARGS are as in `use-package'."
     - [[#ledger-mode][ledger-mode]]
     - [[#zone][zone]]
     - [[#smog][smog]]
+- [[#languages][Languages]]
+    - [[#python][Python]]
+    - [[#projectile][Projectile]]
+    - [[#rust][Rust]]
+    - [[#latex][LaTeX]]
+    - [[#php][PHP]]
+    - [[#dap-debug-adapter-protocol][DAP (debug adapter protocol)]]
+    - [[#markdown][MarkDown]]
+    - [[#template-test][template-test]]
 - [[#the-end][The end]]
     - [[#time-uses][time uses]]
 
@@ -797,7 +798,7 @@ abcdefghijklmnopqrstuvwxyzæøå
 αβγδεζηθικλμνξοπρστυφχψω
 #+end_example
 
-*** diminish modes
+*** diminish/blackout
 :PROPERTIES:
 :CUSTOM_ID: Diminish modes
 :END:
@@ -805,20 +806,21 @@ abcdefghijklmnopqrstuvwxyzæøå
 (use-package diminish
   :straight t
   :config (diminish 'org-indent-mode " ➣")
-          (diminish 'org-mode " ")
           (diminish 'blacken-mode " ")
           (diminish 'auto-fill-function " ⚮")
-          (diminish 'page-break-lines " ⑃")
-          (diminish 'projectile " 🛠")
           (diminish 'ctrlf-mode " ")
-          (diminish 'dired-filter-mode " ")
           (diminish 'rainbow-delimiters-mode " ♼")
           (diminish 'flx-ido " "))
 ;;
 (straight-use-package '(delight :type git :host github :repo "emacs-straight/delight" :files ("*" (:exclude ".git"))))
 (delight 'gcmh " ")
 (delight 'auto-fill-mode " ⚮")
+(straight-use-package '(blackout :type git :flavor melpa :host github :repo "raxod502/blackout"))
 
+(with-eval-after-load 'dired-filter-mode
+    (blackout 'dired-filter-mode " "))
+(with-eval-after-load 'org-mode    
+    (blackout 'org-mode " "))
 ;;
 (if nec/measure-time (nec/timer "Diminish   "))
 #+end_src
@@ -992,72 +994,6 @@ abcdefghijklmnopqrstuvwxyzæøå
 
 (if nec/measure-time (nec/timer "all the icons   "))
 #+end_src
-*** setting my favorite theme
-#+begin_src emacs-lisp
-;; Treat all themes as safe; no query before use.
-(setf custom-safe-themes t)
-(straight-use-package 'powerline)
-;;
-(use-package doom-themes
-  :straight t
-  :config
-  ;; Global settings (defaults)
-  (setq doom-themes-enable-bold t    ; if nil, bold is universally disabled
-        doom-themes-enable-italic t) ; if nil, italics is universally disabled
- ;; Enable flashing mode-line on errors
-  (doom-themes-visual-bell-config))
-(straight-use-package '(moe-theme :type git :flavor melpa :host github :repo "kuanyui/moe-theme.el"))
-(straight-use-package '(moe-theme-auto-switch :type git :flavor melpa :host github :repo "kuanyui/moe-theme"))
-(straight-use-package '(powerline-moe-theme :type git :flavor melpa :host github :repo "kuanyui/moe-theme"))
-(straight-use-package '(solarized-theme :type git :flavor melpa :host github :repo "bbatsov/solarized-emacs"))
-(straight-use-package '(color-theme-sanityinc-tomorrow :type git :flavor melpa :host github :repo "purcell/color-theme-sanityinc-tomorrow"))
-(straight-use-package '(gruvbox-theme :type git :flavor melpa :host github :repo "greduan/emacs-theme-gruvbox"))
-#+end_src
-
-Source: https://github.com/m-parashar/emax64/issues/5
-
-#+begin_src emacs-lisp
-(use-package zenburn-theme
-  :straight t
-  :config
-  (load-theme 'zenburn t)
-  (set-face-attribute 'font-lock-comment-face nil :italic t)
-  (set-face-attribute 'font-lock-doc-face nil :italic t)
-  (zenburn-with-color-variables
-    (set-face-attribute 'button nil :foreground zenburn-yellow-2)
-    (set-face-attribute 'default nil
-                        :background zenburn-bg-05
-                        :height 145)
-;;                        :font font-family)
-    (set-face-attribute 'help-argument-name nil :foreground zenburn-orange :italic nil)
-;;    (set-face-attribute 'hl-line nil :background zenburn-bg+1)
-    (set-face-attribute 'header-line nil
-                        :background zenburn-bg-1
-                        :box `(:line-width 2 :color ,zenburn-bg-1))
-;;                        :height font-size-header-line)
-    (set-face-attribute 'mode-line nil
-                        :box `(:line-width 2 :color ,zenburn-bg-1)
-                        :foreground zenburn-bg+3)
-;;                        :height font-size-mode-line)
-    (set-face-attribute 'mode-line-inactive nil
-                        :box `(:line-width 2 :color ,zenburn-bg-05)
-                        :foreground zenburn-bg+3)
-;;                        :height font-size-mode-line)
-    (set-face-attribute 'region nil
-                        :background zenburn-fg-1
-                        :distant-foreground 'unspecified)
-    (set-face-attribute 'vertical-border nil :foreground zenburn-bg))
-
-  ;; NOTE: See https://github.com/bbatsov/zenburn-emacs/issues/278.
-  (zenburn-with-color-variables
-    (mapc
-     (lambda (face)
-       (when (eq (face-attribute face :background) zenburn-bg)
-         (set-face-attribute face nil :background 'unspecified)))
-     (face-list))))
-
-(if nec/measure-time (nec/timer "Choose theme "))
-#+end_src
 *** pretty Symbols
 #+begin_src emacs-lisp
 
@@ -1182,6 +1118,72 @@ If Non-nil, use dashboard, otherwise will restore previous session."
    (org-pretty-tags-global-mode 1))
 (if nec/measure-time
           (nec/timer "Variables" ))
+#+end_src
+*** setting my favorite theme
+#+begin_src emacs-lisp
+;; Treat all themes as safe; no query before use.
+(setf custom-safe-themes t)
+(straight-use-package 'powerline)
+;;
+(use-package doom-themes
+  :straight t
+  :config
+  ;; Global settings (defaults)
+  (setq doom-themes-enable-bold t    ; if nil, bold is universally disabled
+        doom-themes-enable-italic t) ; if nil, italics is universally disabled
+ ;; Enable flashing mode-line on errors
+  (doom-themes-visual-bell-config))
+(straight-use-package '(moe-theme :type git :flavor melpa :host github :repo "kuanyui/moe-theme.el"))
+(straight-use-package '(moe-theme-auto-switch :type git :flavor melpa :host github :repo "kuanyui/moe-theme"))
+(straight-use-package '(powerline-moe-theme :type git :flavor melpa :host github :repo "kuanyui/moe-theme"))
+(straight-use-package '(solarized-theme :type git :flavor melpa :host github :repo "bbatsov/solarized-emacs"))
+(straight-use-package '(color-theme-sanityinc-tomorrow :type git :flavor melpa :host github :repo "purcell/color-theme-sanityinc-tomorrow"))
+(straight-use-package '(gruvbox-theme :type git :flavor melpa :host github :repo "greduan/emacs-theme-gruvbox"))
+#+end_src
+
+Source: https://github.com/m-parashar/emax64/issues/5
+
+#+begin_src emacs-lisp
+(use-package zenburn-theme
+  :straight t
+  :config
+  (load-theme 'gruvbox-dark-soft t)
+  (set-face-attribute 'font-lock-comment-face nil :italic t)
+  (set-face-attribute 'font-lock-doc-face nil :italic t)
+  (zenburn-with-color-variables
+    (set-face-attribute 'button nil :foreground zenburn-yellow-2)
+    (set-face-attribute 'default nil
+                        :background zenburn-bg-05
+                        :height 145)
+;;                        :font font-family)
+    (set-face-attribute 'help-argument-name nil :foreground zenburn-orange :italic nil)
+;;    (set-face-attribute 'hl-line nil :background zenburn-bg+1)
+    (set-face-attribute 'header-line nil
+                        :background zenburn-bg-1
+                        :box `(:line-width 2 :color ,zenburn-bg-1))
+;;                        :height font-size-header-line)
+    (set-face-attribute 'mode-line nil
+                        :box `(:line-width 2 :color ,zenburn-bg-1)
+                        :foreground zenburn-bg+3)
+;;                        :height font-size-mode-line)
+    (set-face-attribute 'mode-line-inactive nil
+                        :box `(:line-width 2 :color ,zenburn-bg-05)
+                        :foreground zenburn-bg+3)
+;;                        :height font-size-mode-line)
+    (set-face-attribute 'region nil
+                        :background zenburn-fg-1
+                        :distant-foreground 'unspecified)
+    (set-face-attribute 'vertical-border nil :foreground zenburn-bg))
+
+  ;; NOTE: See https://github.com/bbatsov/zenburn-emacs/issues/278.
+  (zenburn-with-color-variables
+    (mapc
+     (lambda (face)
+       (when (eq (face-attribute face :background) zenburn-bg)
+         (set-face-attribute face nil :background 'unspecified)))
+     (face-list))))
+
+(if nec/measure-time (nec/timer "Choose theme "))
 #+end_src
 *** initial frame
 :PROPERTIES:
@@ -3809,6 +3811,7 @@ We want a Dashboard, which demand Page Break Line
 (straight-use-package-lazy '2048-game)
 (if nec/measure-time (nec/timer "Games "))
 #+end_src
+
 * org and friends
 *** org general settings
 :PROPERTIES:
@@ -4617,6 +4620,21 @@ requires sqlite3.
 (if nec/measure-time (nec/timer "org-mac-iCal "))
 ### #+END_SRC
 
+*** Væk mig
+A package to wake me up, whenever I shall do something
+#+begin_src emacs-lisp
+(require 'alert)
+(require 'org-timed-alerts)
+  (setq org-timed-alerts-alert-function #'alert)
+  (setq org-timed-alerts-default-alert-props nil)
+  (setq org-timed-alerts-warning-times '(-20 -10 -5))
+  (setq org-timed-alerts-agenda-hook-p t)
+  (setq org-timed-alert-final-alert-string "Det er %alert-time\n\n%todo %headline")
+  (setq org-timed-alert-warning-string (concat "%todo %headline\n at %alert-time\n "
+                                               "klokken er %current-time\n "
+                                               "*Dette er din %warning-time minuts advarsel*"))
+  (add-hook 'org-mode-hook #'org-timed-alerts-mode)
+#+end_src
 *** org brain
 [[https://github.com/Kungsgeten/org-brain][org-brain]] provides Org-mode wiki + concept-mapping.
 
@@ -4681,759 +4699,257 @@ Besides the expected PDF viewing utilities, such as search, annotation, and cont
 with a simple mouse right-click, we can even select a ‘midnight’ rendering mode which may be
 easier on the eyes. For more, see the brief [[https://www.dailymotion.com/video/x2bc1is][pdf-tools-tourdeforce]] demo.
 
-* Languages
-*** Python
-:PROPERTIES:
-:CUSTOM_ID: Python
-:END:
-#+begin_src emacs-lisp
-(use-package elpy
-    :straight t
-    :diminish "  "
-    :bind
-    (:map elpy-mode-map
-          ("C-M-n" . elpy-nav-forward-block)
-          ("C-M-p" . elpy-nav-backward-block))
-    :hook ((elpy-mode . flycheck-mode)
-           (elpy-mode . (lambda ()
-                          (set (make-local-variable 'company-backends)
-                               '((elpy-company-backend :with company-yasnippet))))))
-    :init
-    (elpy-enable)
-    :config
-    (setq elpy-modules (delq 'elpy-module-flymake elpy-modules))
-    ; fix for MacOS, see https://github.com/jorgenschaefer/elpy/issues/1550
-    (setq elpy-shell-echo-output nil)
-    (setq elpy-rpc-python-command "python3")
-    (setq elpy-rpc-timeout 2))
-;;
-(with-eval-after-load 'python
-  (defun python-shell-completion-native-try ()
-    "Return non-nil if can trigger native completion."
-    (let ((python-shell-completion-native-enable t)
-          (python-shell-completion-native-output-timeout
-           python-shell-completion-native-try-output-timeout))
-      (python-shell-completion-native-get-completions
-       (get-buffer-process (current-buffer))
-       nil "_"))))
-
-(use-package blacken
-    :straight t
-    :hook (python-mode . blacken-mode)
-    :config
-    (setq blacken-line-length '88))
-(use-package python-docstring
-    :straight t
-    :diminish "  仝"
-    :hook (python-mode . python-docstring-mode))
-(use-package lsp-python-ms
-    :straight t
-    :after lsp-mode
-    :init (setq lsp-python-ms-auto-install-server t))
-
-  (use-package lpy
-    :straight t
-    :hook (python-mode . (lambda () (lpy-mode))))
-(if nec/measure-time (nec/timer "python "))
-;;
-(straight-use-package '(ein :type git :flavor melpa :files ("lisp/*" (:exclude "lisp/zeroein.el") "ein-pkg.el") :host github :repo "millejoh/emacs-ipython-notebook"))
-
-(if nec/measure-time (nec/timer "ipython  "))
-#+end_src
-
-*** Projectile
-:PROPERTIES:
-:CUSTOM_ID: Projectile
-:END:
-#+BEGIN_SRC emacs-lisp
-(straight-use-package '(projectile :type git :flavor melpa :files ("projectile.el" "projectile-pkg.el") :host github :repo "bbatsov/projectile")
-  :diminish  " ✐")  
-
-  
-(setq projectile-project-search-path (f-directories "~/Projects/")) 
-(projectile-mode 1)
-(define-key projectile-mode-map (kbd "s-p") 'projectile-command-map)
-(define-key projectile-mode-map (kbd "C-c p") 'projectile-command-map)
-(if nec/measure-time (nec/timer "Projectile "))
-#+END_SRC
-*** Rust
-:PROPERTIES:
-:CUSTOM_ID: Rust
-:END:
-#+begin_src emacs-lisp
-(defcustom *rust* (or (executable-find "rustc")
-  		    (executable-find "cargo")
-  		    (executable-find "rustup"))
-  "The Rust path.  If nil, will not use Rust."
-  :group 'nec
-  :type 'string)
-(if nec/measure-time (nec/timer "Rust "))
-#+end_src
-#+begin_src emacs-lisp
-;;(straight-use-package 'rust-mode
-;;  :config (add-hook 'rust-mode-hook
-;;            (lambda () (setq indent-tabs-mode nill))))
-;;(setq rust-format-on-save t)
-;;(define-key rust-mode-map (kbd "C-c C-c") 'rust-run)
-
-#+end_src
-*** LaTeX
-:PROPERTIES:
-:CUSTOM_ID: LaTeX
-:END:
-#+begin_src emacs-lisp
-    (straight-use-package-lazy 'auctex)
-    ;; (straight-use-package 'preview)
-    (setq TeX-auto-save t)
-    (setq TeX-parse-self t)
-    (setq-default TeX-master nil)
-    (setq TeX-PDF-mode t)
-    (setq reftex-plug-into-AUCTeX t)
-    (setq TeX-save-query nil)
-    (setq LaTeX-amsmath-label "eq:")
-    (setq LaTeX-label-function 'reftex-label)
-    (setq TeX-engine 'luatex)
-    (setq TeX-error-overview-open-after-TeX-run t )
-    (setq-default TeX-command-extra-options "--shell-escape")
-    (setq TeX-error-overview-open-after-TeX-run t)
-    (setq TeX-electric-math '("$" . "$"))
-    (setq TeX-electric-sub-and-superscript t)
-    ;; fix for company completion
-    ;; (define-key TeX-mode-map (kbd "TAB") 'tab-indent-or-complete)
-    ;; (define-key TeX-mode-map [tab] 'tab-indent-or-complete)
-    ;; (require 'font-latex)
-    ;; (set-face-attribute 'font-latex-sectioning-5-face nil :family "CMU Bright")
-    ;; (setq font-latex-fontify-sectioning 1.2)
-    ;; (font-latex-update-sectioning-faces)
-    (setq-default LaTeX-fill-break-at-separators (quote (\\\( \\\[ \\\])))
-    (add-hook 'LaTeX-mode-hook 'visual-line-mode)
-    (add-hook 'LaTeX-mode-hook 'flyspell-mode)
-    (add-hook 'LaTeX-mode-hook 'LaTeX-math-mode)
-    (add-hook 'LaTeX-mode-hook 'turn-on-reftex)
-    ;; (add-to-list 'TeX-command-list '("XeLaTeX" "%`lualatex %(extraopts)%(mode)%' %t" TeX-run-TeX nil t))
-
-    (if nec/measure-time (nec/timer "LaTeX / AUCTeX "))
-    ;; Setup the compiler and the PDF process
-    (setq org-latex-compiler "lualatex")
-    ;;(setq org-latex-pdf-process
-    ;;      (list (concat "latexmk -"
-    ;;                    org-latex-compiler 
-    ;;                    " -recorder -synctex=1 -bibtex-cond %b")))
-    ;; Use lstlstings
-    (setq org-latex-listings t)
-    ;; The docs for org-latex-default-packages-alist suggest that
-    ;; it shouldn't be changed because it's used for more than one
-    ;; backend. How it's used for non-LaTeX backends, I don't know.
-    ;; Anyway, I've removed "inputenc" and "fontenc" from it because
-    ;; I want to replace those with "fontspec".
-    ;; (setq org-latex-default-packages-alist
-  ;;;;         '(("" "graphicx" t)
-  ;;;;           ("" "grffile" t)
-  ;;;;           ("" "longtable" nil)
-  ;;;;           ("" "wrapfig" nil)
-  ;;;;           ("" "rotating" nil)
-  ;;;;           ("normalem" "ulem" t)
-  ;;;;           ("" "amsmath" t)
-  ;;;;           ("" "textcomp" t)
-  ;;;;           ("" "amssymb" t)
-  ;;;;           ("" "capt-of" nil)
-  ;;          ("" "hyperref" nil)))
-
-
-(require 'ox-latex)
-;;(require 'ox-koma-letter)
-(require 'ox-beamer)
-
-(setq org-latex-classes
-  '(("memoir" 
-      "\\documentclass[11pt]{memoir}
-       [NO-DEFAULT-PACKAGES]
-       [PACKAGES]
-       [EXTRA]"
-       ("\\section{%s}" . "\\section*{%s}")
-       ("\\subsection{%s}" . "\\subsection*{%s}")
-       ("\\subsubsection{%s}" . "\\subsubsection*{%s}"))
-    ("default-koma-letter" "\\documentclass[11pt]{scrlttr2}")
-           ("report" "\\documentclass[11pt]{report}"
-            ("\\part{%s}" . "\\part*{%s}")
-            ("\\chapter{%s}" . "\\chapter*{%s}")
-            ("\\section{%s}" . "\\section*{%s}")
-            ("\\subsection{%s}" . "\\subsection*{%s}")
-            ("\\subsubsection{%s}" . "\\subsubsection*{%s}"))
-           ("beamer" "\\documentclass[11pt,presentation]{beamer}"
-            ("\\section{%s}" . "\\section*{%s}")
-            ("\\subsection{%s}" . "\\subsection*{%s}")
-            ("\\subsubsection{%s}" . "\\subsubsection*{%s}"))
-    ("book" 
-     "\\documentclass[11pt]{book}"
-      ("\\part{%s}" . "\\part*{%s}")
-      ("\\chapter{%s}" . "\\chapter*{%s}")
-      ("\\section{%s}" . "\\section*{%s}")
-      ("\\subsection{%s}" . "\\subsection*{%s}")
-      ("\\subsubsection{%s}" . "\\subsubsection*{%s}"))
-  ("article"
-     "\\RequirePackage{fix-cm}
-      \\PassOptionsToPackage{svgnames}{xcolor}
-      \\documentclass[11pt]{article}
-      \\usepackage[a4paper,margin=1in,left=1in]{geometry}
-      \\usepackage{fontspec}
-      \\setmainfont{Verdana}
-      \\setsansfont[Scale=MatchLowercase]{Raleway}
-      \\setmonofont[Scale=MatchLowercase]{Operator Mono SSm}
-      \\usepackage{sectsty}
-      \\allsectionsfont{\\sffamily}
-      \\usepackage{enumitem}
-      \\setlist[description]{style=unboxed,font=\\sffamily\\bfseries}
-      \\usepackage{listings}
-      \\lstset{frame=single,aboveskip=1em,
-            framesep=.5em,backgroundcolor=\\color{AliceBlue},
-            rulecolor=\\color{LightSteelBlue},framerule=1pt}
-      \\usepackage{xcolor}
-      \\colorlet{punct}{red!60!black}
-      \\definecolor{background}{HTML}{EEEEEE}
-      \\definecolor{delim}{RGB}{20,105,176}
-      \\colorlet{numb}{magenta!60!black}
-      \\newcommand\\basicdefault[1]{\\scriptsize\\color{Black}\\ttfamily#1}
-      \\lstdefinelanguage{json}{
-            basicstyle=\\normalfont\\ttfamily,
-            numbers=left,
-            numberstyle=\\scriptsize,
-            stepnumber=1,
-            numbersep=8pt,
-            showstringspaces=false,
-            breaklines=true,
-            frame=lines,
-            backgroundcolor=\\color{background},
-            literate=
-               ,*{0}{{{\\color{numb}0}}}{1}
-                 {1}{{{\\color{numb}1}}}{1}
-                 {2}{{{\\color{numb}2}}}{1}
-                 {3}{{{\\color{numb}3}}}{1}
-                 {4}{{{\\color{numb}4}}}{1}
-                 {5}{{{\\color{numb}5}}}{1}
-                 {6}{{{\\color{numb}6}}}{1}
-                 {7}{{{\\color{numb}7}}}{1}
-                 {8}{{{\\color{numb}8}}}{1}
-                 {9}{{{\\color{numb}9}}}{1}
-                 {:}{{{\\color{punct}{:}}}}{1}
-                 {,}{{{\\color{punct}{,}}}}{1}
-                 {\\{}{{{\\color{delim}{\\{}}}}{1}
-                 {\\}}{{{\\color{delim}{\\}}}}}{1}
-                 {[}{{{\\color{delim}{[}}}}{1}
-                 {]}{{{\\color{delim}{]}}}}{1},
-           }
-      \\lstset{basicstyle=\\basicdefault{\\spaceskip1em}}
-      \\lstset{literate=
-                  {§}{{\\S}}1
-                  {©}{{\\raisebox{.125ex}{\\copyright}\\enspace}}1
-                  {«}{{\\guillemotleft}}1
-                  {»}{{\\guillemotright}}1
-                  {Á}{{\\'A}}1
-                  {Ä}{{\\\"A}}1
-                  {É}{{\\'E}}1
-                  {Í}{{\\'I}}1
-                  {Ó}{{\\'O}}1
-                  {Ö}{{\\\"O}}1
-                  {Ú}{{\\'U}}1
-                  {Ü}{{\\\"U}}1
-                  {ß}{{\\ss}}2
-                  {à}{{\\`a}}1
-                  {á}{{\\'a}}1
-                  {ä}{{\\\"a}}1
-                  {é}{{\\'e}}1
-                  {í}{{\\'i}}1
-                  {ó}{{\\'o}}1
-                  {ö}{{\\\"o}}1
-                  {ú}{{\\'u}}1
-                  {ü}{{\\\"u}}1
-                  {¹}{{\\textsuperscript1}}1
-                  {²}{{\\textsuperscript2}}1
-                  {³}{{\\textsuperscript3}}1
-                  {ı}{{\\i}}1
-                  {—}{{---}}1
-                  {’}{{'}}1
-                  {…}{{\\dots}}1
-                  {⮠}{{$\\hookleftarrow$}}1
-                  {␣}{{\\textvisiblespace}}1,
-                  keywordstyle=\\color{DarkGreen}\\bfseries,
-                  identifierstyle=\\color{DarkRed},
-                  commentstyle=\\color{Gray}\\upshape,
-                  stringstyle=\\color{DarkBlue}\\upshape,
-                  emphstyle=\\color{Chocolate}\\upshape,
-                  showstringspaces=false,
-                  columns=fullflexible,
-                  keepspaces=true}
-
-      \\usepackage{parskip}
-      \\makeatletter
-      \\renewcommand{\\maketitle}{%
-      \\begingroup\\parindent0pt
-      \\sffamily
-      \\Huge{\\bfseries\\@title}\\par\\bigskip
-      \\LARGE{\\bfseries\\@author}\\par\\medskip
-      \\normalsize\\@date\\par\\bigskip
-      \\endgroup\\@afterindentfalse\\@afterheading}
-      \\makeatother
-      [NO-DEFAULT-PACKAGES]
-      \\AtBeginDocument{\\renewcommand{\\UrlFont}{\\ttfamily}}
-      \\thispagestyle{empty}"
-              ("\\section{%s}" . "\\section*{%s}")
-              ("\\subsection{%s}" . "\\subsection*{%s}")
-              ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
-              ("\\paragraph{%s}" . "\\paragraph*{%s}")
-              ("\\subparagraph{%s}" . "\\subparagraph*{%s}"))))
-      (if nec/measure-time (nec/timer "LaTeX / koma, beamer article and memoir" ))
-#+end_src
-*** PHP
-:PROPERTIES:
-:CUSTOM_ID: PHP
-:END:
-#+begin_src emacs-lisp
-(straight-use-package-lazy 'ac-php)
-
-(use-package php-mode
-  :straight t
-  :mode
-  (("\\.php\\'" . php-mode))
-  :config
-  (add-hook 'php-mode-hook
-	    '(lambda ()
-	       (require 'company-php)
-	       (company-mode t)
-	       (add-to-list 'company-backends 'company-ac-php-backend))))
-
-(use-package phpunit
-  :straight t
-  :mode
-  (("\\.php\\'" . phpunit-mode)))
-(if nec/measure-time (nec/timer "PHP "))
-#+end_src
-*** DAP (debug adapter protocol)
-#+begin_src emacs-lisp
-(straight-use-package 'dap-mode)
-(dap-mode 1)
-;; The modes below are optional
-(dap-ui-mode 1)
-;; enables mouse hover support
-(dap-tooltip-mode 1)
-;; use tooltips for mouse hover
-;; if it is not enabled `dap-mode' will use the minibuffer.
-(tooltip-mode 1)
-;; displays floating panel with debug buttons
-;; requies emacs 26+
-(dap-ui-controls-mode 1)
-(require 'dap-python)
-
-(if nec/measure-time (nec/timer "dap-mode "))
-#+end_src
-*** MarkDown
-:PROPERTIES:
-:CUSTOM_ID: MarkDown
-:END:
-#+begin_src emacs-lisp
-(straight-use-package-lazy 'markdown-mode)
-(use-package markdown-mode
-  :straight t
-  :mode ("INSTALL\\'"
-         "CONTRIBUTORS\\'"
-         "LICENSE\\'"
-         "README\\'"
-         "\\.markdown\\'"
-         "\\.md"
-         "\\.mdown$"
-         "\\.md$\\'"))
-(add-hook 'markdown-mode-hook
-          (lambda ()
-            (visual-line-mode t)
-;;            (writegood-mode t
-            (flyspell-mode t)))
-(setq markdown-command "pandoc --smart -f markdown -t html")
-(setq markdown-css-paths `(,(expand-file-name "markdown.css" "private/md-dir")))
-(if nec/measure-time (nec/timer "MarkDown "))
-#+end_src
-*** template-test
-#+begin_src emacs-lisp
-(defun ndw/minutes-template ()
-  "Insert a minutes template."
-  (interactive)
-  (let* ((repos    (string-match "/20[12][0-9]/[0-9][0-9]/[0-9][0-9]-" (buffer-file-name)))
-         (date     (if repos
-                       (let ((year  (string-to-number
-                                     (substring (buffer-file-name) (1+ repos) (+ repos 5))))
-                             (month (string-to-number
-                                     (substring (buffer-file-name) (+ repos 6) (+ repos 8))))
-                             (day   (string-to-number
-                                     (substring (buffer-file-name) (+ repos 9) (+ repos 11)))))
-                         (encode-time 0 0 12 day month year))
-                     (current-time)))
-         (lastmtg  nil) ;; date of last meeting
-         (prev     (let ((weeks 1)
-                         (minutes nil))
-                     (while (and repos (< weeks 7)) ;; look back 6 weeks
-                       (let* ((lastweek (time-add date (- (* 60 60 24 7 weeks))))
-                              (lwd      (decode-time lastweek))
-                              (pagenda  (concat
-                                         (substring (buffer-file-name) 0 repos)
-                                         (format "/%04d/%02d/%02d-" (nth 5 lwd) (nth 4 lwd) (nth 3 lwd))
-                                         (substring (buffer-file-name) (+ repos 12)))))
-                         (if (file-exists-p pagenda)
-                             (progn
-                               (setq lastmtg lastweek)
-                               (setq minutes
-                                     (let ((apos  (string-match "-agenda.org$" pagenda)))
-                                       (if apos
-                                           (concat (substring pagenda 0 apos) "-minutes.org")
-                                         pagenda)))
-                               (setq weeks 999))) ;; escape the loop
-                         (setq weeks (1+ weeks))))
-                     minutes))
-         (title    (read-string "Meeting title: "))
-         (tags     (read-string "Tags: "))
-         (number   (if prev
-                       (with-temp-buffer
-                         (insert-file-contents prev)
-                         (goto-char 0)
-                         (if (re-search-forward "^#\\+MEETING: *")
-                             (if (looking-at "[0-9]+")
-                                 (match-string 0))))))
-         (actions  (if prev
-                     (with-temp-buffer
-                       (insert-file-contents prev)
-                       (goto-char 0)
-                       (org-mode)
-                       (let* ((ast  (org-element-parse-buffer))
-                              (revh (org-element-map ast 'headline
-                                      (lambda (hl)
-                                        (and (string-equal (org-element-property :raw-value hl)
-                                                           "Review of open action items")
-                                             hl))
-                                      nil t))
-                              (newh (org-element-map ast 'headline
-                                      (lambda (hl)
-                                        (and (string-equal (org-element-property :raw-value hl)
-                                                           "Summary of new action items")
-                                             hl))
-                                      nil t)))
-                         (concat
-                          ""
-                          (if revh
-                              (buffer-substring
-                               (org-element-property :contents-begin revh)
-                               (org-element-property :contents-end revh)))
-                          (if newh
-                              (buffer-substring
-                               (org-element-property :contents-begin newh)
-                               (org-element-property :contents-end newh))))))
-                     "")))
-  (insert "#+TITLE: ")
-  (insert title)
-  (insert ", ")
-  (insert (format-time-string "%d %B %Y" date))
-  (insert "\n")
-  (insert "#+DATE: ")
-  (insert (format-time-string "%Y-%m-%d" date))
-  (insert "\n")
-  (insert "#+AUTHOR: Niels Søndergaard
-#+STARTUP: showeverything\n")
-  (if (not (string-equal "" tags))
-      (progn
-        (insert "#+FILETAGS: ")
-        (dolist (elt (split-string tags))
-          (progn
-            (if (not (string-match-p "^:" elt))
-                (insert ":"))
-            (insert elt)))
-        (if (not (string-match-p ":$" tags))
-            (insert ":"))
-        (insert "\n")))
-  (insert "#+MEETING: ")
-  (if number
-      (insert (format "%03d" (1+ (string-to-number number))))
-    (insert "???"))
-  (insert "\n\n")
-  (insert "* Minutes
-
-   + Present: Norm, 
-     + Regrets:
-   + Scribe: Norm
-   + Accept the agenda?
-     + No objections
-   + Accept the minutes of the previous meeting
-     + No objections")
-  (if prev
-      (progn 
-        (insert ": ")
-        (insert (format-time-string "%d %B %Y" lastmtg))))
-  (insert "?
-   + Next meeting: ")
-  (insert (format-time-string "%d %B %Y" (time-add date (* 60 60 24 7))))
-  (insert "
-   + Review of open action items
-   + Status updates
-   + Any other business
-
-Review of open action items\n\n")
-  (insert actions)
-  (insert "
-
-\n")
-  (goto-char 0)
-  ))
-#+end_src
 * Applications
 *** Calendar
-
 :PROPERTIES:
 :CUSTOM_ID: Calendar
 :END:
 #+begin_src emacs-lisp
-  
-(if (not (featurep 'appt))(require 'appt))   
-;; initiate diary
-(setq view-diary-entries-initially t
-      mark-diary-entries-in-calendar t
-      number-of-diary-entries 7)
-(add-hook 'diary-display-hook 'fancy-diary-display)
-(add-hook 'today-visible-calendar-hook 'calendar-mark-today)
-;;;;;;;;
-(defun alt-clean-equal-signs ()
-  "This function makes lines of = signs invisible."
-  (goto-char (point-min))
-  (let ((state buffer-read-only))
-    (when state (setq buffer-read-only nil))
-    (while (not (eobp))
-      (search-forward-regexp "^=+$" nil 'move)
-      (add-text-properties (match-beginning 0)
-                           (match-end 0)
-                           '(invisible t)))
-    (when state (setq buffer-read-only t))))
-(add-hook 'fancy-diary-display-mode-hook '(lambda () (alt-clean-equal-signs)))
+  (if (not (featurep 'appt))(require 'appt))   
+  ;; initiate diary
+  (setq view-diary-entries-initially t
+        mark-diary-entries-in-calendar t
+        number-of-diary-entries 7)
+  (add-hook 'diary-display-hook 'fancy-diary-display)
+  (add-hook 'today-visible-calendar-hook 'calendar-mark-today)
+  ;;;;;;;;
+  (defun alt-clean-equal-signs ()
+    "This function makes lines of = signs invisible."
+    (goto-char (point-min))
+    (let ((state buffer-read-only))
+      (when state (setq buffer-read-only nil))
+      (while (not (eobp))
+        (search-forward-regexp "^=+$" nil 'move)
+        (add-text-properties (match-beginning 0)
+                             (match-end 0)
+                             '(invisible t)))
+      (when state (setq buffer-read-only t))))
+  (add-hook 'fancy-diary-display-mode-hook '(lambda () (alt-clean-equal-signs)))
 
-;;;;
-
-(defun diary-save-hook ()
-  "Stuff to do when saving the diary files."
-  (appt-initialize))
-(defun add-diary-save-hook ()
-  "find-file-hooks hook to add the diary-save-hook when appropriate"
-  (if (string-match "diary" (buffer-name))
-      (add-hook 'after-save-hook 'diary-save-hook)))
-(add-hook 'find-file-hooks 'add-diary-save-hook)
-
-(if nec/measure-time (nec/timer "initiate diary "))
-
-;;
-;; ---great bit of code from Jeff Miller to highlight appointments in red on modeline---
-(defface appt-face
-  '((t (:foreground "red" :background "white")))
-  "Face to indicate a current appointment."
-  :group 'appt)
-
-(defadvice appt-disp-window (before appt-hilite-more activate)
-  (when appt-mode-string
-    (put-text-property 1 (- (length appt-mode-string) 1)
-                       'face 'appt-face appt-mode-string)))
-
-(defadvice appt-check (after appt-hilite activate)
-  (when appt-mode-string
-    (put-text-property 1 (- (length appt-mode-string) 1)
-                       'face 'appt-face appt-mode-string)
-    (force-mode-line-update)))
-
-;; ---------------------------------
-;; compatability - we don't really miss the aliases appt defines anyway.
-;; there's no need for this in xemacs or emacs 21.3+
-(when (not (fboundp 'defvaralias))
-  (defun defvaralias (&rest args)))
-
-(when (require 'appt nil t)
-  (setq appt-msg-countdown-list '(10 5 1 0)
-        appt-audible (cons 3 .5)
-        appt-check-time-syntax nil
-        appt-announce-method 'appt-persistant-message-announce
-        appt-display-duration 360)
-
-  ;; ding takes a different number of args in gnu emacs - eventually i'll
-  ;; redefine this to use my soundcard anyway
-  (when (not (featurep 'xemacs))
-    (defun appt-beep (&rest args)))
+  ;;;;
 
   (defun diary-save-hook ()
     "Stuff to do when saving the diary files."
-    (appt-activate 1))
-
+    (appt-initialize))
   (defun add-diary-save-hook ()
     "find-file-hooks hook to add the diary-save-hook when appropriate"
-    (let* ((diary-file-components (split-string diary-file "/"))
-           (diary-buffer-name
-            (nth (1- (length diary-file-components)) diary-file-components)))
-      (if (string= (buffer-name) diary-buffer-name)
-          (add-hook (make-variable-buffer-local 'after-save-hook)
-                    'diary-save-hook))))
+    (if (string-match "diary" (buffer-name))
+        (add-hook 'after-save-hook 'diary-save-hook)))
+  (add-hook 'find-file-hooks 'add-diary-save-hook)
 
-  (add-hook 'find-file-hooks 'add-diary-save-hook))
-(if nec/measure-time (nec/timer "initiate appt/diary "))
+  (if nec/measure-time (nec/timer "initiate diary "))
+
+  ;;
+  ;; ---great bit of code from Jeff Miller 
+  (defface appt-face
+    '((t (:foreground "red" :background "white")))
+    "Face to indicate a current appointment."
+    :group 'appt)
+
+  (defadvice appt-disp-window (before appt-hilite-more activate)
+    (when appt-mode-string
+      (put-text-property 1 (- (length appt-mode-string) 1)
+                         'face 'appt-face appt-mode-string)))
+
+  (defadvice appt-check (after appt-hilite activate)
+    (when appt-mode-string
+      (put-text-property 1 (- (length appt-mode-string) 1)
+                         'face 'appt-face appt-mode-string)
+      (force-mode-line-update)))
+
+  ;; ---------------------------------
+  ;; compatability - we don't really miss the aliases appt defines anyway.
+  ;; there's no need for this in xemacs or emacs 21.3+
+  (when (not (fboundp 'defvaralias))
+    (defun defvaralias (&rest args)))
+
+  (when (require 'appt nil t)
+    (setq appt-msg-countdown-list '(10 5 1 0)
+          appt-audible (cons 3 .5)
+          appt-check-time-syntax nil
+          appt-announce-method 'appt-persistant-message-announce
+          appt-display-duration 360)
+
+    ;; ding takes a different number of args in gnu emacs - eventually i'll
+    ;; redefine this to use my soundcard anyway
+    (when (not (featurep 'xemacs))
+      (defun appt-beep (&rest args)))
+
+    (defun diary-save-hook ()
+      "Stuff to do when saving the diary files."
+      (appt-activate 1))
+
+    (defun add-diary-save-hook ()
+      "find-file-hooks hook to add the diary-save-hook when appropriate"
+      (let* ((diary-file-components (split-string diary-file "/"))
+             (diary-buffer-name
+              (nth (1- (length diary-file-components)) diary-file-components)))
+        (if (string= (buffer-name) diary-buffer-name)
+            (add-hook (make-variable-buffer-local 'after-save-hook)
+                      'diary-save-hook))))
+
+    (add-hook 'find-file-hooks 'add-diary-save-hook))
+  (if nec/measure-time (nec/timer "initiate appt/diary "))
   
 
-  (declare-function cfw:open-calendar-buffer "calfw")
-  (declare-function cfw:refresh-calendar-buffer "calfw")
-  (declare-function cfw:org-create-source "calfw-org")
-  (declare-function cfw:cal-create-source "calfw-cal")
+    (declare-function cfw:open-calendar-buffer "calfw")
+    (declare-function cfw:refresh-calendar-buffer "calfw")
+    (declare-function cfw:org-create-source "calfw-org")
+    (declare-function cfw:cal-create-source "calfw-cal")
 
-  (defun my-calendar ()
-      (interactive)
-      (let ((buf (get-buffer "*cfw-calendar*")))
-        (if buf
-            (pop-to-buffer buf nil)
-          (cfw:open-calendar-buffer
-           :contents-sources
-           (list (cfw:org-create-source "Dark Orange")
-                 (cfw:cal-create-source "Green"))
-           :view 'month))))
-    ;; `org-autolist` makes org-mode lists behave more like lists in non-programming
-    ;; editors such as Google Docs, MS Word, and OS X Notes.
-  (use-package org-autolist
-      :straight t
-      :after org
-      :bind ("<C-f12>" . my-calendar)
-      :commands cfw:open-calendar-buffer
-                org-autolist-mode)
+    (defun my-calendar ()
+        (interactive)
+        (let ((buf (get-buffer "*cfw-calendar*")))
+          (if buf
+              (pop-to-buffer buf nil)
+            (cfw:open-calendar-buffer
+             :contents-sources
+             (list (cfw:org-create-source "Dark Orange")
+                   (cfw:cal-create-source "Green"))
+             :view 'month))))
+      ;; `org-autolist` makes org-mode lists behave more like lists in non-programming
+      ;; editors such as Google Docs, MS Word, and OS X Notes.
+    (use-package org-autolist
+        :straight t
+        :after org
+        :bind ("<C-f12>" . my-calendar)
+        :commands cfw:open-calendar-buffer
+                  org-autolist-mode)
 
-    (use-package calfw
-      :straight t
-      :bind ("C-c A" . my-calendar)
-      :init
-      (progn
-        (use-package calfw-cal
-          :straight t)
-        (use-package calfw-org
-          :straight t)
-        (bind-key "M-n" 'cfw:navi-next-month-command cfw:calendar-mode-map)
-        (bind-key "M-p" 'cfw:navi-previous-month-command cfw:calendar-mode-map))
-      :config
-      (progn
-        ;; Unicode characters
-        (setq cfw:fchar-junction ?╋
-              cfw:fchar-vertical-line ?┃
-              cfw:fchar-horizontal-line ?━
-              cfw:fchar-left-junction ?┣
-              cfw:fchar-right-junction ?┫
-              cfw:fchar-top-junction ?┯
-              cfw:fchar-top-left-corner ?┏
-              cfw:fchar-top-right-corner ?┓)
-        (bind-key "j" 'cfw:navi-goto-date-command cfw:calendar-mode-map)
-        (bind-key "g" 'cfw:refresh-calendar-buffer cfw:calendar-mode-map)))
-  (if nec/measure-time (nec/timer "Writing calendar "))
-    (defadvice org-refile-get-location (before clear-refile-history activate)
-      "Fit the Org Agenda to its buffer."
-      (setq org-refile-history nil))
+      (use-package calfw
+        :straight t
+        :bind ("C-c A" . my-calendar)
+        :init
+        (progn
+          (use-package calfw-cal
+            :straight t)
+          (use-package calfw-org
+            :straight t)
+          (bind-key "M-n" 'cfw:navi-next-month-command cfw:calendar-mode-map)
+          (bind-key "M-p" 'cfw:navi-previous-month-command cfw:calendar-mode-map))
+        :config
+        (progn
+          ;; Unicode characters
+          (setq cfw:fchar-junction ?╋
+                cfw:fchar-vertical-line ?┃
+                cfw:fchar-horizontal-line ?━
+                cfw:fchar-left-junction ?┣
+                cfw:fchar-right-junction ?┫
+                cfw:fchar-top-junction ?┯
+                cfw:fchar-top-left-corner ?┏
+                cfw:fchar-top-right-corner ?┓)
+          (bind-key "j" 'cfw:navi-goto-date-command cfw:calendar-mode-map)
+          (bind-key "g" 'cfw:refresh-calendar-buffer cfw:calendar-mode-map)))
+    (if nec/measure-time (nec/timer "Writing calendar "))
+      (defadvice org-refile-get-location (before clear-refile-history activate)
+        "Fit the Org Agenda to its buffer."
+        (setq org-refile-history nil))
 
-    (defun jump-to-org-agenda ()
-      (interactive)
-      (let ((recordings-dir "~/Dropbox/org/agenda"))
-        (ignore-errors
-          (if (directory-files recordings-dir nil "\\`[^.]")
-              (find-file recordings-dir))))
-      (let ((buf (get-buffer "*Org Agenda*"))
-            wind)
-        (if buf
-            (if (setq wind (get-buffer-window buf))
-                (when (called-interactively-p 'any)
-                  (select-window wind)
-                  (org-fit-window-to-buffer))
-              (if (called-interactively-p 'any)
-                  (progn
-                    (select-window (display-buffer buf t t))
+      (defun jump-to-org-agenda ()
+        (interactive)
+        (let ((recordings-dir "~/Dropbox/org/agenda"))
+          (ignore-errors
+            (if (directory-files recordings-dir nil "\\`[^.]")
+                (find-file recordings-dir))))
+        (let ((buf (get-buffer "*Org Agenda*"))
+              wind)
+          (if buf
+              (if (setq wind (get-buffer-window buf))
+                  (when (called-interactively-p 'any)
+                    (select-window wind)
                     (org-fit-window-to-buffer))
-                (with-selected-window (display-buffer buf)
-                  (org-fit-window-to-buffer))))
-          (call-interactively 'org-agenda-list))))
+                (if (called-interactively-p 'any)
+                    (progn
+                      (select-window (display-buffer buf t t))
+                      (org-fit-window-to-buffer))
+                  (with-selected-window (display-buffer buf)
+                    (org-fit-window-to-buffer))))
+            (call-interactively 'org-agenda-list))))
 
-    (defun org-get-global-property (name)
-      (save-excursion
-        (goto-char (point-min))
-        (and (re-search-forward (concat "#\\+PROPERTIES: " name " \\(.*\\)") nil t)
-             (match-string 1))))
+      (defun org-get-global-property (name)
+        (save-excursion
+          (goto-char (point-min))
+          (and (re-search-forward (concat "#\\+PROPERTIES: " name " \\(.*\\)") nil t)
+               (match-string 1))))
 
-    (if nec/measure-time (nec/timer "calendar part 1  "))
-    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-    (defun save-org-mode-files ()
-      (dolist (buf (buffer-list))
-        (with-current-buffer buf
-          (when (eq major-mode 'org-mode)
-            (if (and (buffer-modified-p) (buffer-file-name))
-                (save-buffer))))))
+      ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+      (defun save-org-mode-files ()
+        (dolist (buf (buffer-list))
+          (with-current-buffer buf
+            (when (eq major-mode 'org-mode)
+              (if (and (buffer-modified-p) (buffer-file-name))
+                  (save-buffer))))))
 
-    (run-with-idle-timer 25 t 'save-org-mode-files)
-    ;;** Example 12: org-agenda-view
-    (defun org-agenda-cts ()
-      (and (eq major-mode 'org-agenda-mode)
-           (let ((args (get-text-property
-                        (min (1- (point-max)) (point))
-                        'org-last-args)))
-             (nth 2 args))))
+      (run-with-idle-timer 25 t 'save-org-mode-files)
+      ;;** Example 12: org-agenda-view
+      (defun org-agenda-cts ()
+        (and (eq major-mode 'org-agenda-mode)
+             (let ((args (get-text-property
+                          (min (1- (point-max)) (point))
+                          'org-last-args)))
+               (nth 2 args))))
 
-    (defhydra hydra-org-agenda-view (:hint none)
-      "
-    _d_: ?d? day        _g_: time grid=?g?  _a_: arch-trees
-    _w_: ?w? week       _[_: inactive       _A_: arch-files
-    _t_: ?t? fortnight  _f_: follow=?f?     _r_: clock report=?r?
-    _m_: ?m? month      _e_: entry text=?e? _D_: include diary=?D?
-    _y_: ?y? year       _q_: quit           _L__l__c_: log = ?l?"
-      ("SPC" org-agenda-reset-view)
-      ("d" org-agenda-day-view (if (eq 'day (org-agenda-cts)) "[x]" "[ ]"))
-      ("w" org-agenda-week-view (if (eq 'week (org-agenda-cts)) "[x]" "[ ]"))
-      ("t" org-agenda-fortnight-view (if (eq 'fortnight (org-agenda-cts)) "[x]" "[ ]"))
-      ("m" org-agenda-month-view (if (eq 'month (org-agenda-cts)) "[x]" "[ ]"))
-      ("y" org-agenda-year-view (if (eq 'year (org-agenda-cts)) "[x]" "[ ]"))
-      ("l" org-agenda-log-mode (format "% -3S" org-agenda-show-log))
-      ("L" (org-agenda-log-mode '(4)))
-      ("c" (org-agenda-log-mode 'clockcheck))
-      ("f" org-agenda-follow-mode (format "% -3S" org-agenda-follow-mode))
-      ("a" org-agenda-archives-mode)
-      ("A" (org-agenda-archives-mode 'files))
-      ("r" org-agenda-clockreport-mode (format "% -3S" org-agenda-clockreport-mode))
-      ("e" org-agenda-entry-text-mode (format "% -3S" org-agenda-entry-text-mode))
-      ("g" org-agenda-toggle-time-grid (format "% -3S" org-agenda-use-time-grid))
-      ("D" org-agenda-toggle-diary (format "% -3S" org-agenda-include-diary))
-      ("!" org-agenda-toggle-deadlines)
-      ("[" (let ((org-agenda-include-inactive-timestamps t))
-             (org-agenda-check-type t 'timeline 'agenda)
-             (org-agenda-redo)
-             (message "Display now includes inactive timestamps as well")))
-      ("q" (message "Abort") :exit t)
-      ("v" nil))
+      (defhydra hydra-org-agenda-view (:hint none)
+        "
+      _d_: ?d? day        _g_: time grid=?g?  _a_: arch-trees
+      _w_: ?w? week       _[_: inactive       _A_: arch-files
+      _t_: ?t? fortnight  _f_: follow=?f?     _r_: clock report=?r?
+      _m_: ?m? month      _e_: entry text=?e? _D_: include diary=?D?
+      _y_: ?y? year       _q_: quit           _L__l__c_: log = ?l?"
+        ("SPC" org-agenda-reset-view)
+        ("d" org-agenda-day-view (if (eq 'day (org-agenda-cts)) "[x]" "[ ]"))
+        ("w" org-agenda-week-view (if (eq 'week (org-agenda-cts)) "[x]" "[ ]"))
+        ("t" org-agenda-fortnight-view (if (eq 'fortnight (org-agenda-cts)) "[x]" "[ ]"))
+        ("m" org-agenda-month-view (if (eq 'month (org-agenda-cts)) "[x]" "[ ]"))
+        ("y" org-agenda-year-view (if (eq 'year (org-agenda-cts)) "[x]" "[ ]"))
+        ("l" org-agenda-log-mode (format "% -3S" org-agenda-show-log))
+        ("L" (org-agenda-log-mode '(4)))
+        ("c" (org-agenda-log-mode 'clockcheck))
+        ("f" org-agenda-follow-mode (format "% -3S" org-agenda-follow-mode))
+        ("a" org-agenda-archives-mode)
+        ("A" (org-agenda-archives-mode 'files))
+        ("r" org-agenda-clockreport-mode (format "% -3S" org-agenda-clockreport-mode))
+        ("e" org-agenda-entry-text-mode (format "% -3S" org-agenda-entry-text-mode))
+        ("g" org-agenda-toggle-time-grid (format "% -3S" org-agenda-use-time-grid))
+        ("D" org-agenda-toggle-diary (format "% -3S" org-agenda-include-diary))
+        ("!" org-agenda-toggle-deadlines)
+        ("[" (let ((org-agenda-include-inactive-timestamps t))
+               (org-agenda-check-type t 'timeline 'agenda)
+               (org-agenda-redo)
+               (message "Display now includes inactive timestamps as well")))
+        ("q" (message "Abort") :exit t)
+        ("v" nil))
 
-    ;; Recommended binding:
-    (define-key org-agenda-mode-map "v" 'hydra-org-agenda-view/body)
-    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-    ; Erase all reminders and rebuilt reminders for today from the agenda
-    (defun nec/org-agenda-to-appt ()
-      (interactive)
-      (setq appt-time-msg-list nil)
-      (org-agenda-to-appt))
+      ;; Recommended binding:
+      (define-key org-agenda-mode-map "v" 'hydra-org-agenda-view/body)
+      ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+      ; Erase all reminders and rebuilt reminders for today from the agenda
+      (defun nec/org-agenda-to-appt ()
+        (interactive)
+        (setq appt-time-msg-list nil)
+        (org-agenda-to-appt))
 
-    ; Rebuild the reminders everytime the agenda is displayed
-    (add-hook 'org-agenda-finalize-hook 'nec/org-agenda-to-appt 'append)
+      ; Rebuild the reminders everytime the agenda is displayed
+      (add-hook 'org-agenda-finalize-hook 'nec/org-agenda-to-appt 'append)
 
-    ; This is at the end of my .emacs - so appointments are set up when Emacs starts
-    (nec/org-agenda-to-appt)
+      ; This is at the end of my .emacs - so appointments are set up when Emacs starts
+      (nec/org-agenda-to-appt)
 
-    ; Activate appointments so we get notifications
-    (appt-activate t)
+      ; Activate appointments so we get notifications
+      (appt-activate t)
 
-      ; If we leave Emacs running overnight - reset the appointments one minute after midnight
-    (run-at-time "24:01" nil 'nec/org-agenda-to-appt)
+        ; If we leave Emacs running overnight - reset the appointments one minute after midnight
+      (run-at-time "24:01" nil 'nec/org-agenda-to-appt)
 
     
-    (setq zoneinfo-style-world-list '(("America/Los_Angeles" "Seattle")
-                                      ("America/New_York" "New York")
-                                      ("Europe/London" "London")
-                                      ("Europa/København" "København")
-                                      ("Asia/Calcutta" "Bangalore")
-                                      ("Asia/Tokyo" "Tokyo")))
+      (setq zoneinfo-style-world-list '(("America/Los_Angeles" "Seattle")
+                                        ("America/New_York" "New York")
+                                        ("Europe/London" "London")
+                                        ("Europa/København" "København")
+                                        ("Asia/Calcutta" "Bangalore")
+                                        ("Asia/Tokyo" "Tokyo")))
 
-    (if nec/measure-time (nec/timer "Calendar part 2 "))
+      (if nec/measure-time (nec/timer "Calendar "))
 #+end_src
 *** Header for new files
 :PROPERTIES:
@@ -5864,6 +5380,7 @@ Ledger mode for MacBook Air
 (straight-use-package '(flycheck-ledger :type git :flavor melpa :host github :repo "purcell/flycheck-ledger"))
 (straight-use-package '(dklrt :type git :flavor melpa :files ("*.el" "*.texi" "dir" "*.py" "dklrt-pkg.el") :host github :repo "davidkeegan/dklrt"))
 (straight-use-package '(ledger-import :type git :flavor melpa :host github :repo "DamienCassou/ledger-import"))
+(if nec/measure-time (nec/timer "ledger "))
 #+end_src
 *** zone
 :PROPERTIES:
@@ -5872,6 +5389,7 @@ Ledger mode for MacBook Air
 #+begin_src emacs-lisp
 (straight-use-package 'zone
   :config (setq zone-when-idle 180)) ; in seconds
+(if nec/measure-time (nec/timer "zone "))
 #+end_src
 *** smog
 :PROPERTIES:
@@ -5880,8 +5398,503 @@ Ledger mode for MacBook Air
 #+begin_src emacs-lisp
 (straight-use-package 'smog
   :config (setq smog-command "style -l 23"))
+(if nec/measure-time (nec/timer "smog "))
+#+end_src
+* Languages
+*** Python
+:PROPERTIES:
+:CUSTOM_ID: Python
+:END:
+#+begin_src emacs-lisp
+(use-package elpy
+    :straight t
+    :diminish "  "
+    :bind
+    (:map elpy-mode-map
+          ("C-M-n" . elpy-nav-forward-block)
+          ("C-M-p" . elpy-nav-backward-block))
+    :hook ((elpy-mode . flycheck-mode)
+           (elpy-mode . (lambda ()
+                          (set (make-local-variable 'company-backends)
+                               '((elpy-company-backend :with company-yasnippet))))))
+    :init
+    (elpy-enable)
+    :config
+    (setq elpy-modules (delq 'elpy-module-flymake elpy-modules))
+    ; fix for MacOS, see https://github.com/jorgenschaefer/elpy/issues/1550
+    (setq elpy-shell-echo-output nil)
+    (setq elpy-rpc-python-command "python3")
+    (setq elpy-rpc-timeout 2))
+;;
+(with-eval-after-load 'python
+  (defun python-shell-completion-native-try ()
+    "Return non-nil if can trigger native completion."
+    (let ((python-shell-completion-native-enable t)
+          (python-shell-completion-native-output-timeout
+           python-shell-completion-native-try-output-timeout))
+      (python-shell-completion-native-get-completions
+       (get-buffer-process (current-buffer))
+       nil "_"))))
+
+(use-package blacken
+    :straight t
+    :hook (python-mode . blacken-mode)
+    :config
+    (setq blacken-line-length '88))
+(use-package python-docstring
+    :straight t
+    :diminish "  仝"
+    :hook (python-mode . python-docstring-mode))
+(use-package lsp-python-ms
+    :straight t
+    :after lsp-mode
+    :init (setq lsp-python-ms-auto-install-server t))
+
+  (use-package lpy
+    :straight t
+    :hook (python-mode . (lambda () (lpy-mode))))
+(if nec/measure-time (nec/timer "python "))
+;;
+(straight-use-package '(ein :type git :flavor melpa :files ("lisp/*" (:exclude "lisp/zeroein.el") "ein-pkg.el") :host github :repo "millejoh/emacs-ipython-notebook"))
+
+(if nec/measure-time (nec/timer "ipython  "))
 #+end_src
 
+*** Projectile
+:PROPERTIES:
+:CUSTOM_ID: Projectile
+:END:
+#+BEGIN_SRC emacs-lisp
+(straight-use-package '(projectile :type git :flavor melpa :files ("projectile.el" "projectile-pkg.el") :host github :repo "bbatsov/projectile")
+  :diminish  " ✐")  
+
+(setq projectile-project-search-path (f-directories "~/Projects/")) 
+(projectile-mode 1)
+(define-key projectile-mode-map (kbd "s-p") 'projectile-command-map)
+(define-key projectile-mode-map (kbd "C-c p") 'projectile-command-map)
+(if nec/measure-time (nec/timer "Projectile "))
+#+END_SRC
+*** Rust
+:PROPERTIES:
+:CUSTOM_ID: Rust
+:END:
+#+begin_src emacs-lisp
+(defcustom *rust* (or (executable-find "rustc")
+  		    (executable-find "cargo")
+  		    (executable-find "rustup"))
+  "The Rust path.  If nil, will not use Rust."
+  :group 'nec
+  :type 'string)
+(if nec/measure-time (nec/timer "Rust "))
+#+end_src
+#+begin_src emacs-lisp
+;;(straight-use-package 'rust-mode
+;;  :config (add-hook 'rust-mode-hook
+;;            (lambda () (setq indent-tabs-mode nill))))
+;;(setq rust-format-on-save t)
+;;(define-key rust-mode-map (kbd "C-c C-c") 'rust-run)
+
+#+end_src
+*** LaTeX
+:PROPERTIES:
+:CUSTOM_ID: LaTeX
+:END:
+#+begin_src emacs-lisp
+    (straight-use-package-lazy 'auctex)
+    ;; (straight-use-package 'preview)
+    (setq TeX-auto-save t)
+    (setq TeX-parse-self t)
+    (setq-default TeX-master nil)
+    (setq TeX-PDF-mode t)
+    (setq reftex-plug-into-AUCTeX t)
+    (setq TeX-save-query nil)
+    (setq LaTeX-amsmath-label "eq:")
+    (setq LaTeX-label-function 'reftex-label)
+    (setq TeX-engine 'luatex)
+    (setq TeX-error-overview-open-after-TeX-run t )
+    (setq-default TeX-command-extra-options "--shell-escape")
+    (setq TeX-error-overview-open-after-TeX-run t)
+    (setq TeX-electric-math '("$" . "$"))
+    (setq TeX-electric-sub-and-superscript t)
+    ;; fix for company completion
+    ;; (define-key TeX-mode-map (kbd "TAB") 'tab-indent-or-complete)
+    ;; (define-key TeX-mode-map [tab] 'tab-indent-or-complete)
+    ;; (require 'font-latex)
+    ;; (set-face-attribute 'font-latex-sectioning-5-face nil :family "CMU Bright")
+    ;; (setq font-latex-fontify-sectioning 1.2)
+    ;; (font-latex-update-sectioning-faces)
+    (setq-default LaTeX-fill-break-at-separators (quote (\\\( \\\[ \\\])))
+    (add-hook 'LaTeX-mode-hook 'visual-line-mode)
+    (add-hook 'LaTeX-mode-hook 'flyspell-mode)
+    (add-hook 'LaTeX-mode-hook 'LaTeX-math-mode)
+    (add-hook 'LaTeX-mode-hook 'turn-on-reftex)
+    ;; (add-to-list 'TeX-command-list '("XeLaTeX" "%`lualatex %(extraopts)%(mode)%' %t" TeX-run-TeX nil t))
+    (if nec/measure-time (nec/timer "LaTeX / AUCTeX "))
+    ;; Setup the compiler and the PDF process
+    (setq org-latex-compiler "lualatex")
+    ;;(setq org-latex-pdf-process
+    ;;      (list (concat "latexmk -"
+    ;;                    org-latex-compiler 
+    ;;                    " -recorder -synctex=1 -bibtex-cond %b")))
+    ;; Use lstlstings
+    (setq org-latex-listings t)
+    ;; The docs for org-latex-default-packages-alist suggest that
+    ;; it shouldn't be changed because it's used for more than one
+    ;; backend. How it's used for non-LaTeX backends, I don't know.
+    ;; Anyway, I've removed "inputenc" and "fontenc" from it because
+    ;; I want to replace those with "fontspec".
+    ;; (setq org-latex-default-packages-alist
+  ;;;;         '(("" "graphicx" t)
+  ;;;;           ("" "grffile" t)
+  ;;;;           ("" "longtable" nil)
+  ;;;;           ("" "wrapfig" nil)
+  ;;;;           ("" "rotating" nil)
+  ;;;;           ("normalem" "ulem" t)
+  ;;;;           ("" "amsmath" t)
+  ;;;;           ("" "textcomp" t)
+  ;;;;           ("" "amssymb" t)
+  ;;;;           ("" "capt-of" nil)
+  ;;          ("" "hyperref" nil)))
+
+(require 'ox-latex)
+;;(require 'ox-koma-letter)
+(require 'ox-beamer)
+
+(setq org-latex-classes
+  '(("memoir" 
+      "\\documentclass[11pt]{memoir}
+       [NO-DEFAULT-PACKAGES]
+       [PACKAGES]
+       [EXTRA]"
+       ("\\section{%s}" . "\\section*{%s}")
+       ("\\subsection{%s}" . "\\subsection*{%s}")
+       ("\\subsubsection{%s}" . "\\subsubsection*{%s}"))
+    ("default-koma-letter" "\\documentclass[11pt]{scrlttr2}")
+           ("report" "\\documentclass[11pt]{report}"
+            ("\\part{%s}" . "\\part*{%s}")
+            ("\\chapter{%s}" . "\\chapter*{%s}")
+            ("\\section{%s}" . "\\section*{%s}")
+            ("\\subsection{%s}" . "\\subsection*{%s}")
+            ("\\subsubsection{%s}" . "\\subsubsection*{%s}"))
+    ("beamer" "\\documentclass[11pt,presentation]{beamer}"
+            ("\\section{%s}" . "\\section*{%s}")
+            ("\\subsection{%s}" . "\\subsection*{%s}")
+            ("\\subsubsection{%s}" . "\\subsubsection*{%s}"))
+    ("book" 
+     "\\documentclass[11pt]{book}"
+      ("\\part{%s}" . "\\part*{%s}")
+      ("\\chapter{%s}" . "\\chapter*{%s}")
+      ("\\section{%s}" . "\\section*{%s}")
+      ("\\subsection{%s}" . "\\subsection*{%s}")
+      ("\\subsubsection{%s}" . "\\subsubsection*{%s}"))
+    ("article"
+     "\\RequirePackage{fix-cm}
+      \\PassOptionsToPackage{svgnames}{xcolor}
+      \\documentclass[11pt]{article}
+      \\usepackage[a4paper,margin=1in,left=1in]{geometry}
+      \\usepackage{fontspec}
+      \\setmainfont{Verdana}
+      \\setsansfont[Scale=MatchLowercase]{Raleway}
+      \\setmonofont[Scale=MatchLowercase]{Operator Mono SSm}
+      \\usepackage{sectsty}
+      \\allsectionsfont{\\sffamily}
+      \\usepackage{enumitem}
+      \\setlist[description]{style=unboxed,font=\\sffamily\\bfseries}
+      \\usepackage{listings}
+      \\lstset{frame=single,aboveskip=1em,
+            framesep=.5em,backgroundcolor=\\color{AliceBlue},
+            rulecolor=\\color{LightSteelBlue},framerule=1pt}
+      \\usepackage{xcolor}
+      \\colorlet{punct}{red!60!black}
+      \\definecolor{background}{HTML}{EEEEEE}
+      \\definecolor{delim}{RGB}{20,105,176}
+      \\colorlet{numb}{magenta!60!black}
+      \\newcommand\\basicdefault[1]{\\scriptsize\\color{Black}\\ttfamily#1}
+      \\lstdefinelanguage{json}{
+            basicstyle=\\normalfont\\ttfamily,
+            numbers=left,
+            numberstyle=\\scriptsize,
+            stepnumber=1,
+            numbersep=8pt,
+            showstringspaces=false,
+            breaklines=true,
+            frame=lines,
+            backgroundcolor=\\color{background},
+            literate=
+               ,*{0}{{{\\color{numb}0}}}{1}
+                 {1}{{{\\color{numb}1}}}{1}
+                 {2}{{{\\color{numb}2}}}{1}
+                 {3}{{{\\color{numb}3}}}{1}
+                 {4}{{{\\color{numb}4}}}{1}
+                 {5}{{{\\color{numb}5}}}{1}
+                 {6}{{{\\color{numb}6}}}{1}
+                 {7}{{{\\color{numb}7}}}{1}
+                 {8}{{{\\color{numb}8}}}{1}
+                 {9}{{{\\color{numb}9}}}{1}
+                 {:}{{{\\color{punct}{:}}}}{1}
+                 {,}{{{\\color{punct}{,}}}}{1}
+                 {\\{}{{{\\color{delim}{\\{}}}}{1}
+                 {\\}}{{{\\color{delim}{\\}}}}}{1}
+                 {[}{{{\\color{delim}{[}}}}{1}
+                 {]}{{{\\color{delim}{]}}}}{1},
+           }
+      \\lstset{basicstyle=\\basicdefault{\\spaceskip1em}}
+      \\lstset{literate=
+                  {§}{{\\S}}1
+                  {©}{{\\raisebox{.125ex}{\\copyright}\\enspace}}1
+                  {«}{{\\guillemotleft}}1
+                  {»}{{\\guillemotright}}1
+                  {Á}{{\\'A}}1
+                  {Ä}{{\\\"A}}1
+                  {É}{{\\'E}}1
+                  {Í}{{\\'I}}1
+                  {Ó}{{\\'O}}1
+                  {Ö}{{\\\"O}}1
+                  {Ú}{{\\'U}}1
+                  {Ü}{{\\\"U}}1
+                  {ß}{{\\ss}}2
+                  {à}{{\\`a}}1
+                  {á}{{\\'a}}1
+                  {ä}{{\\\"a}}1
+                  {é}{{\\'e}}1
+                  {í}{{\\'i}}1
+                  {ó}{{\\'o}}1
+                  {ö}{{\\\"o}}1
+                  {ú}{{\\'u}}1
+                  {ü}{{\\\"u}}1
+                  {¹}{{\\textsuperscript1}}1
+                  {²}{{\\textsuperscript2}}1
+                  {³}{{\\textsuperscript3}}1
+                  {ı}{{\\i}}1
+                  {—}{{---}}1
+                  {’}{{'}}1
+                  {…}{{\\dots}}1
+                  {⮠}{{$\\hookleftarrow$}}1
+                  {␣}{{\\textvisiblespace}}1,
+                  keywordstyle=\\color{DarkGreen}\\bfseries,
+                  identifierstyle=\\color{DarkRed},
+                  commentstyle=\\color{Gray}\\upshape,
+                  stringstyle=\\color{DarkBlue}\\upshape,
+                  emphstyle=\\color{Chocolate}\\upshape,
+                  showstringspaces=false,
+                  columns=fullflexible,
+                  keepspaces=true}
+      \\usepackage{parskip}
+      \\makeatletter
+      \\renewcommand{\\maketitle}{%
+      \\begingroup\\parindent0pt
+      \\sffamily
+      \\Huge{\\bfseries\\@title}\\par\\bigskip
+      \\LARGE{\\bfseries\\@author}\\par\\medskip
+      \\normalsize\\@date\\par\\bigskip
+      \\endgroup\\@afterindentfalse\\@afterheading}
+      \\makeatother
+      [NO-DEFAULT-PACKAGES]
+      \\AtBeginDocument{\\renewcommand{\\UrlFont}{\\ttfamily}}
+      \\thispagestyle{empty}"
+              ("\\section{%s}" . "\\section*{%s}")
+              ("\\subsection{%s}" . "\\subsection*{%s}")
+              ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
+              ("\\paragraph{%s}" . "\\paragraph*{%s}")
+              ("\\subparagraph{%s}" . "\\subparagraph*{%s}"))))
+      (if nec/measure-time (nec/timer "LaTeX / koma, beamer article and memoir" ))
+#+end_src
+*** PHP
+:PROPERTIES:
+:CUSTOM_ID: PHP
+:END:
+#+begin_src emacs-lisp
+(straight-use-package-lazy 'ac-php)
+
+(use-package php-mode
+  :straight t
+  :mode
+  (("\\.php\\'" . php-mode))
+  :config
+  (add-hook 'php-mode-hook
+	    '(lambda ()
+	       (require 'company-php)
+	       (company-mode t)
+	       (add-to-list 'company-backends 'company-ac-php-backend))))
+
+(use-package phpunit
+  :straight t
+  :mode
+  (("\\.php\\'" . phpunit-mode)))
+(if nec/measure-time (nec/timer "PHP "))
+#+end_src
+*** DAP (debug adapter protocol)
+#+begin_src emacs-lisp
+(straight-use-package 'dap-mode)
+(dap-mode 1)
+;; The modes below are optional
+(dap-ui-mode 1)
+;; enables mouse hover support
+(dap-tooltip-mode 1)
+;; use tooltips for mouse hover
+;; if it is not enabled `dap-mode' will use the minibuffer.
+(tooltip-mode 1)
+;; displays floating panel with debug buttons
+;; requies emacs 26+
+(dap-ui-controls-mode 1)
+(require 'dap-python)
+
+(if nec/measure-time (nec/timer "dap-mode "))
+#+end_src
+*** MarkDown
+:PROPERTIES:
+:CUSTOM_ID: MarkDown
+:END:
+#+begin_src emacs-lisp
+(straight-use-package-lazy 'markdown-mode)
+(use-package markdown-mode
+  :straight t
+  :mode ("INSTALL\\'"
+         "CONTRIBUTORS\\'"
+         "LICENSE\\'"
+         "README\\'"
+         "\\.markdown\\'"
+         "\\.md"
+         "\\.mdown$"
+         "\\.md$\\'"))
+(add-hook 'markdown-mode-hook
+          (lambda ()
+            (visual-line-mode t)
+;;            (writegood-mode t
+            (flyspell-mode t)))
+(setq markdown-command "pandoc --smart -f markdown -t html")
+(setq markdown-css-paths `(,(expand-file-name "markdown.css" "private/md-dir")))
+(if nec/measure-time (nec/timer "MarkDown "))
+#+end_src
+*** template-test
+#+begin_src emacs-lisp
+(defun ndw/minutes-template ()
+  "Insert a minutes template."
+  (interactive)
+  (let* ((repos    (string-match "/20[12][0-9]/[0-9][0-9]/[0-9][0-9]-" (buffer-file-name)))
+         (date     (if repos
+                       (let ((year  (string-to-number
+                                     (substring (buffer-file-name) (1+ repos) (+ repos 5))))
+                             (month (string-to-number
+                                     (substring (buffer-file-name) (+ repos 6) (+ repos 8))))
+                             (day   (string-to-number
+                                     (substring (buffer-file-name) (+ repos 9) (+ repos 11)))))
+                         (encode-time 0 0 12 day month year))
+                     (current-time)))
+         (lastmtg  nil) ;; date of last meeting
+         (prev     (let ((weeks 1)
+                         (minutes nil))
+                     (while (and repos (< weeks 7)) ;; look back 6 weeks
+                       (let* ((lastweek (time-add date (- (* 60 60 24 7 weeks))))
+                              (lwd      (decode-time lastweek))
+                              (pagenda  (concat
+                                         (substring (buffer-file-name) 0 repos)
+                                         (format "/%04d/%02d/%02d-" (nth 5 lwd) (nth 4 lwd) (nth 3 lwd))
+                                         (substring (buffer-file-name) (+ repos 12)))))
+                         (if (file-exists-p pagenda)
+                             (progn
+                               (setq lastmtg lastweek)
+                               (setq minutes
+                                     (let ((apos  (string-match "-agenda.org$" pagenda)))
+                                       (if apos
+                                           (concat (substring pagenda 0 apos) "-minutes.org")
+                                         pagenda)))
+                               (setq weeks 999))) ;; escape the loop
+                         (setq weeks (1+ weeks))))
+                     minutes))
+         (title    (read-string "Meeting title: "))
+         (tags     (read-string "Tags: "))
+         (number   (if prev
+                       (with-temp-buffer
+                         (insert-file-contents prev)
+                         (goto-char 0)
+                         (if (re-search-forward "^#\\+MEETING: *")
+                             (if (looking-at "[0-9]+")
+                                 (match-string 0))))))
+         (actions  (if prev
+                     (with-temp-buffer
+                       (insert-file-contents prev)
+                       (goto-char 0)
+                       (org-mode)
+                       (let* ((ast  (org-element-parse-buffer))
+                              (revh (org-element-map ast 'headline
+                                      (lambda (hl)
+                                        (and (string-equal (org-element-property :raw-value hl)
+                                                           "Review of open action items")
+                                             hl))
+                                      nil t))
+                              (newh (org-element-map ast 'headline
+                                      (lambda (hl)
+                                        (and (string-equal (org-element-property :raw-value hl)
+                                                           "Summary of new action items")
+                                             hl))
+                                      nil t)))
+                         (concat
+                          ""
+                          (if revh
+                              (buffer-substring
+                               (org-element-property :contents-begin revh)
+                               (org-element-property :contents-end revh)))
+                          (if newh
+                              (buffer-substring
+                               (org-element-property :contents-begin newh)
+                               (org-element-property :contents-end newh))))))
+                     "")))
+  (insert "#+TITLE: ")
+  (insert title)
+  (insert ", ")
+  (insert (format-time-string "%d %B %Y" date))
+  (insert "\n")
+  (insert "#+DATE: ")
+  (insert (format-time-string "%Y-%m-%d" date))
+  (insert "\n")
+  (insert "#+AUTHOR: Niels Søndergaard
+#+STARTUP: showeverything\n")
+  (if (not (string-equal "" tags))
+      (progn
+        (insert "#+FILETAGS: ")
+        (dolist (elt (split-string tags))
+          (progn
+            (if (not (string-match-p "^:" elt))
+                (insert ":"))
+            (insert elt)))
+        (if (not (string-match-p ":$" tags))
+            (insert ":"))
+        (insert "\n")))
+  (insert "#+MEETING: ")
+  (if number
+      (insert (format "%03d" (1+ (string-to-number number))))
+    (insert "???"))
+  (insert "\n\n")
+  (insert "* Minutes
+
+   + Present: Norm, 
+     + Regrets:
+   + Scribe: Norm
+   + Accept the agenda?
+     + No objections
+   + Accept the minutes of the previous meeting
+     + No objections")
+  (if prev
+      (progn 
+        (insert ": ")
+        (insert (format-time-string "%d %B %Y" lastmtg))))
+  (insert "?
+   + Next meeting: ")
+  (insert (format-time-string "%d %B %Y" (time-add date (* 60 60 24 7))))
+  (insert "
+   + Review of open action items
+   + Status updates
+   + Any other business
+
+Review of open action items\n\n")
+  (insert actions)
+  (insert "
+
+\n")
+  (goto-char 0)
+  ))
+#+end_src
 * The end
 *** time uses
 :PROPERTIES:
