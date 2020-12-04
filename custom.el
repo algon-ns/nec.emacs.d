@@ -4,10 +4,48 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(comint-terminfo-terminal "xterm-256color")
+ '(dashboard-banner-logo-title "Open EMACS for a new world...")
+ '(dashboard-buffer-last-width 214)
+ '(dashboard-center-content t)
+ '(dashboard-footer "Vi Vi Vi, the editor of the beast")
+ '(dashboard-footer-messages
+   '("The one true editor, Emacs!" "Who the hell uses VIM anyway? Go Evil!" "Free as free speech, free as free Beer" "Richard Stallman is proud of you" "Happy coding!" "Vi Vi Vi, the editor of the beast" "Welcome to the church of Emacs" "While any text editor can save your files, only Emacs can save your soul" "I showed you my source code, pls respond"))
+ '(dashboard-heading-icons
+   '((bookmarks . "book")
+     (recents . "file-text")
+     (recents . "history")
+     (bookmarks . "bookmark")
+     (agenda . "calendar")
+     (projects . "rocket")
+     (registers . "database")))
+ '(dashboard-init-info "217 packages loaded in 4.89729 seconds")
+ '(dashboard-item-generators
+   '((recents . dashboard-insert-recents)
+     (bookmarks . dashboard-insert-bookmarks)
+     (projects . dashboard-insert-projects)
+     (agenda . dashboard-insert-agenda)
+     (registers . dashboard-insert-registers)))
+ '(dashboard-navigator-buttons
+   '(((#("" 0 1
+         (rear-nonsticky t display
+                         (raise -0.06)
+                         font-lock-face
+                         (:family "github-octicons" :height 1.32)
+                         face
+                         (:family "github-octicons" :height 1.32)))
+       "ALGON" "Browse ALGON Homepage"
+       (lambda
+         (&rest _)
+         (browse-url "https://algon.dk"))))))
+ '(dashboard-set-file-icons t)
+ '(dashboard-set-heading-icons t)
+ '(dashboard-set-navigator t)
+ '(dashboard-startup-banner "/Users/niels/.emacs.d/images/ohands.png")
  '(doom-modeline-gnus-timer 0)
  '(eww-bookmarks-directory "~/.emacs.d/private/")
  '(exec-path
-   '("/usr/local/opt/coreutils/libexec/gnubin/" "/bin/" "/usr/bin/" "/usr/local/bin/" "/usr/local/texlive/bin/" "/opt/local/bin/" "/Library/TeX/texbin/" "/usr/sbin/" "/sbin/" "/opt/X11/bin/" "/Applications/Emacs.app/Contents/MacOS/libexec/" "/usr/local/Cellar/pyenv-virtualenv/1.1.5/shims/"))
+   '("/bin/" "/usr/bin/" "/usr/local/bin/" "/usr/local/texlive/bin/" "/opt/local/bin/" "/Library/TeX/texbin/" "/usr/sbin/" "/sbin/" "/opt/X11/bin/" "/Applications/Emacs.app/Contents/MacOS/libexec/" "/usr/local/Cellar/pyenv-virtualenv/1.1.5/shims/" "/usr/local/opt/coreutils/libexec/gnubin/"))
+ '(file-template-insert-automatically t)
  '(focus-follows-mouse 'auto-raise)
  '(font-latex-fontify-sectioning 1.2)
  '(helm-allow-mouse t)

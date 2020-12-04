@@ -1,0 +1,9 @@
+#+AUTHOR: %U
+#+LANGUAGE: da
+#+CATEGORY: Dokument
+#+DATE: %d/%m/%y
+#+LaTeX_Compiler: lualatex
+#+OPTIONS: ^:{} num:nil toc:nil tex:t 
+#+EXCLUDE_TAGS:        noexport
+#+SELECT_TAGS:         export
+#+INCLUDE: ~/Dropbox/org/include/NS-std.org

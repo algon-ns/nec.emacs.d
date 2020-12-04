@@ -112,9 +112,9 @@ If you wonder, where You found this file....
 ;; Author: Niels Søndergaard
 ;; Created: Fri Jun 12 10:49:04 2020 (+0200)
 ;; Version: 1.0
-;; Last-Updated: Tor Dec  3 09:07:55 2020 (+0100)
+;; Last-Updated: Tor Dec  3 15:26:51 2020 (+0100)
 ;;           By: Niels Søndergaard
-;;     Update #: 113
+;;     Update #: 116
 ;; Keywords:
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -329,10 +329,10 @@ NAME and ARGS are as in `use-package'."
     - [[#diminishblackout][diminish/blackout]]
     - [[#bind-key][bind key]]
     - [[#variables-and-defaults][variables and Defaults]]
-    - [[#initial-frame][initial frame]]
     - [[#all-the-icons][all-the-icons]]
     - [[#pretty-symbols][pretty Symbols]]
     - [[#setting-my-favorite-theme][setting my favorite theme]]
+    - [[#initial-frame][initial frame]]
     - [[#backup][backup]]
     - [[#create-missing-directory-for-find-file][create missing directory for find-file]]
     - [[#ctrl-s--isearch][ctrl-s  (isearch)]]
@@ -422,7 +422,7 @@ NAME and ARGS are as in `use-package'."
     - [[#refiling-setup][refiling Setup]]
     - [[#org-journal][org-journal]]
     - [[#doct-and-org-capture][doct and org-capture]]
-    - [[#org-ag][org ag]]
+    - [[#org-agenda][org agenda]]
     - [[#org-super-agenda][org super agenda]]
     - [[#org-contact][org contact]]
     - [[#org-roam][org-roam]]
@@ -433,7 +433,6 @@ NAME and ARGS are as in `use-package'."
     - [[#excellent-pdf-viewer][excellent PDF Viewer]]
 - [[#applications][Applications]]
     - [[#calendar][Calendar]]
-    - [[#header-for-new-files][Header for new files]]
     - [[#magit][Magit]]
     - [[#remember-mode][Remember mode]]
     - [[#tæl-ord][Tæl ord]]
@@ -4356,8 +4355,7 @@ multiple times below:
 
 (if nec/measure-time (nec/timer "doct capture templates "))
 #+end_src
-*** org ag 
-enda
+*** org agenda
 :PROPERTIES:
 :CUSTOM_ID: org agenda 
 :END:
@@ -4377,7 +4375,6 @@ enda
     (setq org-agenda-tags-column -100)
     (setq org-agenda-time-grid '((daily today require-timed)))
     (setq org-agenda-use-tag-inheritance t)
-  ;;  (setq org-columns-default-format "%14SCHEDULED %Effort{:} %1PRIORITY %TODO %50ITEM %TAGS")
     (setq org-columns-default-format "%TODO %32ITEM  %3PRIORITY %14SCHEDULED %TAGS")
     (setq org-default-notes-file "~/Dropbox/org/agenda/Notes.org")
     (setq org-track-ordered-property-with-tag t)
@@ -4599,12 +4596,11 @@ requires sqlite3.
 [[https://github.com/ndw/org-mac-iCal][org-mac-iCal]] allows you to imports events from iCal.app to the Emacs diary.
 
 #+NAME: package-org-mac-iCal
-### #+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp
 
 (require 'org-mac-iCal)
 (setq org-mac-iCal-import-exchange t)
-(setq org-mac-iCal-calendar-names
-      '("nisoni" "niels" "lilian" "Søndergaard"))
+(setq org-mac-iCal-calendar-names '("niels" "lilian" "Søndergaard"))
 (add-hook 'org-agenda-cleanup-fancy-diary-hook
        (lambda ()
          (goto-char (point-min))
@@ -4618,7 +4614,7 @@ requires sqlite3.
              (re-search-backward "^[0-9]+:[0-9]+-[0-9]+:[0-9]+ " nil t))
            (insert (match-string 0)))))
 (if nec/measure-time (nec/timer "org-mac-iCal "))
-### #+END_SRC
+#+END_SRC
 
 *** Væk mig
 A package to wake me up, whenever I shall do something
@@ -4951,24 +4947,7 @@ easier on the eyes. For more, see the brief [[https://www.dailymotion.com/video/
 
       (if nec/measure-time (nec/timer "Calendar "))
 #+end_src
-*** Header for new files
-:PROPERTIES:
-:CUSTOM_ID: Header for emacs-lisp files
-:END:
-We want to give all nye (and old) emacs-lisp files a header)
-#+begin_src emacs-lisp
-(require 'header2)
-(setq header-copyright-notice (concat "Copyright (C) 2020, " (user-full-name) "\n"))
-(add-to-list 'write-file-functions 'auto-update-file-header)
-(add-hook 'emacs-lisp-mode-hook 'auto-make-header)
-(straight-use-package-lazy 'autoinsert)
-  (setq auto-insert-query nil)
-  (setq auto-insert-directory "~/Dropbox/org/include/")
-  (auto-insert-mode 1)
-  (add-hook 'find-file-hook 'auto-insert)  
-  (define-auto-insert "\\.org?$" "std-header.org")
-(if nec/measure-time (nec/timer "App: header on files  "))
-#+end_src
+
 *** Magit
 :PROPERTIES:
 :CUSTOM_ID: Magit
@@ -5401,6 +5380,31 @@ Ledger mode for MacBook Air
 (if nec/measure-time (nec/timer "smog "))
 #+end_src
 * Languages
+**💢 Header for new files
+:PROPERTIES:
+:CUSTOM_ID: Header for emacs-lisp files
+:END:
+
+We want to give all nye (and old) emacs-lisp files a header)
+#+begin_src emacs-lisp
+(require 'file-template)
+
+(autoload 'file-template-find-file-not-found-hook "file-template" nil t)
+(add-hook 'find-file-not-found-hooks 'file-template-find-file-not-found-hook 'append)
+#+end_src
+
+(require 'header2)
+(setq header-copyright-notice (concat "Copyright (C) 2020, " (user-full-name) "\n"))
+(add-to-list 'write-file-functions 'auto-update-file-header)
+(add-hook 'emacs-lisp-mode-hook 'auto-make-header)
+(straight-use-package-lazy 'autoinsert)
+  (setq auto-insert-query nil)
+  (setq auto-insert-directory "~/Dropbox/org/include/")
+  (auto-insert-mode 1)
+  (add-hook 'find-file-hook 'auto-insert)  
+  (define-auto-insert "\\.org?$" "std-header.org")
+(if nec/measure-time (nec/timer "App: header on files  "))
+
 *** Python
 :PROPERTIES:
 :CUSTOM_ID: Python
