@@ -41,13 +41,13 @@ Insert a witty quote about imitation, theft, and plagiarism here. Many of the id
 
 A few to mention:
 
-***John Wiegley***
-***Sacha Chua***
-***Musa Al-hassey***
-***Arjen Wiersma***
-***Dennis Ogbe***
-***Terencio Agozzino***
-***Karl Voit,*** but also configurations like purcell, doom, centaur and many more
+***John Wiegley***,
+ ***Sacha Chua***,
+ ***Musa Al-hassey***,
+ ***Arjen Wiersma***,
+ ***Dennis Ogbe***,
+ ***Terencio Agozzino***,
+ ***Karl Voit,*** but also configurations like purcell, doom, centaur and many more
 has been the foundation for this.
 
 The base for my emacs configuration, is the config comming from ___Ryan’s Minimal Emacs___ by ***Ryan Hajianpour***, but I don’t think there is anything left by now.
