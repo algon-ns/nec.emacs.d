@@ -30,8 +30,8 @@ I'm not expecting to get a Nobel Prize, as my work still have not reached the ma
 
 ## Required
 You need til have 2 fonts: Source Code Pro Medium and OpenDyslexic are required.
-Also You need to have a directory called "~/Projects/", and I have my orgfiles
-desvribed i the file "~/Dropbox/org/org-files".
+Also You need to have a directory called '~/Projects/', and I have my orgfiles
+described i the file '~/Dropbox/org/org-files'.
 
 ## about this file
 
@@ -42,17 +42,11 @@ Insert a witty quote about imitation, theft, and plagiarism here. Many of the id
 A few to mention:
 
 ***John Wiegley***
-
 ***Sacha Chua***
-
 ***Musa Al-hassey***
-
 ***Arjen Wiersma***
-
 ***Dennis Ogbe***
-
 ***Terencio Agozzino***
-
 ***Karl Voit,*** but also configurations like purcell, doom, centaur and many more
 has been the foundation for this.
 
