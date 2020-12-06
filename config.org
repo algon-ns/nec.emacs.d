@@ -422,7 +422,7 @@ NAME and ARGS are as in `use-package'."
     - [[#refiling-setup][refiling Setup]]
     - [[#org-journal][org-journal]]
     - [[#doct-and-org-capture][doct and org-capture]]
-    - [[#org-agenda][org agenda]]
+    - [[#org-agenda][org-agenda]]
     - [[#org-super-agenda][org super agenda]]
     - [[#org-contact][org contact]]
     - [[#org-roam][org-roam]]
@@ -2905,6 +2905,8 @@ Put all keybindings here (with doc)
 (global-set-key (kbd "C-c n g")  'org-roam-graph)
 (global-set-key (kbd "C-c n f")  'org-roam-find-file)
 
+(global-set-key (kbd "<f2>")  'open-dashboard)
+
 (if nec/measure-time
     (nec/timer "Global key bindings   "))
 #+end_src
@@ -3724,66 +3726,60 @@ blocks! Love this one ^_^
 *** Dashboard
 :PROPERTIES:
 :CUSTOM_ID: Dashboard
-:END:
+⏏
  [[https://github.com/emacs-dashboard/emacs-dashboard][Dashboard]] - A startup dashboard which provides certain information 
              about your recent Emacs activities.
 We want a Dashboard, which demand Page Break Line 
 #+begin_src emacs-lisp
-(straight-use-package '(page-break-lines :type git :flavor melpa :host github :repo "purcell/page-break-lines"))
-(setq page-break-lines-lighter " ⩵")
-(global-page-break-lines-mode)
+    (straight-use-package '(page-break-lines :type git :flavor melpa :host github
+                                             :repo "purcell/page-break-lines"))
+    (setq page-break-lines-lighter " ⩵")
+    (global-page-break-lines-mode)
 
-(straight-use-package '(elisp-lint :type git :flavor melpa :host github :repo "gonewest818/elisp-lint"))
+    
+;;      (bindkey ("<f2>" . open-dashboard))
+      (setq dashboard-modify-heading-icons '((recents . "file-text")
+                                             (bookmarks . "book")))
+      (setq dashboard-center-content t)
+      (setq dashboard-week-agenda t)
 
-(use-package dashboard
-  :straight t 
-  :diminish
-  :bind ("<f2>" . open-dashboard)
-  :custom
-  (dashboard-banner-logo-title "Open EMACS for a new world...")
-  ;(dashboard-startup-banner "~/.emacs.d/images/garfield.png")
-  ;(dashboard-startup-banner "~/.emacs.d/images/hands.png")
-  (dashboard-startup-banner "/Users/niels/.emacs.d/images/ohands.png")
-  ;(dashboard-startup-banner "~/.emacs.d/images/gnu.png")
-  ;(dashboard-startup-banner "~/.emacs.d/images/Verdensmaal.png")
-  ;(dashboard-startup-banner "~/.emacs.d/images/ognu.png")
-  (dashboard-items '( (bookmarks . 6) (agenda . 6)))
-  (initial-buffer-choice (lambda () (get-buffer dashboard-buffer-name)))
-  (dashboard-set-heading-icons t)
-  (dashboard-set-navigator t)
-  (dashboard-navigator-buttons
-   '(((#("" 0 1
-         (rear-nonsticky t display
-                         (raise -0.06)
-                         font-lock-face
-                         (:family "github-octicons" :height 1.32)
-                         face
-                         (:family "github-octicons" :height 1.32)))
-       "ALGON" "Browse ALGON Homepage"
-       (lambda
-         (&rest _)
-         (browse-url "https://algon.dk"))))))
- :custom-face
-  (dashboard-banner-logo-title ((t (:family "Love LetterTW" :height 123))))
- :config
-  (dashboard-modify-heading-icons '((recents . "file-text")
-                                    (bookmarks . "book")))
-  (setq dashboard-center-content t)
-  (setq show-week-agenda-p t) )
-(dashboard-setup-startup-hook) 
+      (setq dashboard-banner-logo-title "Open EMACS for a new world...")
+      (setq dashboard-startup-banner "/Users/niels/.emacs.d/images/ohands.png")
+      (setq dashboard-items '((bookmarks . 6) (agenda . 6)))
+      (setq initial-buffer-choice (lambda () (get-buffer dashboard-buffer-name)))
+      (setq dashboard-set-heading-icons t)
+      (setq dashboard-set-navigator t)
+      (setq dashboard-navigator-buttons
+       '(((#("" 0 1
+          (rear-nonsticky t display
+            (raise -0.06)
+             font-lock-face
+               (:family "github-octicons" :height 1.32)
+             face
+               (:family "github-octicons" :height 1.32)))
+         "ALGON" "Browse ALGON Homepage"
+         (lambda
+           (&rest _)
+           (browse-url "https://algon.dk"))))))
 
-(defun open-dashboard ()
-    "Open the *dashboard* buffer and jump to the first widget."
-    (interactive)
-    (if (get-buffer dashboard-buffer-name)
-        (kill-buffer dashboard-buffer-name))
-    (dashboard-insert-startupify-lists)
-    (switch-to-buffer dashboard-buffer-name)
-    (goto-char (point-min))
-    (delete-other-windows))
+;;      (setq dashboard-banner-logo-title ((t (:family "Love LetterTW" :height 123)))))
+       (straight-use-package '(dashboard :type git :flavor melpa :files (:defaults "banners" "dashboard-pkg.el")
+                                  :host github :repo "emacs-dashboard/emacs-dashboard"))
+       (dashboard-setup-startup-hook)
+      
+    (defun open-dashboard ()
+        "Open the *dashboard* buffer and jump to the first widget."
+        (interactive)
+        (if (get-buffer dashboard-buffer-name)
+            (kill-buffer dashboard-buffer-name))
+        (dashboard-insert-startupify-lists)
+        (switch-to-buffer dashboard-buffer-name)
+        (goto-char (point-min))
+        (delete-other-windows))
 
-(if nec/measure-time (nec/timer "Dashboard   "))
+    (if nec/measure-time (nec/timer "Dashboard   "))
 #+end_src
+
 *** Games
 :PROPERTIES:
 :CUSTOM_ID: Games
@@ -4355,7 +4351,7 @@ multiple times below:
 
 (if nec/measure-time (nec/timer "doct capture templates "))
 #+end_src
-*** org agenda
+*** org-agenda
 :PROPERTIES:
 :CUSTOM_ID: org agenda 
 :END:
@@ -5914,7 +5910,7 @@ Review of open action items\n\n")
               "; Org-mode "   org-version
               "; System "     (system-name)
               "; Time "       (emacs-init-time))))
-(open-dashboard)
+;;(open-dashboard)
 (message "→★★★ Total time for configuration  %.2fs"  (float-time (time-subtract (current-time) nec/total-time)))
 (message "      T H E   E N D")
 #+end_src

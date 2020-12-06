@@ -27,12 +27,13 @@
      (registers . dashboard-insert-registers)))
  '(dashboard-navigator-buttons
    '(((#("" 0 1
-         (rear-nonsticky t display
-                         (raise -0.06)
-                         font-lock-face
-                         (:family "github-octicons" :height 1.32)
-                         face
-                         (:family "github-octicons" :height 1.32)))
+         (face
+          (:family "github-octicons" :height 1.32)
+          font-lock-face
+          (:family "github-octicons" :height 1.32)
+          display
+          (raise -0.06)
+          rear-nonsticky t))
        "ALGON" "Browse ALGON Homepage"
        (lambda
          (&rest _)
@@ -41,6 +42,7 @@
  '(dashboard-set-heading-icons t)
  '(dashboard-set-navigator t)
  '(dashboard-startup-banner "/Users/niels/.emacs.d/images/ohands.png")
+ '(dashboard-week-agenda t)
  '(doom-modeline-gnus-timer 0)
  '(eww-bookmarks-directory "~/.emacs.d/private/")
  '(exec-path

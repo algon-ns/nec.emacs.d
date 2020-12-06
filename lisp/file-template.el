@@ -53,7 +53,7 @@
   "*File templates."
   :group 'file-template)
 
-(defcustom file-template-insert-automatically Ask
+(defcustom file-template-insert-automatically t
   "*Insert file-template automatically.
 Can be one of the following values:
 
@@ -98,6 +98,7 @@ Suggested values are \" \", \"0\" and \"\"."
     ("\\.h\\(pp\\)?$" . "template.h")
     ("[Mm]akefile" . "template.mk")
     ("\\.sh$" . "template.sh")
+    ("\\.zsh$" . "template.zsh")    
     ("\\.org$" . "template.org")    
     ("\\.csh$" . "template.csh")
     ("\\.pl$" . "template.pl")
