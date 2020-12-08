@@ -33,7 +33,7 @@
 (setq enable-local-variables :safe)
 ;;
 ;;Some default settings are here
-(setq-default debug-on-error         t
+(setq-default debug-on-error         nil
               message-log-max        t
               ad-redefinition-action 'accept)
 ;;;;;; Set garbage collection threshold

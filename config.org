@@ -329,6 +329,8 @@ NAME and ARGS are as in `use-package'."
     - [[#diminishblackout][diminish/blackout]]
     - [[#bind-key][bind key]]
     - [[#variables-and-defaults][variables and Defaults]]
+    - [[#path-and-env-from-os][PATH and env (from OS)]]
+    - [[#list-environment][list-environment]]
     - [[#all-the-icons][all-the-icons]]
     - [[#pretty-symbols][pretty Symbols]]
     - [[#setting-my-favorite-theme][setting my favorite theme]]
@@ -357,10 +359,8 @@ NAME and ARGS are as in `use-package'."
     - [[#crux][Crux]]
     - [[#disk-usage][Disk Usage]]
     - [[#hostname][hostname]]
-    - [[#path-and-env-from-os][PATH and env (from OS)]]
     - [[#time-stamp--large-file-warning][Time stamp / large file warning]]
     - [[#copy-id][Copy ID]]
-    - [[#list-environment][list-environment]]
     - [[#running-on-a-macos][running on a macOS]]
       - [[#key-bindings][Key Bindings]]
       - [[#ligatures-in-code][Ligatures in Code]]
@@ -402,19 +402,9 @@ NAME and ARGS are as in `use-package'."
     - [[#edit-command][Edit command]]
     - [[#text-folding-with-origami-mode][Text Folding with Origami-mode]]
     - [[#dired-filefinder][Dired filefinder]]
-    - [[#games][Games]]
     - [[#flyckeck][Flyckeck]]
-    - [[#edit-command-1][Edit command]]
-    - [[#text-folding-with-origami-mode-1][Text Folding with Origami-mode]]
-    - [[#dired-filefinder-1][Dired filefinder]]
-    - [[#games-1][Games]]
-    - [[#flyckeck-1][Flyckeck]]
-    - [[#edit-command-2][Edit command]]
-    - [[#text-folding-with-origami-mode-2][Text Folding with Origami-mode]]
-    - [[#dired-filefinder-2][Dired filefinder]]
-    - [[#flyckeck-2][Flyckeck]]
     - [[#dashboard][Dashboard]]
-    - [[#games-2][Games]]
+    - [[#games][Games]]
 - [[#org-and-friends][org and friends]]
     - [[#org-general-settings][org general settings]]
     - [[#org-bullets][org bullets]]
@@ -502,7 +492,7 @@ Here are what I consider better defaults as per my own experience.
 (display-time-mode 1)                             ; Enable time in the mode-line
 (fringe-mode 0)                                   ; Disable fringes
 (fset 'yes-or-no-p 'y-or-n-p)                     ; Replace yes/no prompts with y/n
-(global-subword-mode 1)                           ; Iterate through CamelCase words
+;; (global-subword-mode 1)                           ; Iterate through CamelCase words
 (menu-bar-mode 0)                                 ; Disable the menu bar
 (mouse-avoidance-mode 'exile)                     ; Avoid collision of mouse with point
 (put 'downcase-region 'disabled nil)              ; Enable downcase-region
@@ -956,6 +946,45 @@ abcdefghijklmnopqrstuvwxyzæøå
 (setq recentf-save-file "~/.emacs.d/private/recentf")
 (if nec/measure-time (nec/timer "Set constants "))   
 #+end_src
+*** PATH and env (from OS)
+:PROPERTIES:
+:CUSTOM_ID: PATH and env (from OS)
+:END:
+#+begin_src emacs-lisp
+;;; Environment fixup
+(setenv "TMPDIR" "/tmp/")
+(setenv "TERM" "xterm-256color")
+(setenv "LANG" "da_DK.UTF-8")
+
+(use-package exec-path-from-shell
+  :straight t
+  :if (and (eq system-type 'darwin) (display-graphic-p))
+  :config
+  (progn
+    ;; For debugging
+    (when nil
+      (message "path: %s, setup: %s" (getenv "PATH")
+               (getenv "ENVIRONMENT_SETUP_DONE"))
+      (setq exec-path-from-shell-debug t))
+    (setq exec-path-from-shell-arguments (list "-l"))
+    (setq exec-path-from-shell-check-startup-files nil)
+    (add-to-list 'exec-path-from-shell-variables "SHELL")
+    (add-to-list 'exec-path-from-shell-variables "TERM")
+    (add-to-list 'exec-path-from-shell-variables "ENVIRONMENT_SETUP_DONE")
+    (add-to-list 'exec-path-from-shell-variables "TMPDIR")
+    (exec-path-from-shell-initialize)))
+
+(if nec/measure-time (nec/timer "set PATH and env "))
+#+end_src
+
+*** list-environment
+:PROPERTIES:
+:CUSTOM_ID: list-environment
+:END:
+#+BEGIN_SRC emacs-lisp
+(straight-use-package-lazy 'list-environment)
+(if nec/measure-time (nec/timer "List environment  "))
+#+END_SRC
 *** all-the-icons
 :PROPERTIES:
 :CUSTOM_ID: all-the-icons
@@ -1011,8 +1040,6 @@ If Non-nil, use dashboard, otherwise will restore previous session."
   "Line spacing in frame "
   :group 'nec
   :type 'float)
-
-
 (defcustom nec-prettify-symbols-alist
   '(("lambda" . ?λ)
     ("<-" . ?←)
@@ -1741,8 +1768,7 @@ Specially useful for presentations, demos and other shows alike.
 (use-package disk-usage
   :straight t
   :commands (disk-usage))
-(if nec/measure-time
-          (nec/timer "Disk usage   "))
+(if nec/measure-time (nec/timer "Disk usage   "))
 #+end_src
 *** hostname
 :PROPERTIES:
@@ -1765,32 +1791,7 @@ Specially useful for presentations, demos and other shows alike.
 (if nec/measure-time
           (nec/timer "Hostname   "))
 #+end_src
-*** PATH and env (from OS)
-:PROPERTIES:
-:CUSTOM_ID: PATH and env (from OS)
-:END:
-#+begin_src emacs-lisp
-;;; Environment fixup
-(use-package exec-path-from-shell
-  :straight t
-  :if (and (eq system-type 'darwin) (display-graphic-p))
-  :config
-  (progn
-    ;; For debugging
-    (when nil
-      (message "path: %s, setup: %s" (getenv "PATH")
-               (getenv "ENVIRONMENT_SETUP_DONE"))
-      (setq exec-path-from-shell-debug t))
-    (setq exec-path-from-shell-arguments (list "-l"))
-    (setq exec-path-from-shell-check-startup-files nil)
-    (add-to-list 'exec-path-from-shell-variables "SHELL")
-    (add-to-list 'exec-path-from-shell-variables "GOPATH")
-    (add-to-list 'exec-path-from-shell-variables "ENVIRONMENT_SETUP_DONE")
-    (add-to-list 'exec-path-from-shell-variables "PYTHONPATH")
-    (exec-path-from-shell-initialize)))
 
-(if nec/measure-time (nec/timer "set PATH and env "))
-#+end_src
 *** Time stamp / large file warning
 :PROPERTIES:
 :CUSTOM_ID: Time stamp / large file warning
@@ -1818,31 +1819,25 @@ visual line mode and stretch the cursor
 :CUSTOM_ID: Copy ID
 :END:
 #+begin_src emacs-lisp
-(defun my/copy-id-to-clipboard() "Copy the ID property value to killring,
-if no ID is there then create a new unique ID. 
-This function works only in org-mode buffers.
+    (defun my/copy-id-to-clipboard()
+   "Copy the ID property value to killring, if no ID is there then
+    create a new unique ID. This function works only in org-mode
+    buffers.
  
-The purpose of this function is to easily construct id:-links to 
-org-mode items. If its assigned to a key it saves you marking the
-text and copying to the killring."
-       (interactive)
-       (when (eq major-mode 'org-mode) ; do this only in org-mode buffers
-	 (setq mytmpid (funcall 'org-id-get-create))
-	 (kill-new mytmpid)
-	 (message "Copied %s to killring (clipboard)" mytmpid)
-       ))
+    The purpose of this function is to easily construct id:-links to 
+    org-mode items. If its assigned to a key it saves you marking the
+    text and copying to the killring."
+           (interactive)
+           (when (eq major-mode 'org-mode) ; do this only in org-mode buffers
+             (setq mytmpid (funcall 'org-id-get-create))
+             (kill-new mytmpid)
+             (message "Copied %s to killring (clipboard)" mytmpid)
+           ))
  
-(global-set-key (kbd "<f5>") 'my/copy-id-to-clipboard)
-(if nec/measure-time (nec/timer "Copy ID  "))
+    (global-set-key (kbd "<f5>") 'my/copy-id-to-clipboard)
+    (if nec/measure-time (nec/timer "Copy ID  "))
 #+end_src
-*** list-environment
-:PROPERTIES:
-:CUSTOM_ID: list-environment
-:END:
-#+BEGIN_SRC emacs-lisp
-(straight-use-package-lazy 'list-environment)
-(if nec/measure-time (nec/timer "List environment  "))
-#+END_SRC
+
 *** running on a macOS 
 :PROPERTIES:
 :CUSTOM_ID: running on a macOS mashine
@@ -3087,7 +3082,9 @@ dark themes, and its modified powerline setup.
                            ;; `term' does need readline support.
                            (remove "--noediting" (symbol-value xargs-name))
                          '("-i")))))
-        (straight-use-package 'eterm-256color
+        (straight-use-package '(eterm-256color :type git :flavor melpa :files 
+                               (:defaults "eterm-256color.ti" "eterm-256color-pkg.el") 
+                                :host github :repo "dieggsy/eterm-256color")
           :hook (term-mode))
         
         (set-buffer term-ansi-buffer-name)
@@ -3104,436 +3101,6 @@ dark themes, and its modified powerline setup.
 
       (global-set-key "\C-t" 'term/shell)
 #+end_src
-*** Edit command
-:PROPERTIES:
-:CUSTOM_ID: Edit command
-:END:
-#+begin_src emacs-lisp
-  (use-package move-text
-    :straight t
-    :bind (("M-<up>" .  move-text-up)
-           ("M-<down>" .  move-text-down)))
-
-  (define-key global-map (kbd "RET") 'newline-and-indent)
-
-  ;; Remember line when you revisit a file
-  (setq-default save-place t)
-  (setq save-place-file (concat user-emacs-directory "places"))
-  (setq delete-active-region t)
-
-  ;; Fix for emacs killing text to kill-ring when using M-Backspace and C-Backspace
-  (defun delete-word (arg)
-    "Delete characters forward until encountering the end of a word.
-  With argument ARG, do this that many times."
-    (interactive "p")
-    (delete-region (point) (progn (forward-word arg) (point))))
-
-  (defun backward-delete-word (arg)
-    "Delete characters backward until encountering the beginning of a word.
-  With argument ARG, do this that many times."
-    (interactive "p")
-    (delete-word (- arg)))
-
-  (global-set-key (kbd "<M-backspace>") 'backward-delete-word)
-  (global-set-key (kbd "<C-backspace>") 'backward-delete-word)
-  (if nec/measure-time (nec/timer "editing   "))
-#+end_src
-*** Text Folding with Origami-mode
-Literate programming within Org-mode is not always ideal, so we use a
-programming mode directly and then may want to have arbitrary ‘sections’ of text
-folded up.  Let's describe how to accomplish this goal.
-
-We use a feature-full folding mode,  [[https://github.com/gregsexton/origami.el][Origami-mode]].
-#+BEGIN_SRC emacs-lisp
-(straight-use-package 'origami)
-#+END_SRC
-
-Along with a hydra for super quick navigation and easily folding, unfolding
-blocks! Love this one ^_^
-#+BEGIN_SRC emacs-lisp
-(defhydra folding-with-origami-mode (global-map "C-c f")
-  ("h" origami-close-node-recursively "Hide")
-  ("o" origami-open-node-recursively  "Open")
-  ("t" origami-toggle-all-nodes  "Toggle buffer")
-  ("n" origami-next-fold "Next")
-  ("p" origami-previous-fold "Previous"))
-(if nec/measure-time (nec/timer "Origami "))
-#+END_SRC
-
-*** Dired filefinder
-:PROPERTIES:
-:CUSTOM_ID: Dired filefinder
-:END:
- [[https://www.emacswiki.org/emacs/DiredMode][Dired]] - =[built-in]= *Dir* ectory *Ed* itor. A customizable great file manager.
-#+begin_src emacs-lisp
-
- (straight-use-package '(dired :type built-in)
-;;    :bind (:map dired-mode-map
-;;          ("C-c C-p" . wdired-change-to-wdired-mode))
-      :config
-      (setq dired-dwim-target t)
-      (setq dired-recursive-deletes 'always)
-      (setq dired-recursive-copies 'always))
- (when sys/macp
- ;; Suppress the warning: `ls does not support --dired'.
-   (setq dired-use-ls-dired nil))
- (when (executable-find "gls")
- ;; Use GNU ls as `gls' from `coreutils' if available.
-   (setq insert-directory-program "gls"))
-    ;;  (when (or (and sys/macp (executable-find "gls"))
-    ;;            (and (not sys/macp) (executable-find "ls")))
-    ;; Using `insert-directory-program'
-    ;;  (setq ls-lisp-use-insert-directory-program t)
-  (setq dired-listing-switches "-alh --group-directories-first")
-    ;; Quick sort dired buffers via hydra
-  (use-package dired-quick-sort
-    :bind (:map dired-mode-map
-                ("S" . hydra-dired-quick-sort/body)))
-    ;; Show git info in dired
-      (use-package dired-git-info
-        :straight t
-        :bind (:map dired-mode-map
-               (")" . dired-git-info-mode)))
-    ;; Allow rsync from dired buffers
-      (use-package dired-rsync
-        :straight t
-        :bind (:map dired-mode-map
-               ("C-c C-r" . dired-rsync)))
-    ;; Colourful dired
-      (use-package diredfl
-        :straight t
-        :init (diredfl-global-mode 1))
-   (straight-use-package 'dired-filter)
-   (use-package dired-filter
-      :after    dired
-      :bind (:map dired-mode-map
-                  ("/" . dired-filter-map))
-      :hook ((dired-mode . dired-filter-mode)
-             (dired-mode . dired-filter-group-mode))
-      :init (gsetq dired-filter-revert 'never
-                   dired-filter-group-saved-groups
-                   '(("default"
-                      ("Git"
-                       (directory . ".git")
-                       (file . ".gitignore"))
-                      ("Directory"
-                       (directory))
-                      ("PDF"
-                       (extension . "pdf"))
-                      ("LaTeX"
-                       (extension "tex" "bib"))
-                      ("Source"
-                       (extension "c" "cpp" "hs" "rb" "py" "r" "cs" "el" "lisp" "html" "js" "css"))
-                      ("Doc"
-                       (extension "md" "rst" "txt"))
-                      ("Org"
-                       (extension . "org"))
-                      ("Archives"
-                       (extension "zip" "rar" "gz" "bz2" "tar"))
-                      ("Images"
-                       (extension "jpg" "JPG" "webp" "png" "PNG" "jpeg" "JPEG" "bmp" "BMP" "TIFF" "tiff" "gif" "GIF"))))))
-  ;;(setcar (cdr (assq 'dired-filter-mode minor-mode-alist)) " ")
-
-(straight-use-package 'dired-git)
-;;(add-hook 'dired-mode-hook 'dired-git-mode)
-
-  (straight-use-package 'dired-rainbow)
-    (use-package dired-rainbow
-      :after dired
-      :config
-      (dired-rainbow-define-chmod directory "#6cb2eb" "d.*")
-      (dired-rainbow-define html        "#eb5286" ("css" "less" "sass" "scss" "htm" "html" "jhtm" "mht" "eml" "mustache" "xhtml"))
-      (dired-rainbow-define xml         "#f2d024" ("xml" "xsd" "xsl" "xslt" "wsdl" "bib" "json" "msg" "pgn" "rss" "yaml" "yml" "rdata"))
-      (dired-rainbow-define document    "#9561e2" ("docm" "doc" "docx" "odb" "odt" "pdb" "pdf" "ps" "rtf" "djvu" "epub" "odp" "ppt" "pptx"))
-      (dired-rainbow-define markdown    "#ffed4a" ("org" "etx" "info" "markdown" "md" "mkd" "nfo" "pod" "rst" "tex" "textfile" "txt"))
-      (dired-rainbow-define database    "#6574cd" ("xlsx" "xls" "csv" "accdb" "db" "mdb" "sqlite" "nc"))
-      (dired-rainbow-define media       "#de751f" ("mp3" "mp4" "MP3" "MP4" "avi" "mpeg" "mpg" "flv" "ogg" "mov" "mid" "midi" "wav" "aiff" "flac"))
-      (dired-rainbow-define image       "#f66d9b" ("tiff" "tif" "cdr" "gif" "ico" "jpeg" "jpg" "png" "psd" "eps" "svg"))
-      (dired-rainbow-define log         "#c17d11" ("log"))
-      (dired-rainbow-define shell       "#f6993f" ("awk" "bash" "bat" "sed" "sh" "zsh" "vim"))
-      (dired-rainbow-define interpreted "#38c172" ("py" "ipynb" "rb" "pl" "t" "msql" "mysql" "pgsql" "sql" "r" "clj" "cljs" "scala" "js"))
-      (dired-rainbow-define compiled    "#4dc0b5" ("asm" "cl" "lisp" "el" "c" "h" "c++" "h++" "hpp" "hxx" "m" "cc" "cs" "cp" "cpp" "go" "f" "for" "ftn" "f90" "f95" "f03" "f08" "s" "rs" "hi" "hs" "pyc" ".java"))
-      (dired-rainbow-define executable  "#8cc4ff" ("exe" "msi"))
-      (dired-rainbow-define compressed  "#51d88a" ("7z" "zip" "bz2" "tgz" "txz" "gz" "xz" "z" "Z" "jar" "war" "ear" "rar" "sar" "xpi" "apk" "xz" "tar"))
-      (dired-rainbow-define packaged    "#faad63" ("deb" "rpm" "apk" "jad" "jar" "cab" "pak" "pk3" "vdf" "vpk" "bsp"))
-      (dired-rainbow-define encrypted   "#ffed4a" ("gpg" "pgp" "asc" "bfe" "enc" "signature" "sig" "p12" "pem"))
-      (dired-rainbow-define fonts       "#6cb2eb" ("afm" "fon" "fnt" "pfb" "pfm" "ttf" "otf"))
-      (dired-rainbow-define partition   "#e3342f" ("dmg" "iso" "bin" "nrg" "qcow" "toast" "vcd" "vmdk" "bak"))
-      (dired-rainbow-define vc          "#0074d9" ("git" "gitignore" "gitattributes" "gitmodules"))
-      (dired-rainbow-define-chmod executable-unix "#38c172" "-.*x.*"))
-   (setq dired-after-readin-hook '(dired-omit-expunge dired-filter--apply))
-   (setq dired-always-read-filesystem t)
-   (setq dired-create-destination-dirs 'ask)
-   (setq dired-dwim-target t)
-   (setq dired-listing-switches "-alh --group-directories-first")
-   (setq dired-use-ls-dired nil)
-
-    (use-package all-the-icons-dired
-      :straight t
-      :diminish " "
-      :hook (dired-mode . all-the-icons-dired-mode))
-
-    ;;(use-package dired-sidebar
-    ;;  :straight t
-    ;;  :bind (("C-c s" . dired-sidebar-toggle-sidebar)))
-
-    (if nec/measure-time (nec/timer "Dired   "))
-#+end_src
-*** Games
-:PROPERTIES:
-:CUSTOM_ID: Games
-:END:
-#+begin_src emacs-lisp
-(use-package tetris
-  :straight t
-  :commands (tetris)
-  :bind
-  (:map tetris-mode-map
-        ("C-p" . tetris-rotate-prev)
-        ("C-n" . tetris-rotate-down)
-        ("C-b" . tetris-move-left)
-        ("C-f" . tetris-move-right)
-        ("C-SPC" . tetris-move-bottom))
-  :config
-  (defadvice tetris-end-game (around zap-scores activate)
-    (save-window-excursion ad-do-it)))
-;; -TetrisConfig
-
-;; SpeedTypePac
-(straight-use-package-lazy 'speed-type)
-
-(straight-use-package-lazy '2048-game)
-(if nec/measure-time (nec/timer "Games "))
-#+end_src
-*** Flyckeck
-:PROPERTIES:
-:CUSTOM_ID: Flyckeck
-:END:
-#+begin_src emacs-lisp
-(use-package flycheck
-  :straight t
-  :hook
-  (prog-mode . flycheck-mode)
-  (text-mode . flycheck-mode)
-  :config (diminish 'flycheck-mode " Ⓕ"))
-(if nec/measure-time (nec/timer "flycheck   "))
-#+end_src
-
-*** Edit command
-:PROPERTIES:
-:CUSTOM_ID: Edit command
-:END:
-#+begin_src emacs-lisp
-  (use-package move-text
-    :straight t
-    :bind (("M-<up>" .  move-text-up)
-           ("M-<down>" .  move-text-down)))
-
-  (define-key global-map (kbd "RET") 'newline-and-indent)
-
-  ;; Remember line when you revisit a file
-  (setq-default save-place t)
-  (setq save-place-file (concat user-emacs-directory "places"))
-  (setq delete-active-region t)
-
-  ;; Fix for emacs killing text to kill-ring when using M-Backspace and C-Backspace
-  (defun delete-word (arg)
-    "Delete characters forward until encountering the end of a word.
-  With argument ARG, do this that many times."
-    (interactive "p")
-    (delete-region (point) (progn (forward-word arg) (point))))
-
-  (defun backward-delete-word (arg)
-    "Delete characters backward until encountering the beginning of a word.
-  With argument ARG, do this that many times."
-    (interactive "p")
-    (delete-word (- arg)))
-
-  (global-set-key (kbd "<M-backspace>") 'backward-delete-word)
-  (global-set-key (kbd "<C-backspace>") 'backward-delete-word)
-  (if nec/measure-time (nec/timer "editing   "))
-#+end_src
-*** Text Folding with Origami-mode
-Literate programming within Org-mode is not always ideal, so we use a
-programming mode directly and then may want to have arbitrary ‘sections’ of text
-folded up.  Let's describe how to accomplish this goal.
-
-We use a feature-full folding mode,  [[https://github.com/gregsexton/origami.el][Origami-mode]].
-#+BEGIN_SRC emacs-lisp
-(straight-use-package 'origami)
-#+END_SRC
-
-Along with a hydra for super quick navigation and easily folding, unfolding
-blocks! Love this one ^_^
-#+BEGIN_SRC emacs-lisp
-(defhydra folding-with-origami-mode (global-map "C-c f")
-  ("h" origami-close-node-recursively "Hide")
-  ("o" origami-open-node-recursively  "Open")
-  ("t" origami-toggle-all-nodes  "Toggle buffer")
-  ("n" origami-next-fold "Next")
-  ("p" origami-previous-fold "Previous"))
-(if nec/measure-time (nec/timer "Origami "))
-#+END_SRC
-
-*** Dired filefinder
-:PROPERTIES:
-:CUSTOM_ID: Dired filefinder
-:END:
- [[https://www.emacswiki.org/emacs/DiredMode][Dired]] - =[built-in]= *Dir* ectory *Ed* itor. A customizable great file manager.
-#+begin_src emacs-lisp
-
- (straight-use-package '(dired :type built-in)
-;;    :bind (:map dired-mode-map
-;;          ("C-c C-p" . wdired-change-to-wdired-mode))
-      :config
-      (setq dired-dwim-target t)
-      (setq dired-recursive-deletes 'always)
-      (setq dired-recursive-copies 'always))
- (when sys/macp
- ;; Suppress the warning: `ls does not support --dired'.
-   (setq dired-use-ls-dired nil))
- (when (executable-find "gls")
- ;; Use GNU ls as `gls' from `coreutils' if available.
-   (setq insert-directory-program "gls"))
-    ;;  (when (or (and sys/macp (executable-find "gls"))
-    ;;            (and (not sys/macp) (executable-find "ls")))
-    ;; Using `insert-directory-program'
-    ;;  (setq ls-lisp-use-insert-directory-program t)
-  (setq dired-listing-switches "-alh --group-directories-first")
-    ;; Quick sort dired buffers via hydra
-  (use-package dired-quick-sort
-    :bind (:map dired-mode-map
-                ("S" . hydra-dired-quick-sort/body)))
-    ;; Show git info in dired
-      (use-package dired-git-info
-        :straight t
-        :bind (:map dired-mode-map
-               (")" . dired-git-info-mode)))
-    ;; Allow rsync from dired buffers
-      (use-package dired-rsync
-        :straight t
-        :bind (:map dired-mode-map
-               ("C-c C-r" . dired-rsync)))
-    ;; Colourful dired
-      (use-package diredfl
-        :straight t
-        :init (diredfl-global-mode 1))
-   (straight-use-package 'dired-filter)
-   (use-package dired-filter
-      :after    dired
-      :bind (:map dired-mode-map
-                  ("/" . dired-filter-map))
-      :hook ((dired-mode . dired-filter-mode)
-             (dired-mode . dired-filter-group-mode))
-      :init (gsetq dired-filter-revert 'never
-                   dired-filter-group-saved-groups
-                   '(("default"
-                      ("Git"
-                       (directory . ".git")
-                       (file . ".gitignore"))
-                      ("Directory"
-                       (directory))
-                      ("PDF"
-                       (extension . "pdf"))
-                      ("LaTeX"
-                       (extension "tex" "bib"))
-                      ("Source"
-                       (extension "c" "cpp" "hs" "rb" "py" "r" "cs" "el" "lisp" "html" "js" "css"))
-                      ("Doc"
-                       (extension "md" "rst" "txt"))
-                      ("Org"
-                       (extension . "org"))
-                      ("Archives"
-                       (extension "zip" "rar" "gz" "bz2" "tar"))
-                      ("Images"
-                       (extension "jpg" "JPG" "webp" "png" "PNG" "jpeg" "JPEG" "bmp" "BMP" "TIFF" "tiff" "gif" "GIF"))))))
-  ;;(setcar (cdr (assq 'dired-filter-mode minor-mode-alist)) " ")
-
-(straight-use-package 'dired-git)
-;;(add-hook 'dired-mode-hook 'dired-git-mode)
-
-  (straight-use-package 'dired-rainbow)
-    (use-package dired-rainbow
-      :after dired
-      :config
-      (dired-rainbow-define-chmod directory "#6cb2eb" "d.*")
-      (dired-rainbow-define html        "#eb5286" ("css" "less" "sass" "scss" "htm" "html" "jhtm" "mht" "eml" "mustache" "xhtml"))
-      (dired-rainbow-define xml         "#f2d024" ("xml" "xsd" "xsl" "xslt" "wsdl" "bib" "json" "msg" "pgn" "rss" "yaml" "yml" "rdata"))
-      (dired-rainbow-define document    "#9561e2" ("docm" "doc" "docx" "odb" "odt" "pdb" "pdf" "ps" "rtf" "djvu" "epub" "odp" "ppt" "pptx"))
-      (dired-rainbow-define markdown    "#ffed4a" ("org" "etx" "info" "markdown" "md" "mkd" "nfo" "pod" "rst" "tex" "textfile" "txt"))
-      (dired-rainbow-define database    "#6574cd" ("xlsx" "xls" "csv" "accdb" "db" "mdb" "sqlite" "nc"))
-      (dired-rainbow-define media       "#de751f" ("mp3" "mp4" "MP3" "MP4" "avi" "mpeg" "mpg" "flv" "ogg" "mov" "mid" "midi" "wav" "aiff" "flac"))
-      (dired-rainbow-define image       "#f66d9b" ("tiff" "tif" "cdr" "gif" "ico" "jpeg" "jpg" "png" "psd" "eps" "svg"))
-      (dired-rainbow-define log         "#c17d11" ("log"))
-      (dired-rainbow-define shell       "#f6993f" ("awk" "bash" "bat" "sed" "sh" "zsh" "vim"))
-      (dired-rainbow-define interpreted "#38c172" ("py" "ipynb" "rb" "pl" "t" "msql" "mysql" "pgsql" "sql" "r" "clj" "cljs" "scala" "js"))
-      (dired-rainbow-define compiled    "#4dc0b5" ("asm" "cl" "lisp" "el" "c" "h" "c++" "h++" "hpp" "hxx" "m" "cc" "cs" "cp" "cpp" "go" "f" "for" "ftn" "f90" "f95" "f03" "f08" "s" "rs" "hi" "hs" "pyc" ".java"))
-      (dired-rainbow-define executable  "#8cc4ff" ("exe" "msi"))
-      (dired-rainbow-define compressed  "#51d88a" ("7z" "zip" "bz2" "tgz" "txz" "gz" "xz" "z" "Z" "jar" "war" "ear" "rar" "sar" "xpi" "apk" "xz" "tar"))
-      (dired-rainbow-define packaged    "#faad63" ("deb" "rpm" "apk" "jad" "jar" "cab" "pak" "pk3" "vdf" "vpk" "bsp"))
-      (dired-rainbow-define encrypted   "#ffed4a" ("gpg" "pgp" "asc" "bfe" "enc" "signature" "sig" "p12" "pem"))
-      (dired-rainbow-define fonts       "#6cb2eb" ("afm" "fon" "fnt" "pfb" "pfm" "ttf" "otf"))
-      (dired-rainbow-define partition   "#e3342f" ("dmg" "iso" "bin" "nrg" "qcow" "toast" "vcd" "vmdk" "bak"))
-      (dired-rainbow-define vc          "#0074d9" ("git" "gitignore" "gitattributes" "gitmodules"))
-      (dired-rainbow-define-chmod executable-unix "#38c172" "-.*x.*"))
-   (setq dired-after-readin-hook '(dired-omit-expunge dired-filter--apply))
-   (setq dired-always-read-filesystem t)
-   (setq dired-create-destination-dirs 'ask)
-   (setq dired-dwim-target t)
-   (setq dired-listing-switches "-alh --group-directories-first")
-   (setq dired-use-ls-dired nil)
-
-    (use-package all-the-icons-dired
-      :straight t
-      :diminish " "
-      :hook (dired-mode . all-the-icons-dired-mode))
-
-    ;;(use-package dired-sidebar
-    ;;  :straight t
-    ;;  :bind (("C-c s" . dired-sidebar-toggle-sidebar)))
-
-    (if nec/measure-time (nec/timer "Dired   "))
-#+end_src
-*** Games
-:PROPERTIES:
-:CUSTOM_ID: Games
-:END:
-#+begin_src emacs-lisp
-(use-package tetris
-  :straight t
-  :commands (tetris)
-  :bind
-  (:map tetris-mode-map
-        ("C-p" . tetris-rotate-prev)
-        ("C-n" . tetris-rotate-down)
-        ("C-b" . tetris-move-left)
-        ("C-f" . tetris-move-right)
-        ("C-SPC" . tetris-move-bottom))
-  :config
-  (defadvice tetris-end-game (around zap-scores activate)
-    (save-window-excursion ad-do-it)))
-;; -TetrisConfig
-
-;; SpeedTypePac
-(straight-use-package-lazy 'speed-type)
-
-(straight-use-package-lazy '2048-game)
-(if nec/measure-time (nec/timer "Games "))
-#+end_src
-*** Flyckeck
-:PROPERTIES:
-:CUSTOM_ID: Flyckeck
-:END:
-#+begin_src emacs-lisp
-(use-package flycheck
-  :straight t
-  :hook
-  (prog-mode . flycheck-mode)
-  (text-mode . flycheck-mode)
-  :config (diminish 'flycheck-mode " Ⓕ"))
-(if nec/measure-time (nec/timer "flycheck   "))
-#+end_src
-
 *** Edit command
 :PROPERTIES:
 :CUSTOM_ID: Edit command
@@ -3736,13 +3303,10 @@ We want a Dashboard, which demand Page Break Line
     (setq page-break-lines-lighter " ⩵")
     (global-page-break-lines-mode)
 
-    
-;;      (bindkey ("<f2>" . open-dashboard))
       (setq dashboard-modify-heading-icons '((recents . "file-text")
                                              (bookmarks . "book")))
       (setq dashboard-center-content t)
       (setq dashboard-week-agenda t)
-
       (setq dashboard-banner-logo-title "Open EMACS for a new world...")
       (setq dashboard-startup-banner "/Users/niels/.emacs.d/images/ohands.png")
       (setq dashboard-items '((bookmarks . 6) (agenda . 6)))
