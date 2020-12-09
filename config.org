@@ -1424,14 +1424,6 @@ with character preview in completion prompt. from: [[https://gitlab.com/matsievs
 ;; Makes *scratch* empty.
 (setq initial-scratch-message "")
 
-;; Removes *scratch* from buffer after the mode has been set.
-(defun remove-scratch-buffer ()
-  (if (get-buffer "*scratch*")
-      (kill-buffer "*scratch*")))
-(add-hook 'after-change-major-mode-hook 'remove-scratch-buffer)
-
-
-
 ;; Removes *Completions* from buffer after you've opened a file.
 (add-hook 'minibuffer-exit-hook
       '(lambda ()
@@ -3330,7 +3322,7 @@ We want a Dashboard, which demand Page Break Line
        (straight-use-package '(dashboard :type git :flavor melpa :files (:defaults "banners" "dashboard-pkg.el")
                                   :host github :repo "emacs-dashboard/emacs-dashboard"))
        (dashboard-setup-startup-hook)
-      
+;;     
     (defun open-dashboard ()
         "Open the *dashboard* buffer and jump to the first widget."
         (interactive)
