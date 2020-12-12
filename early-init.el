@@ -80,7 +80,7 @@
 
 ;; goto my base
 (cd my-user-emacs-directory)
-;;(add-to-list 'load-path              "~/.emacs.d/themes")
+
 (add-to-list 'custom-theme-load-path "~/.emacs.d/themes")
 (defvar my-init-el-start-time (current-time) "Time when init.el was started")
 ;; from http://ergoemacs.org/emacs/elisp_datetime.html

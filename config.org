@@ -324,7 +324,6 @@ NAME and ARGS are as in `use-package'."
     - [[#helpers][helpers]]
     - [[#version-and-warning-if-wrong-version][version and warning if wrong version]]
     - [[#load-custom-file][load custom file]]
-    - [[#fundamentals-for-hydras][fundamentals for Hydras]]
     - [[#typeface-suitability-test][typeface suitability test]]
     - [[#diminishblackout][diminish/blackout]]
     - [[#bind-key][bind key]]
@@ -337,6 +336,7 @@ NAME and ARGS are as in `use-package'."
     - [[#initial-frame][initial frame]]
     - [[#backup][backup]]
     - [[#create-missing-directory-for-find-file][create missing directory for find-file]]
+    - [[#fundamentals-for-hydras][fundamentals for Hydras]]
     - [[#ctrl-s--isearch][ctrl-s  (isearch)]]
     - [[#making-emacs-secure][making emacs secure]]
     - [[#registers][registers]]
@@ -353,10 +353,9 @@ NAME and ARGS are as in `use-package'."
     - [[#fill-a-paragraph][fill a paragraph]]
     - [[#auto-fill-mode][Auto fill mode]]
     - [[#move-to-indentation-or-beginning-of-the-line][Move to indentation or beginning of the line]]
-    - [[#disable-tab-bar-disable][DISABLE Tab-bar DISABLE]]
     - [[#increase-or-decrease-font-size-across-all-buffers][Increase or decrease font size across all buffers]]
   - [[#misc][Misc]]
-    - [[#crux][Crux]]
+    - [[#][]]
     - [[#disk-usage][Disk Usage]]
     - [[#hostname][hostname]]
     - [[#time-stamp--large-file-warning][Time stamp / large file warning]]
@@ -407,8 +406,7 @@ NAME and ARGS are as in `use-package'."
     - [[#games][Games]]
 - [[#org-and-friends][org and friends]]
     - [[#org-general-settings][org general settings]]
-    - [[#org-bullets][org bullets]]
-    - [[#org-cliplink][org-cliplink]]
+    - [[#org-bulle][org bulle]]
     - [[#refiling-setup][refiling Setup]]
     - [[#org-journal][org-journal]]
     - [[#doct-and-org-capture][doct and org-capture]]
@@ -417,10 +415,13 @@ NAME and ARGS are as in `use-package'."
     - [[#org-contact][org contact]]
     - [[#org-roam][org-roam]]
     - [[#org-mac-ical][org mac iCal]]
+    - [[#org-cliplink][org-cliplink]]
     - [[#væk-mig][Væk mig]]
     - [[#org-brain][org brain]]
     - [[#org-manage][org manage]]
     - [[#excellent-pdf-viewer][excellent PDF Viewer]]
+    - [[#org-ref][org-ref]]
+    - [[#latex][LaTeX]]
 - [[#applications][Applications]]
     - [[#calendar][Calendar]]
     - [[#magit][Magit]]
@@ -433,16 +434,15 @@ NAME and ARGS are as in `use-package'."
     - [[#zone][zone]]
     - [[#smog][smog]]
 - [[#languages][Languages]]
+    - [[#header-for-new-files][Header for new files]]
     - [[#python][Python]]
     - [[#projectile][Projectile]]
     - [[#rust][Rust]]
-    - [[#latex][LaTeX]]
     - [[#php][PHP]]
     - [[#dap-debug-adapter-protocol][DAP (debug adapter protocol)]]
     - [[#markdown][MarkDown]]
     - [[#template-test][template-test]]
-- [[#the-end][The end]]
-    - [[#time-uses][time uses]]
+- [[#the-end-time-uses][The end*** time uses]]
 
 * Basic emacs
 :PROPERTIES:
@@ -685,63 +685,6 @@ what is stored in that added =custom= snippet.
 (load custom-file 'noerror)
 (if nec/measure-time (nec/timer "Load custom.el   "))
 #+end_src
-*** fundamentals for Hydras
-:PROPERTIES:
-:CUSTOM_ID: h:af691a31-917e-4d9b-aee6-5744b1173999
-:END:
- [[https://github.com/abo-abo/hydra][Hydra]] - Make bindings that stick around.
-
-A "hydra" is an ad-hoc mode for mapping commands to a group of more
-convenient key bindings.  In an active hydra, all of its keys---the
-hydra's "heads"---can be typed in any order, keeping the mode active in
-the process (if wanted), while at least one key performs the function of
-exiting the hydra.
-
-I thus employ =C-c h= as a common prefix for all my hydras (knowing that
-it is meant for private use), binding each sequence to the relevant
-minor mode's map.  An extra key completes the chord following mnemonics.
-For instance, a hydra about the linter when that is active is =C-c h l=,
-for the outline viewer =C-c h o=, for git merge conflicts =C-c h g=, and so
-on.
-
-Look for the =defhydra= macro in the relevant package declarations (these
-will evolve over time).  Hydras are colour-coded as a means of denoting
-their behaviour with regard to the use of non-defined keys and the
-criteria for exiting.
-
-| Colour   | Hydra heads         | Other keys          |
-|----------+---------------------+---------------------|
-| red      | Accept and Continue | Accept and Exit     |
-| pink     | Accept and Continue | Accept and Continue |
-| amaranth | Accept and Continue | Reject and Continue |
-| teal     | Exit                | Reject and Continue |
-| blue     | Exit                | Accept and Exit     |
-
-Also check [[https://github.com/abo-abo/hydra][the project's source]] for more information.
- Hydra
-:PROPERTIES:
-:CUSTOM_ID: Hydra
-:END:
-#+begin_src emacs-lisp
-(use-package hydra
-  :straight t
-  :config
-  (progn
-  ;; (setq hydra-lv nil)
-    (set-face-attribute 'hydra-face-red      nil :foreground "Red"        :bold t)
-    (set-face-attribute 'hydra-face-blue     nil :foreground "RoyalBlue3" :bold t)
-    (set-face-attribute 'hydra-face-amaranth nil :foreground "#e52b50"    :bold t)
-    (set-face-attribute 'hydra-face-pink     nil :foreground "HotPink1"   :bold t)
-    (set-face-attribute 'hydra-face-teal     nil :foreground "#367588"    :bold t)
-    (hydra-add-font-lock)))
-;;
-(straight-use-package-lazy 'major-mode-hydra)
-;;
-(straight-use-package-lazy 'use-package-hydra)
-;;
-(if nec/measure-time (nec/timer "Hydra   "))
-#+end_src
-
 *** typeface suitability test
 :PROPERTIES:
 :CUSTOM_ID: h:9035a1ed-e988-4731-89a5-0d9e302c3dea
@@ -803,11 +746,11 @@ abcdefghijklmnopqrstuvwxyzæøå
 ;;
 (straight-use-package '(delight :type git :host github :repo "emacs-straight/delight" :files ("*" (:exclude ".git"))))
 (delight 'gcmh " ")
+(delight 'smartparens-mode " ⑃")
+(delight 'dired-filter-mode " ")
 (delight 'auto-fill-mode " ⚮")
 (straight-use-package '(blackout :type git :flavor melpa :host github :repo "raxod502/blackout"))
-
-(with-eval-after-load 'dired-filter-mode
-    (blackout 'dired-filter-mode " "))
+ 
 (with-eval-after-load 'org-mode    
     (blackout 'org-mode " "))
 ;;
@@ -1174,6 +1117,7 @@ Source: https://github.com/m-parashar/emax64/issues/5
   :straight t
   :config
   (load-theme 'gruvbox-dark-soft t)
+;; (load-theme 'gruvbox-dark-soft t)
   (set-face-attribute 'font-lock-comment-face nil :italic t)
   (set-face-attribute 'font-lock-doc-face nil :italic t)
   (zenburn-with-color-variables
@@ -1274,6 +1218,63 @@ Source: https://github.com/m-parashar/emax64/issues/5
 (if nec/measure-time
           (nec/timer "Create missing files   "))
 #+end_src
+*** fundamentals for Hydras
+:PROPERTIES:
+:CUSTOM_ID: h:af691a31-917e-4d9b-aee6-5744b1173999
+:END:
+ [[https://github.com/abo-abo/hydra][Hydra]] - Make bindings that stick around.
+
+A "hydra" is an ad-hoc mode for mapping commands to a group of more
+convenient key bindings.  In an active hydra, all of its keys---the
+hydra's "heads"---can be typed in any order, keeping the mode active in
+the process (if wanted), while at least one key performs the function of
+exiting the hydra.
+
+I thus employ =C-c h= as a common prefix for all my hydras (knowing that
+it is meant for private use), binding each sequence to the relevant
+minor mode's map.  An extra key completes the chord following mnemonics.
+For instance, a hydra about the linter when that is active is =C-c h l=,
+for the outline viewer =C-c h o=, for git merge conflicts =C-c h g=, and so
+on.
+
+Look for the =defhydra= macro in the relevant package declarations (these
+will evolve over time).  Hydras are colour-coded as a means of denoting
+their behaviour with regard to the use of non-defined keys and the
+criteria for exiting.
+
+| Colour   | Hydra heads         | Other keys          |
+|----------+---------------------+---------------------|
+| red      | Accept and Continue | Accept and Exit     |
+| pink     | Accept and Continue | Accept and Continue |
+| amaranth | Accept and Continue | Reject and Continue |
+| teal     | Exit                | Reject and Continue |
+| blue     | Exit                | Accept and Exit     |
+
+Also check [[https://github.com/abo-abo/hydra][the project's source]] for more information.
+ Hydra
+:PROPERTIES:
+:CUSTOM_ID: Hydra
+:END:
+#+begin_src emacs-lisp
+(use-package hydra
+  :straight t
+  :config
+  (progn
+  ;; (setq hydra-lv nil)
+    (set-face-attribute 'hydra-face-red      nil :foreground "Red"        :bold t)
+    (set-face-attribute 'hydra-face-blue     nil :foreground "RoyalBlue3" :bold t)
+    (set-face-attribute 'hydra-face-amaranth nil :foreground "#e52b50"    :bold t)
+    (set-face-attribute 'hydra-face-pink     nil :foreground "HotPink1"   :bold t)
+    (set-face-attribute 'hydra-face-teal     nil :foreground "#367588"    :bold t)
+    (hydra-add-font-lock)))
+;;
+(straight-use-package-lazy 'major-mode-hydra)
+;;
+(straight-use-package-lazy 'use-package-hydra)
+;;
+(if nec/measure-time (nec/timer "Hydra   "))
+#+end_src
+
 *** ctrl-s  (isearch)
 :PROPERTIES:
 :CUSTOM_ID: ctrl-s  (isearch)
@@ -1441,7 +1442,7 @@ with character preview in completion prompt. from: [[https://gitlab.com/matsievs
    #+BEGIN_SRC emacs-lisp
      (defun bk/kill-buffer-and-file (buffer-name)
        "Removes file connected to current buffer and kills buffer."
-       (interactive "bKill buffer and its file:")
+       (interactive "Kill buffer and its file:")
        (let* ((buffer (get-buffer buffer-name))
    	   (filename (buffer-file-name buffer)))
          (if (not (and filename (file-exists-p filename)))
@@ -1619,81 +1620,6 @@ you to the absolute beginning of the line.
 
 (global-set-key (kbd "C-a") 'beginning-of-line-dwim)
 #+END_SRC
-*** DISABLE Tab-bar DISABLE
-Starting with version 27.1, Emacs has built-in support for two distinct
-  concepts of “tabs”:
-
-  Work spaces that contain windows in any given layout.
-  A list of buffers presented as buttons at the top of the window.
-
-The former, represented by the tab-bar library, is best understood as
-  the equivalent of “virtual desktops”, as these are used in most desktop
-  environments or window managers.
-All settings I configure here are meant to work in accordance with this
-  abstract conception of “tabs are work spaces”.  Here are the main key
-  chords for tab-bar (they will all work properly if you keep the mode
-  active):
-
-  
-Key          Description
-C-x t b      Open a buffer in a new tab
-C-x t d      Open a directory in a new tab
-C-x t f      Open a file in a new tab
-C-x t 0      Close current tab
-C-x t 1      Close all other tabs
-C-x t 2      Open current buffer in new tab
-
-These are consistent with the standard commands for handling windows and
-  accessing buffers/files in the “other window” (the C-x 4 KEY pattern).
-  There is also a command for giving a name to the current tab, accessed
-  via C-x t r, though I find I do not use it.
-##-#+begin_src emacs-lisp
-(straight-use-package 'tab-bar
-  :config
-  (setq tab-bar-close-button-show nil)
-  (setq tab-bar-close-last-tab-choice 'tab-bar-mode-disable)
-  (setq tab-bar-close-tab-select 'recent)
-  (setq tab-bar-new-tab-choice t)
-  (setq tab-bar-new-tab-to 'right)
-  (setq tab-bar-position nil)
-  (setq tab-bar-show nil)
-  (setq tab-bar-tab-hints nil)
-  (setq tab-bar-tab-name-function 'tab-bar-tab-name-all)
-
-  (tab-bar-mode -1)
-  (tab-bar-history-mode -1)
-
-  (defun prot/tab-bar-select-tab-dwim ()
-    "Do-What-I-Mean function for getting to a `tab-bar-mode' tab.
-If no other tab exists, create one and switch to it.  If there is
-one other tab (so two in total) switch to it without further
-questions.  Else use completion to select the tab to switch to."
-    (interactive)
-    (let ((tabs (mapcar (lambda (tab)
-                          (alist-get 'name tab))
-                        (tab-bar--tabs-recent))))
-      (cond ((eq tabs nil)
-             (tab-new))
-            ((eq (length tabs) 1)
-             (tab-next))
-            (t
-             (icomplete-vertical-do ()
-               (tab-bar-switch-to-tab
-                (completing-read "Select tab: " tabs nil t)))))))
-
-  :bind (("C-x t t" . prot/tab-bar-select-tab-dwim)
-         ("s-t" . prot/tab-bar-select-tab-dwim)
-         ("<s-tab>" . tab-next)
-         ("<S-s-iso-lefttab>" . tab-previous)))
-
-;; This is only included as a reference.
-(straight-use-package 'tab-line
-  :disabled
-  :commands (tab-line-mode global-tab-line-mode)
-  :config
-  (global-tab-line-mode -1))
-##-#+end_src
-
 *** Increase or decrease font size across all buffers
 :PROPERTIES:
 :CUSTOM_ID: Increase or decrease font size across all buffers
@@ -1734,7 +1660,8 @@ Specially useful for presentations, demos and other shows alike.
           (nec/timer "Increase/Decrease font   "))
 #+end_src
 ** Misc
-*** Crux
+*** 
+Crux
 #+begin_src emacs-lisp
 (use-package crux
   :straight t
@@ -2278,7 +2205,7 @@ proper shell in Emacs!
 	helm-ff-skip-boring-files t)
 ;;  (helm-mode 1)
 ;;
-(straight-use-package-lazy '(helm-bibtex :type git :flavor melpa :files ("helm-bibtex.el" "helm-bibtex-pkg.el") :host github :repo "tmalsburg/helm-bibtex"))
+(straight-use-package '(helm-bibtex :type git :flavor melpa :files ("helm-bibtex.el" "helm-bibtex-pkg.el") :host github :repo "tmalsburg/helm-bibtex"))
 ;;
 (straight-use-package-lazy '(helm-ag :type git :flavor melpa :host github :repo "emacsorphanage/helm-ag"))
 ;;
@@ -2891,6 +2818,10 @@ Put all keybindings here (with doc)
 (global-set-key (kbd "C-c n l")  'org-roam)
 (global-set-key (kbd "C-c n g")  'org-roam-graph)
 (global-set-key (kbd "C-c n f")  'org-roam-find-file)
+ 
+(global-set-key (kbd "C-c n e")  'ebib)
+(global-set-key (kbd "C-c n r")  'org-ebib-open)
+(global-set-key (kbd "C-c n s")  'org-ebib-store-link)
 
 (global-set-key (kbd "<f2>")  'open-dashboard)
 
@@ -3683,7 +3614,8 @@ Disable property inheritance (in order to seed up)
 
   (if nec/measure-time (nec/timer "general org "))
 #+end_src
-*** org bullets
+*** org bulle
+ts
 :PROPERTIES:
 :CUSTOM_ID: org bullets
 :END:
@@ -3696,17 +3628,10 @@ Disable property inheritance (in order to seed up)
 (use-package org-bullets
   :straight t
   :hook (org-mode . org-bullets-mode)
-  :init (setq org-bullets-bullet-list '("⭐️" "🔵" "💢" "⚾️" "🔴" "🌀" "🔘")))
+  :init (setq org-bullets-bullet-list '("⭐️" "🌀" "💢" "⚾️" "🔵" "🔴" "🔘")))
 (if nec/measure-time (nec/timer "org bullets" ))
 #+end_src
 
-*** org-cliplink
-[[https://github.com/rexim/org-cliplink][org-cliplink]] inserts Org-mode links from the clipboard.
-#+NAME: package-org-cliplink)
-#+BEGIN_SRC emacs-lisp
-  (straight-use-package 'org-cliplink)
-(if nec/measure-time (nec/timer "org-cliplink "))
-#+END_SRC
 *** refiling Setup
 :PROPERTIES:
 :CUSTOM_ID: Refiling Task
@@ -4134,6 +4059,9 @@ requires sqlite3.
         org-roam-server-network-label-truncate t
         org-roam-server-network-label-truncate-length 60
         org-roam-server-network-label-wrap-length 20))
+ (setq org-roam-server-mode t)
+ (setq org-roam-server-served-file-extensions '("pdf" "mp4" "ogv"))
+
 ;;(org-roam-server-mode t)
 (if nec/measure-time (nec/timer "org-roam-server "))
 #+end_src
@@ -4168,6 +4096,13 @@ requires sqlite3.
 (if nec/measure-time (nec/timer "org-mac-iCal "))
 #+END_SRC
 
+*** org-cliplink
+[[https://github.com/rexim/org-cliplink][org-cliplink]] inserts Org-mode links from the clipboard.
+#+NAME: package-org-cliplink)
+#+BEGIN_SRC emacs-lisp
+  (straight-use-package 'org-cliplink)
+(if nec/measure-time (nec/timer "org-cliplink "))
+#+END_SRC
 *** Væk mig
 A package to wake me up, whenever I shall do something
 #+begin_src emacs-lisp
@@ -4246,6 +4181,239 @@ Let's install the [[https://github.com/politza/pdf-tools][pdf-tools]] library fo
 Besides the expected PDF viewing utilities, such as search, annotation, and continuous scrolling;
 with a simple mouse right-click, we can even select a ‘midnight’ rendering mode which may be
 easier on the eyes. For more, see the brief [[https://www.dailymotion.com/video/x2bc1is][pdf-tools-tourdeforce]] demo.
+
+*** org-ref
+#+begin_src emacs-lisp
+
+
+(straight-use-package '(org-ref :type git :flavor melpa :files 
+                       (:defaults "org-ref.org" "org-ref.bib" "citeproc" "org-ref-pkg.el") 
+                        :host github :repo "jkitchin/org-ref"))
+;; see org-ref for use of these variables
+(setq org-ref-bibliography-notes "~/Dropbox/bibliography/notes.org"
+      org-ref-default-bibliography '("~/Dropbox/bibliography/references.bib")
+      org-ref-pdf-directory "~/Dropbox/bibliography/bibtex-pdfs/")
+(setq bibtex-completion-bibliography "~/Dropbox/bibliography/references.bib"
+      bibtex-completion-library-path "~/Dropbox/bibliography/bibtex-pdfs"
+      bibtex-completion-notes-path "~/Dropbox/bibliography/helm-bibtex-notes")
+;; open pdf with system pdf viewer (works on mac)
+(setq bibtex-completion-pdf-open-function
+  (lambda (fpath)
+    (start-process "open" "*open*" "open" fpath)))
+(straight-use-package '(ebib :type git :flavor melpa :host github :repo "joostkremers/ebib"))
+(global-set-key "\C-ce" 'ebib)
+(require 'org-ebib)
+(setq ebib-bib-search-dirs '("~/Dropbox/bibliography/"))
+(setq ebib-hide-cursor nil)
+(setq ebib-uniquify-keys t)
+(setq ebib-use-timestamp t)
+(setq ebib-default-dir "/Users/niels/Dropbox/bibliography/")
+#+end_src
+*** LaTeX
+:PROPERTIES:
+:CUSTOM_ID: LaTeX
+:END:
+#+begin_src emacs-lisp
+    (straight-use-package '(auctex :type git :host github :repo "emacs-straight/auctex" 
+                                   :files ("*" (:exclude ".git"))))
+    ;; (straight-use-package 'preview)
+    (setq TeX-auto-save t)
+    (setq TeX-parse-self t)
+    (setq-default TeX-master nil)
+    (setq TeX-PDF-mode t)
+    (setq reftex-plug-into-AUCTeX t)
+    (setq TeX-save-query nil)
+    (setq LaTeX-amsmath-label "eq:")
+    (setq LaTeX-label-function 'reftex-label)
+    (setq TeX-engine 'luatex)
+    (setq TeX-error-overview-open-after-TeX-run t )
+    (setq-default TeX-command-extra-options "--shell-escape")
+    (setq TeX-error-overview-open-after-TeX-run t)
+    (setq TeX-electric-math '("$" . "$"))
+    (setq TeX-electric-sub-and-superscript t)
+    ;; fix for company completion
+    ;; (define-key TeX-mode-map (kbd "TAB") 'tab-indent-or-complete)
+    ;; (define-key TeX-mode-map [tab] 'tab-indent-or-complete)
+    ;; (require 'font-latex)
+    ;; (set-face-attribute 'font-latex-sectioning-5-face nil :family "CMU Bright")
+    ;; (setq font-latex-fontify-sectioning 1.2)
+    ;; (font-latex-update-sectioning-faces)
+    (setq-default LaTeX-fill-break-at-separators (quote (\\\( \\\[ \\\])))
+    (add-hook 'LaTeX-mode-hook 'visual-line-mode)
+    (add-hook 'LaTeX-mode-hook 'flyspell-mode)
+    (add-hook 'LaTeX-mode-hook 'LaTeX-math-mode)
+    (add-hook 'LaTeX-mode-hook 'turn-on-reftex)
+    ;; (add-to-list 'TeX-command-list '("XeLaTeX" "%`lualatex %(extraopts)%(mode)%' %t" TeX-run-TeX nil t))
+    (if nec/measure-time (nec/timer "LaTeX / AUCTeX "))
+    ;; Setup the compiler and the PDF process
+    (setq org-latex-compiler "lualatex")
+    ;;(setq org-latex-pdf-process
+    ;;      (list (concat "latexmk -"
+    ;;                    org-latex-compiler 
+    ;;                    " -recorder -synctex=1 -bibtex-cond %b")))
+    ;; Use lstlstings
+    (setq org-latex-listings t)
+    ;; The docs for org-latex-default-packages-alist suggest that
+    ;; it shouldn't be changed because it's used for more than one
+    ;; backend. How it's used for non-LaTeX backends, I don't know.
+    ;; Anyway, I've removed "inputenc" and "fontenc" from it because
+    ;; I want to replace those with "fontspec".
+    ;; (setq org-latex-default-packages-alist
+  ;;;;         '(("" "graphicx" t)
+  ;;;;           ("" "grffile" t)
+  ;;;;           ("" "longtable" nil)
+  ;;;;           ("" "wrapfig" nil)
+  ;;;;           ("" "rotating" nil)
+  ;;;;           ("normalem" "ulem" t)
+  ;;;;           ("" "amsmath" t)
+  ;;;;           ("" "textcomp" t)
+  ;;;;           ("" "amssymb" t)
+  ;;;;           ("" "capt-of" nil)
+  ;;          ("" "hyperref" nil)))
+
+(require 'ox-latex)
+;;(require 'ox-koma-letter)
+(require 'ox-beamer)
+
+(setq org-latex-classes
+  '(("memoir" 
+      "\\documentclass[11pt]{memoir}
+       [NO-DEFAULT-PACKAGES]
+       [PACKAGES]
+       [EXTRA]"
+       ("\\section{%s}" . "\\section*{%s}")
+       ("\\subsection{%s}" . "\\subsection*{%s}")
+       ("\\subsubsection{%s}" . "\\subsubsection*{%s}"))
+    ("default-koma-letter" "\\documentclass[11pt]{scrlttr2}")
+           ("report" "\\documentclass[11pt]{report}"
+            ("\\part{%s}" . "\\part*{%s}")
+            ("\\chapter{%s}" . "\\chapter*{%s}")
+            ("\\section{%s}" . "\\section*{%s}")
+            ("\\subsection{%s}" . "\\subsection*{%s}")
+            ("\\subsubsection{%s}" . "\\subsubsection*{%s}"))
+    ("beamer" "\\documentclass[11pt,presentation]{beamer}"
+            ("\\section{%s}" . "\\section*{%s}")
+            ("\\subsection{%s}" . "\\subsection*{%s}")
+            ("\\subsubsection{%s}" . "\\subsubsection*{%s}"))
+    ("book" 
+     "\\documentclass[11pt]{book}"
+      ("\\part{%s}" . "\\part*{%s}")
+      ("\\chapter{%s}" . "\\chapter*{%s}")
+      ("\\section{%s}" . "\\section*{%s}")
+      ("\\subsection{%s}" . "\\subsection*{%s}")
+      ("\\subsubsection{%s}" . "\\subsubsection*{%s}"))
+    ("article"
+     "\\RequirePackage{fix-cm}
+      \\PassOptionsToPackage{svgnames}{xcolor}
+      \\documentclass[11pt]{article}
+      \\usepackage[a4paper,margin=1in,left=1in]{geometry}
+      \\usepackage{fontspec}
+      \\setmainfont{Verdana}
+      \\setsansfont[Scale=MatchLowercase]{Raleway}
+      \\setmonofont[Scale=MatchLowercase]{Operator Mono SSm}
+      \\usepackage{sectsty}
+      \\allsectionsfont{\\sffamily}
+      \\usepackage{enumitem}
+      \\setlist[description]{style=unboxed,font=\\sffamily\\bfseries}
+      \\usepackage{listings}
+      \\lstset{frame=single,aboveskip=1em,
+            framesep=.5em,backgroundcolor=\\color{AliceBlue},
+            rulecolor=\\color{LightSteelBlue},framerule=1pt}
+      \\usepackage{xcolor}
+      \\colorlet{punct}{red!60!black}
+      \\definecolor{background}{HTML}{EEEEEE}
+      \\definecolor{delim}{RGB}{20,105,176}
+      \\colorlet{numb}{magenta!60!black}
+      \\newcommand\\basicdefault[1]{\\scriptsize\\color{Black}\\ttfamily#1}
+      \\lstdefinelanguage{json}{
+            basicstyle=\\normalfont\\ttfamily,
+            numbers=left,
+            numberstyle=\\scriptsize,
+            stepnumber=1,
+            numbersep=8pt,
+            showstringspaces=false,
+            breaklines=true,
+            frame=lines,
+            backgroundcolor=\\color{background},
+            literate=
+               ,*{0}{{{\\color{numb}0}}}{1}
+                 {1}{{{\\color{numb}1}}}{1}
+                 {2}{{{\\color{numb}2}}}{1}
+                 {3}{{{\\color{numb}3}}}{1}
+                 {4}{{{\\color{numb}4}}}{1}
+                 {5}{{{\\color{numb}5}}}{1}
+                 {6}{{{\\color{numb}6}}}{1}
+                 {7}{{{\\color{numb}7}}}{1}
+                 {8}{{{\\color{numb}8}}}{1}
+                 {9}{{{\\color{numb}9}}}{1}
+                 {:}{{{\\color{punct}{:}}}}{1}
+                 {,}{{{\\color{punct}{,}}}}{1}
+                 {\\{}{{{\\color{delim}{\\{}}}}{1}
+                 {\\}}{{{\\color{delim}{\\}}}}}{1}
+                 {[}{{{\\color{delim}{[}}}}{1}
+                 {]}{{{\\color{delim}{]}}}}{1},
+           }
+      \\lstset{basicstyle=\\basicdefault{\\spaceskip1em}}
+      \\lstset{literate=
+                  {§}{{\\S}}1
+                  {©}{{\\raisebox{.125ex}{\\copyright}\\enspace}}1
+                  {«}{{\\guillemotleft}}1
+                  {»}{{\\guillemotright}}1
+                  {Á}{{\\'A}}1
+                  {Ä}{{\\\"A}}1
+                  {É}{{\\'E}}1
+                  {Í}{{\\'I}}1
+                  {Ó}{{\\'O}}1
+                  {Ö}{{\\\"O}}1
+                  {Ú}{{\\'U}}1
+                  {Ü}{{\\\"U}}1
+                  {ß}{{\\ss}}2
+                  {à}{{\\`a}}1
+                  {á}{{\\'a}}1
+                  {ä}{{\\\"a}}1
+                  {é}{{\\'e}}1
+                  {í}{{\\'i}}1
+                  {ó}{{\\'o}}1
+                  {ö}{{\\\"o}}1
+                  {ú}{{\\'u}}1
+                  {ü}{{\\\"u}}1
+                  {¹}{{\\textsuperscript1}}1
+                  {²}{{\\textsuperscript2}}1
+                  {³}{{\\textsuperscript3}}1
+                  {ı}{{\\i}}1
+                  {—}{{---}}1
+                  {’}{{'}}1
+                  {…}{{\\dots}}1
+                  {⮠}{{$\\hookleftarrow$}}1
+                  {␣}{{\\textvisiblespace}}1,
+                  keywordstyle=\\color{DarkGreen}\\bfseries,
+                  identifierstyle=\\color{DarkRed},
+                  commentstyle=\\color{Gray}\\upshape,
+                  stringstyle=\\color{DarkBlue}\\upshape,
+                  emphstyle=\\color{Chocolate}\\upshape,
+                  showstringspaces=false,
+                  columns=fullflexible,
+                  keepspaces=true}
+      \\usepackage{parskip}
+      \\makeatletter
+      \\renewcommand{\\maketitle}{%
+      \\begingroup\\parindent0pt
+      \\sffamily
+      \\Huge{\\bfseries\\@title}\\par\\bigskip
+      \\LARGE{\\bfseries\\@author}\\par\\medskip
+      \\normalsize\\@date\\par\\bigskip
+      \\endgroup\\@afterindentfalse\\@afterheading}
+      \\makeatother
+      [NO-DEFAULT-PACKAGES]
+      \\AtBeginDocument{\\renewcommand{\\UrlFont}{\\ttfamily}}
+      \\thispagestyle{empty}"
+              ("\\section{%s}" . "\\section*{%s}")
+              ("\\subsection{%s}" . "\\subsection*{%s}")
+              ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
+              ("\\paragraph{%s}" . "\\paragraph*{%s}")
+              ("\\subparagraph{%s}" . "\\subparagraph*{%s}"))))
+      (if nec/measure-time (nec/timer "LaTeX / koma, beamer article and memoir" ))
+#+end_src
 
 * Applications
 *** Calendar
@@ -4932,7 +5100,7 @@ Ledger mode for MacBook Air
 (if nec/measure-time (nec/timer "smog "))
 #+end_src
 * Languages
-**💢 Header for new files
+*** Header for new files
 :PROPERTIES:
 :CUSTOM_ID: Header for emacs-lisp files
 :END:
@@ -5051,210 +5219,6 @@ We want to give all nye (and old) emacs-lisp files a header)
 ;;(define-key rust-mode-map (kbd "C-c C-c") 'rust-run)
 
 #+end_src
-*** LaTeX
-:PROPERTIES:
-:CUSTOM_ID: LaTeX
-:END:
-#+begin_src emacs-lisp
-    (straight-use-package-lazy 'auctex)
-    ;; (straight-use-package 'preview)
-    (setq TeX-auto-save t)
-    (setq TeX-parse-self t)
-    (setq-default TeX-master nil)
-    (setq TeX-PDF-mode t)
-    (setq reftex-plug-into-AUCTeX t)
-    (setq TeX-save-query nil)
-    (setq LaTeX-amsmath-label "eq:")
-    (setq LaTeX-label-function 'reftex-label)
-    (setq TeX-engine 'luatex)
-    (setq TeX-error-overview-open-after-TeX-run t )
-    (setq-default TeX-command-extra-options "--shell-escape")
-    (setq TeX-error-overview-open-after-TeX-run t)
-    (setq TeX-electric-math '("$" . "$"))
-    (setq TeX-electric-sub-and-superscript t)
-    ;; fix for company completion
-    ;; (define-key TeX-mode-map (kbd "TAB") 'tab-indent-or-complete)
-    ;; (define-key TeX-mode-map [tab] 'tab-indent-or-complete)
-    ;; (require 'font-latex)
-    ;; (set-face-attribute 'font-latex-sectioning-5-face nil :family "CMU Bright")
-    ;; (setq font-latex-fontify-sectioning 1.2)
-    ;; (font-latex-update-sectioning-faces)
-    (setq-default LaTeX-fill-break-at-separators (quote (\\\( \\\[ \\\])))
-    (add-hook 'LaTeX-mode-hook 'visual-line-mode)
-    (add-hook 'LaTeX-mode-hook 'flyspell-mode)
-    (add-hook 'LaTeX-mode-hook 'LaTeX-math-mode)
-    (add-hook 'LaTeX-mode-hook 'turn-on-reftex)
-    ;; (add-to-list 'TeX-command-list '("XeLaTeX" "%`lualatex %(extraopts)%(mode)%' %t" TeX-run-TeX nil t))
-    (if nec/measure-time (nec/timer "LaTeX / AUCTeX "))
-    ;; Setup the compiler and the PDF process
-    (setq org-latex-compiler "lualatex")
-    ;;(setq org-latex-pdf-process
-    ;;      (list (concat "latexmk -"
-    ;;                    org-latex-compiler 
-    ;;                    " -recorder -synctex=1 -bibtex-cond %b")))
-    ;; Use lstlstings
-    (setq org-latex-listings t)
-    ;; The docs for org-latex-default-packages-alist suggest that
-    ;; it shouldn't be changed because it's used for more than one
-    ;; backend. How it's used for non-LaTeX backends, I don't know.
-    ;; Anyway, I've removed "inputenc" and "fontenc" from it because
-    ;; I want to replace those with "fontspec".
-    ;; (setq org-latex-default-packages-alist
-  ;;;;         '(("" "graphicx" t)
-  ;;;;           ("" "grffile" t)
-  ;;;;           ("" "longtable" nil)
-  ;;;;           ("" "wrapfig" nil)
-  ;;;;           ("" "rotating" nil)
-  ;;;;           ("normalem" "ulem" t)
-  ;;;;           ("" "amsmath" t)
-  ;;;;           ("" "textcomp" t)
-  ;;;;           ("" "amssymb" t)
-  ;;;;           ("" "capt-of" nil)
-  ;;          ("" "hyperref" nil)))
-
-(require 'ox-latex)
-;;(require 'ox-koma-letter)
-(require 'ox-beamer)
-
-(setq org-latex-classes
-  '(("memoir" 
-      "\\documentclass[11pt]{memoir}
-       [NO-DEFAULT-PACKAGES]
-       [PACKAGES]
-       [EXTRA]"
-       ("\\section{%s}" . "\\section*{%s}")
-       ("\\subsection{%s}" . "\\subsection*{%s}")
-       ("\\subsubsection{%s}" . "\\subsubsection*{%s}"))
-    ("default-koma-letter" "\\documentclass[11pt]{scrlttr2}")
-           ("report" "\\documentclass[11pt]{report}"
-            ("\\part{%s}" . "\\part*{%s}")
-            ("\\chapter{%s}" . "\\chapter*{%s}")
-            ("\\section{%s}" . "\\section*{%s}")
-            ("\\subsection{%s}" . "\\subsection*{%s}")
-            ("\\subsubsection{%s}" . "\\subsubsection*{%s}"))
-    ("beamer" "\\documentclass[11pt,presentation]{beamer}"
-            ("\\section{%s}" . "\\section*{%s}")
-            ("\\subsection{%s}" . "\\subsection*{%s}")
-            ("\\subsubsection{%s}" . "\\subsubsection*{%s}"))
-    ("book" 
-     "\\documentclass[11pt]{book}"
-      ("\\part{%s}" . "\\part*{%s}")
-      ("\\chapter{%s}" . "\\chapter*{%s}")
-      ("\\section{%s}" . "\\section*{%s}")
-      ("\\subsection{%s}" . "\\subsection*{%s}")
-      ("\\subsubsection{%s}" . "\\subsubsection*{%s}"))
-    ("article"
-     "\\RequirePackage{fix-cm}
-      \\PassOptionsToPackage{svgnames}{xcolor}
-      \\documentclass[11pt]{article}
-      \\usepackage[a4paper,margin=1in,left=1in]{geometry}
-      \\usepackage{fontspec}
-      \\setmainfont{Verdana}
-      \\setsansfont[Scale=MatchLowercase]{Raleway}
-      \\setmonofont[Scale=MatchLowercase]{Operator Mono SSm}
-      \\usepackage{sectsty}
-      \\allsectionsfont{\\sffamily}
-      \\usepackage{enumitem}
-      \\setlist[description]{style=unboxed,font=\\sffamily\\bfseries}
-      \\usepackage{listings}
-      \\lstset{frame=single,aboveskip=1em,
-            framesep=.5em,backgroundcolor=\\color{AliceBlue},
-            rulecolor=\\color{LightSteelBlue},framerule=1pt}
-      \\usepackage{xcolor}
-      \\colorlet{punct}{red!60!black}
-      \\definecolor{background}{HTML}{EEEEEE}
-      \\definecolor{delim}{RGB}{20,105,176}
-      \\colorlet{numb}{magenta!60!black}
-      \\newcommand\\basicdefault[1]{\\scriptsize\\color{Black}\\ttfamily#1}
-      \\lstdefinelanguage{json}{
-            basicstyle=\\normalfont\\ttfamily,
-            numbers=left,
-            numberstyle=\\scriptsize,
-            stepnumber=1,
-            numbersep=8pt,
-            showstringspaces=false,
-            breaklines=true,
-            frame=lines,
-            backgroundcolor=\\color{background},
-            literate=
-               ,*{0}{{{\\color{numb}0}}}{1}
-                 {1}{{{\\color{numb}1}}}{1}
-                 {2}{{{\\color{numb}2}}}{1}
-                 {3}{{{\\color{numb}3}}}{1}
-                 {4}{{{\\color{numb}4}}}{1}
-                 {5}{{{\\color{numb}5}}}{1}
-                 {6}{{{\\color{numb}6}}}{1}
-                 {7}{{{\\color{numb}7}}}{1}
-                 {8}{{{\\color{numb}8}}}{1}
-                 {9}{{{\\color{numb}9}}}{1}
-                 {:}{{{\\color{punct}{:}}}}{1}
-                 {,}{{{\\color{punct}{,}}}}{1}
-                 {\\{}{{{\\color{delim}{\\{}}}}{1}
-                 {\\}}{{{\\color{delim}{\\}}}}}{1}
-                 {[}{{{\\color{delim}{[}}}}{1}
-                 {]}{{{\\color{delim}{]}}}}{1},
-           }
-      \\lstset{basicstyle=\\basicdefault{\\spaceskip1em}}
-      \\lstset{literate=
-                  {§}{{\\S}}1
-                  {©}{{\\raisebox{.125ex}{\\copyright}\\enspace}}1
-                  {«}{{\\guillemotleft}}1
-                  {»}{{\\guillemotright}}1
-                  {Á}{{\\'A}}1
-                  {Ä}{{\\\"A}}1
-                  {É}{{\\'E}}1
-                  {Í}{{\\'I}}1
-                  {Ó}{{\\'O}}1
-                  {Ö}{{\\\"O}}1
-                  {Ú}{{\\'U}}1
-                  {Ü}{{\\\"U}}1
-                  {ß}{{\\ss}}2
-                  {à}{{\\`a}}1
-                  {á}{{\\'a}}1
-                  {ä}{{\\\"a}}1
-                  {é}{{\\'e}}1
-                  {í}{{\\'i}}1
-                  {ó}{{\\'o}}1
-                  {ö}{{\\\"o}}1
-                  {ú}{{\\'u}}1
-                  {ü}{{\\\"u}}1
-                  {¹}{{\\textsuperscript1}}1
-                  {²}{{\\textsuperscript2}}1
-                  {³}{{\\textsuperscript3}}1
-                  {ı}{{\\i}}1
-                  {—}{{---}}1
-                  {’}{{'}}1
-                  {…}{{\\dots}}1
-                  {⮠}{{$\\hookleftarrow$}}1
-                  {␣}{{\\textvisiblespace}}1,
-                  keywordstyle=\\color{DarkGreen}\\bfseries,
-                  identifierstyle=\\color{DarkRed},
-                  commentstyle=\\color{Gray}\\upshape,
-                  stringstyle=\\color{DarkBlue}\\upshape,
-                  emphstyle=\\color{Chocolate}\\upshape,
-                  showstringspaces=false,
-                  columns=fullflexible,
-                  keepspaces=true}
-      \\usepackage{parskip}
-      \\makeatletter
-      \\renewcommand{\\maketitle}{%
-      \\begingroup\\parindent0pt
-      \\sffamily
-      \\Huge{\\bfseries\\@title}\\par\\bigskip
-      \\LARGE{\\bfseries\\@author}\\par\\medskip
-      \\normalsize\\@date\\par\\bigskip
-      \\endgroup\\@afterindentfalse\\@afterheading}
-      \\makeatother
-      [NO-DEFAULT-PACKAGES]
-      \\AtBeginDocument{\\renewcommand{\\UrlFont}{\\ttfamily}}
-      \\thispagestyle{empty}"
-              ("\\section{%s}" . "\\section*{%s}")
-              ("\\subsection{%s}" . "\\subsection*{%s}")
-              ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
-              ("\\paragraph{%s}" . "\\paragraph*{%s}")
-              ("\\subparagraph{%s}" . "\\subparagraph*{%s}"))))
-      (if nec/measure-time (nec/timer "LaTeX / koma, beamer article and memoir" ))
-#+end_src
 *** PHP
 :PROPERTIES:
 :CUSTOM_ID: PHP
@@ -5302,7 +5266,7 @@ We want to give all nye (and old) emacs-lisp files a header)
 :CUSTOM_ID: MarkDown
 :END:
 #+begin_src emacs-lisp
-(straight-use-package-lazy 'markdown-mode)
+(straight-use-package 'markdown-mode)
 (use-package markdown-mode
   :straight t
   :mode ("INSTALL\\'"
@@ -5451,8 +5415,7 @@ Review of open action items\n\n")
   (goto-char 0)
   ))
 #+end_src
-* The end
-*** time uses
+* The end*** time uses
 :PROPERTIES:
 :CUSTOM_ID: time uses
 :END:

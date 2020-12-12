@@ -55,13 +55,14 @@
 
  (setq straight-use-package-by-default t)
  (straight-use-package 'use-package)
- (use-package git) ;; ensure we can install from git sources
-
-(if nec/measure-time (nec/timer "After load of straight... "))
+;; ensure we can install from git sources
+ (straight-use-package '(git :type git :flavor melpa :host github :repo "rejeep/git.el"))
+ (if nec/measure-time (nec/timer "After load of straight and git.... "))
 
 (straight-use-package '(org :type git :repo "https://code.orgmode.org/bzg/org-mode.git" :local-repo "org")
-   :diminish " O")
-(straight-use-package '(org-contrib :type git :repo "https://code.orgmode.org/bzg/org-mode.git" :local-repo "org" :files (:defaults "contrib/lisp/*.el")))
+                            :diminish " O")
+(straight-use-package '(org-contrib :type git :repo "https://code.orgmode.org/bzg/org-mode.git"
+                                    :local-repo "org" :files (:defaults "contrib/lisp/*.el")))
 ;; need to get hold of org a soon as possible
 (straight-use-package 'cl-lib)
 (straight-use-package '(dash :type git :flavor melpa :files ("dash.el" "dash.texi" "dash-pkg.el") :host github :repo "magnars/dash.el"))
