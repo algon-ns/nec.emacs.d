@@ -30,8 +30,8 @@ I'm not expecting to get a Nobel Prize, as my work still have not reached the ma
 
 ## Required
 You need til have 2 fonts: Source Code Pro Medium and OpenDyslexic are required.
-Also You need to have a directory called '~/Projects/', and I have my orgfiles
-described i the file '~/Dropbox/org/org-files'.
+Also You need to have a directory called "~/Projects/", and I have my orgfiles
+described i the file "~/Dropbox/org/org-files".
 
 ## about this file
 
