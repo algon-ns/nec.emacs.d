@@ -308,7 +308,7 @@ NAME and ARGS are as in `use-package'."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (put 'dired-find-alternate-file 'disabled nil)
 #+end_example
-* Contents                                      :TOC_5:
+* Contents                                                              :TOC_5:
 :PROPERTIES:
 :CUSTOM_ID: Contents
 :END:
@@ -406,16 +406,17 @@ NAME and ARGS are as in `use-package'."
     - [[#games][Games]]
 - [[#org-and-friends][org and friends]]
     - [[#org-general-settings][org general settings]]
-    - [[#org-bulle][org bulle]]
+    - [[#org-bullets][org bullets]]
     - [[#refiling-setup][refiling Setup]]
-    - [[#org-journal][org-journal]]
+    - [[#org-journal][org journal]]
     - [[#doct-and-org-capture][doct and org-capture]]
     - [[#org-agenda][org-agenda]]
     - [[#org-super-agenda][org super agenda]]
     - [[#org-contact][org contact]]
-    - [[#org-roam][org-roam]]
+    - [[#org-roam][org roam]]
+    - [[#org-tree-slide][org tree slide]]
     - [[#org-mac-ical][org mac iCal]]
-    - [[#org-cliplink][org-cliplink]]
+    - [[#org-cliplink][org cliplink]]
     - [[#væk-mig][Væk mig]]
     - [[#org-brain][org brain]]
     - [[#org-manage][org manage]]
@@ -442,13 +443,14 @@ NAME and ARGS are as in `use-package'."
     - [[#dap-debug-adapter-protocol][DAP (debug adapter protocol)]]
     - [[#markdown][MarkDown]]
     - [[#template-test][template-test]]
-- [[#the-end-time-uses][The end*** time uses]]
+- [[#the-end][The end]]
+    - [[#time-uses][time uses]]
 
 * Basic emacs
 :PROPERTIES:
 :CUSTOM_ID: Basic emacs
 :END:
-I've tried to make this i an orderdly manner, which is not an 
+I've tried to make this in an orderdly manner, which is not an 
 easy task for me, as the is far from my normally behavior.
 First the basics for running emacs
 ** Fundamental constants and functions
@@ -2193,8 +2195,6 @@ proper shell in Emacs!
               ("C-x c o" . helm-occur)
               ("C-x c p" . helm-projectile-ag)
               ("C-x c k" . helm-show-kill-ring)
-;;         :map helm-map
-;;              ("<tab>" . helm-execute-persistent-action)))
 )   
 
   (setq helm-split-window-in-side-p t
@@ -2204,15 +2204,10 @@ proper shell in Emacs!
 	helm-quick-update t
 	helm-ff-skip-boring-files t)
 ;;  (helm-mode 1)
-;;
 (straight-use-package '(helm-bibtex :type git :flavor melpa :files ("helm-bibtex.el" "helm-bibtex-pkg.el") :host github :repo "tmalsburg/helm-bibtex"))
-;;
 (straight-use-package-lazy '(helm-ag :type git :flavor melpa :host github :repo "emacsorphanage/helm-ag"))
-;;
 (straight-use-package-lazy '(helm-org :type git :flavor melpa :files ("helm-org.el" "helm-org-pkg.el") :host github :repo "emacs-helm/helm-org"))
-;;
 (straight-use-package-lazy 'helm-git-grep)
-;;
 (straight-use-package-lazy 'helm-projectile)
 ;;
 (use-package helm-swoop
@@ -2263,9 +2258,9 @@ proper shell in Emacs!
   :init
   (setq smex-save-file "~/.emacs.d/private/smex-items")
   (smex-initialize))
-(smex-auto-update 120)
-(global-set-key (kbd "M-x") 'smex)
-(global-set-key (kbd "M-X") 'smex-major-mode-commands)
+  (smex-auto-update 120)
+  (global-set-key (kbd "M-x") 'smex)
+  (global-set-key (kbd "M-X") 'smex-major-mode-commands)
 ;; This is your old M-x.
 (global-set-key (kbd "C-c C-c M-x") 'execute-extended-command)
 (if nec/measure-time (nec/timer "SMEX   "))
@@ -3614,8 +3609,7 @@ Disable property inheritance (in order to seed up)
 
   (if nec/measure-time (nec/timer "general org "))
 #+end_src
-*** org bulle
-ts
+*** org bullets
 :PROPERTIES:
 :CUSTOM_ID: org bullets
 :END:
@@ -3672,7 +3666,7 @@ ts
 (if nec/measure-time (nec/timer "Refiling "))
 #+end_src
 
-*** org-journal
+*** org journal
 :PROPERTIES:
 :CUSTOM_ID: org-journal
 :END:
@@ -3889,17 +3883,8 @@ Let's setup the basics of our agenda.
 #+begin_src emacs-lisp
 ;; Display tags really close to their tasks.
 (setq org-agenda-tags-column -10)
-
-;; May be any number; the larger the slower it takes to generate the view.
-;; One day is thus the fastest ^_^
-
-;; How many days early a deadline item will begin showing up in your agenda list.
 (setq org-deadline-warning-days 14)
-
-;; In the agenda view, days that have no associated tasks will still have a line showing the date.
 (setq org-agenda-show-all-dates t)
-
-;; Scheduled items marked as complete will not show up in your agenda view.
 (setq org-agenda-skip-scheduled-if-done t)
 (setq org-agenda-skip-deadline-if-done  t)
 #+end_src
@@ -3934,14 +3919,14 @@ to use predicates to group entries together; e.g., by considering an entry's
 under appropriate parent headings, I want entries to be shown according to their
 parent heading. Of-course, the top-most grouping, the important tasks, should be
 pulled out of their group and placed at the top.
-### #+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp
  (straight-use-package '(origami :type git :flavor melpa :host github :repo "gregsexton/origami.el"))
   (use-package org-super-agenda
     :straight t
     :hook (org-agenda-mode . origami-mode) ;; Easily fold groups via TAB.
     :bind (:map org-super-agenda-header-map ("<tab>" . origami-toggle-node))
     :config
-    (org-super-agenda-mode)
+   
     (setq org-super-agenda-groups
             '((:name "Aftaler"   :time-grid t
                      :tag "SENIORRÅD"
@@ -3953,12 +3938,9 @@ pulled out of their group and placed at the top.
             ;; For everything else, nicely display their heading hierarchy list.
               (:auto-map (lambda (e) (org-format-outline-path (org-get-outline-path)))))))
 (org-agenda-list)
-  ;; MA: No noticable effect when using org-super-agenda :/
-  ;;
-  ;; Leave new line at the end of an entry.
-  ;; (setq org-blank-before-new-entry '((heading . t) (plain-list-item . t)))
+(org-super-agenda-mode)
 (if nec/measure-time (nec/timer "org-super-agenda "))
-### #+END_SRC
+#+END_SRC
 
 + Origami mode ---see below in [[Text Folding with Origami-mode]]---
   works well with super-agenda. Just ~M-x origami-mode~ then ~C-c f~ to
@@ -3979,7 +3961,7 @@ Be careful that to install it, this one is available with =org-plus-contrib=.
 (setq org-contacts-files '("~/Dropbox/org/agenda/contacts.org"))
 (if nec/measure-time (nec/timer "org-contact"))
 #+end_src
-*** org-roam
+*** org roam
 It's supposed to ease note-taking and relations between notes. Let's try and see. It
 requires sqlite3. 
 #+begin_src emacs-lisp
@@ -4071,6 +4053,26 @@ requires sqlite3.
   :straight t
   :config (push 'company-org-roam company-backends))
 #+end_src
+*** org tree slide 
+slide
+Do presentation directly from Emacs
+#+begin_src emacs-lisp
+
+ (straight-use-package '(moom :type git :flavor melpa :host github :repo "takaxp/moom"))
+ (with-eval-after-load "moom"
+  ;; add settings here ...
+  (moom-mode 1))
+
+(straight-use-package '(org-tree-slide :type git :flavor melpa 
+                           :host github :repo "takaxp/org-tree-slide"))
+(setq org-image-actual-width nil)
+(with-eval-after-load "org-tree-slide"
+  (define-key org-tree-slide-mode-map (kbd "<f9>") 'org-tree-slide-move-previous-tree)
+  (define-key org-tree-slide-mode-map (kbd "<f10>") 'org-tree-slide-move-next-tree)
+  )
+
+
+#+end_src
 *** org mac iCal
 
 [[https://github.com/ndw/org-mac-iCal][org-mac-iCal]] allows you to imports events from iCal.app to the Emacs diary.
@@ -4096,7 +4098,7 @@ requires sqlite3.
 (if nec/measure-time (nec/timer "org-mac-iCal "))
 #+END_SRC
 
-*** org-cliplink
+*** org cliplink
 [[https://github.com/rexim/org-cliplink][org-cliplink]] inserts Org-mode links from the clipboard.
 #+NAME: package-org-cliplink)
 #+BEGIN_SRC emacs-lisp
@@ -5415,7 +5417,8 @@ Review of open action items\n\n")
   (goto-char 0)
   ))
 #+end_src
-* The end*** time uses
+* The end
+*** time uses
 :PROPERTIES:
 :CUSTOM_ID: time uses
 :END:
@@ -5429,7 +5432,7 @@ Review of open action items\n\n")
               "; Org-mode "   org-version
               "; System "     (system-name)
               "; Time "       (emacs-init-time))))
-;;(open-dashboard)
+(open-dashboard)
 (message "→★★★ Total time for configuration  %.2fs"  (float-time (time-subtract (current-time) nec/total-time)))
 (message "      T H E   E N D")
 #+end_src
