@@ -167,8 +167,7 @@ NAME and ARGS are as in `use-package'."
 			(string= "DISABLED" match_for_TODO_keyword)
 			(not (string= "emacs-lisp" lang)))
 	      (add-to-list 'body-list (concat "\n\n;; #####################################################################################\n"
-					      "(message \"config • " (org-get-heading) " …\")\n\n")
-			   )
+					      "(message \"config • " (org-get-heading) " …\")\n\n"))
 	      (add-to-list 'body-list body)
 	      ))))
       (with-temp-file output-file

@@ -3,10 +3,10 @@
 #+EMAIL:   niels@algon.dk
 #+CATEGORY:   Emacs configuratione files
 #+DESCRIPTION:   A literate programming version of my Emacs Configuration
-#+LANGUAGE:    da
-#+OPTIONS:   html-postamble:nil toc:t d:nil num:nil :results nil
-#+OPTIONS:   skip:nil author:t email:t creator:nil timestamp:nil
-#+PROPERTIES:   header-args :tangle config.el :comments link :results
+#+LANGUAGE:   da
+#+OPTIONS:  html-postamble:nil toc:t d:nil num:nil :results nil
+#+OPTIONS:  skip:nil author:t email:t creator:nil timestamp:nil
+#+PROPERTIES:  header-args :tangle config.el :comments link :results
 :PROPERTIES:
 :ID:       77278751-5C93-4253-8198-D33BE1F77D8B
 :END:
@@ -308,10 +308,11 @@ NAME and ARGS are as in `use-package'."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (put 'dired-find-alternate-file 'disabled nil)
 #+end_example
-* Contents                                                              :TOC_5:
+* Contents             :TOC_5:
 :PROPERTIES:
 :CUSTOM_ID: Contents
 :END:
+
 
 - [[#preface][Preface]]
   - [[#about-me][about me]]
@@ -426,14 +427,14 @@ NAME and ARGS are as in `use-package'."
 - [[#applications][Applications]]
     - [[#calendar][Calendar]]
     - [[#magit][Magit]]
+    - [[#gnuplot][gnuplot]]
     - [[#remember-mode][Remember mode]]
+    - [[#gnuplot-1][gnuplot]]
     - [[#tæl-ord][Tæl ord]]
     - [[#elgantt][elgantt]]
     - [[#gnus][gnus]]
     - [[#elfeed][Elfeed]]
     - [[#ledger-mode][ledger-mode]]
-    - [[#zone][zone]]
-    - [[#smog][smog]]
 - [[#languages][Languages]]
     - [[#header-for-new-files][Header for new files]]
     - [[#python][Python]]
@@ -442,7 +443,6 @@ NAME and ARGS are as in `use-package'."
     - [[#php][PHP]]
     - [[#dap-debug-adapter-protocol][DAP (debug adapter protocol)]]
     - [[#markdown][MarkDown]]
-    - [[#template-test][template-test]]
 - [[#the-end][The end]]
     - [[#time-uses][time uses]]
 
@@ -937,7 +937,9 @@ abcdefghijklmnopqrstuvwxyzæøå
 #+begin_src emacs-lisp
 ;; Download icons
 
- (straight-use-package '(all-the-icons :type git :flavor melpa :files (:defaults "data" "all-the-icons-pkg.el") :host github :repo "domtronn/all-the-icons.el")
+ (straight-use-package '(all-the-icons :type git :flavor melpa 
+          :files (:defaults "data" "all-the-icons-pkg.el") 
+          :host github :repo "domtronn/all-the-icons.el")
     :init (gsetq inhibit-compacting-font-caches t))
 
 (defcustom is-all-the-icons-installed nil
@@ -1096,14 +1098,6 @@ If Non-nil, use dashboard, otherwise will restore previous session."
 (setf custom-safe-themes t)
 (straight-use-package 'powerline)
 ;;
-(use-package doom-themes
-  :straight t
-  :config
-  ;; Global settings (defaults)
-  (setq doom-themes-enable-bold t    ; if nil, bold is universally disabled
-        doom-themes-enable-italic t) ; if nil, italics is universally disabled
- ;; Enable flashing mode-line on errors
-  (doom-themes-visual-bell-config))
 (straight-use-package '(moe-theme :type git :flavor melpa :host github :repo "kuanyui/moe-theme.el"))
 (straight-use-package '(moe-theme-auto-switch :type git :flavor melpa :host github :repo "kuanyui/moe-theme"))
 (straight-use-package '(powerline-moe-theme :type git :flavor melpa :host github :repo "kuanyui/moe-theme"))
@@ -1115,46 +1109,7 @@ If Non-nil, use dashboard, otherwise will restore previous session."
 Source: https://github.com/m-parashar/emax64/issues/5
 
 #+begin_src emacs-lisp
-(use-package zenburn-theme
-  :straight t
-  :config
-  (load-theme 'gruvbox-dark-soft t)
-;; (load-theme 'gruvbox-dark-soft t)
-  (set-face-attribute 'font-lock-comment-face nil :italic t)
-  (set-face-attribute 'font-lock-doc-face nil :italic t)
-  (zenburn-with-color-variables
-    (set-face-attribute 'button nil :foreground zenburn-yellow-2)
-    (set-face-attribute 'default nil
-                        :background zenburn-bg-05
-                        :height 145)
-;;                        :font font-family)
-    (set-face-attribute 'help-argument-name nil :foreground zenburn-orange :italic nil)
-;;    (set-face-attribute 'hl-line nil :background zenburn-bg+1)
-    (set-face-attribute 'header-line nil
-                        :background zenburn-bg-1
-                        :box `(:line-width 2 :color ,zenburn-bg-1))
-;;                        :height font-size-header-line)
-    (set-face-attribute 'mode-line nil
-                        :box `(:line-width 2 :color ,zenburn-bg-1)
-                        :foreground zenburn-bg+3)
-;;                        :height font-size-mode-line)
-    (set-face-attribute 'mode-line-inactive nil
-                        :box `(:line-width 2 :color ,zenburn-bg-05)
-                        :foreground zenburn-bg+3)
-;;                        :height font-size-mode-line)
-    (set-face-attribute 'region nil
-                        :background zenburn-fg-1
-                        :distant-foreground 'unspecified)
-    (set-face-attribute 'vertical-border nil :foreground zenburn-bg))
-
-  ;; NOTE: See https://github.com/bbatsov/zenburn-emacs/issues/278.
-  (zenburn-with-color-variables
-    (mapc
-     (lambda (face)
-       (when (eq (face-attribute face :background) zenburn-bg)
-         (set-face-attribute face nil :background 'unspecified)))
-     (face-list))))
-
+(load-theme 'misterioso t)
 (if nec/measure-time (nec/timer "Choose theme "))
 #+end_src
 *** initial frame
@@ -1896,7 +1851,7 @@ visual line mode and stretch the cursor
 (require 'server)
 (unless (server-running-p)
   (server-start))
-(require 'org-protocol)
+
 (if nec/measure-time (nec/timer "start server "))
 #+end_src
 *** line numbers, I like them all over the places
@@ -2810,10 +2765,13 @@ Put all keybindings here (with doc)
 (global-set-key (kbd "C-c a") 'org-agenda)
 (global-set-key (kbd "C-c c") 'org-capture)
 ;; org-roam 
-(global-set-key (kbd "C-c n l")  'org-roam)
-(global-set-key (kbd "C-c n g")  'org-roam-graph)
-(global-set-key (kbd "C-c n f")  'org-roam-find-file)
- 
+(global-set-key (kbd "C-c r l")  'org-roam)
+(global-set-key (kbd "C-c r g")  'org-roam-graph)
+(global-set-key (kbd "C-c r f")  'org-roam-find-file)
+(global-set-key (kbd "C-c r i")  'org-roam-insert)
+(global-set-key (kbd "C-c r c")  'org-roam-capture)
+(global-set-key (kbd"C-c r x")  'org-roam-jump-to-index)
+;; ebib bibliography               
 (global-set-key (kbd "C-c n e")  'ebib)
 (global-set-key (kbd "C-c n r")  'org-ebib-open)
 (global-set-key (kbd "C-c n s")  'org-ebib-store-link)
@@ -3120,6 +3078,7 @@ blocks! Love this one ^_^
         :init (diredfl-global-mode 1))
    (straight-use-package 'dired-filter)
    (use-package dired-filter
+      :straight t
       :after    dired
       :bind (:map dired-mode-map
                   ("/" . dired-filter-map))
@@ -3187,14 +3146,12 @@ blocks! Love this one ^_^
       :straight t
       :diminish " "
       :hook (dired-mode . all-the-icons-dired-mode))
-
     ;;(use-package dired-sidebar
     ;;  :straight t
     ;;  :bind (("C-c s" . dired-sidebar-toggle-sidebar)))
-
     (if nec/measure-time (nec/timer "Dired   "))
 #+end_src
-*** Flyckeck
+*** Flycheck
 :PROPERTIES:
 :CUSTOM_ID: Flyckeck
 :END:
@@ -3207,7 +3164,6 @@ blocks! Love this one ^_^
   :config (diminish 'flycheck-mode " Ⓕ"))
 (if nec/measure-time (nec/timer "flycheck   "))
 #+end_src
-
 *** Dashboard
 :PROPERTIES:
 :CUSTOM_ID: Dashboard
@@ -3245,7 +3201,8 @@ We want a Dashboard, which demand Page Break Line
            (browse-url "https://algon.dk"))))))
 
 ;;      (setq dashboard-banner-logo-title ((t (:family "Love LetterTW" :height 123)))))
-       (straight-use-package '(dashboard :type git :flavor melpa :files (:defaults "banners" "dashboard-pkg.el")
+        (straight-use-package '(dashboard :type git :flavor melpa 
+                                  :files (:defaults "banners" "dashboard-pkg.el")
                                   :host github :repo "emacs-dashboard/emacs-dashboard"))
        (dashboard-setup-startup-hook)
 ;;     
@@ -3258,10 +3215,8 @@ We want a Dashboard, which demand Page Break Line
         (switch-to-buffer dashboard-buffer-name)
         (goto-char (point-min))
         (delete-other-windows))
-
     (if nec/measure-time (nec/timer "Dashboard   "))
 #+end_src
-
 *** Games
 :PROPERTIES:
 :CUSTOM_ID: Games
@@ -3355,7 +3310,6 @@ Prevent accidental deleting of hole subtrees or similar
 #+BEGIN_SRC emacs-lisp
   (setq org-catch-invisible-edits "smart")
 #+END_SRC
-
 Use IDO for target completion:
 #+BEGIN_SRC emacs-lisp
   (setq org-completion-use-ido t)
@@ -3369,7 +3323,6 @@ Disable property inheritance (in order to seed up)
 #+begin_src emacs-lisp
     (use-package pretty-hydra
       :straight t)
-
     (defvar org-default-notes-file "~/Dropbox/org/agenda/Notes.org")
     (defvar org-default-tasks-file "~/Dropbox/org/agenda/organizer.org")
     (setq org-startup-intended t)
@@ -3517,6 +3470,7 @@ Disable property inheritance (in order to seed up)
                                    (ruby . t)
                                    ;;(js . t)
                                    (shell . t)
+                                   (gnuplot . t)
                                    (css . t)
                                    (ledger . t)
                                    ;;(sass . t)
@@ -3616,9 +3570,7 @@ Disable property inheritance (in order to seed up)
  [[https://github.com/sabof/org-bullets][org-bullets]] - Shows org-mode bullets as pretty UTF-8 characters.
 #+begin_src emacs-lisp 
 ;; Prettify UI
-
 (require 'pretty-symbols)
-
 (use-package org-bullets
   :straight t
   :hook (org-mode . org-bullets-mode)
@@ -3783,7 +3735,7 @@ multiple times below:
                ("Tickler"
                   :keys "T"
                   :type entry
-                  :file "~/Dropbox/org/agenda/tickler.org"
+                  :file "~/Dropbox/org/agenda/organizer.org"
                   :headline "Husk"
                   :template ("* TODO %?                :HUSK:%^G"
                             "  SCHEDULED:  %^T"
@@ -3889,30 +3841,6 @@ Let's setup the basics of our agenda.
 (setq org-agenda-skip-deadline-if-done  t)
 #+end_src
 
-The agenda view, like nearly all Emacs entities, is interactive:
-+ =𝓃 f,b= ⇒ Look forward at next week's agenda, or backward to a previous week.
-  - The optional $𝓃$ means do the action =𝓃=-many times;
-    it defaults to 1.
-+ =w, d= ⇒ toggle week view, or day view; use ~v~ to see possible views.
-  - E.g., ~C-u 2017 v y~ shows us the specific year 2017.
-+ =𝓃 n,p= to navigate to next and previous entries.
-+ =t= ⇒ cycle TODO state of the current entry.
-+ =±= ⇒ cycle priority state.
-+ =𝓃 S-⇆= ⇒ Shift date time by $𝓃$ days; 1 day by default.
-+ =C-c C-s= ⇒ Reschedule an entry; prefix it with ~C-u~ to remove a scheduled entry.
-  - [[https://orgmode.org/manual/Repeated-tasks.html][Repeat tasks]] by a repeater such as ‘+1m’ or ‘+7d’
-  in their timestamps; e.g., ~DEADLINE: <2005-10-01 Sat +1m>.~
-+ =s= ⇒ save all agenda buffers; i.e., save the org-files where the agenda items live.
-+ =g= ⇒ Rebuild agenda according to any changes made thus far.
-+ =F= ⇒ Toggle ‘follow mode’: As you go up/down entries, you can see their
-  details in an adjacent window.
-  - =SPC= ⇒ Show details of a single entry in other window; stay in Agenda.
-+ =RET, TAB= ⇒ Go to the current entry in the current window or in a new
-  adjacent window, so as to alter task details.
-
-# ;; Easy way to capture tasks when in agenda view.
-# (define-key org-agenda-mode-map "c" #'org-capture)
-
 Instead of having the day's tasks all in one field, org-super-agenda allows us
 to use predicates to group entries together; e.g., by considering an entry's
 =:tags:= or its priority level. Since I'm placing all my tasks in a single file,
@@ -3931,8 +3859,12 @@ pulled out of their group and placed at the top.
             '((:name "Aftaler"   :time-grid t
                      :tag "SENIORRÅD"
                      :tag "4EREN"
+                     :tag "EMACS"
+                     :tag "ÆLDRESAGEN"
                      :tag "PRIVAT")
-              (:name "Møder"     :time-grid t) 
+              (:name "Møder"     :time-grid t)
+              (:name "PHONES"     :time-grid t) 
+              (:name "Aftaler"   :time-grid t)
               (:name "Opgaver"   :time-grid t)
               (:name "Vigtigt"   :priority "A") 
             ;; For everything else, nicely display their heading hierarchy list.
@@ -3962,96 +3894,223 @@ Be careful that to install it, this one is available with =org-plus-contrib=.
 (if nec/measure-time (nec/timer "org-contact"))
 #+end_src
 *** org roam
-It's supposed to ease note-taking and relations between notes. Let's try and see. It
-requires sqlite3. 
+:PROPERTIES:
+:ID:       D931D321-FC5E-4F6A-9411-EDE1B78E766E
+:END:
 #+begin_src emacs-lisp
+;;; jnf-org-roam.el --- Summary
+;;; Commentary:
+;;
+;;  This package provides configuration for org-roam
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; BEGIN ORG ROAM  and concerns
+;;
+;; With the latest update of org-roam, things again behavior
+;; correctly.  Now I can just load org-roam as part of my day to day
+;;; Code:
 ;;Set place of database (ns 20. november 2020)
 (setq org-roam-directory "/Users/niels/Dropbox/org/roam/")
 (setq org-roam-index-file "/Users/niels/Dropbox/org/roam/Index.org")
 (setq org-roam-db-location "/Users/niels/Dropbox/org/roam/org-roam.db")
-(straight-use-package 
-  '(org-roam :type git :host github :repo "org-roam/org-roam"
-             :fork (:host github
-             :repo "algon-ns/org-roam")))
 (use-package org-roam
-    :straight t
-    :diminish " ♨"
-    :hook
-    (after-init . org-roam-mode)
-;;    :custom
-;;    (org-roam-directory "/Users/niels/Dropbox/org/roam")
-    :bind (:map org-roam-mode-map
-                (("C-c n l" . org-roam)
-                 ("C-c n f" . org-roam-find-file)
-                 ("C-c n j" . org-roam-jump-to-index)
-                 ("C-c n b" . org-roam-switch-to-buffer)
-                 ("C-c n g" . org-roam-graph))
-      :map org-mode-map
-      (("C-c n i" . org-roam-insert)))
-    :config
-    (setq org-roam-graph-node-extra-config '(("shape" . "ellipse")
-                                             ("style" . "rounded,filled")
-                                             ("fillcolor" . "#EFEFFF")
-                                             ("color" . "#DEDEFF")
-                                             ("fontcolor" . "#111111")))
-    (setq org-roam-buffer-position 'left
-          org-roam-buffer-width 0.25
-          org-roam-index-file "/Users/niels/Dropbox/org/roam/index.org"
-          org-roam-graph-extra-config '(("overlap" . "false"))
-          org-roam-graph-exclude-matcher '("archive" "PRIVAT" "blog" "books" 
+  :straight t
+  :diminish " ♨"
+  :after pretty-hydra
+  :hook (after-init . org-roam-mode)
+  :custom (org-roam-directory "~/Dropbox/org/roam")
+  :bind (:map org-roam-mode-map
+              (("C-c r l" . org-roam)
+               ("C-c r f" . org-roam-find-file)
+               ("C-c r i" . org-roam-insert)
+               ("C-c r c" . org-roam-capture)
+               ("C-c r x" . org-roam-jump-to-index)
+               ("C-c r g" . org-roam-graph-show))
+              :map org-mode-map
+              (("C-c r c" . org-roam-capture))
+              (("C-c r x" . org-roam-jump-to-index)))
+  ;; Use the traditional org first "*" element then the "#+title:"
+  ;; property to establish the title of the object, then append the
+  ;; "#+roam_alias:" as alternate titles
+  :init (setq org-roam-tag-sources '(prop all-directories))
+        (setq org-roam-buffer-position 'left
+           org-roam-buffer-width 0.25
+           org-roam-index-file "/Users/niels/Dropbox/org/roam/index.org"
+           org-roam-graph-extra-config '(("overlap" . "false"))
+           org-roam-graph-exclude-matcher '("archive" "PRIVAT" "blog" "books" 
                                            "init" "Journal" "regularly" "tasks" "work")
-          org-roam-completion-system 'ivy))    
-    
+           org-roam-completion-system 'ivy)
+        (setq org-roam-graph-node-extra-config '(("shape" . "ellipse")   
+                                                 ("style" . "rounded,filled")
+                                                 ("fillcolor" . "#EFEFFF")
+                                                 ("color" . "#DEDEFF")
+                                                 ("fontcolor" . "#111111")))
+  (setq org-roam-graph-viewer nil)
+  (use-package org-roam-protocol
+    :straight (:type built-in)
+    :after org-roam)
 
+  ;; First use "#+roam_tags:" then the directory structure to build the
+  ;; list of tags.
+  ;;
+  ;; See https://www.orgroam.com/manual/Tags.html#Tags
+  ;;
+  (setq org-roam-title-sources '((title headline) alias))
+  (setq org-roam-update-db-idle-seconds 300)
+  ;; Note: Order of these templates matters. The `org-roam-insert-immediate` uses
+  ;; the first one in the list (e.g. Fleeting)
+  ;;
+  (setq org-roam-capture-templates
+        '(("a" "Project" plain (function org-roam--capture-get-point)
+           "%?"
+           :file-name "roam/projects/%<%Y%m%d%H%M%S>---${slug}"
+           :head  "#+title: ${title}\n#+roam_tags:\n* ${title}\n\n"
+           :unnarrowed t
+           :immediate-finish t)
+          ("4" "4eren" plain (function org-roam--capture-get-point)
+           "%?"
+           :file-name "roam/4eren/%<%Y%m%d%H%M%S>---${slug}"
+           :head "#+title: ${title}\n#+roam_tags:\n* ${title}\n\n"
+           :unnarrowed t)
+          ("b" "Bibliographic" plain (function org-roam--capture-get-point)
+           "%?"
+           :file-name "roam/bibliographies/%<%Y%m%d%H%M%S>---${slug}"
+           :head "#+title: ${title}\n#+roam_tags:\n* ${title}\n\n"
+           :unnarrowed t)
+          ("u" "roam unsorted" plain (function org-roam--capture-get-point)
+           "%?"
+           :file-name "roam/000-unsorted---${slug}"
+           :head "#+title: ${title}\n#+roam_tags:\n* ${title}\n\n"
+           :unnarrowed t)
+          ("e" "emacs" plain (function org-roam--capture-get-point)
+           "%?"
+           :file-name "roam/emacs/%<%Y%m%d%H%M%S>---${slug}"
+           :head "#+title: ${title}\n#+roam_tags:\n* ${title}\n\n"
+           :unnarrowed t)
+          
+;;          ("d" "Project > Diversity Equity Incluson (DEI)" plain (function org-roam--capture-get-point)
+;;           "%?"
+;;           :file-name "projects/diversity-equity-inclusion/%<%Y%m%d%H%M%S>---${slug}"
+;;           :head  "#+title: ${title}\n#+roam_tags:\n* ${title}\n\n"
+;;           :unnarrowed t
+;;           :immediate-finish t)
+          ("i" "Project > iniziu" plain (function org-roam--capture-get-point)
+           "%?"
+           :file-name "roam/iniziu/%<%Y%m%d%H%M%S>---${slug}"
+           :head  "#+title: ${title}\n#+roam_tags:\n* ${title}\n\n"
+           :unnarrowed t
+           :immediate-finish t)
+          ("s" "Project > Seniorråd" plain (function org-roam--capture-get-point)
+           "%?"
+           :file-name "roam/seniorraad/%<%Y%m%d%H%M%S>---${slug}"
+           :head  "#+title: ${title}\n#+roam_tags:\n* ${title}\n\n"
+           :unnarrowed t
+           :immediate-finish t)
+          ("o" "Project > andre" plain (function org-roam--capture-get-point)
+           "%?"
+           :file-name "/roam/andre/%<%Y%m%d%H%M%S>---${slug}"
+           :head  "#+title: ${title}\n#+roam_tags:\n* ${title}\n\n"
+           :unnarrowed t
+           :immediate-finish t)
+          ("n" "roam/niels" plain (function org-roam--capture-get-point)
+           "%?"
+           :file-name "roam/niels/%<%Y%m%d%H%M%S>---${slug}"
+           :head  "#+title: ${title}\n#+roam_tags:\n* ${title}\n\n"
+           :unnarrowed t
+           :immediate-finish t))))
 
-;;    (setq org-roam-db-location org-roam-directory)
-    (setq org-roam-graph-viewer nil)
+(defmacro go-roam-find-file-project-fn (project)
+  "Define a function to find an `org-roam' file within the given PROJECT."
+  (let* ((fn-name (intern (concat "go-roam-find-" (replace-regexp-in-string " +" "-" project))))
+         (docstring (concat "Find an `org-roam' file for: " project)))
+    `(defun ,fn-name (&optional completions filter-nf no-confirm)
+       ,docstring
+       (interactive)
+       (org-roam-find-file (concat ,project " ") completions filter-nf no-confirm))))
 
-1   (setq org-roam-capture-templates `(("n" "default" plain #'org-roam-capture--get-point
-                                              "%? "
-                                                :file-name "%<%Y%m%d%H%M%S>-${slug}"
-                                                :head "#+title: ${title}\n  "
-                                                :unnarrowed t)
-                                       ("r" "ref" plain #'org-roam-capture--get-point
-                                              "%?"
-                                                :file-name "${slug}"
-                                                :head "#+title: ${title}\n#+roam_key: ${ref}"
-                                                :unnarrowed t)))
-(require 'org-roam-dailies)
-(setq org-roam-dailies-directory "~/dailies/")
-(setq org-roam-completion-system 'helm)
-;; (require 'org-roam-protocol)
+(go-roam-find-file-project-fn "niels")
+(go-roam-find-file-project-fn "andre")
+(go-roam-find-file-project-fn "bibliographies")
+(go-roam-find-file-project-fn "4eren")
+(go-roam-find-file-project-fn "seniorraad")
+(go-roam-find-file-project-fn "iniziu")
+;;(defvar jnf-find-file-in-roam-project--title ("Find File in Roam Project" 1 -0.05))
+(pretty-hydra-define jnf-find-file-in-roam-project (:foreign-keys warn :title jnf-find-file-in-roam-project--title :quit-key "q")
+  (
+   "roam"
+   (("b" go-roam-find-permanent-bibliographies "Bibliography")
+    ("4" go-roam-find-permanent-4eren "4eren")
+    ("a" go-roam-find-niels "Niels")
+    ("t" go-roam-find-seniorraad "Seniorråd")
+    ("h" go-roam-find-iniziu "Iniziu")
+    ("s" go-roam-find-andre "Andre"))
+   ))
+(global-set-key (kbd "s-1") 'jnf-find-file-in-roam-project/body)
 
-(use-package org-roam-protocol
-   :straight (:type built-in)
-   :after org-roam)
-#+end_src
-=org-roam-server= will start a web server on http://127.0.0.1:8080/ to see the nodes and their linking
-#+begin_src emacs-lisp
 (use-package org-roam-server
   :straight t
-;; :hook (after-init . org-roam-server-mode)
-  :config  
+  :after org-roam
+  :config
   (setq org-roam-server-host "127.0.0.1"
         org-roam-server-port 8080
-        org-roam-server-export-inline-images nil
+        org-roam-server-export-inline-images t
         org-roam-server-authenticate nil
+        org-roam-server-serve-files nil
+        org-roam-server-served-file-extensions '("pdf" "mp4" "ogv")    
         org-roam-server-network-poll t
         org-roam-server-network-arrows nil
         org-roam-server-network-label-truncate t
         org-roam-server-network-label-truncate-length 60
         org-roam-server-network-label-wrap-length 20))
- (setq org-roam-server-mode t)
- (setq org-roam-server-served-file-extensions '("pdf" "mp4" "ogv"))
+(setq org-roam-server-mode t)
+;; https://ag91.github.io/blog/2020/11/12/write-org-roam-notes-via-elisp/
+(defun jnf/make-filepath (title now &optional zone)
+  "Make filename from note TITLE and NOW time (assumed in the current time ZONE)."
+  (f-join
+   org-roam-directory
+   "roam"
+   (concat
+    (format-time-string "%Y%m%d%H%M%S-" now (or zone (current-time-zone)))
+    (org-roam--title-to-slug title)
+    ".org")))
 
-;;(org-roam-server-mode t)
-(if nec/measure-time (nec/timer "org-roam-server "))
-#+end_src
-=company-org-roam= provides completion for the links
-#+begin_src emacs-lisp
-(use-package company-org-roam
-  :straight t
-  :config (push 'company-org-roam company-backends))
+(defun jnf/insert-org-roam-file (file-path title &optional links sources text quote)
+  "Insert org roam file in FILE-PATH with TITLE, LINKS, SOURCES, TEXT, QUOTE."
+  (with-temp-file file-path
+    (insert
+     "#+TITLE: " title
+     "\n\n- tags :: " (--reduce (concat acc ", " it) links) "\n"
+     (if sources (concat "- source :: " (--reduce (concat acc ", " it) sources) "\n") "")
+     "\n"
+     (if text text "")
+     "\n"
+     "\n"
+     (if quote
+         (concat "#+begin_src text \n"
+     quote "\n"
+     "#+end_src")
+       ""))))
+
+(defun send-roaming ()
+  "Convert an org node to a `org-roam' note."
+  (interactive)
+  (let* ((heading (org-get-heading t t t t))
+         (body (org-get-entry))
+         (link (format "[[id:%s][%s]]" (org-id-get-create) heading))
+         (filepath (jnf/make-filepath heading (current-time))))
+    (jnf/insert-org-roam-file
+     filepath
+     heading
+     nil
+     (list link)
+     (format "* Note stored from tasks\n%s" body)
+     nil)
+    (find-file filepath)))
+
+;; Some hot keys to jump to often different relevant files
+;; Jump to the current clock if one is open, otherwise, go to my agenda file.
+(global-set-key (kbd "s-i") 'org-roam-insert)
+(provide 'jnf-org-roam.el)
+;;; jnf-org-roam.el ends here
 #+end_src
 *** org tree slide 
 slide
@@ -4740,6 +4799,22 @@ easier on the eyes. For more, see the brief [[https://www.dailymotion.com/video/
 (if nec/measure-time (nec/timer "App: magit   "))
 #+END_SRC
 
+*** gnuplot
+#+begin_src emacs-lisp
+(straight-use-package '(gnuplot :type git :flavor melpa 
+      :files ("gnuplot.el" "gnuplot-gui.el" "gnuplot-context.el" "gnuplot-pkg.el") 
+      :host github :repo "emacsorphanage/gnuplot"))
+(add-to-list 'load-path "/usr/local/bin/gnuplot")
+;; these lines enable the use of gnuplot mode
+(autoload 'gnuplot-mode "gnuplot" "gnuplot major mode" t)
+(autoload 'gnuplot-make-buffer "gnuplot" "open a buffer in gnuplot mode" t)
+
+;; this line automatically causes all files with the .gp extension to be loaded into gnuplot mode
+(setq auto-mode-alist (append '(("\\.gp$" . gnuplot-mode)) auto-mode-alist))
+
+;; This line binds the function-9 key so that it opens a buffer into gnuplot mode
+(global-set-key [(f9)] 'gnuplot-make-buffer)
+#+end_src
 *** Remember mode
 :PROPERTIES:
 :CUSTOM_ID: h:8044df56-9819-4c61-abe6-43d352087211
@@ -4791,6 +4866,20 @@ by `remember-notes-buffer-name'."
          (remember-notes-mode-hook . prot/outline-minor-mode))
   :bind ("<f12>" . prot/remember))
 (if nec/measure-time (nec/timer "Remember "))
+#+end_src
+*** gnuplot
+#+begin_src emacs-lisp
+(straight-use-package '(gnuplot :type git :flavor melpa 
+       :files ("gnuplot.el" "gnuplot-gui.el" "gnuplot-context.el" "gnuplot-pkg.el") 
+       :host github :repo "emacsorphanage/gnuplot") )
+;; these lines enable the use of gnuplot mode
+(autoload 'gnuplot-mode "gnuplot" "gnuplot major mode" t)
+(autoload 'gnuplot-make-buffer "gnuplot" "open a buffer in gnuplot mode" t)
+;; this line automatically causes all files with the .gp extension to be loaded into gnuplot mode
+(setq auto-mode-alist (append '(("\\.gp$" . gnuplot-mode)) auto-mode-alist))
+
+;; This line binds the function-9 key so that it opens a buffer into gnuplot mode
+(global-set-key [(f9)] 'gnuplot-make-buffer)
 #+end_src
 *** Tæl ord
 :PROPERTIES:
@@ -5051,14 +5140,12 @@ In an attempt to do even more in emacs, i've installed `elfeed' and imported my 
                      "umpv"
                      (elfeed-entry-link elfeed-show-entry)))
 
-
     ;; New entry hook allows meta information manipulation
     ;; without directly having to change elfeed-feeds
     (add-hook 'elfeed-new-entry-hook
               (elfeed-make-tagger :feed-url "youtube\\.com"
                                   :add '(video youtube))))
-                                  
-
+                                 
 #+end_src
 
 Elfeed allows to interactively subscribe to a feed (defaulting to what is in the
@@ -5072,7 +5159,11 @@ file to record the feeds i want.
 (straight-use-package '(elfeed-org :type git :flavor melpa 
                         :host github :repo "remyhonig/elfeed-org"))
 (if nec/measure-time (nec/timer "elfeed "))
+
+(require 'elfeed-dashboard)
+
 #+end_src
+
 *** ledger-mode
 Ledger mode for MacBook Air
 #+begin_src emacs-lisp
@@ -5083,23 +5174,6 @@ Ledger mode for MacBook Air
 (straight-use-package '(ledger-import :type git :flavor melpa :host github :repo "DamienCassou/ledger-import"))
 (if nec/measure-time (nec/timer "ledger "))
 #+end_src
-*** zone
-:PROPERTIES:
-:CUSTOM_ID: zone
-:END:
-#+begin_src emacs-lisp
-(straight-use-package 'zone
-  :config (setq zone-when-idle 180)) ; in seconds
-(if nec/measure-time (nec/timer "zone "))
-#+end_src
-*** smog
-:PROPERTIES:
-:CUSTOM_ID: smog
-:END:
-#+begin_src emacs-lisp
-(straight-use-package 'smog
-  :config (setq smog-command "style -l 23"))
-(if nec/measure-time (nec/timer "smog "))
 #+end_src
 * Languages
 *** Header for new files
@@ -5149,7 +5223,7 @@ We want to give all nye (and old) emacs-lisp files a header)
     (setq elpy-modules (delq 'elpy-module-flymake elpy-modules))
     ; fix for MacOS, see https://github.com/jorgenschaefer/elpy/issues/1550
     (setq elpy-shell-echo-output nil)
-    (setq elpy-rpc-python-command "python3")
+    (setq elpy-rpc-python-command "python")
     (setq elpy-rpc-timeout 2))
 ;;
 (with-eval-after-load 'python
@@ -5181,17 +5255,20 @@ We want to give all nye (and old) emacs-lisp files a header)
     :hook (python-mode . (lambda () (lpy-mode))))
 (if nec/measure-time (nec/timer "python "))
 ;;
-(straight-use-package '(ein :type git :flavor melpa :files ("lisp/*" (:exclude "lisp/zeroein.el") "ein-pkg.el") :host github :repo "millejoh/emacs-ipython-notebook"))
+(straight-use-package '(ein :type git :flavor melpa 
+        :files ("lisp/*" (:exclude "lisp/zeroein.el") "ein-pkg.el") 
+        :host github :repo "millejoh/emacs-ipython-notebook"))
 
 (if nec/measure-time (nec/timer "ipython  "))
 #+end_src
-
 *** Projectile
 :PROPERTIES:
 :CUSTOM_ID: Projectile
 :END:
 #+BEGIN_SRC emacs-lisp
-(straight-use-package '(projectile :type git :flavor melpa :files ("projectile.el" "projectile-pkg.el") :host github :repo "bbatsov/projectile")
+(straight-use-package '(projectile :type git :flavor melpa 
+       :files ("projectile.el" "projectile-pkg.el") 
+       :host github :repo "bbatsov/projectile")
   :diminish  " ✐")  
 
 (setq projectile-project-search-path (f-directories "~/Projects/")) 
@@ -5238,7 +5315,6 @@ We want to give all nye (and old) emacs-lisp files a header)
 	       (require 'company-php)
 	       (company-mode t)
 	       (add-to-list 'company-backends 'company-ac-php-backend))))
-
 (use-package phpunit
   :straight t
   :mode
@@ -5260,7 +5336,6 @@ We want to give all nye (and old) emacs-lisp files a header)
 ;; requies emacs 26+
 (dap-ui-controls-mode 1)
 (require 'dap-python)
-
 (if nec/measure-time (nec/timer "dap-mode "))
 #+end_src
 *** MarkDown
@@ -5268,7 +5343,7 @@ We want to give all nye (and old) emacs-lisp files a header)
 :CUSTOM_ID: MarkDown
 :END:
 #+begin_src emacs-lisp
-(straight-use-package 'markdown-mode)
+
 (use-package markdown-mode
   :straight t
   :mode ("INSTALL\\'"
@@ -5279,143 +5354,13 @@ We want to give all nye (and old) emacs-lisp files a header)
          "\\.md"
          "\\.mdown$"
          "\\.md$\\'"))
-(add-hook 'markdown-mode-hook
-          (lambda ()
-            (visual-line-mode t)
+(add-hook 'markdown-mode-hook (lambda ()
+                                 (visual-line-mode t)
 ;;            (writegood-mode t
-            (flyspell-mode t)))
+                                 (flyspell-mode t)))
 (setq markdown-command "pandoc --smart -f markdown -t html")
 (setq markdown-css-paths `(,(expand-file-name "markdown.css" "private/md-dir")))
 (if nec/measure-time (nec/timer "MarkDown "))
-#+end_src
-*** template-test
-#+begin_src emacs-lisp
-(defun ndw/minutes-template ()
-  "Insert a minutes template."
-  (interactive)
-  (let* ((repos    (string-match "/20[12][0-9]/[0-9][0-9]/[0-9][0-9]-" (buffer-file-name)))
-         (date     (if repos
-                       (let ((year  (string-to-number
-                                     (substring (buffer-file-name) (1+ repos) (+ repos 5))))
-                             (month (string-to-number
-                                     (substring (buffer-file-name) (+ repos 6) (+ repos 8))))
-                             (day   (string-to-number
-                                     (substring (buffer-file-name) (+ repos 9) (+ repos 11)))))
-                         (encode-time 0 0 12 day month year))
-                     (current-time)))
-         (lastmtg  nil) ;; date of last meeting
-         (prev     (let ((weeks 1)
-                         (minutes nil))
-                     (while (and repos (< weeks 7)) ;; look back 6 weeks
-                       (let* ((lastweek (time-add date (- (* 60 60 24 7 weeks))))
-                              (lwd      (decode-time lastweek))
-                              (pagenda  (concat
-                                         (substring (buffer-file-name) 0 repos)
-                                         (format "/%04d/%02d/%02d-" (nth 5 lwd) (nth 4 lwd) (nth 3 lwd))
-                                         (substring (buffer-file-name) (+ repos 12)))))
-                         (if (file-exists-p pagenda)
-                             (progn
-                               (setq lastmtg lastweek)
-                               (setq minutes
-                                     (let ((apos  (string-match "-agenda.org$" pagenda)))
-                                       (if apos
-                                           (concat (substring pagenda 0 apos) "-minutes.org")
-                                         pagenda)))
-                               (setq weeks 999))) ;; escape the loop
-                         (setq weeks (1+ weeks))))
-                     minutes))
-         (title    (read-string "Meeting title: "))
-         (tags     (read-string "Tags: "))
-         (number   (if prev
-                       (with-temp-buffer
-                         (insert-file-contents prev)
-                         (goto-char 0)
-                         (if (re-search-forward "^#\\+MEETING: *")
-                             (if (looking-at "[0-9]+")
-                                 (match-string 0))))))
-         (actions  (if prev
-                     (with-temp-buffer
-                       (insert-file-contents prev)
-                       (goto-char 0)
-                       (org-mode)
-                       (let* ((ast  (org-element-parse-buffer))
-                              (revh (org-element-map ast 'headline
-                                      (lambda (hl)
-                                        (and (string-equal (org-element-property :raw-value hl)
-                                                           "Review of open action items")
-                                             hl))
-                                      nil t))
-                              (newh (org-element-map ast 'headline
-                                      (lambda (hl)
-                                        (and (string-equal (org-element-property :raw-value hl)
-                                                           "Summary of new action items")
-                                             hl))
-                                      nil t)))
-                         (concat
-                          ""
-                          (if revh
-                              (buffer-substring
-                               (org-element-property :contents-begin revh)
-                               (org-element-property :contents-end revh)))
-                          (if newh
-                              (buffer-substring
-                               (org-element-property :contents-begin newh)
-                               (org-element-property :contents-end newh))))))
-                     "")))
-  (insert "#+TITLE: ")
-  (insert title)
-  (insert ", ")
-  (insert (format-time-string "%d %B %Y" date))
-  (insert "\n")
-  (insert "#+DATE: ")
-  (insert (format-time-string "%Y-%m-%d" date))
-  (insert "\n")
-  (insert "#+AUTHOR: Niels Søndergaard
-#+STARTUP: showeverything\n")
-  (if (not (string-equal "" tags))
-      (progn
-        (insert "#+FILETAGS: ")
-        (dolist (elt (split-string tags))
-          (progn
-            (if (not (string-match-p "^:" elt))
-                (insert ":"))
-            (insert elt)))
-        (if (not (string-match-p ":$" tags))
-            (insert ":"))
-        (insert "\n")))
-  (insert "#+MEETING: ")
-  (if number
-      (insert (format "%03d" (1+ (string-to-number number))))
-    (insert "???"))
-  (insert "\n\n")
-  (insert "* Minutes
-
-   + Present: Norm, 
-     + Regrets:
-   + Scribe: Norm
-   + Accept the agenda?
-     + No objections
-   + Accept the minutes of the previous meeting
-     + No objections")
-  (if prev
-      (progn 
-        (insert ": ")
-        (insert (format-time-string "%d %B %Y" lastmtg))))
-  (insert "?
-   + Next meeting: ")
-  (insert (format-time-string "%d %B %Y" (time-add date (* 60 60 24 7))))
-  (insert "
-   + Review of open action items
-   + Status updates
-   + Any other business
-
-Review of open action items\n\n")
-  (insert actions)
-  (insert "
-
-\n")
-  (goto-char 0)
-  ))
 #+end_src
 * The end
 *** time uses
@@ -5423,6 +5368,7 @@ Review of open action items\n\n")
 :CUSTOM_ID: time uses
 :END:
 #+begin_src emacs-lisp
+
 (setq frame-title-format '("" "%b - Living The Dream (•̀ᴗ•́)و"))
 (defun display-startup-echo-area-message ()
   "The message that is shown after ‘user-init-file’ is loaded."

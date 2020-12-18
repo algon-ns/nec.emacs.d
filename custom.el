@@ -17,8 +17,6 @@
  '(mouse-wheel-progressive-speed nil)
  '(mouse-yank-at-point t)
  '(nxml-bind-meta-tab-to-complete-flag nil)
- '(org-roam-server-mode t)
- '(org-roam-server-served-file-extensions '("pdf" "mp4" "ogv"))
  '(preview-TeX-style-dir "/Users/niels/.emacs.d/straight/build/auctex/latex" t)
  '(projectile-known-projects-file "/Users/niels/.emacs.d/private/projectile-bookmarks.eld")
  '(projectile-mode-line-prefix " ✐")

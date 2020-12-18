@@ -66,7 +66,7 @@
    (setq garbage-collection-messages nil)
    (message "gc-cons-threshold and file-name-handler-alist restored")))               
 
-(defcustom nec/measure-time t
+(defcustom nec/measure-time nil
   "Do we want to measure time for this startup?"
   :group 'nec
   :type 'boolean)
@@ -90,7 +90,7 @@
     (format-time-string "%z"))))
 
 (setq nec/total-time (current-time))
-(if nec/measure-time (setq nec/nutid (current-time)))
+(setq nec/nutid (current-time))
 
 (defun nec/timer (tekst)
   (message  (concat  "→ ★ " tekst "  %.2fs" )  (float-time (time-subtract (current-time) nec/nutid)))
