@@ -16,4 +16,5 @@ org-roam.db
 emojis/.DS_Store
 lisp/gemheader.el
 lisp/NS-org-roam.org
+network-security.data
 

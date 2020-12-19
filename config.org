@@ -402,7 +402,7 @@ NAME and ARGS are as in `use-package'."
     - [[#edit-command][Edit command]]
     - [[#text-folding-with-origami-mode][Text Folding with Origami-mode]]
     - [[#dired-filefinder][Dired filefinder]]
-    - [[#flyckeck][Flyckeck]]
+    - [[#flycheck][Flycheck]]
     - [[#dashboard][Dashboard]]
     - [[#games][Games]]
 - [[#org-and-friends][org and friends]]
@@ -5024,7 +5024,7 @@ by `remember-notes-buffer-name'."
 (setq gnus-default-charset 'utf-8)
 (setq gnus-default-directory "/Users/niels/.emacs.d/private")
 (setq gnus-default-nntp-server "http://dr.dk/nyheder/service/feeds/viden")
-(setq gnus-group-change-level-function 'gnus-topic-change-level)
+;;(setq gnus-group-change-level-function 'gnus-topic-change-level)
 (setq gnus-group-update-tool-bar t)
 (setq gnus-ignored-from-addresses "niels@algon\\.dk")
 (setq gnus-local-domain "algon\\.dk")
@@ -5033,7 +5033,7 @@ by `remember-notes-buffer-name'."
 (setq gnus-sum-thread-tree-vertical "│")
 
 (setq gnus-select-method '(nntp "dr.dk/nyheder/service/feeds/viden"))
-    (add-to-list 'gnus-secondary-select-methods '(nnml ""))
+    (add-to-list 'gnus-secondary-select-methods '(nnml "mail.algon.dk"))
 (setq gnus-select-method
       '(nnimap "algon"
                (nnimap-address "mail.algon.dk")
@@ -5047,11 +5047,6 @@ by `remember-notes-buffer-name'."
                            :user "nisoni"
                            :password "baldur2780")))
 
-;;(setq send-mail-function 'smtpmail-send-it
-;;   smtpmail-smtp-server "mail.algon.dk"
-;;   smtpmail-stream-type 'network
-;;   smtpmail-smtp-service 587
-;;   smtpmail-debug-info t)
 (setq message-send-mail-function 'smtpmail-send-it
    smtpmail-default-smtp-server "mail.algon.dk"
    smtpmail-local-domain "algon.dk"
@@ -5059,8 +5054,6 @@ by `remember-notes-buffer-name'."
    smtpmail-stream-type 'network
    smtpmail-smtp-service 587
    smtpmail-debug-info t)
-
-
 ;;
 ;; Make mail look pretty
 (use-package all-the-icons-gnus
