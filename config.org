@@ -2608,7 +2608,6 @@ retrieve and display completion candidates.
 
 (defun add-yas-to-company-backends (backend)
   "Add yasnippet suggestions to the `company-mode' backend BACKEND.
-
   Returns an alist of (BACKEND :with company-yasnippet)."
   (if (or (eq backend 'company-yasnippet)
           (and (listp backend) (member 'company-yasnippet backend)))
@@ -2619,6 +2618,11 @@ retrieve and display completion candidates.
             '(:with company-yasnippet))))
 ;; set the backends if wanted---not right now
 ;; (setq company-backends (mapcar #'add-yas-to-company-backends my-company-backends))
+
+;; bibtex
+(straight-use-package '(company-bibtex :type git :flavor melpa 
+                         :host github :repo "gbgar/company-bibtex"))
+(add-to-list 'company-backends 'company-bibtex)
 
 (if nec/measure-time (nec/timer "Company   "))
 #+end_src
@@ -2753,7 +2757,7 @@ that is supports a wide range of backends for finding completions -
 bindings
 Put all keybindings here (with doc)
 #+begin_src emacs-lisp
-(global-set-key (kbd "C-x w") 'elfeed)                   ;; key to ger elfeed
+(global-set-key (kbd "C-x w") 'elfeed)                
 (global-set-key (kbd "C-+") 'text-scale-increase)
 (global-set-key (kbd "C--") 'text-scale-decrease)
 ;;rust bindings
@@ -3960,30 +3964,30 @@ Be careful that to install it, this one is available with =org-plus-contrib=.
   ;; the first one in the list (e.g. Fleeting)
   ;;
   (setq org-roam-capture-templates
-        '(("a" "Project" plain (function org-roam--capture-get-point)
+        '(("a" "andet" plain (function org-roam--capture-get-point)
            "%?"
-           :file-name "roam/projects/%<%Y%m%d%H%M%S>---${slug}"
+           :file-name "roam/%<%Y%m%d%H%M%S>-${slug}"
            :head  "#+title: ${title}\n#+roam_tags:\n* ${title}\n\n"
            :unnarrowed t
            :immediate-finish t)
           ("4" "4eren" plain (function org-roam--capture-get-point)
            "%?"
-           :file-name "roam/4eren/%<%Y%m%d%H%M%S>---${slug}"
+           :file-name "roam/4eren/%<%Y%m%d%H%M%S>-${slug}"
            :head "#+title: ${title}\n#+roam_tags:\n* ${title}\n\n"
            :unnarrowed t)
-          ("b" "Bibliographic" plain (function org-roam--capture-get-point)
+          ("b" "bibliographic" plain (function org-roam--capture-get-point)
            "%?"
-           :file-name "roam/bibliographies/%<%Y%m%d%H%M%S>---${slug}"
+           :file-name "roam/bibliography/%<%Y%m%d%H%M%S>-${slug}"
            :head "#+title: ${title}\n#+roam_tags:\n* ${title}\n\n"
            :unnarrowed t)
           ("u" "roam unsorted" plain (function org-roam--capture-get-point)
            "%?"
-           :file-name "roam/000-unsorted---${slug}"
+           :file-name "roam/%<%Y%m%d%H%M%S>-${slug}"
            :head "#+title: ${title}\n#+roam_tags:\n* ${title}\n\n"
            :unnarrowed t)
           ("e" "emacs" plain (function org-roam--capture-get-point)
            "%?"
-           :file-name "roam/emacs/%<%Y%m%d%H%M%S>---${slug}"
+           :file-name "roam/emacs/%<%Y%m%d%H%M%S>-${slug}"
            :head "#+title: ${title}\n#+roam_tags:\n* ${title}\n\n"
            :unnarrowed t)
           
@@ -3993,27 +3997,27 @@ Be careful that to install it, this one is available with =org-plus-contrib=.
 ;;           :head  "#+title: ${title}\n#+roam_tags:\n* ${title}\n\n"
 ;;           :unnarrowed t
 ;;           :immediate-finish t)
-          ("i" "Project > iniziu" plain (function org-roam--capture-get-point)
+          ("i" "iniziu" plain (function org-roam--capture-get-point)
            "%?"
-           :file-name "roam/iniziu/%<%Y%m%d%H%M%S>---${slug}"
+           :file-name "roam/iniziu/%<%Y%m%d%H%M%S>-${slug}"
            :head  "#+title: ${title}\n#+roam_tags:\n* ${title}\n\n"
            :unnarrowed t
            :immediate-finish t)
-          ("s" "Project > Seniorråd" plain (function org-roam--capture-get-point)
+          ("s" "seniorråd" plain (function org-roam--capture-get-point)
            "%?"
            :file-name "roam/seniorraad/%<%Y%m%d%H%M%S>---${slug}"
            :head  "#+title: ${title}\n#+roam_tags:\n* ${title}\n\n"
            :unnarrowed t
            :immediate-finish t)
-          ("o" "Project > andre" plain (function org-roam--capture-get-point)
+;;          ("o" "andre" plain (function org-roam--capture-get-point)
+;;           "%?"
+;;           :file-name "/roam/andre/%<%Y%m%d%H%M%S>---${slug}"
+;;           :head  "#+title: ${title}\n#+roam_tags:\n* ${title}\n\n"
+;;           :unnarrowed t
+;;           :immediate-finish t)
+          ("n" "niels" plain (function org-roam--capture-get-point)
            "%?"
-           :file-name "/roam/andre/%<%Y%m%d%H%M%S>---${slug}"
-           :head  "#+title: ${title}\n#+roam_tags:\n* ${title}\n\n"
-           :unnarrowed t
-           :immediate-finish t)
-          ("n" "roam/niels" plain (function org-roam--capture-get-point)
-           "%?"
-           :file-name "roam/niels/%<%Y%m%d%H%M%S>---${slug}"
+           :file-name "roam/niels/%<%Y%m%d%H%M%S>-${slug}"
            :head  "#+title: ${title}\n#+roam_tags:\n* ${title}\n\n"
            :unnarrowed t
            :immediate-finish t))))
@@ -4028,8 +4032,8 @@ Be careful that to install it, this one is available with =org-plus-contrib=.
        (org-roam-find-file (concat ,project " ") completions filter-nf no-confirm))))
 
 (go-roam-find-file-project-fn "niels")
-(go-roam-find-file-project-fn "andre")
-(go-roam-find-file-project-fn "bibliographies")
+(go-roam-find-file-project-fn "emacs")
+(go-roam-find-file-project-fn "bibliography")
 (go-roam-find-file-project-fn "4eren")
 (go-roam-find-file-project-fn "seniorraad")
 (go-roam-find-file-project-fn "iniziu")
@@ -4044,7 +4048,7 @@ Be careful that to install it, this one is available with =org-plus-contrib=.
     ("h" go-roam-find-iniziu "Iniziu")
     ("s" go-roam-find-andre "Andre"))
    ))
-(global-set-key (kbd "s-1") 'jnf-find-file-in-roam-project/body)
+(global-set-key (kbd "s-1") 'jnf-find-file-in-roam-project)
 
 (use-package org-roam-server
   :straight t
@@ -4246,7 +4250,6 @@ easier on the eyes. For more, see the brief [[https://www.dailymotion.com/video/
 *** org-ref
 #+begin_src emacs-lisp
 
-
 (straight-use-package '(org-ref :type git :flavor melpa :files 
                        (:defaults "org-ref.org" "org-ref.bib" "citeproc" "org-ref-pkg.el") 
                         :host github :repo "jkitchin/org-ref"))
@@ -4264,7 +4267,14 @@ easier on the eyes. For more, see the brief [[https://www.dailymotion.com/video/
 (straight-use-package '(ebib :type git :flavor melpa :host github :repo "joostkremers/ebib"))
 (global-set-key "\C-ce" 'ebib)
 (require 'org-ebib)
-(setq ebib-bib-search-dirs '("~/Dropbox/bibliography/"))
+(setq ebib-default-directory "~/Dropbox/org/bibliography/")
+(setq ebib-file-search-dirs '("~/Dropbox/org/bibliography/"))
+(setq ebib-filters-default-file "~/.emacs.d/private/ebib-filters")
+(setq ebib-filters-default-file "~/.emacs.d/private/ebib-filters")
+(setq ebib-extra-fields
+   '((biblatex "crossref" "annotation" "abstract" "keywords" "file" "timestamp" "isbn")
+     (BibTeX "crossref" "annote" "abstract" "keywords" "file" "timestamp" "url" "doi")))
+(setq ebib-bibtex-dialect "biblatex")
 (setq ebib-hide-cursor nil)
 (setq ebib-uniquify-keys t)
 (setq ebib-use-timestamp t)
@@ -4308,10 +4318,10 @@ easier on the eyes. For more, see the brief [[https://www.dailymotion.com/video/
     (if nec/measure-time (nec/timer "LaTeX / AUCTeX "))
     ;; Setup the compiler and the PDF process
     (setq org-latex-compiler "lualatex")
-    ;;(setq org-latex-pdf-process
-    ;;      (list (concat "latexmk -"
-    ;;                    org-latex-compiler 
-    ;;                    " -recorder -synctex=1 -bibtex-cond %b")))
+    (setq org-latex-pdf-process
+          (list (concat "latexmk -"
+                        org-latex-compiler 
+                        " -recorder -synctex=1 -bibtex-cond %b")))
     ;; Use lstlstings
     (setq org-latex-listings t)
     ;; The docs for org-latex-default-packages-alist suggest that
@@ -5089,7 +5099,7 @@ In an attempt to do even more in emacs, i've installed `elfeed' and imported my 
     :straight t
     :after notifications
     :commands elfeed
-    :bind (("C-c f" . 'elfeed)
+    :bind (("C-c f" . 'elfeed-dashboard)
            :map elfeed-show-mode-map
            ("w" . 'mrb/elfeed-show-toggle-watchlater)
            ("v" . 'mrb/elfeed-play-with-mpv)
@@ -5351,7 +5361,7 @@ We want to give all nye (and old) emacs-lisp files a header)
                                  (visual-line-mode t)
 ;;            (writegood-mode t
                                  (flyspell-mode t)))
-(setq markdown-command "pandoc --smart -f markdown -t html")
+(setq markdown-command "pandoc -f markdown -t html")
 (setq markdown-css-paths `(,(expand-file-name "markdown.css" "private/md-dir")))
 (if nec/measure-time (nec/timer "MarkDown "))
 #+end_src
