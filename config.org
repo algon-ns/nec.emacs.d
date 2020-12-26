@@ -412,17 +412,17 @@ NAME and ARGS are as in `use-package'."
     - [[#org-journal][org journal]]
     - [[#doct-and-org-capture][doct and org-capture]]
     - [[#org-agenda][org-agenda]]
+    - [[#org-roam][org roam]]
+    - [[#deft][deft]]
+    - [[#org-ref][org-ref]]
     - [[#org-super-agenda][org super agenda]]
     - [[#org-contact][org contact]]
-    - [[#org-roam][org roam]]
     - [[#org-tree-slide][org tree slide]]
     - [[#org-mac-ical][org mac iCal]]
     - [[#org-cliplink][org cliplink]]
     - [[#væk-mig][Væk mig]]
-    - [[#org-brain][org brain]]
     - [[#org-manage][org manage]]
     - [[#excellent-pdf-viewer][excellent PDF Viewer]]
-    - [[#org-ref][org-ref]]
     - [[#latex][LaTeX]]
 - [[#applications][Applications]]
     - [[#calendar][Calendar]]
@@ -436,9 +436,9 @@ NAME and ARGS are as in `use-package'."
     - [[#elfeed][Elfeed]]
     - [[#ledger-mode][ledger-mode]]
 - [[#languages][Languages]]
+    - [[#projectile][Projectile]]
     - [[#header-for-new-files][Header for new files]]
     - [[#python][Python]]
-    - [[#projectile][Projectile]]
     - [[#rust][Rust]]
     - [[#php][PHP]]
     - [[#dap-debug-adapter-protocol][DAP (debug adapter protocol)]]
@@ -1021,13 +1021,14 @@ If Non-nil, use dashboard, otherwise will restore previous session."
     ("#+SETUPFILE:" . ?)    ("#+setupfile:" . ?)
     ("#+TAGS:" . ?)    ("#+tags:" . ?)
     ("#+LATEX:" . ?)    ("#+latex:" . ?)
+    ("#+LaTeX:" . ?)    ("#+latex:" . ?)
     ("#+TITLE:" . ?)    ("#+title:" . ?)
     ("#+PROPERTIES:" . ?💡)    ("#+property:" . ?💡)
     ("#+BEGIN_SRC" . ?✎)    ("#+begin_src" . ?✎)
     ("#+END_SRC" . ?□)    ("#+end_src" . ?□)
     ("#+BEGIN_QUOTE" . ?»)    ("#+begin_quote" . ?»)
     ("#+END_QUOTE" . ?«)    ("#+END_QUOTE" . ?«)
-    ("#+HEADERS" . ?)    ("#+HEADERS" . ?)
+    ("#+LATEX_HEADERS:" . ?)    ("#+LaTeX_Headers:" . ?)
     ("#+RESULTS:" . ?)    ("#+RESULTS:" . ?)
     (":LOGBOOK:" . ?▤)
     ( ":END:" . ?⏏))
@@ -3154,6 +3155,11 @@ blocks! Love this one ^_^
     ;;  :straight t
     ;;  :bind (("C-c s" . dired-sidebar-toggle-sidebar)))
     (if nec/measure-time (nec/timer "Dired   "))
+;; new dired extensions
+(require'diredc)
+(global-set-key (kbd "S-<f11>") 'diredc)
+(global-set-key [remap dired-other-frame] 'diredc)
+
 #+end_src
 *** Flycheck
 :PROPERTIES:
@@ -3820,6 +3826,323 @@ multiple times below:
   ;;(org-caldav-sync)
   (if nec/measure-time (nec/timer "org agenda" ))
 #+end_src
+*** org roam
+
+:PROPERTIES:
+:ID:       D931D321-FC5E-4F6A-9411-EDE1B78E766E
+:END:
+#+begin_src emacs-lisp
+;;; jnf-org-roam.el --- Summary
+;;; Commentary:
+;;
+;;  This package provides configuration for org-roam
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; BEGIN ORG ROAM  and concerns
+;;
+;; With the latest update of org-roam, things again behavior
+;; correctly.  Now I can just load org-roam as part of my day to day
+;;; Code:
+;;Set place of database (ns 20. november 2020)
+(setq org-roam-directory "/Users/niels/Dropbox/org/roam/")
+(setq org-roam-index-file "/Users/niels/Dropbox/org/roam/Index.org")
+(setq org-roam-db-location "/Users/niels/Dropbox/org/roam/org-roam.db")
+(use-package org-roam
+  :straight t
+  :diminish " ♨"
+  :after pretty-hydra
+  :hook (after-init . org-roam-mode)
+  :custom (org-roam-directory "~/Dropbox/org/roam/")
+  :bind (:map org-roam-mode-map
+              (("C-c r l" . org-roam)
+               ("C-c r f" . org-roam-find-file)
+               ("C-c r i" . org-roam-insert)
+               ("C-c r c" . org-roam-capture)
+               ("C-c r x" . org-roam-jump-to-index)
+               ("C-c r g" . org-roam-graph-show))
+              :map org-mode-map
+              (("C-c r c" . org-roam-capture))
+              (("C-c r x" . org-roam-jump-to-index)))
+  ;; Use the traditional org first "*" element then the "#+title:"
+  ;; property to establish the title of the object, then append the
+  ;; "#+roam_alias:" as alternate titles
+  :init (setq org-roam-tag-sources '(prop all-directories))
+        (setq org-roam-buffer-position 'left
+           org-roam-buffer-width 0.25
+           org-roam-index-file "/Users/niels/Dropbox/org/roam/Index.org"
+           org-roam-graph-extra-config '(("overlap" . "false"))
+           org-roam-graph-exclude-matcher '("archive" "PRIVAT" "blog" "books" 
+                                           "init" "Journal" "regularly" "tasks" "work")
+           org-roam-completion-system 'ivy)
+        (setq org-roam-graph-node-extra-config '(("shape" . "ellipse")   
+                                                 ("style" . "rounded,filled")
+                                                 ("fillcolor" . "#EFEFFF")
+                                                 ("color" . "#DEDEFF")
+                                                 ("fontcolor" . "#111111")))
+  (setq org-roam-graph-viewer nil)
+  ;;(setq org-roam-graph-viewer "neato")
+  (use-package org-roam-protocol
+    :straight (:type built-in)
+    :after org-roam)
+
+  ;; First use "#+roam_tags:" then the directory structure to build the
+  ;; list of tags.
+  ;;
+  ;; See https://www.orgroam.com/manual/Tags.html#Tags
+  ;;
+  (setq org-roam-title-sources '((title headline) alias))
+  (setq org-roam-update-db-idle-seconds 300)
+  ;; Note: Order of these templates matters. The `org-roam-insert-immediate` uses
+  ;; the first one in the list (e.g. Fleeting)
+  ;;
+  (setq org-roam-capture-templates
+        '(("a" "andet" plain (function org-roam--capture-get-point)
+           "%?"
+           :file-name "%<%Y%m%d%H%M%S>-${slug}"
+           :head  "#+title: ${title}\n#+roam_tags:\n* ${title}\n\n"
+           :unnarrowed t
+           :immediate-finish t)
+          ("4" "4eren" plain (function org-roam--capture-get-point)
+           "%?"
+           :file-name "4eren/%<%Y%m%d%H%M%S>-${slug}"
+           :head "#+title: ${title}\n#+roam_tags:\n* ${title}\n\n"
+           :unnarrowed t)
+          ("b" "bibliographic" plain (function org-roam--capture-get-point)
+           "%?"
+           :file-name "bibliography/%<%Y%m%d%H%M%S>-${slug}"
+           :head "#+title: ${title}\n#+roam_tags:\n* ${title}\n\n"
+           :unnarrowed t)
+          ("u" "roam unsorted" plain (function org-roam--capture-get-point)
+           "%?"
+           :file-name "%<%Y%m%d%H%M%S>-${slug}"
+           :head "#+title: ${title}\n#+roam_tags:\n* ${title}\n\n"
+           :unnarrowed t)
+          ("e" "emacs" plain (function org-roam--capture-get-point)
+           "%?"
+           :file-name "emacs/%<%Y%m%d%H%M%S>-${slug}"
+           :head "#+title: ${title}\n#+roam_tags:\n* ${title}\n\n"
+           :unnarrowed t)
+          
+;;          ("d" "Project > Diversity Equity Incluson (DEI)" plain (function org-roam--capture-get-point)
+;;           "%?"
+;;           :file-name "projects/diversity-equity-inclusion/%<%Y%m%d%H%M%S>---${slug}"
+;;           :head  "#+title: ${title}\n#+roam_tags:\n* ${title}\n\n"
+;;           :unnarrowed t
+;;           :immediate-finish t)
+          ("i" "iniziu" plain (function org-roam--capture-get-point)
+           "%?"
+           :file-name "iniziu/%<%Y%m%d%H%M%S>-${slug}"
+           :head  "#+title: ${title}\n#+roam_tags:\n* ${title}\n\n"
+           :unnarrowed t
+           :immediate-finish t)
+          ("s" "seniorråd" plain (function org-roam--capture-get-point)
+           "%?"
+           :file-name "seniorraad/%<%Y%m%d%H%M%S>---${slug}"
+           :head  "#+title: ${title}\n#+roam_tags:\n* ${title}\n\n"
+           :unnarrowed t
+           :immediate-finish t)
+;;          ("o" "andre" plain (function org-roam--capture-get-point)
+;;           "%?"
+;;           :file-name "/roam/andre/%<%Y%m%d%H%M%S>---${slug}"
+;;           :head  "#+title: ${title}\n#+roam_tags:\n* ${title}\n\n"
+;;           :unnarrowed t
+;;           :immediate-finish t)
+          ("n" "niels" plain (function org-roam--capture-get-point)
+           "%?"
+           :file-name "niels/%<%Y%m%d%H%M%S>-${slug}"
+           :head  "#+title: ${title}\n#+roam_tags:\n* ${title}\n\n"
+           :unnarrowed t
+           :immediate-finish t))))
+
+(defmacro go-roam-find-file-project-fn (project)
+  "Define a function to find an `org-roam' file within the given PROJECT."
+  (let* ((fn-name (intern (concat "go-roam-find-" (replace-regexp-in-string " +" "-" project))))
+         (docstring (concat "Find an `org-roam' file for: " project)))
+    `(defun ,fn-name (&optional completions filter-nf no-confirm)
+       ,docstring
+       (interactive)
+       (org-roam-find-file (concat ,project " ") completions filter-nf no-confirm))))
+
+(go-roam-find-file-project-fn "niels")
+(go-roam-find-file-project-fn "emacs")
+(go-roam-find-file-project-fn "bibliography")
+(go-roam-find-file-project-fn "4eren")
+(go-roam-find-file-project-fn "seniorraad")
+(go-roam-find-file-project-fn "iniziu")
+;;(defvar jnf-find-file-in-roam-project--title ("Find File in Roam Project" 1 -0.05))
+(pretty-hydra-define jnf-find-file-in-roam-project (:foreign-keys warn :title jnf-find-file-in-roam-project--title :quit-key "q")
+  (
+   "roam"
+   (("b" go-roam-find-permanent-bibliographies "Bibliography")
+    ("4" go-roam-find-permanent-4eren "4eren")
+    ("a" go-roam-find-niels "Niels")
+    ("t" go-roam-find-seniorraad "Seniorråd")
+    ("h" go-roam-find-iniziu "Iniziu")
+    ("s" go-roam-find-andre "Andre"))
+   ))
+(global-set-key (kbd "s-1") 'jnf-find-file-in-roam-project)
+;;;;;;;;;
+(use-package company-org-roam
+  :straight (:host github :repo "org-roam/company-org-roam")
+  :config
+  (push 'company-org-roam company-backends))
+
+;;;;;;;;;;
+(defun org-roam/init-org-roam-bibtex()
+   (straight-use-package '(org-roam-bibtex :type git :flavor melpa 
+                        :host github :repo "org-roam/org-roam-bibtex")
+           :hook (org-roam-mode . org-roam-bibtex-mode)))
+
+;;;;;;;;;;
+
+(setq org-roam-graph-exclude-matcher '("andet" "daily" "liberal"))
+(use-package org-roam-server
+  :straight t
+;;  :after org-roam
+  :config
+  (setq org-roam-server-host "127.0.0.1"
+        org-roam-server-port 8080
+        org-roam-server-export-inline-images t
+        org-roam-server-authenticate nil
+        org-roam-server-serve-files nil
+        org-roam-server-served-file-extensions '("pdf" "mp4" "ogv")    
+        org-roam-server-network-poll t
+        org-roam-server-network-arrows nil
+        org-roam-server-network-label-truncate t
+        org-roam-server-network-label-truncate-length 60
+        org-roam-server-network-label-wrap-length 20))
+(setq org-roam-server-mode t)
+;; https://ag91.github.io/blog/2020/11/12/write-org-roam-notes-via-elisp/
+(defun jnf/make-filepath (title now &optional zone)
+  "Make filename from note TITLE and NOW time (assumed in the current time ZONE)."
+  (f-join
+   org-roam-directory
+   "roam"
+   (concat
+    (format-time-string "%Y%m%d%H%M%S-" now (or zone (current-time-zone)))
+    (org-roam--title-to-slug title)
+    ".org")))
+
+(defun jnf/insert-org-roam-file (file-path title &optional links sources text quote)
+  "Insert org roam file in FILE-PATH with TITLE, LINKS, SOURCES, TEXT, QUOTE."
+  (with-temp-file file-path
+    (insert
+     "#+TITLE: " title
+     "\n\n- tags :: " (--reduce (concat acc ", " it) links) "\n"
+     (if sources (concat "- source :: " (--reduce (concat acc ", " it) sources) "\n") "")
+     "\n"
+     (if text text "")
+     "\n"
+     "\n"
+     (if quote
+         (concat "#+begin_src text \n"
+     quote "\n"
+     "#+end_src")
+       ""))))
+
+(defun send-roaming ()
+  "Convert an org node to a `org-roam' note."
+  (interactive)
+  (let* ((heading (org-get-heading t t t t))
+         (body (org-get-entry))
+         (link (format "[[id:%s][%s]]" (org-id-get-create) heading))
+         (filepath (jnf/make-filepath heading (current-time))))
+    (jnf/insert-org-roam-file
+     filepath
+     heading
+     nil
+     (list link)
+     (format "* Note stored from tasks\n%s" body)
+     nil)
+    (find-file filepath)))
+
+;; Some hot keys to jump to often different relevant files
+;; Jump to the current clock if one is open, otherwise, go to my agenda file.
+(global-set-key (kbd "s-i") 'org-roam-insert)
+(provide 'jnf-org-roam.el)
+;;; jnf-org-roam.el ends here
+#+end_src
+*** deft
+#+begin_src emacs-lisp
+(straight-use-package '(deft :type git :flavor melpa 
+                             :host github :repo "jrblevin/deft"))
+    (setq deft-default-extension "org")
+    (setq deft-extensions '("txt" "tex" "md" "org"))
+    (setq deft-directory "~/org")
+    (setq deft-recursive t)
+    (setq deft-use-filename-as-title nil)
+    (setq deft-use-filter-string-for-filename t)
+    (setq deft-file-naming-rules '((noslash . "-")
+                                   (nospace . "-")
+                                   (case-fn . downcase)))
+    (setq deft-text-mode 'org-mode)
+    (global-set-key (kbd "C-M-S-s-d") 'deft)
+    (global-set-key (kbd "C-x C-g") 'deft-find-file)
+;;;;;;;;;
+(setq
+ bibtex-completion-notes-path "~/Dropbox/org/roam/"
+ bibtex-completion-bibliography "~/Dropbox/org/roam/zotLib.bib"
+ bibtex-completion-pdf-field "file"
+ bibtex-completion-notes-template-multiple-files
+ (concat
+  "#+TITLE: ${title}\n"
+  "#+ROAM_KEY: cite:${=key=}\n"
+  "* TODO Notes\n"
+  ":PROPERTIES:\n"
+  ":Custom_ID: ${=key=}\n"
+  ":NOTER_DOCUMENT: %(orb-process-file-field \"${=key=}\")\n"
+  ":AUTHOR: ${author-abbrev}\n"
+  ":JOURNAL: ${journaltitle}\n"
+  ":DATE: ${date}\n"
+  ":YEAR: ${year}\n"
+;;  ":DOI: ${doi}\n"
+  ":URL: ${url}\n"
+  ":END:\n\n"
+  )
+ )
+#+end_src
+*** org-ref
+#+begin_src emacs-lisp
+(straight-use-package '(org-ref :type git :flavor melpa :files 
+                       (:defaults "org-ref.org" "org-ref.bib" "citeproc" "org-ref-pkg.el") 
+                        :host github :repo "jkitchin/org-ref"))
+;; see org-ref for use of these variables
+(setq org-ref-bibliography-notes "~/Dropbox/org/bibliography/notes.org"
+      org-ref-default-bibliography '("~/Dropbox/org/bibliography/references.bib")
+      org-ref-pdf-directory "~/Dropbox/org/bibliography/bibtex-pdfs/")
+(setq bibtex-completion-bibliography "~/Dropbox/org/bibliography/references.bib"
+      bibtex-completion-library-path "~/Dropbox/org/bibliography/bibtex-pdfs"
+      bibtex-completion-notes-path "~/Dropbox/org/bibliography/helm-bibtex-notes")
+;; open pdf with system pdf viewer (works on mac)
+(setq
+         org-ref-completion-library 'org-ref-ivy-cite
+         org-ref-get-pdf-filename-function 'org-ref-get-pdf-filename-helm-bibtex
+;;         org-ref-default-bibliography (list "/home/haozeke/GDrive/zotLib.bib")
+         org-ref-bibliography-notes "~/Dropbox/org/roam/bibnotes.org"
+         org-ref-note-title-format "* TODO %y - %t\n :PROPERTIES:\n  :Custom_ID: %k\n  :NOTER_DOCUMENT: %F\n :ROAM_KEY: cite:%k\n  :AUTHOR: %9a\n  :JOURNAL: %j\n  :YEAR: %y\n  :VOLUME: %v\n  :PAGES: %p\n  :DOI: %D\n  :URL: %U\n :END:\n\n"
+         org-ref-notes-directory "~/Dropbox/org/roam/Notes/"
+         org-ref-notes-function 'orb-edit-notes
+    )
+
+;;
+(setq bibtex-completion-pdf-open-function
+  (lambda (fpath)
+    (start-process "open" "*open*" "open" fpath)))
+(straight-use-package '(ebib :type git :flavor melpa :host github :repo "joostkremers/ebib"))
+(global-set-key "\C-ce" 'ebib)
+(require 'org-ebib)
+(setq ebib-default-directory "~/Dropbox/org/bibliography/")
+(setq ebib-file-search-dirs '("~/Dropbox/org/bibliography/"))
+(setq ebib-filters-default-file "~/.emacs.d/private/ebib-filters")
+(setq ebib-filters-default-file "~/.emacs.d/private/ebib-filters")
+(setq ebib-extra-fields
+   '((biblatex "crossref" "annotation" "abstract" "keywords" "file" "timestamp" "isbn")
+     (BibTeX "crossref" "annote" "abstract" "keywords" "file" "timestamp" "url" "doi")))
+(setq ebib-bibtex-dialect "biblatex")
+(setq ebib-hide-cursor nil)
+(setq ebib-uniquify-keys t)
+(setq ebib-use-timestamp t)
+(setq ebib-default-dir "/Users/niels/Dropbox/org/bibliography/")
+#+end_src
 *** org super agenda
 :PROPERTIES:
 :CUSTOM_ID: Super-Agenda
@@ -3897,225 +4220,6 @@ Be careful that to install it, this one is available with =org-plus-contrib=.
 (setq org-contacts-files '("~/Dropbox/org/agenda/contacts.org"))
 (if nec/measure-time (nec/timer "org-contact"))
 #+end_src
-*** org roam
-:PROPERTIES:
-:ID:       D931D321-FC5E-4F6A-9411-EDE1B78E766E
-:END:
-#+begin_src emacs-lisp
-;;; jnf-org-roam.el --- Summary
-;;; Commentary:
-;;
-;;  This package provides configuration for org-roam
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; BEGIN ORG ROAM  and concerns
-;;
-;; With the latest update of org-roam, things again behavior
-;; correctly.  Now I can just load org-roam as part of my day to day
-;;; Code:
-;;Set place of database (ns 20. november 2020)
-(setq org-roam-directory "/Users/niels/Dropbox/org/roam/")
-(setq org-roam-index-file "/Users/niels/Dropbox/org/roam/Index.org")
-(setq org-roam-db-location "/Users/niels/Dropbox/org/roam/org-roam.db")
-(use-package org-roam
-  :straight t
-  :diminish " ♨"
-  :after pretty-hydra
-  :hook (after-init . org-roam-mode)
-  :custom (org-roam-directory "~/Dropbox/org/roam")
-  :bind (:map org-roam-mode-map
-              (("C-c r l" . org-roam)
-               ("C-c r f" . org-roam-find-file)
-               ("C-c r i" . org-roam-insert)
-               ("C-c r c" . org-roam-capture)
-               ("C-c r x" . org-roam-jump-to-index)
-               ("C-c r g" . org-roam-graph-show))
-              :map org-mode-map
-              (("C-c r c" . org-roam-capture))
-              (("C-c r x" . org-roam-jump-to-index)))
-  ;; Use the traditional org first "*" element then the "#+title:"
-  ;; property to establish the title of the object, then append the
-  ;; "#+roam_alias:" as alternate titles
-  :init (setq org-roam-tag-sources '(prop all-directories))
-        (setq org-roam-buffer-position 'left
-           org-roam-buffer-width 0.25
-           org-roam-index-file "/Users/niels/Dropbox/org/roam/index.org"
-           org-roam-graph-extra-config '(("overlap" . "false"))
-           org-roam-graph-exclude-matcher '("archive" "PRIVAT" "blog" "books" 
-                                           "init" "Journal" "regularly" "tasks" "work")
-           org-roam-completion-system 'ivy)
-        (setq org-roam-graph-node-extra-config '(("shape" . "ellipse")   
-                                                 ("style" . "rounded,filled")
-                                                 ("fillcolor" . "#EFEFFF")
-                                                 ("color" . "#DEDEFF")
-                                                 ("fontcolor" . "#111111")))
-  (setq org-roam-graph-viewer nil)
-  (use-package org-roam-protocol
-    :straight (:type built-in)
-    :after org-roam)
-
-  ;; First use "#+roam_tags:" then the directory structure to build the
-  ;; list of tags.
-  ;;
-  ;; See https://www.orgroam.com/manual/Tags.html#Tags
-  ;;
-  (setq org-roam-title-sources '((title headline) alias))
-  (setq org-roam-update-db-idle-seconds 300)
-  ;; Note: Order of these templates matters. The `org-roam-insert-immediate` uses
-  ;; the first one in the list (e.g. Fleeting)
-  ;;
-  (setq org-roam-capture-templates
-        '(("a" "andet" plain (function org-roam--capture-get-point)
-           "%?"
-           :file-name "roam/%<%Y%m%d%H%M%S>-${slug}"
-           :head  "#+title: ${title}\n#+roam_tags:\n* ${title}\n\n"
-           :unnarrowed t
-           :immediate-finish t)
-          ("4" "4eren" plain (function org-roam--capture-get-point)
-           "%?"
-           :file-name "roam/4eren/%<%Y%m%d%H%M%S>-${slug}"
-           :head "#+title: ${title}\n#+roam_tags:\n* ${title}\n\n"
-           :unnarrowed t)
-          ("b" "bibliographic" plain (function org-roam--capture-get-point)
-           "%?"
-           :file-name "roam/bibliography/%<%Y%m%d%H%M%S>-${slug}"
-           :head "#+title: ${title}\n#+roam_tags:\n* ${title}\n\n"
-           :unnarrowed t)
-          ("u" "roam unsorted" plain (function org-roam--capture-get-point)
-           "%?"
-           :file-name "roam/%<%Y%m%d%H%M%S>-${slug}"
-           :head "#+title: ${title}\n#+roam_tags:\n* ${title}\n\n"
-           :unnarrowed t)
-          ("e" "emacs" plain (function org-roam--capture-get-point)
-           "%?"
-           :file-name "roam/emacs/%<%Y%m%d%H%M%S>-${slug}"
-           :head "#+title: ${title}\n#+roam_tags:\n* ${title}\n\n"
-           :unnarrowed t)
-          
-;;          ("d" "Project > Diversity Equity Incluson (DEI)" plain (function org-roam--capture-get-point)
-;;           "%?"
-;;           :file-name "projects/diversity-equity-inclusion/%<%Y%m%d%H%M%S>---${slug}"
-;;           :head  "#+title: ${title}\n#+roam_tags:\n* ${title}\n\n"
-;;           :unnarrowed t
-;;           :immediate-finish t)
-          ("i" "iniziu" plain (function org-roam--capture-get-point)
-           "%?"
-           :file-name "roam/iniziu/%<%Y%m%d%H%M%S>-${slug}"
-           :head  "#+title: ${title}\n#+roam_tags:\n* ${title}\n\n"
-           :unnarrowed t
-           :immediate-finish t)
-          ("s" "seniorråd" plain (function org-roam--capture-get-point)
-           "%?"
-           :file-name "roam/seniorraad/%<%Y%m%d%H%M%S>---${slug}"
-           :head  "#+title: ${title}\n#+roam_tags:\n* ${title}\n\n"
-           :unnarrowed t
-           :immediate-finish t)
-;;          ("o" "andre" plain (function org-roam--capture-get-point)
-;;           "%?"
-;;           :file-name "/roam/andre/%<%Y%m%d%H%M%S>---${slug}"
-;;           :head  "#+title: ${title}\n#+roam_tags:\n* ${title}\n\n"
-;;           :unnarrowed t
-;;           :immediate-finish t)
-          ("n" "niels" plain (function org-roam--capture-get-point)
-           "%?"
-           :file-name "roam/niels/%<%Y%m%d%H%M%S>-${slug}"
-           :head  "#+title: ${title}\n#+roam_tags:\n* ${title}\n\n"
-           :unnarrowed t
-           :immediate-finish t))))
-
-(defmacro go-roam-find-file-project-fn (project)
-  "Define a function to find an `org-roam' file within the given PROJECT."
-  (let* ((fn-name (intern (concat "go-roam-find-" (replace-regexp-in-string " +" "-" project))))
-         (docstring (concat "Find an `org-roam' file for: " project)))
-    `(defun ,fn-name (&optional completions filter-nf no-confirm)
-       ,docstring
-       (interactive)
-       (org-roam-find-file (concat ,project " ") completions filter-nf no-confirm))))
-
-(go-roam-find-file-project-fn "niels")
-(go-roam-find-file-project-fn "emacs")
-(go-roam-find-file-project-fn "bibliography")
-(go-roam-find-file-project-fn "4eren")
-(go-roam-find-file-project-fn "seniorraad")
-(go-roam-find-file-project-fn "iniziu")
-;;(defvar jnf-find-file-in-roam-project--title ("Find File in Roam Project" 1 -0.05))
-(pretty-hydra-define jnf-find-file-in-roam-project (:foreign-keys warn :title jnf-find-file-in-roam-project--title :quit-key "q")
-  (
-   "roam"
-   (("b" go-roam-find-permanent-bibliographies "Bibliography")
-    ("4" go-roam-find-permanent-4eren "4eren")
-    ("a" go-roam-find-niels "Niels")
-    ("t" go-roam-find-seniorraad "Seniorråd")
-    ("h" go-roam-find-iniziu "Iniziu")
-    ("s" go-roam-find-andre "Andre"))
-   ))
-(global-set-key (kbd "s-1") 'jnf-find-file-in-roam-project)
-
-(use-package org-roam-server
-  :straight t
-  :after org-roam
-  :config
-  (setq org-roam-server-host "127.0.0.1"
-        org-roam-server-port 8080
-        org-roam-server-export-inline-images t
-        org-roam-server-authenticate nil
-        org-roam-server-serve-files nil
-        org-roam-server-served-file-extensions '("pdf" "mp4" "ogv")    
-        org-roam-server-network-poll t
-        org-roam-server-network-arrows nil
-        org-roam-server-network-label-truncate t
-        org-roam-server-network-label-truncate-length 60
-        org-roam-server-network-label-wrap-length 20))
-(setq org-roam-server-mode t)
-;; https://ag91.github.io/blog/2020/11/12/write-org-roam-notes-via-elisp/
-(defun jnf/make-filepath (title now &optional zone)
-  "Make filename from note TITLE and NOW time (assumed in the current time ZONE)."
-  (f-join
-   org-roam-directory
-   "roam"
-   (concat
-    (format-time-string "%Y%m%d%H%M%S-" now (or zone (current-time-zone)))
-    (org-roam--title-to-slug title)
-    ".org")))
-
-(defun jnf/insert-org-roam-file (file-path title &optional links sources text quote)
-  "Insert org roam file in FILE-PATH with TITLE, LINKS, SOURCES, TEXT, QUOTE."
-  (with-temp-file file-path
-    (insert
-     "#+TITLE: " title
-     "\n\n- tags :: " (--reduce (concat acc ", " it) links) "\n"
-     (if sources (concat "- source :: " (--reduce (concat acc ", " it) sources) "\n") "")
-     "\n"
-     (if text text "")
-     "\n"
-     "\n"
-     (if quote
-         (concat "#+begin_src text \n"
-     quote "\n"
-     "#+end_src")
-       ""))))
-
-(defun send-roaming ()
-  "Convert an org node to a `org-roam' note."
-  (interactive)
-  (let* ((heading (org-get-heading t t t t))
-         (body (org-get-entry))
-         (link (format "[[id:%s][%s]]" (org-id-get-create) heading))
-         (filepath (jnf/make-filepath heading (current-time))))
-    (jnf/insert-org-roam-file
-     filepath
-     heading
-     nil
-     (list link)
-     (format "* Note stored from tasks\n%s" body)
-     nil)
-    (find-file filepath)))
-
-;; Some hot keys to jump to often different relevant files
-;; Jump to the current clock if one is open, otherwise, go to my agenda file.
-(global-set-key (kbd "s-i") 'org-roam-insert)
-(provide 'jnf-org-roam.el)
-;;; jnf-org-roam.el ends here
-#+end_src
 *** org tree slide 
 slide
 Do presentation directly from Emacs
@@ -4183,39 +4287,6 @@ A package to wake me up, whenever I shall do something
                                                "*Dette er din %warning-time minuts advarsel*"))
   (add-hook 'org-mode-hook #'org-timed-alerts-mode)
 #+end_src
-*** org brain
-[[https://github.com/Kungsgeten/org-brain][org-brain]] provides Org-mode wiki + concept-mapping.
-
-## #+BEGIN_SRC emacs-lisp 
-;; Load org-brain after my personal org settings...
-(straight-use-package 'org-brain
-  :init
-  (setq org-brain-path "~/Dropbox/Org/brain")
-  :config
-  (setq org-id-track-globally t)
-  (setq org-id-locations-file "~/.emacs.d/private/.org-id-locations")
-
-  (push (car doct '(("Brain" :keys "b"
-                      :type plain
-                      :function org-brain-goto-end
-                      :template "** %i%?"))))
-        org-capture-templates)
-
-;  (push '("b" "Brain" plain (function org-brain-goto-end)
-;          "* %i%?" :empty-lines 1)
-;        org-capture-templates)
-
-;  (push (doct '(("Brain" :keys "b"
-;         :type plain
-;         :function org-brain-goto-end
-;         :template "** %i%?")))
-;         org-capture-templates)
-
-  (setq org-brain-visualize-default-choices 'all)
-  (setq org-brain-title-max-length 12)
-  (setq org-brain-include-file-entries nil)
-  (setq org-brain-file-entries-use-title nil))
-## #+END_SRC
 *** org manage
 :PROPERTIES:
 :CUSTOM_ID: org-manage and header
@@ -4247,39 +4318,6 @@ Besides the expected PDF viewing utilities, such as search, annotation, and cont
 with a simple mouse right-click, we can even select a ‘midnight’ rendering mode which may be
 easier on the eyes. For more, see the brief [[https://www.dailymotion.com/video/x2bc1is][pdf-tools-tourdeforce]] demo.
 
-*** org-ref
-#+begin_src emacs-lisp
-
-(straight-use-package '(org-ref :type git :flavor melpa :files 
-                       (:defaults "org-ref.org" "org-ref.bib" "citeproc" "org-ref-pkg.el") 
-                        :host github :repo "jkitchin/org-ref"))
-;; see org-ref for use of these variables
-(setq org-ref-bibliography-notes "~/Dropbox/bibliography/notes.org"
-      org-ref-default-bibliography '("~/Dropbox/bibliography/references.bib")
-      org-ref-pdf-directory "~/Dropbox/bibliography/bibtex-pdfs/")
-(setq bibtex-completion-bibliography "~/Dropbox/bibliography/references.bib"
-      bibtex-completion-library-path "~/Dropbox/bibliography/bibtex-pdfs"
-      bibtex-completion-notes-path "~/Dropbox/bibliography/helm-bibtex-notes")
-;; open pdf with system pdf viewer (works on mac)
-(setq bibtex-completion-pdf-open-function
-  (lambda (fpath)
-    (start-process "open" "*open*" "open" fpath)))
-(straight-use-package '(ebib :type git :flavor melpa :host github :repo "joostkremers/ebib"))
-(global-set-key "\C-ce" 'ebib)
-(require 'org-ebib)
-(setq ebib-default-directory "~/Dropbox/org/bibliography/")
-(setq ebib-file-search-dirs '("~/Dropbox/org/bibliography/"))
-(setq ebib-filters-default-file "~/.emacs.d/private/ebib-filters")
-(setq ebib-filters-default-file "~/.emacs.d/private/ebib-filters")
-(setq ebib-extra-fields
-   '((biblatex "crossref" "annotation" "abstract" "keywords" "file" "timestamp" "isbn")
-     (BibTeX "crossref" "annote" "abstract" "keywords" "file" "timestamp" "url" "doi")))
-(setq ebib-bibtex-dialect "biblatex")
-(setq ebib-hide-cursor nil)
-(setq ebib-uniquify-keys t)
-(setq ebib-use-timestamp t)
-(setq ebib-default-dir "/Users/niels/Dropbox/bibliography/")
-#+end_src
 *** LaTeX
 :PROPERTIES:
 :CUSTOM_ID: LaTeX
@@ -4348,9 +4386,9 @@ easier on the eyes. For more, see the brief [[https://www.dailymotion.com/video/
 
 (setq org-latex-classes
   '(("memoir" 
-      "\\documentclass[11pt]{memoir}
+      "\\documentclass[12pt]{memoir}
        [NO-DEFAULT-PACKAGES]
-       [PACKAGES]
+       [NO-PACKAGES]
        [EXTRA]"
        ("\\section{%s}" . "\\section*{%s}")
        ("\\subsection{%s}" . "\\subsection*{%s}")
@@ -5179,6 +5217,19 @@ Ledger mode for MacBook Air
 #+end_src
 #+end_src
 * Languages
+*** Projectile
+#+begin_src emacs-lisp
+(straight-use-package '(projectile :type git :flavor melpa 
+               :files ("projectile.el" "projectile-pkg.el") 
+               :host github :repo "bbatsov/projectile"))
+(setq projectile-project-search-path '("~/Projects/"))
+(projectile-mode +1)
+(straight-use-package '(counsel-projectile :type git :flavor melpa 
+               :host github :repo "ericdanan/counsel-projectile"))
+(define-key global-map (kbd "C-c p f") 'counsel-projectile-find-file)
+(define-key projectile-mode-map (kbd "s-p") 'projectile-command-map)
+(define-key projectile-mode-map (kbd "C-c p") 'projectile-command-map)
+#+end_src
 *** Header for new files
 :PROPERTIES:
 :CUSTOM_ID: Header for emacs-lisp files
@@ -5264,22 +5315,6 @@ We want to give all nye (and old) emacs-lisp files a header)
 
 (if nec/measure-time (nec/timer "ipython  "))
 #+end_src
-*** Projectile
-:PROPERTIES:
-:CUSTOM_ID: Projectile
-:END:
-#+BEGIN_SRC emacs-lisp
-(straight-use-package '(projectile :type git :flavor melpa 
-       :files ("projectile.el" "projectile-pkg.el") 
-       :host github :repo "bbatsov/projectile")
-  :diminish  " ✐")  
-
-(setq projectile-project-search-path (f-directories "~/Projects/")) 
-(projectile-mode 1)
-(define-key projectile-mode-map (kbd "s-p") 'projectile-command-map)
-(define-key projectile-mode-map (kbd "C-c p") 'projectile-command-map)
-(if nec/measure-time (nec/timer "Projectile "))
-#+END_SRC
 *** Rust
 :PROPERTIES:
 :CUSTOM_ID: Rust

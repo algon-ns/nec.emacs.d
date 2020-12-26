@@ -66,7 +66,7 @@
    (setq garbage-collection-messages nil)
    (message "gc-cons-threshold and file-name-handler-alist restored")))               
 
-(defcustom nec/measure-time nil
+(defcustom nec/measure-time t
   "Do we want to measure time for this startup?"
   :group 'nec
   :type 'boolean)
