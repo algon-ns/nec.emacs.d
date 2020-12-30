@@ -32,18 +32,35 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;
 ;;; Code:
+(setq straight-use-package-by-default t)
+(setq straight-vc-git-default-clone-depth 1)
 (defvar bootstrap-version)
-(let ((bootstrap-file
-       (expand-file-name "straight/repos/straight.el/bootstrap.el" user-emacs-directory))
-      (bootstrap-version 5))
+(let* ((straight-repo-dir
+        (expand-file-name "straight/repos" user-emacs-directory))
+       (bootstrap-file
+        (concat straight-repo-dir "/straight.el/bootstrap.el"))
+       (bootstrap-version 5))
   (unless (file-exists-p bootstrap-file)
-    (with-current-buffer
-        (url-retrieve-synchronously
-         "https://raw.githubusercontent.com/raxod502/straight.el/develop/install.el"
-         'silent 'inhibit-cookies)
-      (goto-char (point-max))
-      (eval-print-last-sexp)))
+    (shell-command
+     (concat
+      "mkdir -p " straight-repo-dir " && "
+      "git -C " straight-repo-dir " clone "
+      "https://github.com/raxod502/straight.el.git && "
+      "git -C " straight-repo-dir " checkout 2d407bc")))
   (load bootstrap-file nil 'nomessage))
+(straight-use-package 'use-package)
+;;(defvar bootstrap-version)
+;;(let ((bootstrap-file
+;;       (expand-file-name "straight/repos/straight.el/bootstrap.el" user-emacs-directory))
+;;      (bootstrap-version 5))
+;;  (unless (file-exists-p bootstrap-file)
+;;    (with-current-buffer
+;;        (url-retrieve-synchronously
+;;         "https://raw.githubusercontent.com/raxod502/straight.el/develop/install.el"
+;;         'silent 'inhibit-cookies)
+;;      (goto-char (point-max))
+;;      (eval-print-last-sexp)))
+;;  (load bootstrap-file nil 'nomessage))
 ;; To not increase Emacs startup time, check package modifications when packages
 ;; edited (with Emacs) or manually invoke =straight-check-all= command, instead of
 ;; checking modifications at startup.

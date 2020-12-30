@@ -33,6 +33,7 @@
 (setq enable-local-variables :safe)
 ;;
 ;;Some default settings are here
+(setq package-enable-at-startup nil)
 (setq-default debug-on-error         nil
               message-log-max        t
               ad-redefinition-action 'accept)

@@ -333,6 +333,7 @@ NAME and ARGS are as in `use-package'."
     - [[#list-environment][list-environment]]
     - [[#all-the-icons][all-the-icons]]
     - [[#pretty-symbols][pretty Symbols]]
+    - [[#emacs-svg-icon][emacs-svg-icon]]
     - [[#setting-my-favorite-theme][setting my favorite theme]]
     - [[#initial-frame][initial frame]]
     - [[#backup][backup]]
@@ -356,7 +357,7 @@ NAME and ARGS are as in `use-package'."
     - [[#move-to-indentation-or-beginning-of-the-line][Move to indentation or beginning of the line]]
     - [[#increase-or-decrease-font-size-across-all-buffers][Increase or decrease font size across all buffers]]
   - [[#misc][Misc]]
-    - [[#][]]
+    - [[#crux][Crux]]
     - [[#disk-usage][Disk Usage]]
     - [[#hostname][hostname]]
     - [[#time-stamp--large-file-warning][Time stamp / large file warning]]
@@ -411,10 +412,11 @@ NAME and ARGS are as in `use-package'."
     - [[#refiling-setup][refiling Setup]]
     - [[#org-journal][org journal]]
     - [[#doct-and-org-capture][doct and org-capture]]
-    - [[#org-agenda][org-agenda]]
+    - [[#org-agenda][org agenda]]
     - [[#org-roam][org roam]]
+    - [[#org-super-links][org super links]]
     - [[#deft][deft]]
-    - [[#org-ref][org-ref]]
+    - [[#org-ref][org ref]]
     - [[#org-super-agenda][org super agenda]]
     - [[#org-contact][org contact]]
     - [[#org-tree-slide][org tree slide]]
@@ -429,6 +431,7 @@ NAME and ARGS are as in `use-package'."
     - [[#magit][Magit]]
     - [[#gnuplot][gnuplot]]
     - [[#remember-mode][Remember mode]]
+    - [[#docker][docker]]
     - [[#gnuplot-1][gnuplot]]
     - [[#tæl-ord][Tæl ord]]
     - [[#elgantt][elgantt]]
@@ -1093,11 +1096,15 @@ If Non-nil, use dashboard, otherwise will restore previous session."
 (if nec/measure-time
           (nec/timer "Variables" ))
 #+end_src
+*** emacs-svg-icon
+#+begin_src emacs-lisp
+(require 'svg-icon)
+#+end_src
 *** setting my favorite theme
 #+begin_src emacs-lisp
 ;; Treat all themes as safe; no query before use.
 (setf custom-safe-themes t)
-(straight-use-package 'powerline)
+;;(straight-use-package 'powerline)
 ;;
 (straight-use-package '(moe-theme :type git :flavor melpa :host github :repo "kuanyui/moe-theme.el"))
 (straight-use-package '(moe-theme-auto-switch :type git :flavor melpa :host github :repo "kuanyui/moe-theme"))
@@ -1493,8 +1500,6 @@ Non-null optional arg FILES-ONLY means mention only file buffers."
 (straight-use-package '(emojify :type git :flavor melpa :files (:defaults "data" "images" "emojify-pkg.el") 
      :host github :repo "iqbalansari/emacs-emojify"))
 (add-hook 'after-init-hook #'global-emojify-mode)
-
-
     ;; set a default font
      (when (member "DejaVu Sans Mono" (font-family-list))
       (set-face-attribute 'default nil :font "DejaVu Sans Mono"))
@@ -1618,8 +1623,7 @@ Specially useful for presentations, demos and other shows alike.
           (nec/timer "Increase/Decrease font   "))
 #+end_src
 ** Misc
-*** 
-Crux
+*** Crux
 #+begin_src emacs-lisp
 (use-package crux
   :straight t
@@ -2567,6 +2571,7 @@ Company is a text completion framework for Emacs. The name stands for
 "complete anything". It uses pluggable back-ends and front-ends to
 retrieve and display completion candidates.
 #+begin_src emacs-lisp
+
 (use-package company
   :straight t
   :diminish " 🄲"
@@ -2588,6 +2593,12 @@ retrieve and display completion candidates.
            company-capf)  ; completion-at-point-functions
           (company-abbrev company-dabbrev)
           )))
+(straight-use-package '(company-lsp :type git :flavor melpa :host github 
+                                    :repo "tigersoldier/company-lsp")
+  :config
+      (setq compnay-lsp-enable-snippet t)
+      (push 'company-lsp company-backends))
+
 (use-package company-statistics
     :straight t
     :init
@@ -2674,14 +2685,10 @@ retrieve and display completion candidates.
         (22 . (fa_cube :face font-lock-type-face)) ;; Struct
         (23 . fa_calendar) ;; Event
         (24 . fa_square_o) ;; Operator
-        (25 . fa_arrows)) ;; TypeParameter
-      )
-(use-package company-lsp
-  :straight t
-  :config
-(setq compnay-lsp-enable-snippet t)
-(push 'company-lsp company-backends))
-(if nec/measure-time (nec/timer "Company-box   "))
+        (25 . fa_arrows))) ;; TypeParameter
+ 
+
+(if nec/measure-time (nec/timer "Company-box & lsp  "))
 #+end_src
 *** Hippie Expand
 :PROPERTIES:
@@ -2780,6 +2787,8 @@ Put all keybindings here (with doc)
 (global-set-key (kbd "C-c n e")  'ebib)
 (global-set-key (kbd "C-c n r")  'org-ebib-open)
 (global-set-key (kbd "C-c n s")  'org-ebib-store-link)
+;; docker
+(global-set-key (kbd "C-c d")  'docker)
 
 (global-set-key (kbd "<f2>")  'open-dashboard)
 
@@ -3788,7 +3797,7 @@ multiple times below:
 
 (if nec/measure-time (nec/timer "doct capture templates "))
 #+end_src
-*** org-agenda
+*** org agenda
 :PROPERTIES:
 :CUSTOM_ID: org agenda 
 :END:
@@ -3878,7 +3887,10 @@ multiple times below:
                                                  ("fillcolor" . "#EFEFFF")
                                                  ("color" . "#DEDEFF")
                                                  ("fontcolor" . "#111111")))
-  (setq org-roam-graph-viewer nil)
+(require 'org-backlink)  
+(straight-use-package '(ox-hugo :type git :flavor melpa :host github :repo "kaushalmodi/ox-hugo"))
+  
+(setq org-roam-graph-viewer nil)
   ;;(setq org-roam-graph-viewer "neato")
   (use-package org-roam-protocol
     :straight (:type built-in)
@@ -4061,6 +4073,22 @@ multiple times below:
 (provide 'jnf-org-roam.el)
 ;;; jnf-org-roam.el ends here
 #+end_src
+*** org super links
+#+begin_src emacs-lisp
+(use-package org-super-links
+  :straight (org-super-links :host github :repo "toshism/org-super-links" 
+             :files ("*" (:exclude ".git")) :commit "0.3")
+  :bind (("C-c s s" . sl-link)
+         ("C-c s l" . sl-store-link)
+         ("C-c s C-l" . sl-insert-link)
+         ("C-c s d" . sl-quick-insert-drawer-link)
+         ("C-c s i" . sl-quick-insert-inline-link)
+         ("C-c s C-d" . sl-delete-link))
+  :config
+  (setq sl-backlink-into-drawer "~/Dropbox/org/roam/Index.org"
+        sl-related-into-drawer  "~/Dropbox/org/roam/Index.org" 
+        sl-link-prefix 'sl-link-prefix-timestamp))
+#+end_src
 *** deft
 #+begin_src emacs-lisp
 (straight-use-package '(deft :type git :flavor melpa 
@@ -4100,7 +4128,7 @@ multiple times below:
   )
  )
 #+end_src
-*** org-ref
+*** org ref
 #+begin_src emacs-lisp
 (straight-use-package '(org-ref :type git :flavor melpa :files 
                        (:defaults "org-ref.org" "org-ref.bib" "citeproc" "org-ref-pkg.el") 
@@ -4915,6 +4943,19 @@ by `remember-notes-buffer-name'."
   :bind ("<f12>" . prot/remember))
 (if nec/measure-time (nec/timer "Remember "))
 #+end_src
+*** docker
+#+begin_src emacs-lisp
+;; docker
+(straight-use-package '(docker :type git :flavor melpa :host github :repo "Silex/docker.el"))
+
+(setenv "PATH" (concat (getenv "PATH") ":/usr/local/bin"))
+(setq exec-path (append exec-path '("/usr/local/bin")))
+;; Use "docker-machine env box" command to find out your environment variables
+(setenv "DOCKER_TLS_VERIFY" "1")
+(setenv "DOCKER_HOST" "tcp://192.168.99.100:2376")
+(setenv "DOCKER_CERT_PATH" "/Users/niels/.docker/machine/machines/default")
+(setenv "DOCKER_MACHINE_NAME" "default")
+#+end_src
 *** gnuplot
 #+begin_src emacs-lisp
 (straight-use-package '(gnuplot :type git :flavor melpa 
@@ -5420,3 +5461,4 @@ We want to give all nye (and old) emacs-lisp files a header)
 (message "→★★★ Total time for configuration  %.2fs"  (float-time (time-subtract (current-time) nec/total-time)))
 (message "      T H E   E N D")
 #+end_src
+
