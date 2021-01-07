@@ -33,7 +33,7 @@
 ;;;;
 ;;; Code:
 (setq straight-use-package-by-default t)
-(setq straight-vc-git-default-clone-depth 1)
+;; (setq straight-vc-git-default-clone-depth 'full)
 (defvar bootstrap-version)
 (let* ((straight-repo-dir
         (expand-file-name "straight/repos" user-emacs-directory))
@@ -78,10 +78,9 @@
 
 (straight-use-package '(org :type git :repo "https://code.orgmode.org/bzg/org-mode.git" :local-repo "org")
                             :diminish " O")
-(straight-use-package '(org-contrib :type git :repo "https://code.orgmode.org/bzg/org-mode.git"
-                                    :local-repo "org" :files (:defaults "contrib/lisp/*.el")))
+(straight-use-package '(org-plus-contrib :type git :repo "https://code.orgmode.org/bzg/org-mode.git"
+                                         :local-repo "org" :files (:defaults "contrib/lisp/*.el")))
 ;; need to get hold of org a soon as possible
-(straight-use-package 'cl-lib)
 (straight-use-package '(dash :type git :flavor melpa :files ("dash.el" "dash.texi" "dash-pkg.el") :host github :repo "magnars/dash.el"))
 (straight-use-package '(f :type git :flavor melpa :files ("f.el" "f-pkg.el") :host github :repo "rejeep/f.el"))
 (straight-use-package '(ht :type git :flavor melpa :files ("ht.el" "ht-pkg.el") :host github :repo "Wilfred/ht.el"))

@@ -954,6 +954,9 @@ abcdefghijklmnopqrstuvwxyzæøå
   (all-the-icons-install-fonts)
   (customize-save-variable 'is-all-the-icons-installed t))
 
+(straight-use-package '(all-the-icons-ibuffer :type git :flavor melpa 
+                 :host github :repo "seagle0128/all-the-icons-ibuffer"))
+
 (use-package counsel
   :straight t)
 
@@ -2836,14 +2839,7 @@ No body wants to, but at time you have to...
 :PROPERTIES:
 :CUSTOM_ID: Modeline
 :END:
-The ‘modeline’ is a part near the bottom of Emacs that gives information about
-the current mode, as well as other matters ---such as time & date, for example.
-
-Let's have it also show remaining battery life, coloured green if charging
-and coloured yellow otherwise. It is important to note that
-this package is no longer maintained. It works on my machine.
 #+BEGIN_SRC emacs-lisp
-
 (setq display-time-day-and-date t)
 (display-time)
 ;; (display-battery-mode -1)
@@ -2854,37 +2850,19 @@ this package is no longer maintained. It works on my machine.
   :custom (fancy-battery-show-percentage  t)
           (battery-update-interval       15)
   :config (fancy-battery-mode))
-#+END_SRC
 
-Likewise, let's have the modeline display column numbers, but not line numbers.
-Instead, let's have line numbers on the side of the buffer; moreover let's have
-a uniform width for displaying line numbers, rather than having the width grow
-as necessary.
-#+BEGIN_SRC emacs-lisp
 ;; Following two taken care of in the spaceline package, below.
 (column-number-mode t)
 ;; (line-number-mode  t)
 (setq display-line-numbers-width-start t)
 ;;(global-display-line-numbers-mode      t)
-#+END_SRC
-
-I may not use the spacemacs [[https://www.emacswiki.org/emacs/StarterKits][starter kit]], since I find spacemacs to “hide things”
-from me ---whereas Emacs “encourages” me to learn more---, however it is a
-configuration and I enjoy reading Emacs configs in order to improve my own
-setup. From Spacemacs I've adopted Helm for list completion, its sleek light &
-dark themes, and its modified powerline setup.
-
-#+BEGIN_SRC emacs-lisp
-
+(straight-use-package '(info+ :type git :host github :repo "emacsmirror/info-plus"))
 ;; When using helm & info & default, mode line looks prettier.
 (use-package spaceline
   :straight  t
   :custom (spaceline-buffer-encoding-abbrev-p nil)
-          ;; Use an arrow to seperate modeline information
           (powerline-default-separator 'arrow)
-          ;; Show “line-number : column-number” in modeline.
           (spaceline-line-column-p t)
-          ;; Use two colours to indicate whether a buffer is modified or not.
           (spaceline-highlight-face-func 'spaceline-highlight-face-modified)
   :config (custom-set-faces '(spaceline-unmodified ((t (:foreground "black" :background "gold")))))
           (custom-set-faces '(spaceline-modified   ((t (:foreground "black" :background "red")))))
@@ -2895,10 +2873,8 @@ dark themes, and its modified powerline setup.
           (spaceline-helm-mode)
           (spaceline-info-mode)
           (spaceline-emacs-theme))
-#+end_src
 
-#+begin_src emacs-lisp
-(if nec/measure-time (nec/timer "mode line "))
+(if nec/measure-time (nec/timer "mode line (spacemacs) "))
 #+end_src
 
 *** Term
@@ -3173,6 +3149,7 @@ blocks! Love this one ^_^
   (prog-mode . flycheck-mode)
   (text-mode . flycheck-mode)
   :config (diminish 'flycheck-mode " Ⓕ"))
+(add-hook 'after-init-hook #'global-flycheck-mode)
 (if nec/measure-time (nec/timer "flycheck   "))
 #+end_src
 *** Dashboard
@@ -3434,7 +3411,7 @@ Disable property inheritance (in order to seed up)
             org-agenda-files "~/Dropbox/org/org-files"
             org-todo-keywords
             '((sequence "TODO(t)" "DOING(i)" "SOMEDAY(s)" "PHONE(p!)" 
-                        "MEETING(m!)" "|" "DONE(d!)" "CANCEL(c@)"))
+                        "MØDE(m!)" "|" "DONE(d!)" "CANCEL(c@)"))
             org-priority-faces '((?A . error)
                                  (?B . warning)
                                  (?C . success))
@@ -3811,7 +3788,8 @@ multiple times below:
   (setq diary-file "~/.emacs.d/diary")
   ;;(require 'org-mac-iCal)
   ;;(org-mac-iCal)
-  (straight-use-package '(org-agenda :type git :repo "https://code.orgmode.org/bzg/org-mode.git" :local-repo "org/lisp"))    
+  (straight-use-package '(org-agenda :type git :repo "https://code.orgmode.org/bzg/org-mode.git" 
+                                     :local-repo "org/lisp"))    
     (setq org-agenda-dim-blocked-tasks t)
     (setq org-agenda-inhibit-startup t)
     (setq org-agenda-show-log t)
@@ -5158,84 +5136,84 @@ by `remember-notes-buffer-name'."
 (if nec/measure-time (nec/timer "gnus "))
 #+end_src
 *** Elfeed
-This document is irregularly published and lives in different locations:
-- available on github :: https://github.com/mrvdb/emacs-config
-In an attempt to do even more in emacs, i've installed `elfeed' and imported my feeds from RSSyl
-#+begin_src emacs-lisp
-  (use-package notifications
-    :straight t)
-
-  (use-package elfeed
-    :straight t
-    :after notifications
-    :commands elfeed
-    :bind (("C-c f" . 'elfeed-dashboard)
-           :map elfeed-show-mode-map
-           ("w" . 'mrb/elfeed-show-toggle-watchlater)
-           ("v" . 'mrb/elfeed-play-with-mpv)
-           :map elfeed-search-mode-map
-           ("w" . 'mrb/elfeed-search-toggle-watchlater))
-    :init
-    (setf url-queue-timeout 30
-          elfeed-db-directory "~/.emacs.d/private/.elfeed")
-    :config
-    (defun mrb/elfeed-search-toggle-tag(tag)
-      (let ((entries (elfeed-search-selected)))
-        (cl-loop for entry in entries do
-                 (if (elfeed-tagged-p tag entry)
-                     (elfeed-untag entry tag)
-                   (elfeed-tag entry tag)))
-        (mapc #'elfeed-search-update-entry entries)
-        (unless (use-region-p) (forward-line))))
-
-    (defun mrb/elfeed-search-togggle-watchlater()
-      (mrb/elfeed-search-toggle-tag 'watchlater))
-
-    (defun mrb/elfeed-show-toggle-tag(tag)
-      (interactive)
-      (if (elfeed-tagged-p tag elfeed-show-entry)
-          (elfeed-show-untag tag)
-        (elfeed-show-tag tag)))
-
-    (defun mrb/elfeed-show-togggle-watchlater()
-      (mrb/elfeed-show-toggle-tag 'watchlater))
-
-    ;; TODO: mrb/elfeed-enqueue-video
-    (defun mrb/elfeed-play-with-mpv ()
-      "Play elfeed link in mpv"
-      (interactive)
-      (notifications-notify
-       :title "Elfeed action"
-       :body "Playing video with MPV"
-       :app-name "Elfeed")
-
-      (start-process "elfeed-mpv" nil
-                     "umpv"
-                     (elfeed-entry-link elfeed-show-entry)))
-
-    ;; New entry hook allows meta information manipulation
-    ;; without directly having to change elfeed-feeds
-    (add-hook 'elfeed-new-entry-hook
-              (elfeed-make-tagger :feed-url "youtube\\.com"
-                                  :add '(video youtube))))
-                                 
-#+end_src
-
-Elfeed allows to interactively subscribe to a feed (defaulting to what is in the
-clipboard. Managing elfeed-feeds as a variable is kinda clumsy, although very
-flexible. There is a middle ground which fits me even better. At the cost of the
-bare-bone flexibilith of having the feeds directly in lisp, I'm using an orgmode
-file to record the feeds i want.
-
-#+begin_src emacs-lisp
-(setq rmh-elfeed-org-files (list "~/Dropbox/org/elfeed/elfeed.org"))  
-(straight-use-package '(elfeed-org :type git :flavor melpa 
-                        :host github :repo "remyhonig/elfeed-org"))
-(if nec/measure-time (nec/timer "elfeed "))
-
-(require 'elfeed-dashboard)
-
-#+end_src
+;; This document is irregularly published and lives in different locations:
+;; - available on github :: https://github.com/mrvdb/emacs-config
+;; In an attempt to do even more in emacs, i've installed `elfeed' and imported my feeds from RSSyl
+;; #+begin_src emacs-lisp
+  ;; (use-package notifications
+    ;; :straight t)
+;; 
+  ;; (use-package elfeed
+    ;; :straight t
+;;     :after notifications
+    ;; :commands elfeed
+;;     :bind (("C-c f" . 'elfeed-dashboard)
+           ;; :map elfeed-show-mode-map
+;;            ("w" . 'mrb/elfeed-show-toggle-watchlater)
+           ;; ("v" . 'mrb/elfeed-play-with-mpv)
+;;            :map elfeed-search-mode-map
+           ;; ("w" . 'mrb/elfeed-search-toggle-watchlater))
+    ;; :init
+;;     (setf url-queue-timeout 30
+          ;; elfeed-db-directory "~/.emacs.d/private/.elfeed")
+    ;; :config
+;;     (defun mrb/elfeed-search-toggle-tag(tag)
+      ;; (let ((entries (elfeed-search-selected)))
+        ;; (cl-loop for entry in entries do
+                 ;; (if (elfeed-tagged-p tag entry)
+                     ;; (elfeed-untag entry tag)
+                   ;; (elfeed-tag entry tag)))
+        ;; (mapc #'elfeed-search-update-entry entries)
+;;         (unless (use-region-p) (forward-line))))
+;; 
+    ;; (defun mrb/elfeed-search-togggle-watchlater()
+      ;; (mrb/elfeed-search-toggle-tag 'watchlater))
+;; 
+    ;; (defun mrb/elfeed-show-toggle-tag(tag)
+      ;; (interactive)
+;;       (if (elfeed-tagged-p tag elfeed-show-entry)
+          ;; (elfeed-show-untag tag)
+        ;; (elfeed-show-tag tag)))
+;; 
+    ;; (defun mrb/elfeed-show-togggle-watchlater()
+      ;; (mrb/elfeed-show-toggle-tag 'watchlater))
+;; 
+    ;; ;; TODO: mrb/elfeed-enqueue-video
+;;     (defun mrb/elfeed-play-with-mpv ()
+      ;; "Play elfeed link in mpv"
+;;       (interactive)
+      ;; (notifications-notify
+       ;; :title "Elfeed action"
+;;        :body "Playing video with MPV"
+       ;; :app-name "Elfeed")
+;; 
+      ;; (start-process "elfeed-mpv" nil
+                     ;; "umpv"
+;;                      (elfeed-entry-link elfeed-show-entry)))
+;; 
+    ;; ;; New entry hook allows meta information manipulation
+;;     ;; without directly having to change elfeed-feeds
+    ;; (add-hook 'elfeed-new-entry-hook
+              ;; (elfeed-make-tagger :feed-url "youtube\\.com"
+                                  ;; :add '(video youtube))))
+;;                                  
+;; #+end_src
+;; 
+;; Elfeed allows to interactively subscribe to a feed (defaulting to what is in the
+;; clipboard. Managing elfeed-feeds as a variable is kinda clumsy, although very
+;; flexible. There is a middle ground which fits me even better. At the cost of the
+;; bare-bone flexibilith of having the feeds directly in lisp, I'm using an orgmode
+;; file to record the feeds i want.
+;; 
+;; #+begin_src emacs-lisp
+;; (setq rmh-elfeed-org-files (list "~/Dropbox/org/elfeed/elfeed.org"))  
+;; (straight-use-package '(elfeed-org :type git :flavor melpa 
+                        ;; :host github :repo "remyhonig/elfeed-org"))
+;; (if nec/measure-time (nec/timer "elfeed "))
+;; 
+;; (require 'elfeed-dashboard)
+;; 
+;; #+end_src
 
 *** ledger-mode
 Ledger mode for MacBook Air
