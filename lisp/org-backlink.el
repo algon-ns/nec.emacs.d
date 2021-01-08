@@ -26,7 +26,8 @@
 
 ;;; Code:
 
-(defvar org-backlink-mode-files (list "~/Dropbox/org/roam/" "~/Dropbox/org/roam/4eren/")                                     
+(defvar org-backlink-mode-files (list "~/Dropbox/org/roam/" "~/Dropbox/org/roam/4eren/"
+                                       "~/Dropbox/org/roam/niels/" "~/Dropbox/org/roam/emacs/")
 ;;(defvar org-backlink-mode-files org-agenda-files  
   "These files are scanned for backlinks.")
 

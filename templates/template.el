@@ -1,6 +1,5 @@
 ;;; %b  -*- lexical-binding: t; -*-
-
-;; Copyright (c) 2012-%Y, %U %a
+;; Copyright (c) 2021-%Y, %U %a
 ;;
 ;; Author: %U, %a
 ;; URL: https://github.com/algon-ns/nec.emacs.d

@@ -75,12 +75,6 @@
 (straight-use-package '(emacsql :type git :flavor melpa :files ("emacsql.el" "emacsql-compiler.el" "emacsql-system.el" "README.md" "emacsql-pkg.el") :host github :repo "skeeto/emacsql"))
 (straight-use-package '(emacsql-sqlite3 :type git :flavor melpa :host github :repo "cireu/emacsql-sqlite3"))
 (if nec/measure-time (nec/timer "Load general routines "))
-;; Anaphoric expressions implicitly create one or more temporary
-;; variables which can be referred to during the expression.  This
-;; technique can improve clarity in certain cases.  It also enables
-;; recursion for anonymous functions.
-;; (use-package anaphora
-;;    :straight t)           ;; anaphora
 (setq org-export-backends '(ascii
                             beamer
                             html
@@ -103,10 +97,6 @@ NAME and ARGS are as in `use-package'."
 ;; Feature `straight-x' from package `straight' provides
 ;; experimental/unstable extensions to straight.el which are not yet
 ;; ready for official inclusion.
-;;(use-feature straight-x
-;; Add an autoload for this extremely useful command.y
-;;  :commands (straight-x-fetch-all))
-
 (straight-use-package 'general)
 (use-package general
   :init
@@ -175,6 +165,7 @@ NAME and ARGS are as in `use-package'."
         (insert ";; ============================================================\n")
         (insert ";; Don't edit this file, edit config.org' instead ...\n")
         (insert ";; Auto-generated at " (format-time-string current-date-time-format (current-time)) " on host " system-name "\n")
+        (insert ";; Author: Niels Søndergaard at 'htpps:/github.com/algon-ns/'\n")
         (insert ";; ============================================================\n")
         (insert (apply 'concat (reverse body-list))))
       (message "—————• Wrote %s" output-file))))
@@ -190,7 +181,6 @@ NAME and ARGS are as in `use-package'."
     )
   (load-file elfile))
 
-;; when config.org is saved, re-generate config.el:
 (defun my-tangle-config-org-hook-func ()
   (when (string= "config.org" (buffer-name))
 	(let ((orgfile (concat my-user-emacs-directory "config.org"))
@@ -198,6 +188,5 @@ NAME and ARGS are as in `use-package'."
 	  (my-tangle-config-org))))
 (add-hook 'after-save-hook 'my-tangle-config-org-hook-func)
 (message "→★ loading init.el in %.2fs" (float-time (time-subtract (current-time) my-init-el-start-time)))
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (put 'dired-find-alternate-file 'disabled nil)
