@@ -326,7 +326,6 @@ NAME and ARGS are as in `use-package'."
     - [[#version-and-warning-if-wrong-version][version and warning if wrong version]]
     - [[#load-custom-file][load custom file]]
     - [[#typeface-suitability-test][typeface suitability test]]
-    - [[#diminishblackout][diminish/blackout]]
     - [[#bind-key][bind key]]
     - [[#variables-and-defaults][variables and Defaults]]
     - [[#path-and-env-from-os][PATH and env (from OS)]]
@@ -348,20 +347,20 @@ NAME and ARGS are as in `use-package'."
     - [[#scratch-buffer][scratch buffer]]
     - [[#kill-buffer-and-the-file-associated][kill buffer and the file associated]]
     - [[#rename-current-buffer-and-file-associated][rename current buffer and file associated]]
-    - [[#clean-stale-buffers][Clean stale buffers]]
-    - [[#list-buffers][List buffers]]
-    - [[#save-all-buffer][Save all buffer]]
-    - [[#load-misc-fonts][Load misc fonts]]
+    - [[#clean-stale-buffers][clean stale buffers]]
+    - [[#list-buffers][list buffers]]
+    - [[#save-all-buffer][save all buffer]]
+    - [[#load-misc-fonts][load misc fonts]]
     - [[#fill-a-paragraph][fill a paragraph]]
-    - [[#auto-fill-mode][Auto fill mode]]
-    - [[#move-to-indentation-or-beginning-of-the-line][Move to indentation or beginning of the line]]
-    - [[#increase-or-decrease-font-size-across-all-buffers][Increase or decrease font size across all buffers]]
+    - [[#auto-fill-mode][auto fill mode]]
+    - [[#move-to-indentation-or-beginning-of-the-line][move to indentation or beginning of the line]]
+    - [[#increase-or-decrease-font-size-across-all-buffers][increase or decrease font size across all buffers]]
   - [[#misc][Misc]]
-    - [[#crux][Crux]]
-    - [[#disk-usage][Disk Usage]]
+    - [[#crux][crux]]
+    - [[#disk-usage][disk Usage]]
     - [[#hostname][hostname]]
-    - [[#time-stamp--large-file-warning][Time stamp / large file warning]]
-    - [[#copy-id][Copy ID]]
+    - [[#time-stamp--large-file-warning][time stamp / large file warning]]
+    - [[#copy-id][copy ID]]
     - [[#running-on-a-macos][running on a macOS]]
       - [[#key-bindings][Key Bindings]]
       - [[#ligatures-in-code][Ligatures in Code]]
@@ -369,13 +368,13 @@ NAME and ARGS are as in `use-package'."
       - [[#brew-and-ls][Brew and ls]]
       - [[#notifications][Notifications]]
     - [[#line-numbers-i-like-them-all-over-the-places][line numbers, I like them all over the places]]
-    - [[#keyfreq][Keyfreq]]
+    - [[#keyfreq][keyfreq]]
     - [[#grep-and-find-file][grep and find file]]
   - [[#emacs-interface][emacs interface]]
     - [[#ac-jump][AC Jump]]
     - [[#term][term]]
-    - [[#helm][Helm]]
-    - [[#ivy][Ivy]]
+    - [[#helm][helm]]
+    - [[#ivy][ivy]]
     - [[#smex][SMEX]]
     - [[#disable-yasnippet-disable][DISABLE Yasnippet DISABLE]]
     - [[#ido][IDO]]
@@ -383,29 +382,30 @@ NAME and ARGS are as in `use-package'."
     - [[#rainbow][rainbow]]
     - [[#set-danish-calendar-data][set danish calendar data]]
     - [[#calculate-eastern-sunday][calculate eastern sunday]]
-    - [[#danish-hollidays][Danish hollidays]]
-    - [[#rainbow-1][Rainbow]]
-    - [[#company][Company]]
-    - [[#company-box][Company-box]]
-    - [[#hippie-expand][Hippie Expand]]
-    - [[#show-face-under-cursor][Show face under cursor]]
-    - [[#set-emacs-up-to-have-color-on-terminal][Set emacs up to have color on terminal]]
-    - [[#auto-super-save][Auto Super Save]]
-    - [[#keys][Keys]]
+    - [[#danish-hollidays][danish hollidays]]
+    - [[#rainbow-1][rainbow]]
+    - [[#company][company]]
+    - [[#company-box][company-box]]
+    - [[#hippie-expand][hippie Expand]]
+    - [[#show-face-under-cursor][show face under cursor]]
+    - [[#set-emacs-up-to-have-color-on-terminal][set emacs up to have color on terminal]]
+    - [[#auto-super-save][auto Super Save]]
+    - [[#keys][keys]]
   - [[#user-interface][User interface]]
-    - [[#never-loose-the-cursor][Never loose the cursor]]
-    - [[#beaconmode][BeaconMode]]
-    - [[#dimming-unused-windows][Dimming Unused Windows]]
-    - [[#ask-before-killing-emacs][Ask before killing emacs]]
-    - [[#modeline][Modeline]]
-    - [[#term-1][Term]]
-    - [[#edit-command][Edit command]]
-    - [[#text-folding-with-origami-mode][Text Folding with Origami-mode]]
-    - [[#dired-filefinder][Dired filefinder]]
-    - [[#flycheck][Flycheck]]
-    - [[#dashboard][Dashboard]]
-    - [[#games][Games]]
-    - [[#start-server][Start server]]
+    - [[#diminishblackout][diminish/blackout]]
+    - [[#never-loose-the-cursor][never loose the cursor]]
+    - [[#beaconmode][beaconMode]]
+    - [[#dimming-unused-windows][dimming Unused Windows]]
+    - [[#ask-before-killing-emacs][ask before killing emacs]]
+    - [[#modeline][modeline]]
+    - [[#term-1][term]]
+    - [[#edit-command][edit command]]
+    - [[#text-folding-with-origami-mode][text Folding with Origami-mode]]
+    - [[#dired-filefinder][dired filefinder]]
+    - [[#flycheck][flycheck]]
+    - [[#dashboard][dashboard]]
+    - [[#games][games]]
+    - [[#start-server][start server]]
 - [[#org-and-friends][org and friends]]
     - [[#org-general-settings][org general settings]]
     - [[#org-bullets][org bullets]]
@@ -422,21 +422,21 @@ NAME and ARGS are as in `use-package'."
     - [[#org-tree-slide][org tree slide]]
     - [[#org-mac-ical][org mac iCal]]
     - [[#org-cliplink][org cliplink]]
-    - [[#væk-mig][Væk mig]]
+    - [[#væk-mig][væk mig]]
     - [[#org-manage][org manage]]
     - [[#excellent-pdf-viewer][excellent PDF Viewer]]
     - [[#latex][LaTeX]]
 - [[#applications][Applications]]
-    - [[#calendar][Calendar]]
-    - [[#magit][Magit]]
+    - [[#calendar][calendar]]
+    - [[#magit][magit]]
     - [[#gnuplot][gnuplot]]
-    - [[#remember-mode][Remember mode]]
+    - [[#remember-mode][remember mode]]
     - [[#docker][docker]]
     - [[#gnuplot-1][gnuplot]]
-    - [[#tæl-ord][Tæl ord]]
+    - [[#tæl-ord][tæl ord]]
     - [[#elgantt][elgantt]]
     - [[#gnus][gnus]]
-    - [[#elfeed][Elfeed]]
+    - [[#elfeed][elfeed]]
     - [[#ledger-mode][ledger-mode]]
 - [[#languages][Languages]]
     - [[#projectile][Projectile]]
@@ -543,8 +543,6 @@ The code below is a minor adaptation of the insights of Alain M. Lafon
   
 (if nec/measure-time (nec/timer "Better default "))
 #+end_src
-
-<<<<<<< HEAD
 *** helpers
 These macros are conveinent shorthands.
 :function
@@ -678,7 +676,6 @@ to tweak things to your liking, Emacs will append a piece of Elisp to
 your init file.  In my experience, this is a common source of
 inconsistencies, arising from a conflict between the user's code and
 what is stored in that added =custom= snippet.
-
 #+begin_src emacs-lisp
 ;;; Offload the custom-set-variables to a separate file
 ;;; This keeps your init.el neater and you have the option
@@ -694,7 +691,6 @@ what is stored in that added =custom= snippet.
 :PROPERTIES:
 :CUSTOM_ID: h:9035a1ed-e988-4731-89a5-0d9e302c3dea
 :END:
-
 Here is a test I have come up with to make an initial assessment of the
 overall quality of a monospaced font that is meant to work well in a
 programming context: /can you discern each character at a quick glance?/
@@ -734,33 +730,6 @@ abcdefghijklmnopqrstuvwxyzæøå
 ΑΒΓΔΕΖΗΘΙΚΛΜΝΞΟΠΡΣΤΥΦΧΨΩ
 αβγδεζηθικλμνξοπρστυφχψω
 #+end_example
-
-*** diminish/blackout
-:PROPERTIES:
-:CUSTOM_ID: Diminish modes
-:END:
-#+begin_src emacs-lisp
-(use-package diminish
-  :straight t
-  :config (diminish 'org-indent-mode " ➣")
-          (diminish 'blacken-mode " ")
-          (diminish 'auto-fill-function " ⚮")
-          (diminish 'ctrlf-mode " ")
-          (diminish 'rainbow-delimiters-mode " ♼")
-          (diminish 'flx-ido " "))
-;;
-(straight-use-package '(delight :type git :host github :repo "emacs-straight/delight" :files ("*" (:exclude ".git"))))
-(delight 'gcmh " ")
-(delight 'smartparens-mode " ⑃")
-(delight 'dired-filter-mode " ")
-(delight 'auto-fill-mode " ⚮")
-(straight-use-package '(blackout :type git :flavor melpa :host github :repo "raxod502/blackout"))
- 
-(with-eval-after-load 'org-mode    
-    (blackout 'org-mode " "))
-;;
-(if nec/measure-time (nec/timer "Diminish   "))
-#+end_src
 *** bind key
 :PROPERTIES:
 :CUSTOM_ID: bind key
@@ -977,7 +946,6 @@ abcdefghijklmnopqrstuvwxyzæøå
 #+end_src
 *** pretty Symbols
 #+begin_src emacs-lisp
-
 (defcustom nec-dashboard t
   "Use dashboard at startup or not.
 If Non-nil, use dashboard, otherwise will restore previous session."
@@ -1042,7 +1010,7 @@ If Non-nil, use dashboard, otherwise will restore previous session."
   :group 'nec
   :type '(alist :key-type string :value-type (choice character sexp)))
 
-	(use-package pretty-symbols
+(use-package pretty-symbols
     :straight t
     :config
     (setq pretty-symbol-categories '(relational logical lambda org-specific nil cpp general))
@@ -1054,6 +1022,7 @@ If Non-nil, use dashboard, otherwise will restore previous session."
                     (nreverse (cdr composition)))
 	  (push char composition)
 	  (push '(Br . Bl) composition)))))
+
     (setq pretty-symbol-patterns
 	  (append pretty-symbol-patterns
 		'((?▤ org-specific ":LOGBOOK:" (org-mode))
@@ -1077,27 +1046,31 @@ If Non-nil, use dashboard, otherwise will restore previous session."
       	  ((yant/str-to-glyph "♲") org-specific "\\(?:^*+ +\\)\\(\\<HOLD\\>\\)" (org-mode) 1)
       	  ((yant/str-to-glyph "☠D") org-specific "\\<DEADLINE:" (org-mode))
       	  ((yant/str-to-glyph "◴S") org-specific "\\<SCHEDULED:" (org-mode)))))
-(use-package org-pretty-tags
-  :straight t
-  :diminish org-pretty-tags-mode
-  :config
+
+(straight-use-package '(org-pretty-tags :type git :flavor melpa 
+                                        :host gitlab :repo "marcowahl/org-pretty-tags"))
+   (setq org-pretty-tags-mode-lighter " 📤")
    (setq org-pretty-tags-surrogate-strings
-         '(("Blog"     . "✍")
-           ("Lyd"    . "♬")
-           ("Video"    . "📺")
-           ("Bog"     . "📚")
-           ("Løb"  . "🏃")
-           ("Spørgsmål" . "❓")
-           ("Kone"     . "💕")
-           ("Tekst"     . "💬") ; 📨 📧
-           ("Venner"  . "👪")
-           ("Mig"     . "🍂")
-           ("Penge" . "💰")
-           ("Bil"      . "🚗") ; 🚙 🚗 🚘
-           ("Haster"   . "🔥"))) ;; 📥 📤 📬
-   (org-pretty-tags-global-mode 1))
-(if nec/measure-time
-          (nec/timer "Variables" ))
+         '(("log"     . "✍")
+           ("lyd"    . "♬")
+           ("video"    . "📺")
+           ("bog"     . "📚")
+           ("løb"  . "🏃")
+           ("spørgsmål" . "❓")
+           ("kone"     . "💕")
+           ("tekst"     . "💬") ; 📨 📧
+           ("venner"  . "👪")
+           ("mig"     . "🍂")
+           ("penge" . "💰")
+           ("bil"      . "🚗") ; 🚙 🚗 🚘
+           ("haster"   . "🔥")
+           ("vigtigt" . "☆") ; important stuff.
+           ("ide" . "💡") ; inspiration.
+           ("penge" . "$$$")
+           ("let" . "₰")
+           ("musik" . "♬"))) ;; 📥 📤 📬
+   (setq org-pretty-tags-global-mode 1)
+(if nec/measure-time (nec/timer "Variables" ))
 #+end_src
 *** emacs-svg-icon
 #+begin_src emacs-lisp
@@ -1437,7 +1410,7 @@ with character preview in completion prompt. from: [[https://gitlab.com/matsievs
                      name (file-name-nondirectory new-name)))))
     #+END_SRC
 
-*** Clean stale buffers
+*** clean stale buffers
 :PROPERTIES:
 :CUSTOM_ID: Clean stale buffers
 :END:
@@ -1459,7 +1432,7 @@ We do clean, in the middle of the night
                    "*vc-change-log*")))
 (if nec/measure-time (nec/timer "Clean buffers   "))
 #+end_src
-*** List buffers
+*** list buffers
 :PROPERTIES:
 :CUSTOM_ID: List buffers
 :END:
@@ -1473,7 +1446,7 @@ Non-null optional arg FILES-ONLY means mention only file buffers."
   (display-buffer (list-buffers-noselect files-only (buffer-list))))
 (if nec/measure-time (nec/timer "List buffers "))
 #+end_src
-*** Save all buffer
+*** save all buffer
 :PROPERTIES:
 :CUSTOM_ID: Save all buffer
 :END:
@@ -1487,7 +1460,7 @@ Non-null optional arg FILES-ONLY means mention only file buffers."
 (global-set-key (kbd "C-x C-s") #'save-all-buffers)
 (if nec/measure-time (nec/timer "save all buffers   "))
 #+end_src
-*** Load misc fonts
+*** load misc fonts
 :PROPERTIES:
 :CUSTOM_ID: Load misc fonts
 :END:
@@ -1540,7 +1513,7 @@ Non-null optional arg FILES-ONLY means mention only file buffers."
     (fill-paragraph nil)))
 (if nec/measure-time (nec/timer "Unfill a paragraph "))
 #+end_src
-*** Auto fill mode
+*** auto fill mode
 :PROPERTIES:
 :CUSTOM_ID: Auto fill mode
 :END:
@@ -1565,7 +1538,7 @@ in every buffer.
 (add-hook 'org-mode-hook 'turn-on-auto-fill)
 (if nec/measure-time (nec/timer "Auto Fill Mode"))
 #+end_src
-*** Move to indentation or beginning of the line
+*** move to indentation or beginning of the line
 :PROPERTIES:
 :CUSTOM_ID: Move to indentation or beginning of the line
 :END:
@@ -1586,7 +1559,7 @@ you to the absolute beginning of the line.
 
 (global-set-key (kbd "C-a") 'beginning-of-line-dwim)
 #+END_SRC
-*** Increase or decrease font size across all buffers
+*** increase or decrease font size across all buffers
 :PROPERTIES:
 :CUSTOM_ID: Increase or decrease font size across all buffers
 :END:
@@ -1626,7 +1599,7 @@ Specially useful for presentations, demos and other shows alike.
           (nec/timer "Increase/Decrease font   "))
 #+end_src
 ** Misc
-*** Crux
+*** crux
 #+begin_src emacs-lisp
 (use-package crux
   :straight t
@@ -1644,7 +1617,7 @@ Specially useful for presentations, demos and other shows alike.
   (crux-with-region-or-point-to-eol kill-ring-save)
   (defalias 'rename-file-and-buffer #'crux-rename-file-and-buffer))
 #+end_src
-*** Disk Usage
+*** disk Usage
 :PROPERTIES:
 :CUSTOM_ID: Disk Usage
 :END:
@@ -1676,7 +1649,7 @@ Specially useful for presentations, demos and other shows alike.
           (nec/timer "Hostname   "))
 #+end_src
 
-*** Time stamp / large file warning
+*** time stamp / large file warning
 :PROPERTIES:
 :CUSTOM_ID: Time stamp / large file warning
 :END:
@@ -1698,7 +1671,7 @@ visual line mode and stretch the cursor
 (setq x-stretch-cursor t)
 (if nec/measure-time (nec/timer "Time stamp "))
 #+end_src
-*** Copy ID
+*** copy ID
 :PROPERTIES:
 :CUSTOM_ID: Copy ID
 :END:
@@ -1883,7 +1856,7 @@ visual line mode and stretch the cursor
 (global-hl-line-mode 1)
 (if nec/measure-time (nec/timer "Linenum   "))
 #+end_src
-*** Keyfreq
+*** keyfreq
 :PROPERTIES:
 :CUSTOM_ID: Keyfreq
 :END:
@@ -2132,7 +2105,7 @@ proper shell in Emacs!
            ("C-c T" . sane-term-create)
            ("C-c C-j" . sane-term-mode-toggle)))
 #+END_SRC
-*** Helm
+*** helm
 :PROPERTIES:
 :CUSTOM_ID: Helm
 :END:
@@ -2171,7 +2144,7 @@ proper shell in Emacs!
   ("C-x c s" . helm-swoop))
 (if nec/measure-time (nec/timer "Helm "))
 #+END_SRC
-*** Ivy
+*** ivy
 
 #+begin_src elisp
 (straight-usr-package '(ivy :type git :flavor melpa 
@@ -2441,7 +2414,7 @@ than the calendar, the date is really used many places.
                           adjusted-epact)))
     (calendar-dayname-on-or-before 0 (+ paschal-moon 7))))
 #+end_src
-*** Danish hollidays
+*** danish hollidays
 :PROPERTIES:
 :CUSTOM_ID: Danish hollidays
 :END:
@@ -2501,7 +2474,7 @@ than the calendar, the date is really used many places.
 (if nec/measure-time (nec/timer "Insert Danish calendar "))
 #+end_src
 ace
-*** Rainbow
+*** rainbow
 :PROPERTIES:
 :CUSTOM_ID: Rainbow
 :END:
@@ -2558,7 +2531,7 @@ ace
 
 (if nec/measure-time (nec/timer "Rainbow   "))
 #+end_src
-*** Company
+*** company
 :PROPERTIES:
 :CUSTOM_ID: Company
 :END:
@@ -2633,7 +2606,7 @@ retrieve and display completion candidates.
 
 (if nec/measure-time (nec/timer "Company   "))
 #+end_src
-*** Company-box
+*** company-box
 :PROPERTIES:
 :CUSTOM_ID: Company-box
 :END:
@@ -2685,7 +2658,7 @@ retrieve and display completion candidates.
 
 (if nec/measure-time (nec/timer "Company-box & lsp  "))
 #+end_src
-*** Hippie Expand
+*** hippie Expand
 :PROPERTIES:
 :CUSTOM_ID: Hippie Expand
 :END:
@@ -2713,7 +2686,7 @@ that is supports a wide range of backends for finding completions -
 (if nec/measure-time (nec/timer "Hippie Expand   "))
 #+end_src
 ***
-*** Show face under cursor
+*** show face under cursor
 :PROPERTIES:
 :CUSTOM_ID: Show face under cursor
 :END:
@@ -2726,7 +2699,7 @@ that is supports a wide range of backends for finding completions -
     (if face (message "Face: %s" face) (message "No face at %d" pos))))
 (if nec/measure-time (nec/timer "What-face "))
 #+end_src
-*** Set emacs up to have color on terminal
+*** set emacs up to have color on terminal
 :PROPERTIES:
 :CUSTOM_ID: Set emacs up to have color on terminal
 :END:
@@ -2737,7 +2710,7 @@ that is supports a wide range of backends for finding completions -
 ;;(color-theme-approximate-on()))
 #+END_SRC
 
-*** Auto Super Save
+*** auto Super Save
 :PROPERTIES:
 :CUSTOM_ID: Auto Super Save
 :END:
@@ -2753,7 +2726,7 @@ that is supports a wide range of backends for finding completions -
 (setq-default indent-tabs-mode nil)
 (if nec/measure-time (nec/timer "Auto save org-files   "))
 #+end_src
-*** Keys
+*** keys
 :PROPERTIES:
 :CUSTOM_ID: Keys
 :END:
@@ -2792,8 +2765,31 @@ Put all keybindings here (with doc)
 #+end_src
 
 ** User interface
-*** Never loose the cursor
-*** BeaconMode
+*** diminish/blackout
+:PROPERTIES:
+:CUSTOM_ID: Diminish modes
+:END:
+#+begin_src emacs-lisp
+(use-package diminish
+  :straight t
+  :config (diminish 'org-indent-mode " ➣")
+          (diminish 'blacken-mode " ")
+          (diminish 'auto-fill-function " ⚮")
+          (diminish 'ctrlf-mode " ")
+          (diminish 'rainbow-delimiters-mode " ♼")
+          (diminish 'flx-ido " "))
+;;
+(straight-use-package '(delight :type git :host github :repo "emacs-straight/delight" :files ("*" (:exclude ".git"))))
+(delight 'gcmh " ")
+(delight 'smartparens-mode " ⑃")
+(delight 'dired-filter-mode " ")
+(delight 'auto-fill-mode " ⚮")
+(delight 'org-mode " ")
+
+(if nec/measure-time (nec/timer "Diminish   "))
+#+end_src
+*** never loose the cursor
+*** beaconMode
 :PROPERTIES:
 :CUSTOM_ID: Never-loose-the-cursor
 :END:
@@ -2811,7 +2807,7 @@ When we switch windows or scroll, for example, we get a wave of light near the c
 (beacon-mode t)
 (if nec/measure-time (nec/timer "Beacon-mode "))
 #+end_src
-*** Dimming Unused Windows
+*** dimming Unused Windows
 :PROPERTIES:
 :CUSTOM_ID: Dimming-Unused-Windows
 :END:
@@ -2824,7 +2820,7 @@ Let's dim windows, and even the whole Emacs frame, when not in use.
   :config (dimmer-mode))
 (if nec/measure-time (nec/timer "Dimming windows "))
 #+END_SRC
-*** Ask before killing emacs
+*** ask before killing emacs
 :PROPERTIES:
 :CUSTOM_ID: Ask before killing emacs
 :END:
@@ -2835,7 +2831,7 @@ No body wants to, but at time you have to...
   (global-set-key (kbd "C-x C-c") 'ask-before-closing)
 (if nec/measure-time (nec/timer "Really?  stop emacs "))
 #+end_src
-*** Modeline
+*** modeline
 :PROPERTIES:
 :CUSTOM_ID: Modeline
 :END:
@@ -2877,7 +2873,7 @@ No body wants to, but at time you have to...
 (if nec/measure-time (nec/timer "mode line (spacemacs) "))
 #+end_src
 
-*** Term
+*** term
 :PROPERTIES:
 :CUSTOM_ID: Term
 :END:
@@ -2959,7 +2955,7 @@ No body wants to, but at time you have to...
 
       (global-set-key "\C-t" 'term/shell)
 #+end_src
-*** Edit command
+*** edit command
 :PROPERTIES:
 :CUSTOM_ID: Edit command
 :END:
@@ -2993,7 +2989,7 @@ No body wants to, but at time you have to...
   (global-set-key (kbd "<C-backspace>") 'backward-delete-word)
   (if nec/measure-time (nec/timer "editing   "))
 #+end_src
-*** Text Folding with Origami-mode
+*** text Folding with Origami-mode
 Literate programming within Org-mode is not always ideal, so we use a
 programming mode directly and then may want to have arbitrary ‘sections’ of text
 folded up.  Let's describe how to accomplish this goal.
@@ -3015,7 +3011,7 @@ blocks! Love this one ^_^
 (if nec/measure-time (nec/timer "Origami "))
 #+END_SRC
 
-*** Dired filefinder
+*** dired filefinder
 :PROPERTIES:
 :CUSTOM_ID: Dired filefinder
 :END:
@@ -3138,7 +3134,7 @@ blocks! Love this one ^_^
 (global-set-key [remap dired-other-frame] 'diredc)
 
 #+end_src
-*** Flycheck
+*** flycheck
 :PROPERTIES:
 :CUSTOM_ID: Flyckeck
 :END:
@@ -3152,7 +3148,7 @@ blocks! Love this one ^_^
 (add-hook 'after-init-hook #'global-flycheck-mode)
 (if nec/measure-time (nec/timer "flycheck   "))
 #+end_src
-*** Dashboard
+*** dashboard
 :PROPERTIES:
 :CUSTOM_ID: Dashboard
 ⏏
@@ -3205,7 +3201,7 @@ We want a Dashboard, which demand Page Break Line
         (delete-other-windows))
     (if nec/measure-time (nec/timer "Dashboard   "))
 #+end_src
-*** Games
+*** games
 :PROPERTIES:
 :CUSTOM_ID: Games
 :END:
@@ -3232,7 +3228,7 @@ We want a Dashboard, which demand Page Break Line
 (if nec/measure-time (nec/timer "Games "))
 #+end_src
 
-*** Start server
+*** start server
 #+begin_src emacs-lisp
 ;; 
 (require 'server)
@@ -4269,7 +4265,7 @@ Do presentation directly from Emacs
   (straight-use-package 'org-cliplink)
 (if nec/measure-time (nec/timer "org-cliplink "))
 #+END_SRC
-*** Væk mig
+*** væk mig
 A package to wake me up, whenever I shall do something
 #+begin_src emacs-lisp
 (require 'alert)
@@ -4522,7 +4518,7 @@ easier on the eyes. For more, see the brief [[https://www.dailymotion.com/video/
 #+end_src
 
 * Applications
-*** Calendar
+*** calendar
 :PROPERTIES:
 :CUSTOM_ID: Calendar
 :END:
@@ -4774,7 +4770,7 @@ easier on the eyes. For more, see the brief [[https://www.dailymotion.com/video/
       (if nec/measure-time (nec/timer "Calendar "))
 #+end_src
 
-*** Magit
+*** magit
 :PROPERTIES:
 :CUSTOM_ID: Magit
 :END:
@@ -4860,7 +4856,7 @@ easier on the eyes. For more, see the brief [[https://www.dailymotion.com/video/
 ;; This line binds the function-9 key so that it opens a buffer into gnuplot mode
 (global-set-key [(f9)] 'gnuplot-make-buffer)
 #+end_src
-*** Remember mode
+*** remember mode
 :PROPERTIES:
 :CUSTOM_ID: h:8044df56-9819-4c61-abe6-43d352087211
 :END:
@@ -4939,7 +4935,7 @@ by `remember-notes-buffer-name'."
 ;; This line binds the function-9 key so that it opens a buffer into gnuplot mode
 (global-set-key [(f9)] 'gnuplot-make-buffer)
 #+end_src
-*** Tæl ord
+*** tæl ord
 :PROPERTIES:
 :CUSTOM_ID: Tæl ord
 :END:
@@ -5135,85 +5131,83 @@ by `remember-notes-buffer-name'."
   (add-hook 'gnus-group-mode-hook 'gnus-topic-mode)
 (if nec/measure-time (nec/timer "gnus "))
 #+end_src
-*** Elfeed
+*** elfeed
 ;; This document is irregularly published and lives in different locations:
 ;; - available on github :: https://github.com/mrvdb/emacs-config
 ;; In an attempt to do even more in emacs, i've installed `elfeed' and imported my feeds from RSSyl
-;; #+begin_src emacs-lisp
-  ;; (use-package notifications
-    ;; :straight t)
+ #+begin_src emacs-lisp
+   (use-package notifications
+     :straight t)
+
+   (use-package elfeed
+     :straight t
+     :after notifications
+     :commands elfeed
+     :bind (("C-c f" . 'elfeed-dashboard)
+            :map elfeed-show-mode-map
+            ("w" . 'mrb/elfeed-show-toggle-watchlater)
+            ("v" . 'mrb/elfeed-play-with-mpv)
+            :map elfeed-search-mode-map
+            ("w" . 'mrb/elfeed-search-toggle-watchlater))
+     :init
+     (setf url-queue-timeout 30
+           elfeed-db-directory "~/.emacs.d/private/.elfeed")
+     :config
+     (defun mrb/elfeed-search-toggle-tag(tag)
+       (let ((entries (elfeed-search-selected)))
+         (cl-loop for entry in entries do
+                  (if (elfeed-tagged-p tag entry)
+                      (elfeed-untag entry tag)
+                    (elfeed-tag entry tag)))
+         (mapc #'elfeed-search-update-entry entries)
+         (unless (use-region-p) (forward-line)))) 
+     (defun mrb/elfeed-search-togggle-watchlater()
+       (mrb/elfeed-search-toggle-tag 'watchlater))
+
+     (defun mrb/elfeed-show-toggle-tag(tag)
+       (interactive)
+       (if (elfeed-tagged-p tag elfeed-show-entry)
+           (elfeed-show-untag tag)
+         (elfeed-show-tag tag)))
+
+     (defun mrb/elfeed-show-togggle-watchlater()
+       (mrb/elfeed-show-toggle-tag 'watchlater))
 ;; 
-  ;; (use-package elfeed
-    ;; :straight t
-;;     :after notifications
-    ;; :commands elfeed
-;;     :bind (("C-c f" . 'elfeed-dashboard)
-           ;; :map elfeed-show-mode-map
-;;            ("w" . 'mrb/elfeed-show-toggle-watchlater)
-           ;; ("v" . 'mrb/elfeed-play-with-mpv)
-;;            :map elfeed-search-mode-map
-           ;; ("w" . 'mrb/elfeed-search-toggle-watchlater))
-    ;; :init
-;;     (setf url-queue-timeout 30
-          ;; elfeed-db-directory "~/.emacs.d/private/.elfeed")
-    ;; :config
-;;     (defun mrb/elfeed-search-toggle-tag(tag)
-      ;; (let ((entries (elfeed-search-selected)))
-        ;; (cl-loop for entry in entries do
-                 ;; (if (elfeed-tagged-p tag entry)
-                     ;; (elfeed-untag entry tag)
-                   ;; (elfeed-tag entry tag)))
-        ;; (mapc #'elfeed-search-update-entry entries)
-;;         (unless (use-region-p) (forward-line))))
+;; TODO: mrb/elfeed-enqueue-video
+     (defun mrb/elfeed-play-with-mpv ()
+       "Play elfeed link in mpv"
+       (interactive)
+       (notifications-notify
+        :title "Elfeed action"
+        :body "Playing video with MPV"
+        :app-name "Elfeed")
 ;; 
-    ;; (defun mrb/elfeed-search-togggle-watchlater()
-      ;; (mrb/elfeed-search-toggle-tag 'watchlater))
+       (start-process "elfeed-mpv" nil
+                      "umpv"
+                      (elfeed-entry-link elfeed-show-entry)))
 ;; 
-    ;; (defun mrb/elfeed-show-toggle-tag(tag)
-      ;; (interactive)
-;;       (if (elfeed-tagged-p tag elfeed-show-entry)
-          ;; (elfeed-show-untag tag)
-        ;; (elfeed-show-tag tag)))
-;; 
-    ;; (defun mrb/elfeed-show-togggle-watchlater()
-      ;; (mrb/elfeed-show-toggle-tag 'watchlater))
-;; 
-    ;; ;; TODO: mrb/elfeed-enqueue-video
-;;     (defun mrb/elfeed-play-with-mpv ()
-      ;; "Play elfeed link in mpv"
-;;       (interactive)
-      ;; (notifications-notify
-       ;; :title "Elfeed action"
-;;        :body "Playing video with MPV"
-       ;; :app-name "Elfeed")
-;; 
-      ;; (start-process "elfeed-mpv" nil
-                     ;; "umpv"
-;;                      (elfeed-entry-link elfeed-show-entry)))
-;; 
-    ;; ;; New entry hook allows meta information manipulation
-;;     ;; without directly having to change elfeed-feeds
-    ;; (add-hook 'elfeed-new-entry-hook
-              ;; (elfeed-make-tagger :feed-url "youtube\\.com"
-                                  ;; :add '(video youtube))))
-;;                                  
-;; #+end_src
+;; New entry hook allows meta information manipulation
+;; without directly having to change elfeed-feeds
+    (add-hook 'elfeed-new-entry-hook
+              (elfeed-make-tagger :feed-url "youtube\\.com"
+                                  :add '(video youtube))))                                  
+#+end_src
 ;; 
 ;; Elfeed allows to interactively subscribe to a feed (defaulting to what is in the
 ;; clipboard. Managing elfeed-feeds as a variable is kinda clumsy, although very
 ;; flexible. There is a middle ground which fits me even better. At the cost of the
 ;; bare-bone flexibilith of having the feeds directly in lisp, I'm using an orgmode
 ;; file to record the feeds i want.
-;; 
-;; #+begin_src emacs-lisp
-;; (setq rmh-elfeed-org-files (list "~/Dropbox/org/elfeed/elfeed.org"))  
-;; (straight-use-package '(elfeed-org :type git :flavor melpa 
-                        ;; :host github :repo "remyhonig/elfeed-org"))
-;; (if nec/measure-time (nec/timer "elfeed "))
-;; 
-;; (require 'elfeed-dashboard)
-;; 
-;; #+end_src
+ 
+#+begin_src emacs-lisp
+(setq rmh-elfeed-org-files (list "~/Dropbox/org/elfeed/elfeed.org"))  
+(straight-use-package '(elfeed-org :type git :flavor melpa 
+                        :host github :repo "remyhonig/elfeed-org"))
+(if nec/measure-time (nec/timer "elfeed "))
+
+(require 'elfeed-dashboard)
+ 
+#+end_src
 
 *** ledger-mode
 Ledger mode for MacBook Air
