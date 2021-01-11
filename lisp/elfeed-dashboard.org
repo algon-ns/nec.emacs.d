@@ -12,12 +12,12 @@
 
 * Bookmarks
 
- [u] Unread      ([[elfeed:+unread][   147]]/[[elfeed:][   148]])
+ [u] Unread      ([[elfeed:+unread][   182]]/[[elfeed:][   184]])
  [n] DR nyt      ([[elfeed:+unread +DRNYT][     0]]/[[elfeed:+DRNYT][     0]])
  [v] DR viden    ([[elfeed:+unread +DRVIDEN][     0]]/[[elfeed:+DRVIDEN][     0]])
  [p] DR politik  ([[elfeed:+unread +DRPOLITIK][     0]]/[[elfeed:+DRPOLITIK][     0]])
  [c] Sacha Chua  ([[elfeed:+unread +SachaChua][    20]]/[[elfeed:+SachaChua][    20]])
- [o] Org mode    ([[elfeed:+unread +Orgmode][    56]]/[[elfeed:+Orgmode][    56]])
+ [o] Org mode    ([[elfeed:+unread +Orgmode][    57]]/[[elfeed:+Orgmode][    57]])
  [m] Nyt Melpa   ([[elfeed:+unread +MELPA][     0]]/[[elfeed:+MELPA][     0]])
 
 * Configuration
@@ -30,10 +30,10 @@
   #+STARTUP: showall showstars indent
   #+KEYMAP: u | elfeed-dashboard-query "+unread"
   #+KEYMAP: o | elfeed-dashboard-query "+unread +Org-mode"
-  #+KEYMAP: v | elfeed-dashboard-query "+unread +DR-Viden"
+  #+KEYMAP: v | elfeed-dashboard-query "+unread +VIDEN"
   #+KEYMAP: c | elfeed-dashboard-query "+unread +Sacha-Chua"
-  #+KEYMAP: p | elfeed-dashboard-query "+unread +DR-Politik"
-  #+KEYMAP: n | elfeed-dashboard-query "+unread +DR-Nyheder"
+  #+KEYMAP: p | elfeed-dashboard-query "+unread +POLITIK"
+  #+KEYMAP: n | elfeed-dashboard-query "+unread +NYT"
   #+KEYMAP: m | elfeed-dashboard-query "+unread +MELPA"
   #+KEYMAP: s | elfeed
   #+KEYMAP: g | elfeed-dashboard-update-links

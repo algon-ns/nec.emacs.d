@@ -312,8 +312,6 @@ NAME and ARGS are as in `use-package'."
 :PROPERTIES:
 :CUSTOM_ID: Contents
 :END:
-
-
 - [[#preface][Preface]]
   - [[#about-me][about me]]
   - [[#about-this-file][about this file]]
@@ -375,15 +373,15 @@ NAME and ARGS are as in `use-package'."
     - [[#term][term]]
     - [[#helm][helm]]
     - [[#ivy][ivy]]
+    - [[#marginella][marginella]]
     - [[#smex][SMEX]]
     - [[#disable-yasnippet-disable][DISABLE Yasnippet DISABLE]]
     - [[#ido][IDO]]
     - [[#parenthesis][parenthesis]]
-    - [[#rainbow][rainbow]]
     - [[#set-danish-calendar-data][set danish calendar data]]
     - [[#calculate-eastern-sunday][calculate eastern sunday]]
-    - [[#danish-hollidays][danish hollidays]]
-    - [[#rainbow-1][rainbow]]
+    - [[#danish-holidays][danish holidays]]
+    - [[#rainbow][rainbow]]
     - [[#company][company]]
     - [[#company-box][company-box]]
     - [[#hippie-expand][hippie Expand]]
@@ -417,6 +415,7 @@ NAME and ARGS are as in `use-package'."
     - [[#org-roam][org roam]]
     - [[#org-super-links][org super links]]
     - [[#deft][deft]]
+    - [[#zetteldeft][zetteldeft]]
     - [[#org-ref][org ref]]
     - [[#org-contact][org contact]]
     - [[#org-tree-slide][org tree slide]]
@@ -2174,6 +2173,16 @@ proper shell in Emacs!
 (define-key minibuffer-local-map (kbd "C-r") 'counsel-minibuffer-history)
 #+end_src
 
+*** marginella
+This package provides marginalia-mode which adds marginalia to the minibuffer
+completions. Marginalia are marks or annotations placed at the margin of the
+page of a book or in this case helpful colorful annotations placed at the margin
+of the minibuffer for your completion candidates.
+#+begin_src emacs-lisp
+(straight-use-package '(marginalia :type git :flavor melpa :host github 
+                       :repo "minad/marginalia"))
+(global-set-key (kbd "C-M-a") 'merginalia-cycle)
+#+end_src
 *** SMEX
 :PROPERTIES:
 :CUSTOM_ID: SMEX
@@ -2284,18 +2293,7 @@ Highlight matching ‘parenthesis’ when near one of them.
 ;;(add-hook 'markdown-mode-hook 'turn-on-smartparens-strict-mode)
 
 #+end_src
-*** rainbow
-Colour parens, and other delimiters, depending on their depth.
-Very useful for parens heavy languages like Lisp.
-#+begin_src emacs-lisp
-(use-package rainbow-delimiters
-  :straight t
-  :hook ((org-mode prog-mode text-mode) . rainbow-delimiters-mode))
-#+end_src
 
-;;
-(if nec/measure-time (nec/timer "Smartparns "))
-#+end_src
 *** set danish calendar data
 :PROPERTIES:
 :CUSTOM_ID: Set danish calendar data
@@ -2414,7 +2412,7 @@ than the calendar, the date is really used many places.
                           adjusted-epact)))
     (calendar-dayname-on-or-before 0 (+ paschal-moon 7))))
 #+end_src
-*** danish hollidays
+*** danish holidays
 :PROPERTIES:
 :CUSTOM_ID: Danish hollidays
 :END:
@@ -2478,7 +2476,13 @@ ace
 :PROPERTIES:
 :CUSTOM_ID: Rainbow
 :END:
-#+begin_src emacs-lisp :results silent
+Colour parens, and other delimiters, depending on their depth.
+Very useful for parens heavy languages like Lisp.
+#+begin_src emacs-lisp
+(use-package rainbow-delimiters
+  :straight t
+  :hook ((org-mode prog-mode text-mode) . rainbow-delimiters-mode))
+
 (require 'color)
 (defun gen-col-list (length s v &optional hval)
   (cl-flet ( (random-float () (/ (random 10000000000) 10000000000.0))
@@ -2527,8 +2531,6 @@ ace
           ;; (message (concat rainbow-var-name " => " col))
           (set-face-foreground (intern rainbow-var-name) col))
         (setq i (+ i 1))))))
-
-
 (if nec/measure-time (nec/timer "Rainbow   "))
 #+end_src
 *** company
@@ -2847,30 +2849,47 @@ No body wants to, but at time you have to...
           (battery-update-interval       15)
   :config (fancy-battery-mode))
 
-;; Following two taken care of in the spaceline package, below.
 (column-number-mode t)
-;; (line-number-mode  t)
 (setq display-line-numbers-width-start t)
-;;(global-display-line-numbers-mode      t)
 (straight-use-package '(info+ :type git :host github :repo "emacsmirror/info-plus"))
-;; When using helm & info & default, mode line looks prettier.
-(use-package spaceline
-  :straight  t
-  :custom (spaceline-buffer-encoding-abbrev-p nil)
-          (powerline-default-separator 'arrow)
-          (spaceline-line-column-p t)
-          (spaceline-highlight-face-func 'spaceline-highlight-face-modified)
-  :config (custom-set-faces '(spaceline-unmodified ((t (:foreground "black" :background "gold")))))
-          (custom-set-faces '(spaceline-modified   ((t (:foreground "black" :background "red")))))
-          (format-time-string " %a, %e. %b %Y - %H:%M ")
-          (set-face-attribute 'mode-line t :font "OpenDyslexic" :background "#2d334a")
-          (set-face-attribute 'mode-line-inactive t :font "OpenDyslexic" )
-          (require 'spaceline-config)
-          (spaceline-helm-mode)
-          (spaceline-info-mode)
-          (spaceline-emacs-theme))
+(straight-use-package '(ghub :type git :flavor melpa :host github :repo "magit/ghub"))
 
-(if nec/measure-time (nec/timer "mode line (spacemacs) "))
+(straight-use-package '(doom-modeline :type git :flavor melpa :host github 
+                        :repo "seagle0128/doom-modeline"))
+(setq doom-modeline-height 1.4)
+(set-face-attribute 'mode-line nil :family "OpenDyslexic" :background "#2d334a" :height 125)
+(set-face-attribute 'mode-line-inactive nil :family "OpenDyslexic" :height 125)
+;; Whether display icons in the mode-line.
+;; While using the server mode in GUI, should set the value explicitly.
+(setq doom-modeline-icon (display-graphic-p))
+;; Whether display the icon for `major-mode'. It respects `doom-modeline-icon'.
+(setq doom-modeline-major-mode-icon t)
+;; Whether display the colorful icon for `major-mode'.
+;; It respects `all-the-icons-color-icons'.
+(setq doom-modeline-major-mode-color-icon t)
+;; Whether display the icon for the buffer state. It respects `doom-modeline-icon'.
+(setq doom-modeline-buffer-state-icon t)
+;; Whether display the modification icon for the buffer.
+;; It respects `doom-modeline-icon' and `doom-modeline-buffer-state-icon'.
+(setq doom-modeline-buffer-modification-icon t)
+;; Whether display the minor modes in the mode-line.
+(setq doom-modeline-minor-modes t)
+;; If non-nil, a word count will be added to the selection-info modeline segment.
+(setq doom-modeline-enable-word-count nil)
+;; Whether display the GitHub notifications. It requires `ghub' package.
+(setq doom-modeline-github t)
+;; The interval of checking GitHub.
+(setq doom-modeline-github-interval (* 30 60))
+;; Whether display the modal state icon.
+;; Including `evil', `overwrite', `god', `ryo' and `xah-fly-keys', etc.
+(setq doom-modeline-modal-icon nil)
+;; Whether display the mu4e notifications. It requires `mu4e-alert' package.
+(setq doom-modeline-mu4e nil)
+;; Whether display the gnus notifications.
+(setq doom-modeline-gnus t)
+
+(doom-modeline-mode)  
+(if nec/measure-time (nec/timer "mode line  "))
 #+end_src
 
 *** term
@@ -4155,9 +4174,16 @@ Origami mode ---see below in [[Text Folding with Origami-mode]]---
   ":YEAR: ${year}\n"
 ;;  ":DOI: ${doi}\n"
   ":URL: ${url}\n"
-  ":END:\n\n"
-  )
- )
+  ":END:\n\n"))
+ (if nec/measure-time (nec/timer "deft "))
+#+end_src
+*** zetteldeft
+#+begin_src emacs-lisp
+(straight-use-package '(zetteldeft :type git :flavor melpa 
+                        :files (:defaults "zetteldeft.org" "zetteldeft-pkg.el") 
+                        :host github :repo "EFLS/zetteldeft"))
+(zetteldeft-set-classic-keybindings)
+
 #+end_src
 *** org ref
 #+begin_src emacs-lisp
