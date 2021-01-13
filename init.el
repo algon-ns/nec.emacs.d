@@ -48,41 +48,66 @@
       "https://github.com/raxod502/straight.el.git && "
       "git -C " straight-repo-dir " checkout 2d407bc")))
   (load bootstrap-file nil 'nomessage))
-(straight-use-package 'use-package)
+;;
+(straight-use-package '(use-package :type git :flavor melpa
+                         :files (:defaults (:exclude "bind-key.el"
+                                                     "bind-chord.el"
+                                                     "use-package-chords.el"
+                                                     "use-package-ensure-system-package.el")
+                                           "use-package-pkg.el")
+                         :host github :repo "jwiegley/use-package"))
 (setq straight-check-for-modifications '(check-on-save find-when-checking))
 ;; =M-x straight-pull-all=: update all packages.
 ;; =M-x straight-normalize-all=: restore all packages (remove local edits)
 ;; =M-x straight-freeze-versions= and =M-x straight-thaw-versions= are like =pip
 ;;  freeze requirements.txt= and =pip install -r requirements.txt=
- (setq straight-use-package-by-default t)
- (straight-use-package 'use-package)
-;; ensure we can install from git sources
- (straight-use-package '(git :type git :flavor melpa :host github :repo "rejeep/git.el"))
- (if nec/measure-time (nec/timer "After load of straight and git.... "))
 
-(straight-use-package '(org :type git :repo "https://code.orgmode.org/bzg/org-mode.git" :local-repo "org")
-                            :diminish " O")
+;; ensure we can install from git sources
+(straight-use-package '(git :type git :flavor melpa :host github :repo "rejeep/git.el"))
+(if nec/measure-time (nec/timer "After load of straight and git.... "))
+(straight-use-package '(org :type git :repo "https://code.orgmode.org/bzg/org-mode.git"
+                            :local-repo "org")
+                      :diminish " O")
 (straight-use-package '(org-plus-contrib :type git :repo "https://code.orgmode.org/bzg/org-mode.git"
                                          :local-repo "org" :files (:defaults "contrib/lisp/*.el")))
 ;; need to get hold of org a soon as possible
-(straight-use-package '(dash :type git :flavor melpa :files ("dash.el" "dash.texi" "dash-pkg.el") :host github :repo "magnars/dash.el"))
-(straight-use-package '(f :type git :flavor melpa :files ("f.el" "f-pkg.el") :host github :repo "rejeep/f.el"))
-(straight-use-package '(ht :type git :flavor melpa :files ("ht.el" "ht-pkg.el") :host github :repo "Wilfred/ht.el"))
-(straight-use-package '(s :type git :flavor melpa :files ("s.el" "s-pkg.el") :host github :repo "magnars/s.el"))
-(straight-use-package '(ts :type git :flavor melpa :host github :repo "alphapapa/ts.el"))
-(straight-use-package '(a :type git :flavor melpa :host github :repo "plexus/a.el"))
-(straight-use-package '(org-ql :type git :flavor melpa :host github :repo "alphapapa/org-ql"))
-(straight-use-package '(emacsql :type git :flavor melpa :files ("emacsql.el" "emacsql-compiler.el" "emacsql-system.el" "README.md" "emacsql-pkg.el") :host github :repo "skeeto/emacsql"))
-(straight-use-package '(emacsql-sqlite3 :type git :flavor melpa :host github :repo "cireu/emacsql-sqlite3"))
+(straight-use-package-lazy '(dash :type git :flavor melpa :files ("dash.el" "dash.texi" "dash-pkg.el")
+                             :host github :repo "magnars/dash.el"))
+(straight-use-package-lazy '(f :type git :flavor melpa :files ("f.el" "f-pkg.el")
+                          :host github :repo "rejeep/f.el"))
+(straight-use-package-lazy '(ht :type git :flavor melpa :files ("ht.el" "ht-pkg.el")
+                           :host github :repo "Wilfred/ht.el"))
+(straight-use-package-lazy '(s :type git :flavor melpa :files ("s.el" "s-pkg.el")
+                          :host github :repo "magnars/s.el"))
+(straight-use-package-lazy '(ts :type git :flavor melpa
+                           :host github :repo "alphapapa/ts.el"))
+(straight-use-package-lazy '(a :type git :flavor melpa
+                          :host github :repo "plexus/a.el"))
+(straight-use-package-lazy '(org-ql :type git :flavor melpa
+                               :host github :repo "alphapapa/org-ql"))
+(straight-use-package-lazy '(emacsql :type git :flavor melpa
+                                :files ("emacsql.el"
+                                        "emacsql-compiler.el"
+                                        "emacsql-system.el"
+                                        "README.md"
+                                        "emacsql-pkg.el")
+                                :host github :repo "skeeto/emacsql"))
+(straight-use-package-lazy '(emacsql-sqlite3 :type git :flavor melpa
+                                        :host github :repo "cireu/emacsql-sqlite3"))
 (if nec/measure-time (nec/timer "Load general routines "))
 (setq org-export-backends '(ascii
                             beamer
+                            bibtex
                             html
                             icalendar
+                            koma-letter
                             latex
                             md
                             odt
-                            koma-letter))
+                            org
+                            publish
+                            rss
+                            texinfo))
 ;; Key Chord functionality in use-package
 (use-package use-package-chords
   :straight t
