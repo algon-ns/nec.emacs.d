@@ -31,7 +31,6 @@
  '(set-mark-command-repeat-pop t)
  '(smartparens-global-mode t)
  '(sp-show-pair-from-inside t)
- '(spaceline-highlight-face-func 'spaceline-highlight-face-modified t)
  '(xterm-mouse-mode t))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
