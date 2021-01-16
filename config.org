@@ -100,9 +100,114 @@ Karl Voit have adapted its code and write additional features.
 
 If you wonder, where You found this file....
 - Git Repo :: [[https://github.com/algon-ns/.emacs.d][github.com/algon-ns/.emacs.d]]                
-** early_init.el and init.el
-*** early_init.el (require emacs version > 27.0)
-#+begin_example emacs-lisp
+** emacs init filer
+*** early-init.el (require emacs version > 27.0)
+#+begin_example
+;;; early-init.el -*- lexical-binding: t; -*-
+;;
+;; Filename: early-init.el
+;; Description:
+;; Author: Niels Søndergaard
+;; Created: Wed Apr 21 10:49:04 2020 (+0200)
+;; Version: 1.0
+;; Last-Updated: Ons jan 13 16:47:13 2021 (+0100)
+;;           By: Niels Søndergaard
+;;     Update #: 5
+;; Keywords:
+;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; Commentary:
+;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; This program is free software: you can redistribute it and/or modify
+;; it under the terms of the GNU General Public License as published by
+;; the Free Software Foundation, either version 3 of the License, or (at
+;; your option) any later version.
+;;
+;; This program is distributed in the hope that it will be useful, but
+;; WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+;; General Public License for more details.
+;;
+;; You should have received a copy of the GNU General Public License
+;; along with GNU Emacs.  If not, see <https://www.gnu.org/licenses/>.
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; Code:
+(setq enable-local-variables :safe)
+;;
+;;Some fundemental default settings are here
+(setq package-enable-at-startup nil)
+(setq-default debug-on-error         nil
+              message-log-max        t
+              ad-redefinition-action 'accept)
+;;;;;; Set garbage collection threshold (to secure fast startup)
+;; From https://www.reddit.com/r/emacs/comments/3kqt6e/2_easy_little_known_steps_to_speed_up_emacs_start/
+(setq gc-cons-threshold-original gc-cons-threshold)
+(setq gc-cons-threshold (* 1024 1024 10))
+;;;;;; Set file-name-handler-alist
+;; Also from https://www.reddit.com/r/emacs/comments/3kqt6e/2_easy_little_known_steps_to_speed_up_emacs_start/
+(setq file-name-handler-alist-original file-name-handler-alist)
+(setq file-name-handler-alist nil)
+;;;;;; Set deferred timer to reset them
+(run-with-idle-timer
+ 7 nil ;; seconds of idletime
+ (lambda ()
+   (setq gc-cons-threshold gc-cons-threshold-original)
+   (setq file-name-handler-alist file-name-handler-alist-original)
+   (makunbound 'gc-cons-threshold-original)
+   (makunbound 'file-name-handler-alist-original)
+   (straight-use-package 'gcmh)
+   (use-package gcmh
+     :straight t
+     :delight " "
+     :init
+     (setq gcmh-verbose           nil
+           gcmh-lows-cons-threshold #x800000
+           gcmh-high-cons-threshold #x3200000
+           gcmh-idle-delay          3600)
+     :config
+     (gcmh-mode))
+   (setq garbage-collection-messages nil)
+   (message "gc-cons-threshold and file-name-handler-alist restored")))               
+;; start the startup
+(defcustom nec/measure-time t
+  "Do we want to measure time for this startup?"
+  :group 'nec
+  :type 'boolean)
+
+(defcustom my-user-emacs-directory "~/.emacs.d/"
+   "this is my home directory (in emacs)"
+   :group 'nec
+   :type 'string)
+
+(setq default-directory my-user-emacs-directory)
+(setq user-emacs-directory "~/.emacs.d/")
+
+;; goto my base
+(cd my-user-emacs-directory)
+
+(add-to-list 'custom-theme-load-path "~/.emacs.d/themes")
+(defvar my-init-el-start-time (current-time)
+  "Time when init.el was started")
+;; from http://ergoemacs.org/emacs/elisp_datetime.html
+(setq my-config-el-start-time-iso (concat
+  (format-time-string "%Y-%m-%dT%T")
+  ((lambda (x) (concat (substring x 0 3) ":" (substring x 3 5)))
+    (format-time-string "%z"))))
+(setq nec/total-time (current-time))
+(setq nec/nutid (current-time))
+
+(defun nec/timer (tekst)
+  (message  (concat  "→ ★ " tekst "  %.2fs" )  (float-time (time-subtract (current-time) nec/nutid)))
+  (setq nec/nutid (current-time)))
+;; Resizing the Emacs frame can be a terribly expensive part of changing the
+;; font. By inhibiting this, we easily halve startup times with fonts that are
+;; larger than the system default.
+(nec/timer "Start mesure of load time")
+(setq frame-inhibit-implied-resize t)
+#+end_example
+*** init.el
+#+begin_example
 ;;; -*- lexical-binding: t; -*-
 ;;; -*-no-byte-compile: t; -*- initial file for NEC configurtion
 ;;;init.el ---  main init file for emacs configuration
@@ -112,9 +217,9 @@ If you wonder, where You found this file....
 ;; Author: Niels Søndergaard
 ;; Created: Fri Jun 12 10:49:04 2020 (+0200)
 ;; Version: 1.0
-;; Last-Updated: Tor Dec  3 15:26:51 2020 (+0100)
+;; Last-Updated: Fre Nov 27 20:19:06 2020 (+0100)
 ;;           By: Niels Søndergaard
-;;     Update #: 116
+;;     Update #: 6
 ;; Keywords:
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -137,63 +242,83 @@ If you wonder, where You found this file....
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;
 ;;; Code:
+(setq straight-use-package-by-default t)
+;; (setq straight-vc-git-default-clone-depth 'full)
 (defvar bootstrap-version)
-(let ((bootstrap-file
-       (expand-file-name "straight/repos/straight.el/bootstrap.el" user-emacs-directory))
-      (bootstrap-version 5))
+(let* ((straight-repo-dir
+        (expand-file-name "straight/repos" user-emacs-directory))
+       (bootstrap-file
+        (concat straight-repo-dir "/straight.el/bootstrap.el"))
+       (bootstrap-version 5))
   (unless (file-exists-p bootstrap-file)
-    (with-current-buffer
-        (url-retrieve-synchronously
-         "https://raw.githubusercontent.com/raxod502/straight.el/develop/install.el"
-         'silent 'inhibit-cookies)
-      (goto-char (point-max))
-      (eval-print-last-sexp)))
+    (shell-command
+     (concat
+      "mkdir -p " straight-repo-dir " && "
+      "git -C " straight-repo-dir " clone "
+      "https://github.com/raxod502/straight.el.git && "
+      "git -C " straight-repo-dir " checkout 2d407bc")))
   (load bootstrap-file nil 'nomessage))
-;; To not increase Emacs startup time, check package modifications when packages
-;; edited (with Emacs) or manually invoke =straight-check-all= command, instead of
-;; checking modifications at startup.
+;;
+(straight-use-package '(use-package :type git :flavor melpa
+                         :files (:defaults (:exclude "bind-key.el"
+                                                     "bind-chord.el"
+                                                     "use-package-chords.el"
+                                                     "use-package-ensure-system-package.el")
+                                           "use-package-pkg.el")
+                         :host github :repo "jwiegley/use-package"))
 (setq straight-check-for-modifications '(check-on-save find-when-checking))
 ;; =M-x straight-pull-all=: update all packages.
 ;; =M-x straight-normalize-all=: restore all packages (remove local edits)
 ;; =M-x straight-freeze-versions= and =M-x straight-thaw-versions= are like =pip
 ;;  freeze requirements.txt= and =pip install -r requirements.txt=
 
- (setq straight-use-package-by-default t)
- (straight-use-package 'use-package)
- (use-package git) ;; ensure we can install from git sources
-
-(if nec/measure-time (nec/timer "After load of straight... "))
-
-
-(straight-use-package '(org :type git :repo "https://code.orgmode.org/bzg/org-mode.git" :local-repo "org")
-   :diminish " O")
-(straight-use-package '(org-contrib :type git :repo "https://code.orgmode.org/bzg/org-mode.git" :local-repo "org" :files (:defaults "contrib/lisp/*.el")))
+;; ensure we can install from git sources
+(straight-use-package '(git :type git :flavor melpa :host github :repo "rejeep/git.el"))
+(if nec/measure-time (nec/timer "After load of straight and git.... "))
+(straight-use-package '(org :type git :repo "https://code.orgmode.org/bzg/org-mode.git"
+                            :local-repo "org")
+                      :diminish " O")
+(straight-use-package '(org-plus-contrib :type git :repo "https://code.orgmode.org/bzg/org-mode.git"
+                                         :local-repo "org" :files (:defaults "contrib/lisp/*.el")))
 ;; need to get hold of org a soon as possible
-(straight-use-package 'cl-lib)
-(straight-use-package '(dash :type git :flavor melpa :files ("dash.el" "dash.texi" "dash-pkg.el") :host github :repo "magnars/dash.el"))
-(straight-use-package '(f :type git :flavor melpa :files ("f.el" "f-pkg.el") :host github :repo "rejeep/f.el"))
-(straight-use-package '(ht :type git :flavor melpa :files ("ht.el" "ht-pkg.el") :host github :repo "Wilfred/ht.el"))
-(straight-use-package '(s :type git :flavor melpa :files ("s.el" "s-pkg.el") :host github :repo "magnars/s.el"))
-(straight-use-package '(ts :type git :flavor melpa :host github :repo "alphapapa/ts.el"))
-(straight-use-package '(a :type git :flavor melpa :host github :repo "plexus/a.el"))
-(straight-use-package '(org-ql :type git :flavor melpa :host github :repo "alphapapa/org-ql"))
-(straight-use-package '(emacsql :type git :flavor melpa :files ("emacsql.el" "emacsql-compiler.el" "emacsql-system.el" "README.md" "emacsql-pkg.el") :host github :repo "skeeto/emacsql"))
-(straight-use-package '(emacsql-sqlite3 :type git :flavor melpa :host github :repo "cireu/emacsql-sqlite3"))
+(straight-use-package '(dash :type git :flavor melpa :files ("dash.el" "dash.texi" "dash-pkg.el")
+                             :host github :repo "magnars/dash.el"))
+(straight-use-package '(f :type git :flavor melpa :files ("f.el" "f-pkg.el")
+                          :host github :repo "rejeep/f.el"))
+(straight-use-package '(ht :type git :flavor melpa :files ("ht.el" "ht-pkg.el")
+                           :host github :repo "Wilfred/ht.el"))
+(straight-use-package '(s :type git :flavor melpa :files ("s.el" "s-pkg.el")
+                          :host github :repo "magnars/s.el"))
+(straight-use-package '(ts :type git :flavor melpa
+                           :host github :repo "alphapapa/ts.el"))
+(straight-use-package '(a :type git :flavor melpa
+                          :host github :repo "plexus/a.el"))
+(straight-use-package '(org-ql :type git :flavor melpa
+                               :host github :repo "alphapapa/org-ql"))
+(straight-use-package '(emacsql :type git :flavor melpa
+                                :files ("emacsql.el"
+                                        "emacsql-compiler.el"
+                                        "emacsql-system.el"
+                                        "README.md"
+                                        "emacsql-pkg.el")
+                                :host github :repo "skeeto/emacsql"))
+(straight-use-package '(emacsql-sqlite3 :type git :flavor melpa
+                                        :host github :repo "cireu/emacsql-sqlite3"))
 (if nec/measure-time (nec/timer "Load general routines "))
-;; Anaphoric expressions implicitly create one or more temporary
-;; variables which can be referred to during the expression.  This
-;; technique can improve clarity in certain cases.  It also enables
-;; recursion for anonymous functions.
-;; (use-package anaphora
-;;    :straight t)           ;; anaphora
 (setq org-export-backends '(ascii
                             beamer
+                            bibtex
+                            el
                             html
                             icalendar
+                            koma-letter
                             latex
                             md
                             odt
-                            koma-letter))
+                            org
+                            publish
+                            rss
+                            texinfo))
 ;; Key Chord functionality in use-package
 (use-package use-package-chords
   :straight t
@@ -208,10 +333,6 @@ NAME and ARGS are as in `use-package'."
 ;; Feature `straight-x' from package `straight' provides
 ;; experimental/unstable extensions to straight.el which are not yet
 ;; ready for official inclusion.
-;;(use-feature straight-x
-;; Add an autoload for this extremely useful command.y
-;;  :commands (straight-x-fetch-all))
-
 (straight-use-package 'general)
 (use-package general
   :init
@@ -272,8 +393,7 @@ NAME and ARGS are as in `use-package'."
 			(string= "DISABLED" match_for_TODO_keyword)
 			(not (string= "emacs-lisp" lang)))
 	      (add-to-list 'body-list (concat "\n\n;; #####################################################################################\n"
-					      "(message \"config • " (org-get-heading) " …\")\n\n")
-			   )
+					      "(message \"config • " (org-get-heading) " …\")\n\n"))
 	      (add-to-list 'body-list body)
 	      ))))
       (with-temp-file output-file
@@ -281,6 +401,7 @@ NAME and ARGS are as in `use-package'."
         (insert ";; ============================================================\n")
         (insert ";; Don't edit this file, edit config.org' instead ...\n")
         (insert ";; Auto-generated at " (format-time-string current-date-time-format (current-time)) " on host " system-name "\n")
+        (insert ";; Author: Niels Søndergaard at 'htpps:/github.com/algon-ns/'\n")
         (insert ";; ============================================================\n")
         (insert (apply 'concat (reverse body-list))))
       (message "—————• Wrote %s" output-file))))
@@ -296,7 +417,6 @@ NAME and ARGS are as in `use-package'."
     )
   (load-file elfile))
 
-;; when config.org is saved, re-generate config.el:
 (defun my-tangle-config-org-hook-func ()
   (when (string= "config.org" (buffer-name))
 	(let ((orgfile (concat my-user-emacs-directory "config.org"))
@@ -304,10 +424,10 @@ NAME and ARGS are as in `use-package'."
 	  (my-tangle-config-org))))
 (add-hook 'after-save-hook 'my-tangle-config-org-hook-func)
 (message "→★ loading init.el in %.2fs" (float-time (time-subtract (current-time) my-init-el-start-time)))
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (put 'dired-find-alternate-file 'disabled nil)
 #+end_example
+
 * Contents             :TOC_5:
 :PROPERTIES:
 :CUSTOM_ID: Contents
@@ -315,8 +435,9 @@ NAME and ARGS are as in `use-package'."
 - [[#preface][Preface]]
   - [[#about-me][about me]]
   - [[#about-this-file][about this file]]
-  - [[#early_initel-and-initel][early_init.el and init.el]]
-    - [[#early_initel-require-emacs-version--270][early_init.el (require emacs version > 27.0)]]
+  - [[#emacs-init-filer][emacs init filer]]
+    - [[#early-initel-require-emacs-version--270][early-init.el (require emacs version > 27.0)]]
+    - [[#initel][init.el]]
 - [[#basic-emacs][Basic emacs]]
   - [[#fundamental-constants-and-functions][Fundamental constants and functions]]
     - [[#better-defaults][better Defaults]]
@@ -325,7 +446,7 @@ NAME and ARGS are as in `use-package'."
     - [[#load-custom-file][load custom file]]
     - [[#typeface-suitability-test][typeface suitability test]]
     - [[#bind-key][bind key]]
-    - [[#variables-and-defaults][variables and Defaults]]
+    - [[#variables-and-defaults][variables and defaults]]
     - [[#path-and-env-from-os][PATH and env (from OS)]]
     - [[#list-environment][list-environment]]
     - [[#all-the-icons][all-the-icons]]
@@ -370,7 +491,6 @@ NAME and ARGS are as in `use-package'."
     - [[#grep-and-find-file][grep and find file]]
   - [[#emacs-interface][emacs interface]]
     - [[#ac-jump][AC Jump]]
-    - [[#term][term]]
     - [[#helm][helm]]
     - [[#ivy][ivy]]
     - [[#marginella][marginella]]
@@ -386,17 +506,16 @@ NAME and ARGS are as in `use-package'."
     - [[#company-box][company-box]]
     - [[#hippie-expand][hippie Expand]]
     - [[#show-face-under-cursor][show face under cursor]]
-    - [[#set-emacs-up-to-have-color-on-terminal][set emacs up to have color on terminal]]
+    - [[#color-on-terminal][color on terminal]]
     - [[#auto-super-save][auto Super Save]]
     - [[#keys][keys]]
   - [[#user-interface][User interface]]
     - [[#diminishblackout][diminish/blackout]]
-    - [[#never-loose-the-cursor][never loose the cursor]]
     - [[#beaconmode][beaconMode]]
     - [[#dimming-unused-windows][dimming Unused Windows]]
     - [[#ask-before-killing-emacs][ask before killing emacs]]
     - [[#modeline][modeline]]
-    - [[#term-1][term]]
+    - [[#terminal][terminal]]
     - [[#edit-command][edit command]]
     - [[#text-folding-with-origami-mode][text Folding with Origami-mode]]
     - [[#dired-filefinder][dired filefinder]]
@@ -431,7 +550,6 @@ NAME and ARGS are as in `use-package'."
     - [[#gnuplot][gnuplot]]
     - [[#remember-mode][remember mode]]
     - [[#docker][docker]]
-    - [[#gnuplot-1][gnuplot]]
     - [[#tæl-ord][tæl ord]]
     - [[#elgantt][elgantt]]
     - [[#gnus][gnus]]
@@ -461,8 +579,7 @@ First the basics for running emacs
 :END:
 *** better Defaults
 Here are what I consider better defaults as per my own experience.
-
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp :tangle yes
 (setq-default
  ad-redefinition-action 'accept                   ; Silence warnings for redefinition
  auto-save-list-file-prefix nil                   ; Prevent tracking for auto-saves
@@ -528,7 +645,7 @@ Consistent performance is the reason to also enable global-so-long-mode,
   no further intervention from my part.
 The code below is a minor adaptation of the insights of Alain M. Lafon
   in the Comprehensive guide on handling long lines in Emacs (2020-09-29).
-  #+begin_src emacs-lisp
+  #+begin_src emacs-lisp :tangle yes
 (use-package emacs
   :straight t 
   :config
@@ -547,7 +664,7 @@ These macros are conveinent shorthands.
 :function
 Make non-interactive functions out of forms or a symbol.
 e.g. (:function (message "Hello world.") e.g. (:function foobar)
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
 (defmacro :function (&rest body)
   (if (->> body length (< 1))
       `(lambda () ,@body)
@@ -570,7 +687,7 @@ e.g. (:function (message "Hello world.") e.g. (:function foobar)
 :command
 Make interactive commands out of forms or a symbol.
 e.g. (:command (message "Hello world.")) e.g. (:command foobar)
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
 (defmacro :command (&rest body)
   (if (->> body length (< 1))
       `(lambda () (interactive) ,@body)
@@ -647,8 +764,6 @@ e.g. (:bind "C-m" (message "Hello world." e.g. (:bind org-mode "C-m" (message "H
        `(define-key ,mode (kbd ,key) ,body)))
     ;; global binding
     (_ `(global-set-key (kbd ,key) ,(eval `(:command ,@body))))))
-#+end_src
-#+begin_src emacs-lisp
 (if nec/measure-time (nec/timer "Helpers "))
 #+end_src
 *** version and warning if wrong version
@@ -674,7 +789,7 @@ When you install a package or use the various customisation interfaces
 to tweak things to your liking, Emacs will append a piece of Elisp to
 your init file.  In my experience, this is a common source of
 inconsistencies, arising from a conflict between the user's code and
-what is stored in that added =custom= snippet.
+what is stored in that added =custom= snippet. But......
 #+begin_src emacs-lisp
 ;;; Offload the custom-set-variables to a separate file
 ;;; This keeps your init.el neater and you have the option
@@ -738,10 +853,10 @@ abcdefghijklmnopqrstuvwxyzæøå
 (straight-use-package '(bind-key :type git :flavor melpa :files ("bind-key.el" "bind-key-pkg.el") 
                          :host github :repo "jwiegley/use-package"))
 ;; Have a thick ruler between vertical windows
-(window-divider-mode)
+;; (window-divider-mode)
 (if nec/measure-time (nec/timer "bind key   "))
 #+end_src
-*** variables and Defaults
+*** variables and defaults
 :PROPERTIES:
 :CUSTOM_ID: Variables and Defaults
 :END:
@@ -791,14 +906,15 @@ abcdefghijklmnopqrstuvwxyzæøå
   :group 'nec
   :type 'boolean)
 ;;
-(setq-default cursor-type 'bar)           ; Line-style cursor similar to other text editors
+
 (setq-default frame-title-format '("" "%b - Som i en Drømmeverden (•̀ᴗ•́)و"))
 (setq ring-bell-function 'ignore)         ; Disable bell sound
 (fset 'yes-or-no-p 'y-or-n-p)             ; y-or-n-p makes answering questions faster
 (show-paren-mode t)
 (show-paren-mode 'mixed)
 (set-face-attribute 'default nil :family "Iosevka Type" :height 160 )
-(straight-use-package  '(bookmark+ :type git :host github :repo "emacsmirror/bookmark-plus"))
+(straight-use-package '(bookmark+ :type git :host github 
+                        :repo "emacsmirror/bookmark-plus"))
 (setq bookmark-default-file "~/.emacs.d/private/bookmarks"
       browse-url-generic-program "safari"
       browse-url-text-browser "safari"
@@ -816,11 +932,6 @@ abcdefghijklmnopqrstuvwxyzæøå
 
 ;;; Lockfiles unfortunately cause more pain than benefit
 (setq create-lockfiles nil)
-(setq-default
-  blink-cursor-interval .6
-  blink-matching-paren  t
-  cursor-in-non-selected-windows t)
-(blink-cursor-mode 1)
 (setq hscroll-margin                  7
       scroll-margin                   7
       hscroll-step                    7
@@ -829,7 +940,8 @@ abcdefghijklmnopqrstuvwxyzæøå
       scroll-preserve-screen-position 'always
       mac-mouse-wheel-smooth-scroll    nil)
 
-(setq-default shell-file-name "/bin/zsh")
+(setq async-quiet-switch "-q")
+
 (setq-default
  visual-fill-column-width       100
  word-wrap                      t
@@ -842,7 +954,6 @@ abcdefghijklmnopqrstuvwxyzæøå
  whitespace-style       '(face spaces tabs newline
   			space-mark tab-mark newline-mark
   			lines-tail empty))
-
 (setq-default
    buffers-menu-max-size 30
    case-fold-search      t
@@ -871,24 +982,10 @@ abcdefghijklmnopqrstuvwxyzæøå
 (setenv "TMPDIR" "/tmp/")
 (setenv "TERM" "xterm-256color")
 (setenv "LANG" "da_DK.UTF-8")
-
+(setenv "PATH" "/bin:/usr/bin:/usr/local/bin:/sbin:/usr/sbin:/usr/local/opt:/usr/local/bin:/usr/local/sbin:/Library/Tex/texbin:/opt/X11/bin")
 (use-package exec-path-from-shell
   :straight t
-  :if (and (eq system-type 'darwin) (display-graphic-p))
-  :config
-  (progn
-    ;; For debugging
-    (when nil
-      (message "path: %s, setup: %s" (getenv "PATH")
-               (getenv "ENVIRONMENT_SETUP_DONE"))
-      (setq exec-path-from-shell-debug t))
-    (setq exec-path-from-shell-arguments (list "-l"))
-    (setq exec-path-from-shell-check-startup-files nil)
-    (add-to-list 'exec-path-from-shell-variables "SHELL")
-    (add-to-list 'exec-path-from-shell-variables "TERM")
-    (add-to-list 'exec-path-from-shell-variables "ENVIRONMENT_SETUP_DONE")
-    (add-to-list 'exec-path-from-shell-variables "TMPDIR")
-    (exec-path-from-shell-initialize)))
+  :if (and (eq system-type 'darwin) (display-graphic-p)))
 
 (if nec/measure-time (nec/timer "set PATH and env "))
 #+end_src
@@ -1087,6 +1184,7 @@ If Non-nil, use dashboard, otherwise will restore previous session."
 (straight-use-package '(solarized-theme :type git :flavor melpa :host github :repo "bbatsov/solarized-emacs"))
 (straight-use-package '(color-theme-sanityinc-tomorrow :type git :flavor melpa :host github :repo "purcell/color-theme-sanityinc-tomorrow"))
 (straight-use-package '(gruvbox-theme :type git :flavor melpa :host github :repo "greduan/emacs-theme-gruvbox"))
+(straight-use-package '(doom-themes :type git :flavor melpa :files (:defaults "themes/*.el" "doom-themes-pkg.el") :host github :repo "hlissner/emacs-doom-themes"))
 #+end_src
 
 Source: https://github.com/m-parashar/emax64/issues/5
@@ -1235,7 +1333,7 @@ Some safety tips regarding your editor are covered in the excellent article
 [[https://glyph.twistedmatrix.com/2015/11/editor-malware.html][Your Text Editor is Malware]]. So, before going on with the configuration, let's
 get some things straight. First of all, enable checking trust on TLS
 connections.
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
 (setq tls-checktrust t)
 #+end_src
 Now that we have enabled this feature, Emacs can't fetch HTTPS anymore: Emacs
@@ -1245,7 +1343,7 @@ it. First, there are some things you need to install outside of Emacs: the
 =gnutls= by running =brew install gnutls= or =apt-get install gnutls-bin=. Once
 we have everything set, we just need to tell Emacs where to search for the
 tools: setting the =tls-program= variable.
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
 ;; This snippet is ready to work in both UNIX-like and Windows OS
 (let ((trustfile
        (replace-regexp-in-string
@@ -1262,7 +1360,7 @@ tools: setting the =tls-program= variable.
 #+end_src
 And, just in case (specially since the blog post provided it), we can create a
 function to check if this setup is properly done:
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
 (defun check-tls-config ()
   "Check for correctness in the TLS configuration for Emacs."
   (interactive)
@@ -1282,7 +1380,6 @@ function to check if this setup is properly done:
 (if nec/measure-time
           (nec/timer "Secure emacs   "))
 #+end_src
-
 *** registers
 :PROPERTIES:
 :CUSTOM_ID: Registers
@@ -1355,16 +1452,16 @@ Clean all the registers you saved.
 *** insert-char-preview
 Insert Unicode char via insert-char-preview similar to insert-char command, but
 with character preview in completion prompt. from: [[https://gitlab.com/matsievskiysv/insert-char-preview/tree/0e4a62b5407fb1bed8920a4c13cf9a91065e15ad][insert-char-preview]]
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
 (straight-use-package '(insert-char-preview :type git :flavor melpa :host gitlab :repo "matsievskiysv/insert-char-preview"))
 ;;  :commands insert-char-preview
 ;;  :bind ("C-x 8 RET" . insert-char-preview))
+(if nec/measure-time (nec/timer "insert-char-preview "))
 #+end_src
 *** scratch buffer
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
 ;; Makes *scratch* empty.
 (setq initial-scratch-message "")
-
 ;; Removes *Completions* from buffer after you've opened a file.
 (add-hook 'minibuffer-exit-hook
       '(lambda ()
@@ -1376,10 +1473,10 @@ with character preview in completion prompt. from: [[https://gitlab.com/matsievs
 (setq inhibit-startup-buffer-menu t)
 (setq initial-buffer-choice 'acg-initial-buffer-choice)
 (if nec/measure-time (nec/timer "avoid scratch buffer "))
-#+end_srcstraight
+#+end_src
 *** kill buffer and the file associated
 
-   #+BEGIN_SRC emacs-lisp
+ #+BEGIN_SRC emacs-lisp :tangle yes
      (defun bk/kill-buffer-and-file (buffer-name)
        "Removes file connected to current buffer and kills buffer."
        (interactive "Kill buffer and its file:")
@@ -2065,45 +2162,6 @@ to an html file in `user-emacs-directory'"
   ("C-c SPC" . ace-jump-mode))
 (if nec/measure-time (nec/timer "AC jump   "))
 #+END_SRC
-*** term
-:PROPERTIES:
-:CUSTOM_ID: term
-:END:
-As I started to use Emacs, my use of the terminal was drastically reduced: most
-of my workflow was indeed moved to Emacs bindings, one way or another: =git=,
-=ag=, compiling and running... Everything could be done without using a
-terminal! I kept a binding to =eshell=, just because it was kind of cute and
-useful to have it laying around.
-
-However, growing up in Linux means getting your hands dirtier and becoming
-geekier every time.  
-However, the defaults were far from intuitive, and although it
-came close, some rough corners still felt off. Through a [[https://lobste.rs/s/whaez0/emacs_everywhere#c_i7cq7w][comment in Lobsters]] by
-its author, [[https://lobste.rs/u/adamrt][adamrt]], I discovered =sane-term=: a group of convenience functions
-that restore basic sanity to the Emacs =ansi-term= and provides the closer to a
-proper shell in Emacs!
-
-#+BEGIN_SRC emacs-lisp 
-  (use-package sane-term
-    :straight t
-    :config
-    (defun set-up-sane-term ()
-      "Fix yanking and prepare for sane-term-mode."
-      (setq-local global-hl-line-mode nil)
-      (define-key
-        term-raw-map
-        (kbd "C-y")
-        (lambda ()
-          (interactive)
-          (term-line-mode)
-          (yank)
-          (term-char-mode))))
-
-    :hook (term-mode . set-up-sane-term)
-    :bind (("C-c t" . sane-term)
-           ("C-c T" . sane-term-create)
-           ("C-c C-j" . sane-term-mode-toggle)))
-#+END_SRC
 *** helm
 :PROPERTIES:
 :CUSTOM_ID: Helm
@@ -2701,7 +2759,7 @@ that is supports a wide range of backends for finding completions -
     (if face (message "Face: %s" face) (message "No face at %d" pos))))
 (if nec/measure-time (nec/timer "What-face "))
 #+end_src
-*** set emacs up to have color on terminal
+*** color on terminal
 :PROPERTIES:
 :CUSTOM_ID: Set emacs up to have color on terminal
 :END:
@@ -2777,6 +2835,7 @@ Put all keybindings here (with doc)
   :config (diminish 'org-indent-mode " ➣")
           (diminish 'blacken-mode " ")
           (diminish 'auto-fill-function " ⚮")
+          (diminish 'dired-filter-mode " ")
           (diminish 'ctrlf-mode " ")
           (diminish 'rainbow-delimiters-mode " ♼")
           (diminish 'flx-ido " "))
@@ -2790,7 +2849,6 @@ Put all keybindings here (with doc)
 
 (if nec/measure-time (nec/timer "Diminish   "))
 #+end_src
-*** never loose the cursor
 *** beaconMode
 :PROPERTIES:
 :CUSTOM_ID: Never-loose-the-cursor
@@ -2801,6 +2859,13 @@ Make it very easy to see the line with the cursor.
 Moreover, we reduce the mental strain of locating the cursour when navigation happens:
 When we switch windows or scroll, for example, we get a wave of light near the cursor.
 #+begin_src emacs-lisp
+(setq-default cursor-type 'bar) ; Line-style cursor similar to other text editors
+(setq-default
+  blink-cursor-interval .6
+  blink-matching-paren  t
+  cursor-in-non-selected-windows t)
+(blink-cursor-mode 1)
+
 (use-package beacon
   :straight t
   :diminish
@@ -2856,6 +2921,9 @@ No body wants to, but at time you have to...
 
 (straight-use-package '(doom-modeline :type git :flavor melpa :host github 
                         :repo "seagle0128/doom-modeline"))
+;;;;;;;ns  issue #406 doom-modeline
+(setq battery-status-function nil)
+;;;;;;;ns
 (setq doom-modeline-height 1.4)
 (set-face-attribute 'mode-line nil :family "OpenDyslexic" :background "#2d334a" :height 125)
 (set-face-attribute 'mode-line-inactive nil :family "OpenDyslexic" :height 125)
@@ -2882,97 +2950,26 @@ No body wants to, but at time you have to...
 (setq doom-modeline-github-interval (* 30 60))
 ;; Whether display the modal state icon.
 ;; Including `evil', `overwrite', `god', `ryo' and `xah-fly-keys', etc.
-(setq doom-modeline-modal-icon nil)
+(setq doom-modeline-modal-icon "god")
 ;; Whether display the mu4e notifications. It requires `mu4e-alert' package.
 (setq doom-modeline-mu4e nil)
 ;; Whether display the gnus notifications.
-(setq doom-modeline-gnus t)
+(setq doom-modeline-gnus nil)
+;;
+(setq doom-modeline-buffer-file-name-style 'truncate-with-project)
 
 (doom-modeline-mode)  
 (if nec/measure-time (nec/timer "mode line  "))
 #+end_src
 
-*** term
+*** terminal
 :PROPERTIES:
 :CUSTOM_ID: Term
 :END:
 #+begin_src emacs-lisp
-  (defun term/shell (program &optional new-buffer-name)
-        "Start a terminal-emulator in a new buffer.
+(setq-default shell-file-name "/bin/zsh")
 
-      With a prefix argument, it prompts the user for the shell
-      executable.
-
-      If there is already existing buffer with the same name, switch to
-      that buffer, otherwise it creates new buffer.
-
-      Like `shell', it loads `~/.emacs_SHELLNAME' if exists, or
-      `~/.emacs.d/init_SHELLNAME.sh'.
-
-      The shell file name (sans directories) is used to make a symbol
-      name such as `explicit-bash-args'.  If that symbol is a variable,
-      its value is used as a list of arguments when invoking the
-      shell."
-        (interactive (let ((default-prog (or explicit-shell-file-name
-                                             (getenv "ESHELL")
-                                             shell-file-name
-                                             (getenv "SHELL")
-                                             "/bin/zsh")))
-                       (list (if (or (null default-prog)
-                                     current-prefix-arg)
-                                 (read-from-minibuffer "Run program: " default-prog)
-                               default-prog))))
-
-        ;; Pick the name of the new buffer.
-        (setq term-ansi-buffer-name
-              (if new-buffer-name
-                  new-buffer-name
-                (if term-ansi-buffer-base-name
-                    (if (eq term-ansi-buffer-base-name t)
-                        (file-name-nondirectory program)
-                      term-ansi-buffer-base-name)
-                  "shell/term")))
-
-        (setq term-ansi-buffer-name (concat "*" term-ansi-buffer-name "*"))
-
-        ;; In order to have more than one term active at a time
-        ;; I'd like to have the term names have the *term-ansi-term<?>* form,
-        ;; for now they have the *term-ansi-term*<?> form but we'll see...
-        (when current-prefix-arg
-          (setq term-ansi-buffer-name 
-                (generate-new-buffer-name term-ansi-buffer-name)))
-
-        (let* ((name (file-name-nondirectory program))
-               (startfile (concat "~/.emacs_" name))
-               (xargs-name (intern-soft (concat "explicit-" name "-args"))))
-          (unless (file-exists-p startfile)
-            (setq startfile (concat user-emacs-directory "init_" name ".sh")))
-
-          (setq term-ansi-buffer-name
-                (apply 'term-ansi-make-term term-ansi-buffer-name program
-                       (if (file-exists-p startfile) startfile)
-                       (if (and xargs-name (boundp xargs-name))
-                           ;; `term' does need readline support.
-                           (remove "--noediting" (symbol-value xargs-name))
-                         '("-i")))))
-        (straight-use-package '(eterm-256color :type git :flavor melpa :files 
-                               (:defaults "eterm-256color.ti" "eterm-256color-pkg.el") 
-                                :host github :repo "dieggsy/eterm-256color")
-          :hook (term-mode))
-        
-        (set-buffer term-ansi-buffer-name)
-        (term-mode)
-        (term-line-mode)                      ; (term-char-mode) if you want
-
-        ;; I wanna have find-file on C-x C-f -mm
-        ;; your mileage may definitely vary, maybe it's better to put this in your
-        ;; .emacs ...
-
-        (term-set-escape-char ?\C-x)
-
-        (switch-to-buffer term-ansi-buffer-name))
-
-      (global-set-key "\C-t" 'term/shell)
+(if nec/measure-time (nec/timer "terminal "))
 #+end_src
 *** edit command
 :PROPERTIES:
@@ -3077,6 +3074,7 @@ blocks! Love this one ^_^
    (use-package dired-filter
       :straight t
       :after    dired
+      :delight  " "
       :bind (:map dired-mode-map
                   ("/" . dired-filter-map))
       :hook ((dired-mode . dired-filter-mode)
@@ -3575,6 +3573,7 @@ Disable property inheritance (in order to seed up)
 
   (if nec/measure-time (nec/timer "general org "))
 #+end_src
+
 *** org bullets
 :PROPERTIES:
 :CUSTOM_ID: org bullets
@@ -4135,7 +4134,7 @@ Origami mode ---see below in [[Text Folding with Origami-mode]]---
          ("C-c s i" . sl-quick-insert-inline-link)
          ("C-c s C-d" . sl-delete-link))
   :config
-  (setq sl-backlink-into-drawer "~/Dropbox/org/roam/Index.org"
+  (setq sl-4erebacklink-into-drawer "~/Dropbox/org/roam/Index.org"
         sl-related-into-drawer  "~/Dropbox/org/roam/Index.org" 
         sl-link-prefix 'sl-link-prefix-timestamp))
 #+end_src
@@ -4178,13 +4177,38 @@ Origami mode ---see below in [[Text Folding with Origami-mode]]---
  (if nec/measure-time (nec/timer "deft "))
 #+end_src
 *** zetteldeft
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
+(setq deft-extensions '("org" "md" "txt"))
+ 
+(setq deft-directory (concat org-directory "/roam/")) 
+(setq deft-recursive t)
+;; Search the deft directory recursively, to include subdirectories.n 
 (straight-use-package '(zetteldeft :type git :flavor melpa 
-                        :files (:defaults "zetteldeft.org" "zetteldeft-pkg.el") 
-                        :host github :repo "EFLS/zetteldeft"))
-(zetteldeft-set-classic-keybindings)
+                        :files (:defaults "zetteldeft.org"
+                        "zetteldeft-pkg.el") :host github :repo "EFLS/zetteldeft"))
+(zetteldeft-set-classic-keybindings) 
+(setq zetteldeft-home-id "Index.org")
+(setq zetteldeft-id-format "%Y%m%d%H%M%S")
+(setq zetteldeft-id-regex "20[0-9]\\{12\\}")
+#+end_src 
+I tend to write =org-mode= titles with =#+title:= (i.e.,
+uncapitalized). Also other =org-mode= code at the beginning is written in
+lower case.
 
-#+end_src
+In order to filter these from the deft summary, let's alter the
+regular expression:
+
+#+begin_src emacs-lisp :tangle no
+  (setq deft-strip-summary-regexp
+   (concat "\\("
+           "[\n\t]" ;; blank
+           "\\|^#\\+[a-zA-Z_]+:.*$" ;;org-mode metadata
+           "\\)"))
+(if nec/measure-time (nec/timer "Zettledeft "))
+#+end_SRC
+
+Its original value was =\\([\n ]\\|^#\\+[[:upper:]_]+:.*$\\)=.
+
 *** org ref
 #+begin_src emacs-lisp
 (straight-use-package '(org-ref :type git :flavor melpa :files 
@@ -4262,7 +4286,6 @@ Do presentation directly from Emacs
 *** org mac iCal
 
 [[https://github.com/ndw/org-mac-iCal][org-mac-iCal]] allows you to imports events from iCal.app to the Emacs diary.
-
 #+NAME: package-org-mac-iCal
 #+BEGIN_SRC emacs-lisp
 
@@ -4283,7 +4306,6 @@ Do presentation directly from Emacs
            (insert (match-string 0)))))
 (if nec/measure-time (nec/timer "org-mac-iCal "))
 #+END_SRC
-
 *** org cliplink
 [[https://github.com/rexim/org-cliplink][org-cliplink]] inserts Org-mode links from the clipboard.
 #+NAME: package-org-cliplink)
@@ -4321,6 +4343,7 @@ Let's install the [[https://github.com/politza/pdf-tools][pdf-tools]] library fo
 ;; (:exclude "lisp/tablist.el" "lisp/tablist-filter.el") "pdf-tools-pkg.el") :host github :repo "politza/pdf-tools"))
 ;; (setq pdf-info-epdfinfo-program "/usr/local/bin/epdfinfo")
 ;; (pdf-tools-install)
+(require 'pdf-tools)
 
 ;; to use pdfview with auctex
  (setq TeX-view-program-selection '((output-pdf "PDF Tools"))
@@ -4947,20 +4970,6 @@ by `remember-notes-buffer-name'."
 (setenv "DOCKER_CERT_PATH" "/Users/niels/.docker/machine/machines/default")
 (setenv "DOCKER_MACHINE_NAME" "default")
 #+end_src
-*** gnuplot
-#+begin_src emacs-lisp
-(straight-use-package '(gnuplot :type git :flavor melpa 
-       :files ("gnuplot.el" "gnuplot-gui.el" "gnuplot-context.el" "gnuplot-pkg.el") 
-       :host github :repo "emacsorphanage/gnuplot") )
-;; these lines enable the use of gnuplot mode
-(autoload 'gnuplot-mode "gnuplot" "gnuplot major mode" t)
-(autoload 'gnuplot-make-buffer "gnuplot" "open a buffer in gnuplot mode" t)
-;; this line automatically causes all files with the .gp extension to be loaded into gnuplot mode
-(setq auto-mode-alist (append '(("\\.gp$" . gnuplot-mode)) auto-mode-alist))
-
-;; This line binds the function-9 key so that it opens a buffer into gnuplot mode
-(global-set-key [(f9)] 'gnuplot-make-buffer)
-#+end_src
 *** tæl ord
 :PROPERTIES:
 :CUSTOM_ID: Tæl ord
@@ -5093,69 +5102,169 @@ by `remember-notes-buffer-name'."
 #+end_src
 *** gnus
 #+begin_src emacs-lisp
-(require 'gnus)
-(setq nnml-directory "~/Mail")
-(setq message-directory "~/Mail")
-(setq gnus-ignored-newsgroups "^to\\.\\|^[0-9. ]+\\( \\|$\\)\\|^[\”]\”[#’()]")
-(setq gnus-add-timestamp-to-message t)
-(setq gnus-add-to-list t)
-(setq gnus-article-truncate-lines nil)
-(setq gnus-auto-center-summary 2)
-(setq gnus-default-charset 'utf-8)
-(setq gnus-default-directory "/Users/niels/.emacs.d/private")
-(setq gnus-default-nntp-server "http://dr.dk/nyheder/service/feeds/viden")
-;;(setq gnus-group-change-level-function 'gnus-topic-change-level)
-(setq gnus-group-update-tool-bar t)
-(setq gnus-ignored-from-addresses "niels@algon\\.dk")
-(setq gnus-local-domain "algon\\.dk")
-(setq gnus-sum-thread-tree-leaf-with-other "├─► ")
-(setq gnus-sum-thread-tree-single-leaf "╰─► ")
-(setq gnus-sum-thread-tree-vertical "│")
+  (require 'gnus)
+  (setq nnml-directory "~/Mail")
+  (setq message-directory "~/Mail")
+  (setq gnus-ignored-newsgroups "^to\\.\\|^[0-9. ]+\\( \\|$\\)\\|^[\”]\”[#’()]")
+  (setq gnus-add-timestamp-to-message t)
+  (setq gnus-add-to-list t)
+  (setq gnus-article-truncate-lines nil)
+  (setq gnus-auto-center-summary 2)
+  (setq gnus-default-charset 'utf-8)
+  (setq gnus-default-directory "/Users/niels/.emacs.d/private")
+  (setq gnus-default-nntp-server "http://www.dr.dk/nyheder/service/feeds/viden")
+  ;;(setq gnus-group-change-level-function 'gnus-topic-change-level)
+  (setq gnus-group-update-tool-bar t)
+  (setq gnus-ignored-from-addresses "niels@algon.dk")
+  (setq gnus-local-domain "algon.dk")
 
-(setq gnus-select-method '(nntp "dr.dk/nyheder/service/feeds/viden"))
-    (add-to-list 'gnus-secondary-select-methods '(nnml "mail.algon.dk"))
-(setq gnus-select-method
-      '(nnimap "algon"
-               (nnimap-address "mail.algon.dk")
-               (nnimap-stream plain)
-               (nnimap-user nisoni)
-               (nni-authenticator login)
-               (nni-authinfo-file "~/.emacs.d/private/gnus-passwd")
-               (nnimap-server-port 143)))
+  (setq gnus-select-method '(nntp "https://www.dr.dk/nyheder/service/feeds/viden"))
+      (add-to-list 'gnus-secondary-select-methods '(nnml "mail.algon.dk"))
+  (setq gnus-select-method
+        '(nnimap "algon"
+                 (nnimap-address "mail.algon.dk")
+                 (nnimap-stream plain)
+                 (nnimap-user "nisoni")
+                 (nnimap-password "baldur2780")))
+;;                 (nni-authenticator login)
+;;                 (nni-authinfo-file "~/.emacs.d/private/gnus-passwd")))
+;;                 (nnimap-server-port "143")))
                  
-(setq mail-sources '((imap :server "mail.algon.dk"
-                           :user "nisoni"
-                           :password "baldur2780")))
+  (setq mail-sources '((imap :server "mail.algon.dk"
+                             :user "nisoni"
+                             :password "baldur2780")))
 
-(setq message-send-mail-function 'smtpmail-send-it
-   smtpmail-default-smtp-server "mail.algon.dk"
-   smtpmail-local-domain "algon.dk"
-   smtpmail-smtp-user "nisoni"
-   smtpmail-stream-type 'network
-   smtpmail-smtp-service 587
-   smtpmail-debug-info t)
-;;
-;; Make mail look pretty
-(use-package all-the-icons-gnus
-  :straight t
-  :config (all-the-icons-gnus-setup))
-;;
-(setq gnus-sum-thread-tree-vertical        "│"
-      gnus-sum-thread-tree-leaf-with-other "├─► "
-      gnus-sum-thread-tree-single-leaf     "╰─► "
-      gnus-summary-line-format
-      (concat
-       "%0{%U%R%z%}"
-       "%3{│%}" "%1{%d%}" "%3{│%}"
-       "  "
-       "%4{%-20,20f%}"
-       "  "
-       "%3{│%}"
-       " "
-       "%1{%B%}"
-       "%s\n"))
-  (add-hook 'gnus-group-mode-hook 'gnus-topic-mode)
-(if nec/measure-time (nec/timer "gnus "))
+  (setq message-send-mail-function 'smtpmail-send-it
+     smtpmail-default-smtp-server "mail.algon.dk"
+     smtpmail-local-domain "algon.dk"
+     smtpmail-smtp-user "nisoni"
+     smtpmail-stream-type 'network
+     smtpmail-smtp-service 587
+     smtpmail-debug-info t)
+  ;;
+  ;; Make mail look pretty
+  (use-package all-the-icons-gnus
+    :straight t
+    :config (all-the-icons-gnus-setup))
+  ;;
+  (setq gnus-sum-thread-tree-vertical        "│"
+        gnus-sum-thread-tree-leaf-with-other "├─► "
+        gnus-sum-thread-tree-single-leaf     "╰─► "
+        gnus-summary-line-format
+        (concat
+         "%0{%U%R%z%}"
+         "%3{│%}" "%1{%d%}" "%3{│%}"
+         "  "
+         "%4{%-20,20f%}"
+         "  "
+         "%3{│%}"
+         " "
+         "%1{%B%}"
+         "%s\n"))
+    (add-hook 'gnus-group-mode-hook 'gnus-topic-mode)
+
+;; @see https://github.com/redguardtoo/mastering-emacs-in-one-year-guide/blob/master/gnus-guide-en.org
+;; gnus-group-mode
+(eval-after-load 'gnus-group
+  '(progn
+     (defhydra hydra-gnus-group (:color blue)
+       "
+[_A_] Remote groups (A A) [_g_] Refresh
+[_L_] Local groups        [_\\^_] List servers
+[_c_] Mark all read       [_m_] Compose new mail
+[_G_] Search mails (G G) [_#_] Mark mail
+"
+       ("A" gnus-group-list-active)
+       ("L" gnus-group-list-all-groups)
+       ("c" gnus-topic-catchup-articles)
+       ("G" dianyou-group-make-nnir-group)
+       ("g" gnus-group-get-new-news)
+       ("^" gnus-group-enter-server-mode)
+       ("m" gnus-group-new-mail)
+       ("#" gnus-topic-mark-topic)
+       ("q" nil))
+     ;; y is not used by default
+     (define-key gnus-group-mode-map "y" 'hydra-gnus-group/body)))
+
+;; gnus-summary-mode
+(eval-after-load 'gnus-sum
+  '(progn
+     (defhydra hydra-gnus-summary (:color blue)
+       "
+[_s_] Show thread   [_F_] Forward (C-c C-f)
+[_h_] Hide thread   [_e_] Resend (S D e)
+[_n_] Refresh (/ N) [_r_] Reply
+[_!_] Mail -> disk  [_R_] Reply with original
+[_d_] Disk -> mail  [_w_] Reply all (S w)
+[_c_] Read all      [_W_] Reply all with original (S W)
+[_#_] Mark          [_G_] Search mails
+"
+       ("s" gnus-summary-show-thread)
+       ("h" gnus-summary-hide-thread)
+       ("n" gnus-summary-insert-new-articles)
+       ("F" gnus-summary-mail-forward)
+       ("!" gnus-summary-tick-article-forward)
+       ("d" gnus-summary-put-mark-as-read-next)
+       ("c" gnus-summary-catchup-and-exit)
+       ("e" gnus-summary-resend-message-edit)
+       ("R" gnus-summary-reply-with-original)
+       ("r" gnus-summary-reply)
+       ("W" gnus-summary-wide-reply-with-original)
+       ("w" gnus-summary-wide-reply)
+       ("#" gnus-topic-mark-topic)
+       ("G" dianyou-group-make-nnir-group)
+       ("q" nil))
+     ;; y is not used by default
+     (define-key gnus-summary-mode-map "y" 'hydra-gnus-summary/body)))
+
+;; gnus-article-mode
+(eval-after-load 'gnus-art
+  '(progn
+     (defhydra hydra-gnus-article (:color blue)
+       "
+[_o_] Save attachment        [_F_] Forward
+[_v_] Play video/audio       [_r_] Reply
+[_d_] CLI to download stream [_R_] Reply with original
+[_b_] Open external browser  [_w_] Reply all (S w)
+[_f_] Click link/button      [_W_] Reply all with original (S W)
+[_g_] Focus link/button
+"
+       ("F" gnus-summary-mail-forward)
+       ("r" gnus-article-reply)
+       ("R" gnus-article-reply-with-original)
+       ("w" gnus-article-wide-reply)
+       ("W" gnus-article-wide-reply-with-original)
+       ("o" gnus-mime-save-part)
+       ("v" w3mext-open-with-mplayer)
+       ("d" w3mext-download-rss-stream)
+       ("b" w3mext-open-link-or-image-or-url)
+       ("f" w3m-lnum-follow)
+       ("g" w3m-lnum-goto)
+       ("q" nil))
+     ;; y is not used by default
+     (define-key gnus-article-mode-map "y" 'hydra-gnus-article/body)))
+
+;; message-mode
+(eval-after-load 'message
+  '(progn
+     (defhydra hydra-message (:color blue)
+  "
+[_c_] Complete mail address
+[_a_] Attach file
+[_s_] Send mail (C-c C-c)
+"
+       ("c" counsel-bbdb-complete-mail)
+       ("a" mml-attach-file)
+       ("s" message-send-and-exit)
+       ("i" dianyou-insert-email-address-from-received-mails)
+       ("q" nil))))
+
+(defun message-mode-hook-hydra-setup ()
+  (local-set-key (kbd "C-c C-y") 'hydra-message/body))
+(add-hook 'message-mode-hook 'message-mode-hook-hydra-setup)
+
+
+  (if nec/measure-time (nec/timer "gnus "))
 #+end_src
 *** elfeed
 ;; This document is irregularly published and lives in different locations:
@@ -5248,7 +5357,7 @@ Ledger mode for MacBook Air
 #+end_src
 * Languages
 *** Projectile
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
 (straight-use-package '(projectile :type git :flavor melpa 
                :files ("projectile.el" "projectile-pkg.el") 
                :host github :repo "bbatsov/projectile"))
@@ -5259,18 +5368,18 @@ Ledger mode for MacBook Air
 (define-key global-map (kbd "C-c p f") 'counsel-projectile-find-file)
 (define-key projectile-mode-map (kbd "s-p") 'projectile-command-map)
 (define-key projectile-mode-map (kbd "C-c p") 'projectile-command-map)
+(if nec/measure-time (nec/timer "projectile "))
 #+end_src
 *** Header for new files
 :PROPERTIES:
 :CUSTOM_ID: Header for emacs-lisp files
 :END:
-
 We want to give all nye (and old) emacs-lisp files a header)
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
 (require 'file-template)
-
 (autoload 'file-template-find-file-not-found-hook "file-template" nil t)
 (add-hook 'find-file-not-found-hooks 'file-template-find-file-not-found-hook 'append)
+(if nec/measure-time (nec/timer "file header "))
 #+end_src
 
 (require 'header2)
@@ -5289,7 +5398,7 @@ We want to give all nye (and old) emacs-lisp files a header)
 :PROPERTIES:
 :CUSTOM_ID: Python
 :END:
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
 (use-package elpy
     :straight t
     :diminish "  "
@@ -5349,7 +5458,7 @@ We want to give all nye (and old) emacs-lisp files a header)
 :PROPERTIES:
 :CUSTOM_ID: Rust
 :END:
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
 (defcustom *rust* (or (executable-find "rustc")
   		    (executable-find "cargo")
   		    (executable-find "rustup"))
@@ -5358,19 +5467,18 @@ We want to give all nye (and old) emacs-lisp files a header)
   :type 'string)
 (if nec/measure-time (nec/timer "Rust "))
 #+end_src
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
 ;;(straight-use-package 'rust-mode
 ;;  :config (add-hook 'rust-mode-hook
 ;;            (lambda () (setq indent-tabs-mode nill))))
 ;;(setq rust-format-on-save t)
 ;;(define-key rust-mode-map (kbd "C-c C-c") 'rust-run)
-
 #+end_src
 *** PHP
 :PROPERTIES:
 :CUSTOM_ID: PHP
 :END:
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
 (straight-use-package-lazy 'ac-php)
 
 (use-package php-mode
@@ -5390,7 +5498,7 @@ We want to give all nye (and old) emacs-lisp files a header)
 (if nec/measure-time (nec/timer "PHP "))
 #+end_src
 *** DAP (debug adapter protocol)
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
 (straight-use-package 'dap-mode)
 (dap-mode 1)
 ;; The modes below are optional
@@ -5410,21 +5518,21 @@ We want to give all nye (and old) emacs-lisp files a header)
 :PROPERTIES:
 :CUSTOM_ID: MarkDown
 :END:
-#+begin_src emacs-lisp
-
+#+begin_src emacs-lisp :tangle yes
 (use-package markdown-mode
   :straight t
-  :mode ("INSTALL\\'"
-         "CONTRIBUTORS\\'"
-         "LICENSE\\'"
-         "README\\'"
-         "\\.markdown\\'"
-         "\\.md"
-         "\\.mdown$"
-         "\\.md$\\'"))
+  :mode (("INSTALL\\'" . markdown-mode)
+         ("CONTRIBUTORS\\'" . markdown-mode)
+         ("LICENSE\\'" . markdown-mode)
+         ("README\\'" . gfm-mode)
+         ("\\.markdown\\'" . markdown-mode)
+         ("\\.md" . markdown-mode)
+         ("\\.mdown$" . markdown-mode)
+         ("\\.md$\\'" . markdown-mode)))
+
+
 (add-hook 'markdown-mode-hook (lambda ()
                                  (visual-line-mode t)
-;;            (writegood-mode t
                                  (flyspell-mode t)))
 (setq markdown-command "pandoc -f markdown -t html")
 (setq markdown-css-paths `(,(expand-file-name "markdown.css" "private/md-dir")))
