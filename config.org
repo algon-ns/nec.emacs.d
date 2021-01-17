@@ -532,7 +532,7 @@ NAME and ARGS are as in `use-package'."
     - [[#org-agenda][org agenda]]
     - [[#org-super-agenda][org super agenda]]
     - [[#org-roam][org roam]]
-    - [[#org-super-links][org super links]]
+    - [[#org-super-links][org-super-links]]
     - [[#deft][deft]]
     - [[#zetteldeft][zetteldeft]]
     - [[#org-ref][org ref]]
@@ -548,7 +548,7 @@ NAME and ARGS are as in `use-package'."
     - [[#calendar][calendar]]
     - [[#magit][magit]]
     - [[#gnuplot][gnuplot]]
-    - [[#remember-mode][remember mode]]
+    - [[#][]]
     - [[#docker][docker]]
     - [[#tæl-ord][tæl ord]]
     - [[#elgantt][elgantt]]
@@ -556,7 +556,7 @@ NAME and ARGS are as in `use-package'."
     - [[#elfeed][elfeed]]
     - [[#ledger-mode][ledger-mode]]
 - [[#languages][Languages]]
-    - [[#projectile][Projectile]]
+    - [[#pr][Pr]]
     - [[#header-for-new-files][Header for new files]]
     - [[#python][Python]]
     - [[#rust][Rust]]
@@ -1333,7 +1333,7 @@ Some safety tips regarding your editor are covered in the excellent article
 [[https://glyph.twistedmatrix.com/2015/11/editor-malware.html][Your Text Editor is Malware]]. So, before going on with the configuration, let's
 get some things straight. First of all, enable checking trust on TLS
 connections.
-#+begin_src emacs-lisp :tangle no
+#+begin_src emacs-lisp :tangle yes
 (setq tls-checktrust t)
 #+end_src
 Now that we have enabled this feature, Emacs can't fetch HTTPS anymore: Emacs
@@ -2792,36 +2792,65 @@ that is supports a wide range of backends for finding completions -
 :END:
 bindings
 Put all keybindings here (with doc)
-#+begin_src emacs-lisp
-(global-set-key (kbd "C-x w") 'elfeed)                
+#+begin_src emacs-lisp :tangle yes
+;; zoom in/out the screen
 (global-set-key (kbd "C-+") 'text-scale-increase)
 (global-set-key (kbd "C--") 'text-scale-decrease)
-;;rust bindings
-(global-set-key "\C-c\C-c\C-b" 'cargo-build)
-(global-set-key "\C-c\C-c\C-r" 'cargo-run)
-(global-set-key "\C-c\C-c\C-t" 'cargo-test)
-(global-set-key (kbd "C-c q") 'auto-fill-mode)
-(global-set-key (kbd "C-c l") 'org-store-link)
-(global-set-key (kbd "C-c a") 'org-agenda)
-(global-set-key (kbd "C-c c") 'org-capture)
-;; org-roam 
+;; crux
+(global-set-key (kbd "C-a")  'crux-move-beginning-of-line)
+(global-set-key (kbd "C-x 4 t")  'crux-transpose-windows)
+(global-set-key (kbd "C-x K")  'crux-kill-other-buffers)
+(global-set-key (kbd "M-o")  'crux-smart-open-line)
+(global-set-key (kbd "C-c D")  'crux-delete-file-and-buffer)
+(global-set-key (kbd "C-c e i")  'crux-find-user-init-file)
+(global-set-key (kbd "C-k")  'crux-smart-kill-line)
+;; org roam
 (global-set-key (kbd "C-c r l")  'org-roam)
 (global-set-key (kbd "C-c r g")  'org-roam-graph)
 (global-set-key (kbd "C-c r f")  'org-roam-find-file)
 (global-set-key (kbd "C-c r i")  'org-roam-insert)
 (global-set-key (kbd "C-c r c")  'org-roam-capture)
 (global-set-key (kbd"C-c r x")  'org-roam-jump-to-index)
-;; ebib bibliography               
+(global-set-key (kbd "C-c r r") 'org-backlink-mode-refresh-rate)
+(global-set-key (kbd "C-c r s") 'org-backlink-mode-refresh-rate)  
+(global-set-key (kbd "C-c r m") 'org-backlink-mode)  
+(global-set-key (kbd "C-c s s")  'org-super-links-link)
+(global-set-key (kbd "C-c s l")  'org-super-links-store-link)
+(global-set-key (kbd "C-c s C-l")  'org-super-links-insert-link)
+(global-set-key (kbd "C-c s d")  'org-super-links-quick-insert-drawer-link)
+(global-set-key (kbd "C-c s i")  'org-super-links-quick-insert-inline-link)
+(global-set-key (kbd "C-c s C-d")  'org-super-links-delete-link)
+;; magit
+(global-set-key (kbd "C-c g")  'magit-status)
+(global-set-key (kbd "C-x g x")  'magit-checkout)
+(global-set-key (kbd "C-x g c")  'magit-commit)
+(global-set-key (kbd "C-x g p")  'magit-push)
+(global-set-key (kbd "C-x g u")  'magit-pull)
+(global-set-key (kbd "C-x g e")  'magit-ediff-resolve)
+(global-set-key (kbd "C-x g r")  'magit-rebase-interactive)
+;; misc
+(global-set-key (kbd "M-g M-g") 'hydra-git-gutter/body)
+(global-set-key (kbd "C-c f")  'elfeed-dashboard)
+(global-set-key (kbd "C-M-S-s-d") 'deft)
+(global-set-key (kbd "C-x C-g") 'deft-find-file)
 (global-set-key (kbd "C-c n e")  'ebib)
 (global-set-key (kbd "C-c n r")  'org-ebib-open)
 (global-set-key (kbd "C-c n s")  'org-ebib-store-link)
-;; docker
 (global-set-key (kbd "C-c d")  'docker)
-
 (global-set-key (kbd "<f2>")  'open-dashboard)
+(global-set-key (kbd "C-c C-c C-b") 'cargo-build)
+(global-set-key (kbd "C-c C-c C-r") 'cargo-run)
+(global-set-key (kbd "C-c C-c C-t") 'cargo-test)
+(global-set-key (kbd "C-c q") 'auto-fill-mode)
+(global-set-key (kbd "C-c l") 'org-store-link)
+(global-set-key (kbd "C-c a") 'org-agenda)
+(global-set-key (kbd "C-c c") 'org-capture)
+(define-key global-map (kbd "C-c p f") 'counsel-projectile-find-file)
+;;(define-key projectile-mode-map (kbd "s-p") 'projectile-command-map)
+;;(define-key projectile-mode-map (kbd "C-c p") 'projectile-command-map)
 
 (if nec/measure-time
-    (nec/timer "Global key bindings   "))
+    (nec/timer "Global key bindings "))
 #+end_src
 
 ** User interface
@@ -3688,146 +3717,145 @@ multiple times below:
 #+END_SRC
 
 #+begin_src emacs-lisp
-;; using doct
-    (setq org-capture-templates
-      (doct '(("Aftale"
-         :keys "a"
-         :file "~/Dropbox/org/agenda/organizer.org"
-         :type entry
-         :headline "Aftaler"
-         :template ("* TODO %?                     %^G:AFTALE:"
-                    "  SCHEDULED:  %^T"
-                            "  :PROPERTIES:"               
-                            "  :STED:  "
-                            "  :EMNE:  "
-                            "  :CATEGORY: Aftale "
-                            "  :CREATED: %U"
-                            "  :SRC: %a"
-                            "  :END:"))          
-               ("Møde"
-                  :keys "m"
-                  :file "~/Dropbox/org/agenda/organizer.org"
-                  :type entry
-                  :headline "Møder"
-                  :template ("* TODO %?                     %^G:MØDE:"
-                             "  SCHEDULED:  %^T"
-                             "  :PROPERTIES:"               
-                             "  :STED:  "
-                             "  :EMNE:  "
-                             "  :CATEGORY: Møde "
-                             "  :CREATED: %U"
-                             "  :SRC: %a"
-                             "  :END:"))
-               ("Noter"
-                  :keys "n"
-                  :file org-default-notes-file
-                  :type entry
-                  :headline "Noter"
-                  :template ("* %? "
-                             "  %i "
-                             "  see: %a"))
-               ("Opgave"
-                 :keys "o"
-                 :file "~/Dropbox/org/agenda/organizer.org"
-                 :type entry
-                 :headline "Opgaver"
-                 :template ("* TODO %?                   %^G:OPGAVE:"
-                            "  SCHEDULED:  %^T"
-                            "  DEADLINE:  %^T"
-                            "  :EMNE:  "
-                            "  :CATEGORY: Opgave "
-                            "  :CREATED: %U"
-                            "  :SRC: %a"
-                            "  :END:"))
-               ("Dagbog"
-                 :keys "j"
-                 :type entry
-                 :function org-journal-find-location
-                 :template ("* %(format-time-string org-journal-time-format)%^{Title}"
-                            "  %?"
-                            "  %i"))
-               ("Tickler"
-                  :keys "T"
-                  :type entry
-                  :file "~/Dropbox/org/agenda/organizer.org"
-                  :headline "Husk"
-                  :template ("* TODO %?                :HUSK:%^G"
-                            "  SCHEDULED:  %^T"
-                            "  :PROPERTIES:"               
-                            "  :STED:  "
-                            "  :EMNE:  "
-                            "  :CATEGORY: Husk "
-                            "  :CREATED: %U"
-                            "  :SRC: %a"
-                            "  :END:")) 
-               ("Kontakt"
-                 :keys "K"
-                 :file "~/Dropbox/org/agenda/contacts.org"
-                 :type entry
-                 :headline "Kontakter"
-                 :template ("* KONTAKT %?              :KONTAKT:"
-                            "  :PROPERTIES:   "
-                            "  :ADDRESS:      "
-                            "  :TELEFON:      "
-                            "  :EMAIL:        "
-                            "  :FØDSELSDAG:   "
-                            "  :NOTE:         "
-                            "  :CATAGORY: Kontakt "
-                            "  :END:          "))                          
-               ("kommunikation" 
-                 :keys "k"
-                 :file "~/Dropbox/org/agenda/organizer.org"
-                 :children
-                   ((:group "Tid"
-                     :clock-in t
-                     :children 
-                       (("Telefon"
-                          :keys "t"
-                          :template "* Telefon med %?")
-                        ("Møde"
-                          :keys "m"
-                          :template "* Møde med %?")))
-                    ("Browsing" 
-                      :keys "b"
-                      :template "* Browsing %x"))))))
-(if nec/measure-time (nec/timer "org-capture "))
-
-(if nec/measure-time (nec/timer "doct capture templates "))
-#+end_src
+  ;; using doct
+      (setq org-capture-templates
+        (doct '(("Aftale"
+           :keys "a"
+           :file "~/Dropbox/org/agenda/organizer.org"
+           :type entry
+           :headline "Aftaler"
+           :template ("* TODO %?                     %^G:AFTALE:"
+                      "  SCHEDULED:  %^T"
+                              "  :PROPERTIES:"               
+                              "  :STED:  "
+                              "  :EMNE:  "
+                              "  :CATEGORY: Aftale "
+                              "  :CREATED: %U"
+                              "  :SRC: %a"
+                              "  :END:"))          
+                 ("Møde"
+                    :keys "m"
+                    :file "~/Dropbox/org/agenda/organizer.org"
+                    :type entry
+                    :headline "Møder"
+                    :template ("* TODO %?                     %^G:MØDE:"
+                               "  SCHEDULED:  %^T"
+                               "  :PROPERTIES:"               
+                               "  :STED:  "
+                               "  :EMNE:  "
+                               "  :CATEGORY: Møde "
+                               "  :CREATED: %U"
+                               "  :SRC: %a"
+                               "  :END:"))
+                 ("Noter"
+                    :keys "n"
+                    :file org-default-notes-file
+                    :type entry
+                    :headline "Noter"
+                    :template ("* %? "
+                               "  %i "
+                               "  see: %a"))
+                 ("Opgave"
+                   :keys "o"
+                   :file "~/Dropbox/org/agenda/organizer.org"
+                   :type entry
+                   :headline "Opgaver"
+                   :template ("* TODO %?                   %^G:OPGAVE:"
+                              "  SCHEDULED:  %^T"
+                              "  DEADLINE:  %^T"
+                              "  :EMNE:  "
+                              "  :CATEGORY: Opgave "
+                              "  :CREATED: %U"
+                              "  :SRC: %a"
+                              "  :END:"))
+                 ("Dagbog"
+                   :keys "j"
+                   :type entry
+                   :function org-journal-find-location
+                   :template ("* %(format-time-string org-journal-time-format)%^{Title}"
+                              "  %?"
+                              "  %i"))
+                 ("Tickler"
+                    :keys "T"
+                    :type entry
+                    :file "~/Dropbox/org/agenda/organizer.org"
+                    :headline "Husk"
+                    :template ("* TODO %?                :HUSK:%^G"
+                              "  SCHEDULED:  %^T"
+                              "  :PROPERTIES:"               
+                              "  :STED:  "
+                              "  :EMNE:  "
+                              "  :CATEGORY: Husk "
+                              "  :CREATED: %U"
+                              "  :SRC: %a"
+                              "  :END:")) 
+                 ("Kontakt"
+                   :keys "K"
+                   :file "~/Dropbox/org/agenda/contacts.org"
+                   :type entry
+                   :headline "Kontakter"
+                   :template ("* KONTAKT %?              :KONTAKT:"
+                              "  :PROPERTIES:   "
+                              "  :ADDRESS:      "
+                              "  :TELEFON:      "
+                              "  :EMAIL:        "
+                              "  :FØDSELSDAG:   "
+                              "  :NOTE:         "
+                              "  :CATAGORY: Kontakt "
+                              "  :END:          "))                          
+                 ("kommunikation" 
+                   :keys "k"
+                   :file "~/Dropbox/org/agenda/organizer.org"
+                   :children
+                     ((:group "Tid"
+                       :clock-in t
+                       :children 
+                         (("Telefon"
+                            :keys "t"
+                            :template "* Telefon med %?")
+                          ("Møde"
+                            :keys "m"
+                            :template "* Møde med %?")))
+                      ("Browsing" 
+                        :keys "b"
+                        :template "* Browsing %x"))))))
+  (if nec/measure-time (nec/timer "org-capture "))
+  #+end_src
 *** org agenda
-:PROPERTIES:
-:CUSTOM_ID: org agenda 
-:END:
-#+begin_src emacs-lisp 
-  (setq diary-file "~/.emacs.d/diary")
-  ;;(require 'org-mac-iCal)
-  ;;(org-mac-iCal)
-  (straight-use-package '(org-agenda :type git :repo "https://code.orgmode.org/bzg/org-mode.git" 
-                                     :local-repo "org/lisp"))    
-    (setq org-agenda-dim-blocked-tasks t)
-    (setq org-agenda-inhibit-startup t)
-    (setq org-agenda-show-log t)
-    (setq org-agenda-span 14)
-    (setq org-agenda-include-diary t)
-    (setq org-agenda-start-on-weekday 1)
-    (setq org-agenda-sticky nil)
-    (setq org-agenda-tags-column -100)
-    (setq org-agenda-time-grid '((daily today require-timed)))
-    (setq org-agenda-use-tag-inheritance t)
-    (setq org-columns-default-format "%TODO %32ITEM  %3PRIORITY %14SCHEDULED %TAGS")
-    (setq org-default-notes-file "~/Dropbox/org/agenda/Notes.org")
-    (setq org-track-ordered-property-with-tag t)
+  :PROPERTIES:
+  :CUSTOM_ID: org agenda 
+  :END:
+  #+begin_src emacs-lisp 
+    (setq diary-file "~/.emacs.d/diary")
+    ;;(require 'org-mac-iCal)
+    ;;(org-mac-iCal)
+    (straight-use-package '(org-agenda :type git :repo "https://code.orgmode.org/bzg/org-mode.git" 
+                                       :local-repo "org/lisp"))    
+      (setq org-agenda-dim-blocked-tasks t)
+      (setq org-agenda-inhibit-startup t)
+      (setq org-agenda-show-log t)
+      (setq org-agenda-span 14)
+      (setq org-agenda-include-diary t)
+      (setq org-agenda-start-on-weekday 1)
+      (setq org-agenda-sticky nil)
+      (setq org-agenda-tags-column -100)
+      (setq org-agenda-time-grid '((daily today require-timed)))
+      (setq org-agenda-use-tag-inheritance t)
+      (setq org-columns-default-format "%TODO %32ITEM  %3PRIORITY %14SCHEDULED %TAGS")
+      (setq org-default-notes-file "~/Dropbox/org/agenda/Notes.org")
+      (setq org-track-ordered-property-with-tag t)
 
-  ;;(straight-use-package 'org-caldav)
-  ;;(setq org-caldav-url "http://p33-caldav.icloud.com/published/2/MjkxNzk4MDAxMjkxNzk4MOfvDoutpX6HTnT2-woO9G7Hxkz0TWTjGxqHawdu7zmyH36jxSvvEk8YzK_Ww0jxNN59hJoHIPhgSaRHj1Rrvjg"
-  ;;      org-caldav-calendar-id "niels"
-  ;;      org-caldav-uuid-extension ".ics" 
-  ;;      org-caldav-files '("~/org/agenda/appointments.org")
-  ;;      org-caldav-debug-level 2)
+    ;;(straight-use-package 'org-caldav)
+    ;;(setq org-caldav-url "http://p33-caldav.icloud.com/published/2/MjkxNzk4MDAxMjkxNzk4MOfvDoutpX6HTnT2-woO9G7Hxkz0TWTjGxqHawdu7zmyH36jxSvvEk8YzK_Ww0jxNN59hJoHIPhgSaRHj1Rrvjg"
+    ;;      org-caldav-calendar-id "niels"
+    ;;      org-caldav-uuid-extension ".ics" 
+    ;;      org-caldav-files '("~/org/agenda/appointments.org")
+    ;;      org-caldav-debug-level 2)
 
-  ;;(org-caldav-sync)
-  (if nec/measure-time (nec/timer "org agenda" ))
+    ;;(org-caldav-sync)
+    (if nec/measure-time (nec/timer "org agenda" ))
 #+end_src
+
 *** org super agenda
 :PROPERTIES:
 :CUSTOM_ID: Super-Agenda
@@ -3878,8 +3906,8 @@ Origami mode ---see below in [[Text Folding with Origami-mode]]---
   works well with super-agenda. Just ~M-x origami-mode~ then ~C-c f~ to
   enable the folding hydra.
 
-*** org roam
 
+*** org roam
 :PROPERTIES:
 :ID:       D931D321-FC5E-4F6A-9411-EDE1B78E766E
 :END:
@@ -3930,7 +3958,10 @@ Origami mode ---see below in [[Text Folding with Origami-mode]]---
                                                  ("fontcolor" . "#111111"))))
 (require 'org-backlink)  
 (straight-use-package '(ox-hugo :type git :flavor melpa :host github :repo "kaushalmodi/ox-hugo"))
-  
+(global-set-key (kbd "C-c r r") 'org-backlink-mode-refresh-rate)
+(global-set-key (kbd "C-c r s") 'org-backlink-mode-refresh-rate)  
+(global-set-key (kbd "C-c r m") 'org-backlink-mode)  
+
 (setq org-roam-graph-viewer nil)
   ;;(setq org-roam-graph-viewer "neato")
 (use-package org-roam-protocol
@@ -4122,21 +4153,23 @@ Origami mode ---see below in [[Text Folding with Origami-mode]]---
 (provide 'jnf-org-roam.el)
 ;;; jnf-org-roam.el ends here
 #+end_src
-*** org super links
-#+begin_src emacs-lisp
+
+*** org-super-links
+#+begin_src emacs-lisp :tangle yes
 (use-package org-super-links
   :straight (org-super-links :host github :repo "toshism/org-super-links" 
              :files ("*" (:exclude ".git")) :commit "0.3")
-  :bind (("C-c s s" . sl-link)
-         ("C-c s l" . sl-store-link)
-         ("C-c s C-l" . sl-insert-link)
-         ("C-c s d" . sl-quick-insert-drawer-link)
-         ("C-c s i" . sl-quick-insert-inline-link)
-         ("C-c s C-d" . sl-delete-link))
+  :bind (("C-c s s" . org-super-links-link)
+         ("C-c s l" . org-super-links-store-link)
+         ("C-c s C-l" . org-store-super-links-insert-link)
+         ("C-c s d" . org-super-links-quick-insert-drawer-link)
+         ("C-c s i" . org-super-links-quick-insert-inline-link)
+         ("C-c s r" . org-backlink-mode-refresh-rate)
+         ("C-c s C-d" . org-super-links-delete-link))
   :config
-  (setq sl-4erebacklink-into-drawer "~/Dropbox/org/roam/Index.org"
-        sl-related-into-drawer  "~/Dropbox/org/roam/Index.org" 
-        sl-link-prefix 'sl-link-prefix-timestamp))
+  (setq org-super-links-backlink-into-drawer "~/Dropbox/org/roam/Index.org"
+        org-super-links-related-into-drawer  "~/Dropbox/org/roam/Index.org" 
+        org-super-links-link-prefix 'org-super-links-link-prefix-timestamp))
 #+end_src
 *** deft
 #+begin_src emacs-lisp
@@ -4280,8 +4313,6 @@ Do presentation directly from Emacs
   (define-key org-tree-slide-mode-map (kbd "<f9>") 'org-tree-slide-move-previous-tree)
   (define-key org-tree-slide-mode-map (kbd "<f10>") 'org-tree-slide-move-next-tree)
   )
-
-
 #+end_src
 *** org mac iCal
 
@@ -4365,205 +4396,205 @@ easier on the eyes. For more, see the brief [[https://www.dailymotion.com/video/
 :CUSTOM_ID: LaTeX
 :END:
 #+begin_src emacs-lisp
-    (straight-use-package '(auctex :type git :host github :repo "emacs-straight/auctex" 
-                                   :files ("*" (:exclude ".git"))))
-    ;; (straight-use-package 'preview)
-    (setq TeX-auto-save t)
-    (setq TeX-parse-self t)
-    (setq-default TeX-master nil)
-    (setq TeX-PDF-mode t)
-    (setq reftex-plug-into-AUCTeX t)
-    (setq TeX-save-query nil)
-    (setq LaTeX-amsmath-label "eq:")
-    (setq LaTeX-label-function 'reftex-label)
-    (setq TeX-engine 'luatex)
-    (setq TeX-error-overview-open-after-TeX-run t )
-    (setq-default TeX-command-extra-options "--shell-escape")
-    (setq TeX-error-overview-open-after-TeX-run t)
-    (setq TeX-electric-math '("$" . "$"))
-    (setq TeX-electric-sub-and-superscript t)
-    ;; fix for company completion
-    ;; (define-key TeX-mode-map (kbd "TAB") 'tab-indent-or-complete)
-    ;; (define-key TeX-mode-map [tab] 'tab-indent-or-complete)
-    ;; (require 'font-latex)
-    ;; (set-face-attribute 'font-latex-sectioning-5-face nil :family "CMU Bright")
-    ;; (setq font-latex-fontify-sectioning 1.2)
-    ;; (font-latex-update-sectioning-faces)
-    (setq-default LaTeX-fill-break-at-separators (quote (\\\( \\\[ \\\])))
-    (add-hook 'LaTeX-mode-hook 'visual-line-mode)
-    (add-hook 'LaTeX-mode-hook 'flyspell-mode)
-    (add-hook 'LaTeX-mode-hook 'LaTeX-math-mode)
-    (add-hook 'LaTeX-mode-hook 'turn-on-reftex)
-    ;; (add-to-list 'TeX-command-list '("XeLaTeX" "%`lualatex %(extraopts)%(mode)%' %t" TeX-run-TeX nil t))
-    (if nec/measure-time (nec/timer "LaTeX / AUCTeX "))
-    ;; Setup the compiler and the PDF process
-    (setq org-latex-compiler "lualatex")
-    (setq org-latex-pdf-process
-          (list (concat "latexmk -"
-                        org-latex-compiler 
-                        " -recorder -synctex=1 -bibtex-cond %b")))
-    ;; Use lstlstings
-    (setq org-latex-listings t)
-    ;; The docs for org-latex-default-packages-alist suggest that
-    ;; it shouldn't be changed because it's used for more than one
-    ;; backend. How it's used for non-LaTeX backends, I don't know.
-    ;; Anyway, I've removed "inputenc" and "fontenc" from it because
-    ;; I want to replace those with "fontspec".
-    ;; (setq org-latex-default-packages-alist
-  ;;;;         '(("" "graphicx" t)
-  ;;;;           ("" "grffile" t)
-  ;;;;           ("" "longtable" nil)
-  ;;;;           ("" "wrapfig" nil)
-  ;;;;           ("" "rotating" nil)
-  ;;;;           ("normalem" "ulem" t)
-  ;;;;           ("" "amsmath" t)
-  ;;;;           ("" "textcomp" t)
-  ;;;;           ("" "amssymb" t)
-  ;;;;           ("" "capt-of" nil)
-  ;;          ("" "hyperref" nil)))
+      (straight-use-package '(auctex :type git :host github :repo "emacs-straight/auctex" 
+                                     :files ("*" (:exclude ".git"))))
+      ;; (straight-use-package 'preview)
+      (setq TeX-auto-save t)
+      (setq TeX-parse-self t)
+      (setq-default TeX-master nil)
+      (setq TeX-PDF-mode t)
+      (setq reftex-plug-into-AUCTeX t)
+      (setq TeX-save-query nil)
+      (setq LaTeX-amsmath-label "eq:")
+      (setq LaTeX-label-function 'reftex-label)
+      (setq TeX-engine 'luatex)
+      (setq TeX-error-overview-open-after-TeX-run t )
+      (setq-default TeX-command-extra-options "--shell-escape")
+      (setq TeX-error-overview-open-after-TeX-run t)
+      (setq TeX-electric-math '("$" . "$"))
+      (setq TeX-electric-sub-and-superscript t)
+      ;; fix for company completion
+      ;; (define-key TeX-mode-map (kbd "TAB") 'tab-indent-or-complete)
+      ;; (define-key TeX-mode-map [tab] 'tab-indent-or-complete)
+      ;; (require 'font-latex)
+      ;; (set-face-attribute 'font-latex-sectioning-5-face nil :family "CMU Bright")
+      ;; (setq font-latex-fontify-sectioning 1.2)
+      ;; (font-latex-update-sectioning-faces)
+      (setq-default LaTeX-fill-break-at-separators (quote (\\\( \\\[ \\\])))
+      (add-hook 'LaTeX-mode-hook 'visual-line-mode)
+      (add-hook 'LaTeX-mode-hook 'flyspell-mode)
+      (add-hook 'LaTeX-mode-hook 'LaTeX-math-mode)
+      (add-hook 'LaTeX-mode-hook 'turn-on-reftex)
+      ;; (add-to-list 'TeX-command-list '("XeLaTeX" "%`lualatex %(extraopts)%(mode)%' %t" TeX-run-TeX nil t))
+      (if nec/measure-time (nec/timer "LaTeX / AUCTeX "))
+      ;; Setup the compiler and the PDF process
+      (setq org-latex-compiler "lualatex")
+      (setq org-latex-pdf-process
+            (list (concat "latexmk -"
+                          org-latex-compiler 
+                          " -recorder -synctex=1 -bibtex-cond %b")))
+      ;; Use lstlstings
+      (setq org-latex-listings t)
+      ;; The docs for org-latex-default-packages-alist suggest that
+      ;; it shouldn't be changed because it's used for more than one
+      ;; backend. How it's used for non-LaTeX backends, I don't know.
+      ;; Anyway, I've removed "inputenc" and "fontenc" from it because
+      ;; I want to replace those with "fontspec".
+      ;; (setq org-latex-default-packages-alist
+    ;;;;         '(("" "graphicx" t)
+    ;;;;           ("" "grffile" t)
+    ;;;;           ("" "longtable" nil)
+    ;;;;           ("" "wrapfig" nil)
+    ;;;;           ("" "rotating" nil)
+    ;;;;           ("normalem" "ulem" t)
+    ;;;;           ("" "amsmath" t)
+    ;;;;           ("" "textcomp" t)
+    ;;;;           ("" "amssymb" t)
+    ;;;;           ("" "capt-of" nil)
+    ;;          ("" "hyperref" nil)))
 
-(require 'ox-latex)
-;;(require 'ox-koma-letter)
-(require 'ox-beamer)
+  (require 'ox-latex)
+  ;;(require 'ox-koma-letter)
+  (require 'ox-beamer)
 
-(setq org-latex-classes
-  '(("memoir" 
-      "\\documentclass[12pt]{memoir}
-       [NO-DEFAULT-PACKAGES]
-       [NO-PACKAGES]
-       [EXTRA]"
-       ("\\section{%s}" . "\\section*{%s}")
-       ("\\subsection{%s}" . "\\subsection*{%s}")
-       ("\\subsubsection{%s}" . "\\subsubsection*{%s}"))
-    ("default-koma-letter" "\\documentclass[11pt]{scrlttr2}")
-           ("report" "\\documentclass[11pt]{report}"
-            ("\\part{%s}" . "\\part*{%s}")
-            ("\\chapter{%s}" . "\\chapter*{%s}")
-            ("\\section{%s}" . "\\section*{%s}")
-            ("\\subsection{%s}" . "\\subsection*{%s}")
-            ("\\subsubsection{%s}" . "\\subsubsection*{%s}"))
-    ("beamer" "\\documentclass[11pt,presentation]{beamer}"
-            ("\\section{%s}" . "\\section*{%s}")
-            ("\\subsection{%s}" . "\\subsection*{%s}")
-            ("\\subsubsection{%s}" . "\\subsubsection*{%s}"))
-    ("book" 
-     "\\documentclass[11pt]{book}"
-      ("\\part{%s}" . "\\part*{%s}")
-      ("\\chapter{%s}" . "\\chapter*{%s}")
-      ("\\section{%s}" . "\\section*{%s}")
-      ("\\subsection{%s}" . "\\subsection*{%s}")
-      ("\\subsubsection{%s}" . "\\subsubsection*{%s}"))
-    ("article"
-     "\\RequirePackage{fix-cm}
-      \\PassOptionsToPackage{svgnames}{xcolor}
-      \\documentclass[11pt]{article}
-      \\usepackage[a4paper,margin=1in,left=1in]{geometry}
-      \\usepackage{fontspec}
-      \\setmainfont{Verdana}
-      \\setsansfont[Scale=MatchLowercase]{Raleway}
-      \\setmonofont[Scale=MatchLowercase]{Operator Mono SSm}
-      \\usepackage{sectsty}
-      \\allsectionsfont{\\sffamily}
-      \\usepackage{enumitem}
-      \\setlist[description]{style=unboxed,font=\\sffamily\\bfseries}
-      \\usepackage{listings}
-      \\lstset{frame=single,aboveskip=1em,
-            framesep=.5em,backgroundcolor=\\color{AliceBlue},
-            rulecolor=\\color{LightSteelBlue},framerule=1pt}
-      \\usepackage{xcolor}
-      \\colorlet{punct}{red!60!black}
-      \\definecolor{background}{HTML}{EEEEEE}
-      \\definecolor{delim}{RGB}{20,105,176}
-      \\colorlet{numb}{magenta!60!black}
-      \\newcommand\\basicdefault[1]{\\scriptsize\\color{Black}\\ttfamily#1}
-      \\lstdefinelanguage{json}{
-            basicstyle=\\normalfont\\ttfamily,
-            numbers=left,
-            numberstyle=\\scriptsize,
-            stepnumber=1,
-            numbersep=8pt,
-            showstringspaces=false,
-            breaklines=true,
-            frame=lines,
-            backgroundcolor=\\color{background},
-            literate=
-               ,*{0}{{{\\color{numb}0}}}{1}
-                 {1}{{{\\color{numb}1}}}{1}
-                 {2}{{{\\color{numb}2}}}{1}
-                 {3}{{{\\color{numb}3}}}{1}
-                 {4}{{{\\color{numb}4}}}{1}
-                 {5}{{{\\color{numb}5}}}{1}
-                 {6}{{{\\color{numb}6}}}{1}
-                 {7}{{{\\color{numb}7}}}{1}
-                 {8}{{{\\color{numb}8}}}{1}
-                 {9}{{{\\color{numb}9}}}{1}
-                 {:}{{{\\color{punct}{:}}}}{1}
-                 {,}{{{\\color{punct}{,}}}}{1}
-                 {\\{}{{{\\color{delim}{\\{}}}}{1}
-                 {\\}}{{{\\color{delim}{\\}}}}}{1}
-                 {[}{{{\\color{delim}{[}}}}{1}
-                 {]}{{{\\color{delim}{]}}}}{1},
-           }
-      \\lstset{basicstyle=\\basicdefault{\\spaceskip1em}}
-      \\lstset{literate=
-                  {§}{{\\S}}1
-                  {©}{{\\raisebox{.125ex}{\\copyright}\\enspace}}1
-                  {«}{{\\guillemotleft}}1
-                  {»}{{\\guillemotright}}1
-                  {Á}{{\\'A}}1
-                  {Ä}{{\\\"A}}1
-                  {É}{{\\'E}}1
-                  {Í}{{\\'I}}1
-                  {Ó}{{\\'O}}1
-                  {Ö}{{\\\"O}}1
-                  {Ú}{{\\'U}}1
-                  {Ü}{{\\\"U}}1
-                  {ß}{{\\ss}}2
-                  {à}{{\\`a}}1
-                  {á}{{\\'a}}1
-                  {ä}{{\\\"a}}1
-                  {é}{{\\'e}}1
-                  {í}{{\\'i}}1
-                  {ó}{{\\'o}}1
-                  {ö}{{\\\"o}}1
-                  {ú}{{\\'u}}1
-                  {ü}{{\\\"u}}1
-                  {¹}{{\\textsuperscript1}}1
-                  {²}{{\\textsuperscript2}}1
-                  {³}{{\\textsuperscript3}}1
-                  {ı}{{\\i}}1
-                  {—}{{---}}1
-                  {’}{{'}}1
-                  {…}{{\\dots}}1
-                  {⮠}{{$\\hookleftarrow$}}1
-                  {␣}{{\\textvisiblespace}}1,
-                  keywordstyle=\\color{DarkGreen}\\bfseries,
-                  identifierstyle=\\color{DarkRed},
-                  commentstyle=\\color{Gray}\\upshape,
-                  stringstyle=\\color{DarkBlue}\\upshape,
-                  emphstyle=\\color{Chocolate}\\upshape,
-                  showstringspaces=false,
-                  columns=fullflexible,
-                  keepspaces=true}
-      \\usepackage{parskip}
-      \\makeatletter
-      \\renewcommand{\\maketitle}{%
-      \\begingroup\\parindent0pt
-      \\sffamily
-      \\Huge{\\bfseries\\@title}\\par\\bigskip
-      \\LARGE{\\bfseries\\@author}\\par\\medskip
-      \\normalsize\\@date\\par\\bigskip
-      \\endgroup\\@afterindentfalse\\@afterheading}
-      \\makeatother
-      [NO-DEFAULT-PACKAGES]
-      \\AtBeginDocument{\\renewcommand{\\UrlFont}{\\ttfamily}}
-      \\thispagestyle{empty}"
+  (setq org-latex-classes
+    '(("memoir" 
+        "\\documentclass[12pt]{memoir}
+         [NO-DEFAULT-PACKAGES]
+         [NO-PACKAGES]
+         [EXTRA]"
+         ("\\section{%s}" . "\\section*{%s}")
+         ("\\subsection{%s}" . "\\subsection*{%s}")
+         ("\\subsubsection{%s}" . "\\subsubsection*{%s}"))
+      ("default-koma-letter" "\\documentclass[11pt]{scrlttr2}")
+             ("report" "\\documentclass[11pt]{report}"
+              ("\\part{%s}" . "\\part*{%s}")
+              ("\\chapter{%s}" . "\\chapter*{%s}")
               ("\\section{%s}" . "\\section*{%s}")
               ("\\subsection{%s}" . "\\subsection*{%s}")
-              ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
-              ("\\paragraph{%s}" . "\\paragraph*{%s}")
-              ("\\subparagraph{%s}" . "\\subparagraph*{%s}"))))
-      (if nec/measure-time (nec/timer "LaTeX / koma, beamer article and memoir" ))
+              ("\\subsubsection{%s}" . "\\subsubsection*{%s}"))
+      ("beamer" "\\documentclass[11pt,presentation]{beamer}"
+              ("\\section{%s}" . "\\section*{%s}")
+              ("\\subsection{%s}" . "\\subsection*{%s}")
+              ("\\subsubsection{%s}" . "\\subsubsection*{%s}"))
+      ("book" 
+       "\\documentclass[11pt]{book}"
+        ("\\part{%s}" . "\\part*{%s}")
+        ("\\chapter{%s}" . "\\chapter*{%s}")
+        ("\\section{%s}" . "\\section*{%s}")
+        ("\\subsection{%s}" . "\\subsection*{%s}")
+        ("\\subsubsection{%s}" . "\\subsubsection*{%s}"))
+      ("article"
+       "\\RequirePackage{fix-cm}
+        \\PassOptionsToPackage{svgnames}{xcolor}
+        \\documentclass[11pt]{article}
+        \\usepackage[a4paper,margin=1in,left=1in]{geometry}
+        \\usepackage{fontspec}
+        \\setmainfont{Verdana}
+        \\setsansfont[Scale=MatchLowercase]{Raleway}
+        \\setmonofont[Scale=MatchLowercase]{Operator Mono SSm}
+        \\usepackage{sectsty}
+        \\allsectionsfont{\\sffamily}
+        \\usepackage{enumitem}
+        \\setlist[description]{style=unboxed,font=\\sffamily\\bfseries}
+        \\usepackage{listings}
+        \\lstset{frame=single,aboveskip=1em,
+              framesep=.5em,backgroundcolor=\\color{AliceBlue},
+              rulecolor=\\color{LightSteelBlue},framerule=1pt}
+        \\usepackage{xcolor}
+        \\colorlet{punct}{red!60!black}
+        \\definecolor{background}{HTML}{EEEEEE}
+        \\definecolor{delim}{RGB}{20,105,176}
+        \\colorlet{numb}{magenta!60!black}
+        \\newcommand\\basicdefault[1]{\\scriptsize\\color{Black}\\ttfamily#1}
+        \\lstdefinelanguage{json}{
+              basicstyle=\\normalfont\\ttfamily,
+              numbers=left,
+              numberstyle=\\scriptsize,
+              stepnumber=1,
+              numbersep=8pt,
+              showstringspaces=false,
+              breaklines=true,
+              frame=lines,
+              backgroundcolor=\\color{background},
+              literate=
+                 ,*{0}{{{\\color{numb}0}}}{1}
+                   {1}{{{\\color{numb}1}}}{1}
+                   {2}{{{\\color{numb}2}}}{1}
+                   {3}{{{\\color{numb}3}}}{1}
+                   {4}{{{\\color{numb}4}}}{1}
+                   {5}{{{\\color{numb}5}}}{1}
+                   {6}{{{\\color{numb}6}}}{1}
+                   {7}{{{\\color{numb}7}}}{1}
+                   {8}{{{\\color{numb}8}}}{1}
+                   {9}{{{\\color{numb}9}}}{1}
+                   {:}{{{\\color{punct}{:}}}}{1}
+                   {,}{{{\\color{punct}{,}}}}{1}
+                   {\\{}{{{\\color{delim}{\\{}}}}{1}
+                   {\\}}{{{\\color{delim}{\\}}}}}{1}
+                   {[}{{{\\color{delim}{[}}}}{1}
+                   {]}{{{\\color{delim}{]}}}}{1},
+             }
+        \\lstset{basicstyle=\\basicdefault{\\spaceskip1em}}
+        \\lstset{literate=
+                    {§}{{\\S}}1
+                    {©}{{\\raisebox{.125ex}{\\copyright}\\enspace}}1
+                    {«}{{\\guillemotleft}}1
+                    {»}{{\\guillemotright}}1
+                    {Á}{{\\'A}}1
+                    {Ä}{{\\\"A}}1
+                    {É}{{\\'E}}1
+                    {Í}{{\\'I}}1
+                    {Ó}{{\\'O}}1
+                    {Ö}{{\\\"O}}1
+                    {Ú}{{\\'U}}1
+                    {Ü}{{\\\"U}}1
+                    {ß}{{\\ss}}2
+                    {à}{{\\`a}}1
+                    {á}{{\\'a}}1
+                    {ä}{{\\\"a}}1
+                    {é}{{\\'e}}1
+                    {í}{{\\'i}}1
+                    {ó}{{\\'o}}1
+                    {ö}{{\\\"o}}1
+                    {ú}{{\\'u}}1
+                    {ü}{{\\\"u}}1
+                    {¹}{{\\textsuperscript1}}1
+                    {²}{{\\textsuperscript2}}1
+                    {³}{{\\textsuperscript3}}1
+                    {ı}{{\\i}}1
+                    {—}{{---}}1
+                    {’}{{'}}1
+                    {…}{{\\dots}}1
+                    {⮠}{{$\\hookleftarrow$}}1
+                    {␣}{{\\textvisiblespace}}1,
+                    keywordstyle=\\color{DarkGreen}\\bfseries,
+                    identifierstyle=\\color{DarkRed},
+                    commentstyle=\\color{Gray}\\upshape,
+                    stringstyle=\\color{DarkBlue}\\upshape,
+                    emphstyle=\\color{Chocolate}\\upshape,
+                    showstringspaces=false,
+                    columns=fullflexible,
+                    keepspaces=true}
+        \\usepackage{parskip}
+        \\makeatletter
+        \\renewcommand{\\maketitle}{%
+        \\begingroup\\parindent0pt
+        \\sffamily
+        \\Huge{\\bfseries\\@title}\\par\\bigskip
+        \\LARGE{\\bfseries\\@author}\\par\\medskip
+        \\normalsize\\@date\\par\\bigskip
+        \\endgroup\\@afterindentfalse\\@afterheading}
+        \\makeatother
+        [NO-DEFAULT-PACKAGES]
+        \\AtBeginDocument{\\renewcommand{\\UrlFont}{\\ttfamily}}
+        \\thispagestyle{empty}"
+                ("\\section{%s}" . "\\section*{%s}")
+                ("\\subsection{%s}" . "\\subsection*{%s}")
+                ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
+                ("\\paragraph{%s}" . "\\paragraph*{%s}")
+                ("\\subparagraph{%s}" . "\\subparagraph*{%s}"))))
+        (if nec/measure-time (nec/timer "LaTeX / koma, beamer article and memoir" ))
 #+end_src
 
 * Applications
@@ -4905,7 +4936,8 @@ easier on the eyes. For more, see the brief [[https://www.dailymotion.com/video/
 ;; This line binds the function-9 key so that it opens a buffer into gnuplot mode
 (global-set-key [(f9)] 'gnuplot-make-buffer)
 #+end_src
-*** remember mode
+*** 
+remember mode
 :PROPERTIES:
 :CUSTOM_ID: h:8044df56-9819-4c61-abe6-43d352087211
 :END:
@@ -4958,6 +4990,7 @@ by `remember-notes-buffer-name'."
 (if nec/measure-time (nec/timer "Remember "))
 #+end_src
 *** docker
+
 #+begin_src emacs-lisp
 ;; docker
 (straight-use-package '(docker :type git :flavor melpa :host github :repo "Silex/docker.el"))
@@ -4971,92 +5004,93 @@ by `remember-notes-buffer-name'."
 (setenv "DOCKER_MACHINE_NAME" "default")
 #+end_src
 *** tæl ord
+
 :PROPERTIES:
 :CUSTOM_ID: Tæl ord
 :END:
 #+begin_src emacs-lisp
-;; most-used-words.el --- Display most used words in buffer
-;;; -*- lexical-binding: t; -*-
-;;; Commentary:
-;; Identify the most frequently used words in a buffer.
-;;
-;; The command
-;;   M-x most-used-words-buffer
-;; goes through the current buffer keeping a count of words, as defined
-;; by the default syntax table.  Once done, it displays a buffer of the
-;; most frequently used words.
-;;
-;; I wrote the following functions, and the wonderful posters at
-;; gnu.emacs.help reviewed it.
-;; Part of a discussion thread on gnu.emacs.help follows the
-;; development:
-;; https://groups.google.com/d/topic/gnu.emacs.help/nC8IsIuNeek/discussion
-;;
-;; Special thanks are due to Stefan Monnier and Eric Abrahamsen, who
-;; made suggestions that greatly improved performance; Emmanuel Berg
-;; reminded me to prefix functions from CL-LIB; Bob Proulx,
-;; Ben Bacarisse, Nick Dokos, Eli Zaretskii shared of their Unix wisdom
-;; and experience; and Bob Newell tested it for his purposes.
+  ;; most-used-words.el --- Display most used words in buffer
+  ;;; -*- lexical-binding: t; -*-
+  ;;; Commentary:
+  ;; Identify the most frequently used words in a buffer.
+  ;;
+  ;; The command
+  ;;   M-x most-used-words-buffer
+  ;; goes through the current buffer keeping a count of words, as defined
+  ;; by the default syntax table.  Once done, it displays a buffer of the
+  ;; most frequently used words.
+  ;;
+  ;; I wrote the following functions, and the wonderful posters at
+  ;; gnu.emacs.help reviewed it.
+  ;; Part of a discussion thread on gnu.emacs.help follows the
+  ;; development:
+  ;; https://groups.google.com/d/topic/gnu.emacs.help/nC8IsIuNeek/discussion
+  ;;
+  ;; Special thanks are due to Stefan Monnier and Eric Abrahamsen, who
+  ;; made suggestions that greatly improved performance; Emmanuel Berg
+  ;; reminded me to prefix functions from CL-LIB; Bob Proulx,
+  ;; Ben Bacarisse, Nick Dokos, Eli Zaretskii shared of their Unix wisdom
+  ;; and experience; and Bob Newell tested it for his purposes.
 
-;;; Code:
+  ;;; Code:
 
-(cl-defmacro most-used-words-with-view-buffer (buffer &body body)
-  `(progn
-     (with-current-buffer ,buffer
-       ,@body)
-     (view-buffer-other-window ,buffer
-			       nil
-			       #'kill-buffer)))
+  (cl-defmacro most-used-words-with-view-buffer (buffer &body body)
+    `(progn
+       (with-current-buffer ,buffer
+         ,@body)
+       (view-buffer-other-window ,buffer
+                                 nil
+                                 #'kill-buffer)))
 
-(defun most-used-words-buffer-1 (n)
-  "Make a list of the N most used words in buffer."
-  (let ((counts (make-hash-table :test #'equal))
-	sorted-counts
-	start
-	end)
-    (save-excursion
-      (goto-char (point-min))
-      (skip-syntax-forward "^w")
-      (setf start (point))
-      (cl-loop until (eobp)
-	 do
-	   (skip-syntax-forward "w")
-	   (setf end (point))
-	   (cl-incf (gethash (buffer-substring start end) counts 0))
-	   (skip-syntax-forward "^w")
-	   (setf start (point))))
-    (cl-loop for word being the hash-keys of counts
-       using (hash-values count)
-       do
-	 (push (list word count) sorted-counts)
-       finally (setf sorted-counts (cl-sort sorted-counts #'>
-					  :key #'cl-second)))
-    (mapcar #'cl-first (cl-subseq sorted-counts 0 n))))
-(if nec/measure-time (nec/timer "Count words "))
-;;;###autoload
-(defun most-used-words-buffer (&optional n)
-  "Show the N (default 3) most used words in the current buffer."
-  (interactive (list (completing-read
-		      "How many words? (default 3) "
-		      nil
-		      nil
-		      nil
-		      nil
-		      nil
-		      3
-		      nil)))
-  (unless (numberp n)
-    (setf n (string-to-number n)))
-  (let ((most-used-words-buffer (get-buffer-create "*Most used words*"))
-	(most-used (most-used-words-buffer-1 n)))
-    (most-used-words-with-view-buffer most-used-words-buffer
-      (dolist (word most-used)
-	(insert (format "%s" word))
-	(newline)))))
+  (defun most-used-words-buffer-1 (n)
+    "Make a list of the N most used words in buffer."
+    (let ((counts (make-hash-table :test #'equal))
+          sorted-counts
+          start
+          end)
+      (save-excursion
+        (goto-char (point-min))
+        (skip-syntax-forward "^w")
+        (setf start (point))
+        (cl-loop until (eobp)
+           do
+             (skip-syntax-forward "w")
+             (setf end (point))
+             (cl-incf (gethash (buffer-substring start end) counts 0))
+             (skip-syntax-forward "^w")
+             (setf start (point))))
+      (cl-loop for word being the hash-keys of counts
+         using (hash-values count)
+         do
+           (push (list word count) sorted-counts)
+         finally (setf sorted-counts (cl-sort sorted-counts #'>
+                                            :key #'cl-second)))
+      (mapcar #'cl-first (cl-subseq sorted-counts 0 n))))
+  (if nec/measure-time (nec/timer "Count words "))
+  ;;;###autoload
+  (defun most-used-words-buffer (&optional n)
+    "Show the N (default 3) most used words in the current buffer."
+    (interactive (list (completing-read
+                        "How many words? (default 3) "
+                        nil
+                        nil
+                        nil
+                        nil
+                        nil
+                        3
+                        nil)))
+    (unless (numberp n)
+      (setf n (string-to-number n)))
+    (let ((most-used-words-buffer (get-buffer-create "*Most used words*"))
+          (most-used (most-used-words-buffer-1 n)))
+      (most-used-words-with-view-buffer most-used-words-buffer
+        (dolist (word most-used)
+          (insert (format "%s" word))
+          (newline)))))
 
-(provide 'most-used-words)
+  (provide 'most-used-words)
 
-;;; most-used-words.el ends here
+  ;;; most-used-words.el ends here
 #+end_src
 *** elgantt
 :PROPERTIES:
@@ -5354,9 +5388,9 @@ Ledger mode for MacBook Air
 (straight-use-package '(ledger-import :type git :flavor melpa :host github :repo "DamienCassou/ledger-import"))
 (if nec/measure-time (nec/timer "ledger "))
 #+end_src
-#+end_src
 * Languages
-*** Projectile
+*** Pr
+ojectile
 #+begin_src emacs-lisp :tangle yes
 (straight-use-package '(projectile :type git :flavor melpa 
                :files ("projectile.el" "projectile-pkg.el") 
@@ -5399,60 +5433,60 @@ We want to give all nye (and old) emacs-lisp files a header)
 :CUSTOM_ID: Python
 :END:
 #+begin_src emacs-lisp :tangle yes
-(use-package elpy
-    :straight t
-    :diminish "  "
-    :bind
-    (:map elpy-mode-map
-          ("C-M-n" . elpy-nav-forward-block)
-          ("C-M-p" . elpy-nav-backward-block))
-    :hook ((elpy-mode . flycheck-mode)
-           (elpy-mode . (lambda ()
-                          (set (make-local-variable 'company-backends)
-                               '((elpy-company-backend :with company-yasnippet))))))
-    :init
-    (elpy-enable)
-    :config
-    (setq elpy-modules (delq 'elpy-module-flymake elpy-modules))
-    ; fix for MacOS, see https://github.com/jorgenschaefer/elpy/issues/1550
-    (setq elpy-shell-echo-output nil)
-    (setq elpy-rpc-python-command "python")
-    (setq elpy-rpc-timeout 2))
-;;
-(with-eval-after-load 'python
-  (defun python-shell-completion-native-try ()
-    "Return non-nil if can trigger native completion."
-    (let ((python-shell-completion-native-enable t)
-          (python-shell-completion-native-output-timeout
-           python-shell-completion-native-try-output-timeout))
-      (python-shell-completion-native-get-completions
-       (get-buffer-process (current-buffer))
-       nil "_"))))
+  (use-package elpy
+      :straight t
+      :diminish "  "
+      :bind
+      (:map elpy-mode-map
+            ("C-M-n" . elpy-nav-forward-block)
+            ("C-M-p" . elpy-nav-backward-block))
+      :hook ((elpy-mode . flycheck-mode)
+             (elpy-mode . (lambda ()
+                            (set (make-local-variable 'company-backends)
+                                 '((elpy-company-backend :with company-yasnippet))))))
+      :init
+      (elpy-enable)
+      :config
+      (setq elpy-modules (delq 'elpy-module-flymake elpy-modules))
+      ; fix for MacOS, see https://github.com/jorgenschaefer/elpy/issues/1550
+      (setq elpy-shell-echo-output nil)
+      (setq elpy-rpc-python-command "python")
+      (setq elpy-rpc-timeout 2))
+  ;;
+  (with-eval-after-load 'python
+    (defun python-shell-completion-native-try ()
+      "Return non-nil if can trigger native completion."
+      (let ((python-shell-completion-native-enable t)
+            (python-shell-completion-native-output-timeout
+             python-shell-completion-native-try-output-timeout))
+        (python-shell-completion-native-get-completions
+         (get-buffer-process (current-buffer))
+         nil "_"))))
 
-(use-package blacken
-    :straight t
-    :hook (python-mode . blacken-mode)
-    :config
-    (setq blacken-line-length '88))
-(use-package python-docstring
-    :straight t
-    :diminish "  仝"
-    :hook (python-mode . python-docstring-mode))
-(use-package lsp-python-ms
-    :straight t
-    :after lsp-mode
-    :init (setq lsp-python-ms-auto-install-server t))
+  (use-package blacken
+      :straight t
+      :hook (python-mode . blacken-mode)
+      :config
+      (setq blacken-line-length '88))
+  (use-package python-docstring
+      :straight t
+      :diminish "  仝"
+      :hook (python-mode . python-docstring-mode))
+  (use-package lsp-python-ms
+      :straight t
+      :after lsp-mode
+      :init (setq lsp-python-ms-auto-install-server t))
 
-  (use-package lpy
-    :straight t
-    :hook (python-mode . (lambda () (lpy-mode))))
-(if nec/measure-time (nec/timer "python "))
-;;
-(straight-use-package '(ein :type git :flavor melpa 
-        :files ("lisp/*" (:exclude "lisp/zeroein.el") "ein-pkg.el") 
-        :host github :repo "millejoh/emacs-ipython-notebook"))
+    (use-package lpy
+      :straight t
+      :hook (python-mode . (lambda () (lpy-mode))))
+  (if nec/measure-time (nec/timer "python "))
+  ;;
+  (straight-use-package '(ein :type git :flavor melpa 
+          :files ("lisp/*" (:exclude "lisp/zeroein.el") "ein-pkg.el") 
+          :host github :repo "millejoh/emacs-ipython-notebook"))
 
-(if nec/measure-time (nec/timer "ipython  "))
+  (if nec/measure-time (nec/timer "ipython  "))
 #+end_src
 *** Rust
 :PROPERTIES:
@@ -5539,7 +5573,7 @@ We want to give all nye (and old) emacs-lisp files a header)
 (if nec/measure-time (nec/timer "MarkDown "))
 #+end_src
 * The end
-**💢 start server
+💢 start server
 
 *** time uses
 :PROPERTIES:
@@ -5560,4 +5594,3 @@ We want to give all nye (and old) emacs-lisp files a header)
 (message "→★★★ Total time for configuration  %.2fs"  (float-time (time-subtract (current-time) nec/total-time)))
 (message "      T H E   E N D")
 #+end_src
-

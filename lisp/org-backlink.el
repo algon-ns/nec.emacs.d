@@ -228,7 +228,7 @@
 
   (if org-backlink-mode
       (add-hook 'post-command-hook 'org-backlink-mode-show-backlinks t t)
-    
+
     (remove-hook 'post-command-hook 'org-backlink-mode-show-backlinks t)
     (delete-overlay org-backlink-mode-overlay)))
 
