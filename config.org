@@ -1333,7 +1333,11 @@ Some safety tips regarding your editor are covered in the excellent article
 [[https://glyph.twistedmatrix.com/2015/11/editor-malware.html][Your Text Editor is Malware]]. So, before going on with the configuration, let's
 get some things straight. First of all, enable checking trust on TLS
 connections.
+<<<<<<< HEAD
 #+begin_src emacs-lisp :tangle yes
+=======
+#+begin_src emacs-lisp :tangle no
+>>>>>>> 19e8d1ccf059d7f2fbe79cd3d8e014ec7461e725
 (setq tls-checktrust t)
 #+end_src
 Now that we have enabled this feature, Emacs can't fetch HTTPS anymore: Emacs
@@ -4210,7 +4214,11 @@ Origami mode ---see below in [[Text Folding with Origami-mode]]---
  (if nec/measure-time (nec/timer "deft "))
 #+end_src
 *** zetteldeft
+<<<<<<< HEAD
 #+begin_src emacs-lisp :tangle no
+=======
+#+begin_src emacs-lisp
+>>>>>>> 19e8d1ccf059d7f2fbe79cd3d8e014ec7461e725
 (setq deft-extensions '("org" "md" "txt"))
  
 (setq deft-directory (concat org-directory "/roam/")) 
@@ -4231,13 +4239,20 @@ lower case.
 In order to filter these from the deft summary, let's alter the
 regular expression:
 
+<<<<<<< HEAD
 #+begin_src emacs-lisp :tangle no
+=======
+#+begin_src emacs-lisp
+>>>>>>> 19e8d1ccf059d7f2fbe79cd3d8e014ec7461e725
   (setq deft-strip-summary-regexp
    (concat "\\("
            "[\n\t]" ;; blank
            "\\|^#\\+[a-zA-Z_]+:.*$" ;;org-mode metadata
            "\\)"))
+<<<<<<< HEAD
 (if nec/measure-time (nec/timer "Zettledeft "))
+=======
+>>>>>>> 19e8d1ccf059d7f2fbe79cd3d8e014ec7461e725
 #+end_SRC
 
 Its original value was =\\([\n ]\\|^#\\+[[:upper:]_]+:.*$\\)=.
@@ -5389,8 +5404,12 @@ Ledger mode for MacBook Air
 (if nec/measure-time (nec/timer "ledger "))
 #+end_src
 * Languages
+<<<<<<< HEAD
 *** Pr
 ojectile
+=======
+*** Projectile
+>>>>>>> 19e8d1ccf059d7f2fbe79cd3d8e014ec7461e725
 #+begin_src emacs-lisp :tangle yes
 (straight-use-package '(projectile :type git :flavor melpa 
                :files ("projectile.el" "projectile-pkg.el") 
@@ -5433,6 +5452,7 @@ We want to give all nye (and old) emacs-lisp files a header)
 :CUSTOM_ID: Python
 :END:
 #+begin_src emacs-lisp :tangle yes
+<<<<<<< HEAD
   (use-package elpy
       :straight t
       :diminish "  "
@@ -5476,6 +5496,51 @@ We want to give all nye (and old) emacs-lisp files a header)
       :straight t
       :after lsp-mode
       :init (setq lsp-python-ms-auto-install-server t))
+=======
+(use-package elpy
+    :straight t
+    :diminish "  "
+    :bind
+    (:map elpy-mode-map
+          ("C-M-n" . elpy-nav-forward-block)
+          ("C-M-p" . elpy-nav-backward-block))
+    :hook ((elpy-mode . flycheck-mode)
+           (elpy-mode . (lambda ()
+                          (set (make-local-variable 'company-backends)
+                               '((elpy-company-backend :with company-yasnippet))))))
+    :init
+    (elpy-enable)
+    :config
+    (setq elpy-modules (delq 'elpy-module-flymake elpy-modules))
+    ; fix for MacOS, see https://github.com/jorgenschaefer/elpy/issues/1550
+    (setq elpy-shell-echo-output nil)
+    (setq elpy-rpc-python-command "python")
+    (setq elpy-rpc-timeout 2))
+;;
+(with-eval-after-load 'python
+  (defun python-shell-completion-native-try ()
+    "Return non-nil if can trigger native completion."
+    (let ((python-shell-completion-native-enable t)
+          (python-shell-completion-native-output-timeout
+           python-shell-completion-native-try-output-timeout))
+      (python-shell-completion-native-get-completions
+       (get-buffer-process (current-buffer))
+       nil "_"))))
+
+(use-package blacken
+    :straight t
+    :hook (python-mode . blacken-mode)
+    :config
+    (setq blacken-line-length '88))
+(use-package python-docstring
+    :straight t
+    :diminish "  仝"
+    :hook (python-mode . python-docstring-mode))
+(use-package lsp-python-ms
+    :straight t
+    :after lsp-mode
+    :init (setq lsp-python-ms-auto-install-server t))
+>>>>>>> 19e8d1ccf059d7f2fbe79cd3d8e014ec7461e725
 
     (use-package lpy
       :straight t
