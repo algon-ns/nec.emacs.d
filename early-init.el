@@ -35,6 +35,37 @@
 (setq-default debug-on-error         nil
               message-log-max        t
               ad-redefinition-action 'accept)
+;; be sure to have Straight.el as the first thing to do
+(setq straight-use-package-by-default t)
+;; (setq straight-vc-git-default-clone-depth 'full)
+(defvar bootstrap-version)
+(let* ((straight-repo-dir
+        (expand-file-name "straight/repos" user-emacs-directory))
+       (bootstrap-file
+        (concat straight-repo-dir "/straight.el/bootstrap.el"))
+       (bootstrap-version 5))
+  (unless (file-exists-p bootstrap-file)
+    (shell-command
+     (concat
+      "mkdir -p " straight-repo-dir " && "
+      "git -C " straight-repo-dir " clone "
+      "https://github.com/raxod502/straight.el.git && "
+      "git -C " straight-repo-dir " checkout 2d407bc")))
+  (load bootstrap-file nil 'nomessage))
+;;
+(straight-use-package '(use-package :type git :flavor melpa
+                         :files (:defaults (:exclude "bind-key.el"
+                                                     "bind-chord.el"
+                                                     "use-package-chords.el"
+                                                     "use-package-ensure-system-package.el")
+                                           "use-package-pkg.el")
+                         :host github :repo "jwiegley/use-package"))
+(setq straight-check-for-modifications '(check-on-save find-when-checking))
+;; =M-x straight-pull-all=: update all packages.
+;; =M-x straight-normalize-all=: restore all packages (remove local edits)
+;; =M-x straight-freeze-versions= and =M-x straight-thaw-versions= are like =pip
+;;  freeze requirements.txt= and =pip install -r requirements.txt=
+
 ;;;;;; Set garbage collection threshold (to secure fast startup)
 ;; From https://www.reddit.com/r/emacs/comments/3kqt6e/2_easy_little_known_steps_to_speed_up_emacs_start/
 (setq gc-cons-threshold-original gc-cons-threshold)

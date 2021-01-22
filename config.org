@@ -140,6 +140,37 @@ If you wonder, where You found this file....
 (setq-default debug-on-error         nil
               message-log-max        t
               ad-redefinition-action 'accept)
+;; be sure to have Straight.el as the first thing to do
+(setq straight-use-package-by-default t)
+;; (setq straight-vc-git-default-clone-depth 'full)
+(defvar bootstrap-version)
+(let* ((straight-repo-dir
+        (expand-file-name "straight/repos" user-emacs-directory))
+       (bootstrap-file
+        (concat straight-repo-dir "/straight.el/bootstrap.el"))
+       (bootstrap-version 5))
+  (unless (file-exists-p bootstrap-file)
+    (shell-command
+     (concat
+      "mkdir -p " straight-repo-dir " && "
+      "git -C " straight-repo-dir " clone "
+      "https://github.com/raxod502/straight.el.git && "
+      "git -C " straight-repo-dir " checkout 2d407bc")))
+  (load bootstrap-file nil 'nomessage))
+;;
+(straight-use-package '(use-package :type git :flavor melpa
+                         :files (:defaults (:exclude "bind-key.el"
+                                                     "bind-chord.el"
+                                                     "use-package-chords.el"
+                                                     "use-package-ensure-system-package.el")
+                                           "use-package-pkg.el")
+                         :host github :repo "jwiegley/use-package"))
+(setq straight-check-for-modifications '(check-on-save find-when-checking))
+;; =M-x straight-pull-all=: update all packages.
+;; =M-x straight-normalize-all=: restore all packages (remove local edits)
+;; =M-x straight-freeze-versions= and =M-x straight-thaw-versions= are like =pip
+;;  freeze requirements.txt= and =pip install -r requirements.txt=
+
 ;;;;;; Set garbage collection threshold (to secure fast startup)
 ;; From https://www.reddit.com/r/emacs/comments/3kqt6e/2_easy_little_known_steps_to_speed_up_emacs_start/
 (setq gc-cons-threshold-original gc-cons-threshold)
@@ -242,36 +273,6 @@ If you wonder, where You found this file....
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;
 ;;; Code:
-(setq straight-use-package-by-default t)
-;; (setq straight-vc-git-default-clone-depth 'full)
-(defvar bootstrap-version)
-(let* ((straight-repo-dir
-        (expand-file-name "straight/repos" user-emacs-directory))
-       (bootstrap-file
-        (concat straight-repo-dir "/straight.el/bootstrap.el"))
-       (bootstrap-version 5))
-  (unless (file-exists-p bootstrap-file)
-    (shell-command
-     (concat
-      "mkdir -p " straight-repo-dir " && "
-      "git -C " straight-repo-dir " clone "
-      "https://github.com/raxod502/straight.el.git && "
-      "git -C " straight-repo-dir " checkout 2d407bc")))
-  (load bootstrap-file nil 'nomessage))
-;;
-(straight-use-package '(use-package :type git :flavor melpa
-                         :files (:defaults (:exclude "bind-key.el"
-                                                     "bind-chord.el"
-                                                     "use-package-chords.el"
-                                                     "use-package-ensure-system-package.el")
-                                           "use-package-pkg.el")
-                         :host github :repo "jwiegley/use-package"))
-(setq straight-check-for-modifications '(check-on-save find-when-checking))
-;; =M-x straight-pull-all=: update all packages.
-;; =M-x straight-normalize-all=: restore all packages (remove local edits)
-;; =M-x straight-freeze-versions= and =M-x straight-thaw-versions= are like =pip
-;;  freeze requirements.txt= and =pip install -r requirements.txt=
-
 ;; ensure we can install from git sources
 (straight-use-package '(git :type git :flavor melpa :host github :repo "rejeep/git.el"))
 (if nec/measure-time (nec/timer "After load of straight and git.... "))
@@ -281,34 +282,33 @@ If you wonder, where You found this file....
 (straight-use-package '(org-plus-contrib :type git :repo "https://code.orgmode.org/bzg/org-mode.git"
                                          :local-repo "org" :files (:defaults "contrib/lisp/*.el")))
 ;; need to get hold of org a soon as possible
-(straight-use-package '(dash :type git :flavor melpa :files ("dash.el" "dash.texi" "dash-pkg.el")
+(straight-use-package-lazy '(dash :type git :flavor melpa :files ("dash.el" "dash.texi" "dash-pkg.el")
                              :host github :repo "magnars/dash.el"))
-(straight-use-package '(f :type git :flavor melpa :files ("f.el" "f-pkg.el")
+(straight-use-package-lazy '(f :type git :flavor melpa :files ("f.el" "f-pkg.el")
                           :host github :repo "rejeep/f.el"))
-(straight-use-package '(ht :type git :flavor melpa :files ("ht.el" "ht-pkg.el")
+(straight-use-package-lazy '(ht :type git :flavor melpa :files ("ht.el" "ht-pkg.el")
                            :host github :repo "Wilfred/ht.el"))
-(straight-use-package '(s :type git :flavor melpa :files ("s.el" "s-pkg.el")
+(straight-use-package-lazy '(s :type git :flavor melpa :files ("s.el" "s-pkg.el")
                           :host github :repo "magnars/s.el"))
-(straight-use-package '(ts :type git :flavor melpa
+(straight-use-package-lazy '(ts :type git :flavor melpa
                            :host github :repo "alphapapa/ts.el"))
-(straight-use-package '(a :type git :flavor melpa
+(straight-use-package-lazy '(a :type git :flavor melpa
                           :host github :repo "plexus/a.el"))
-(straight-use-package '(org-ql :type git :flavor melpa
+(straight-use-package-lazy '(org-ql :type git :flavor melpa
                                :host github :repo "alphapapa/org-ql"))
-(straight-use-package '(emacsql :type git :flavor melpa
+(straight-use-package-lazy '(emacsql :type git :flavor melpa
                                 :files ("emacsql.el"
                                         "emacsql-compiler.el"
                                         "emacsql-system.el"
                                         "README.md"
                                         "emacsql-pkg.el")
                                 :host github :repo "skeeto/emacsql"))
-(straight-use-package '(emacsql-sqlite3 :type git :flavor melpa
+(straight-use-package-lazy '(emacsql-sqlite3 :type git :flavor melpa
                                         :host github :repo "cireu/emacsql-sqlite3"))
 (if nec/measure-time (nec/timer "Load general routines "))
 (setq org-export-backends '(ascii
                             beamer
                             bibtex
-                            el
                             html
                             icalendar
                             koma-letter
@@ -330,15 +330,7 @@ NAME and ARGS are as in `use-package'."
   `(use-package ,name
      ,@args))
 
-;; Feature `straight-x' from package `straight' provides
-;; experimental/unstable extensions to straight.el which are not yet
-;; ready for official inclusion.
-(straight-use-package 'general)
-(use-package general
-  :init
-  (defalias 'gsetq #'general-setq)
-  (defalias 'gsetq-local #'general-setq-local)
-  (defalias 'gsetq-default #'general-setq-default))
+
 
 (setq garbage-collection-messages nil)
 ;;
@@ -427,7 +419,6 @@ NAME and ARGS are as in `use-package'."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (put 'dired-find-alternate-file 'disabled nil)
 #+end_example
-
 * Contents             :TOC_5:
 :PROPERTIES:
 :CUSTOM_ID: Contents
@@ -441,7 +432,7 @@ NAME and ARGS are as in `use-package'."
 - [[#basic-emacs][Basic emacs]]
   - [[#fundamental-constants-and-functions][Fundamental constants and functions]]
     - [[#better-defaults][better Defaults]]
-    - [[#helpers][helpers]]
+    - [[#general-and-helpers][general and helpers]]
     - [[#version-and-warning-if-wrong-version][version and warning if wrong version]]
     - [[#load-custom-file][load custom file]]
     - [[#typeface-suitability-test][typeface suitability test]]
@@ -548,15 +539,16 @@ NAME and ARGS are as in `use-package'."
     - [[#calendar][calendar]]
     - [[#magit][magit]]
     - [[#gnuplot][gnuplot]]
-    - [[#][]]
+    - [[#remember-mode][remember mode]]
     - [[#docker][docker]]
     - [[#tæl-ord][tæl ord]]
+    - [[#google-translate][google translate]]
     - [[#elgantt][elgantt]]
     - [[#gnus][gnus]]
     - [[#elfeed][elfeed]]
     - [[#ledger-mode][ledger-mode]]
 - [[#languages][Languages]]
-    - [[#pr][Pr]]
+    - [[#projectile][Projectile]]
     - [[#header-for-new-files][Header for new files]]
     - [[#python][Python]]
     - [[#rust][Rust]]
@@ -612,13 +604,15 @@ Here are what I consider better defaults as per my own experience.
 (delete-selection-mode 1)                         ; Replace region when inserting text
 (display-time-mode 1)                             ; Enable time in the mode-line
 (fringe-mode 0)                                   ; Disable fringes
-(fset 'yes-or-no-p 'y-or-n-p)                     ; Replace yes/no prompts with y/n
-;; (global-subword-mode 1)                           ; Iterate through CamelCase words
 (menu-bar-mode 0)                                 ; Disable the menu bar
 (mouse-avoidance-mode 'exile)                     ; Avoid collision of mouse with point
 (put 'downcase-region 'disabled nil)              ; Enable downcase-region
 (put 'upcase-region 'disabled nil)                ; Enable upcase-region
 (set-default-coding-systems 'utf-8)               ; Default to utf-8 encoding
+
+;; The default is to wait 1 second, which I find a bit long
+(setq echo-keystrokes 0.1)
+
 (setq-default indent-tabs-mode nil)
 (push '(menu-bar-lines . 0) default-frame-alist)
 (setq scroll-bar-mode nil)
@@ -659,7 +653,21 @@ The code below is a minor adaptation of the insights of Alain M. Lafon
   
 (if nec/measure-time (nec/timer "Better default "))
 #+end_src
-*** helpers
+*** general and helpers
+:PROPERTIES:
+:ID:       7B041D81-6330-43C6-95A6-ED94E7C46D3F
+:END:
+The general package is a helper package for defing key bindings and settings i a
+unified way. 
+se https://github.com/noctuid/general.el for documentation
+(straight-use-package '(general :type git :flavor melpa :host github :repo "noctuid/general.el"))
+(use-package general
+  :init
+  (defalias 'gsetq #'general-setq)
+  (defalias 'gsetq-local #'general-setq-local)
+  (defalias 'gsetq-default #'general-setq-default))
+;;
+Beneath are several macros, to help define things
 These macros are conveinent shorthands.
 :function
 Make non-interactive functions out of forms or a symbol.
@@ -909,6 +917,8 @@ abcdefghijklmnopqrstuvwxyzæøå
 
 (setq-default frame-title-format '("" "%b - Som i en Drømmeverden (•̀ᴗ•́)و"))
 (setq ring-bell-function 'ignore)         ; Disable bell sound
+;; Unset C-z
+(global-unset-key (kbd "C-z"))
 (fset 'yes-or-no-p 'y-or-n-p)             ; y-or-n-p makes answering questions faster
 (show-paren-mode t)
 (show-paren-mode 'mixed)
@@ -1008,7 +1018,7 @@ abcdefghijklmnopqrstuvwxyzæøå
  (straight-use-package '(all-the-icons :type git :flavor melpa 
           :files (:defaults "data" "all-the-icons-pkg.el") 
           :host github :repo "domtronn/all-the-icons.el")
-    :init (gsetq inhibit-compacting-font-caches t))
+    :init (setq inhibit-compacting-font-caches t))
 
 (defcustom is-all-the-icons-installed nil
   "DO NOT EDIT. Checks if all-the-icons fonts are installed yet."
@@ -1333,11 +1343,8 @@ Some safety tips regarding your editor are covered in the excellent article
 [[https://glyph.twistedmatrix.com/2015/11/editor-malware.html][Your Text Editor is Malware]]. So, before going on with the configuration, let's
 get some things straight. First of all, enable checking trust on TLS
 connections.
-<<<<<<< HEAD
-#+begin_src emacs-lisp :tangle yes
-=======
 #+begin_src emacs-lisp :tangle no
->>>>>>> 19e8d1ccf059d7f2fbe79cd3d8e014ec7461e725
+
 (setq tls-checktrust t)
 #+end_src
 Now that we have enabled this feature, Emacs can't fetch HTTPS anymore: Emacs
@@ -2602,7 +2609,7 @@ Very useful for parens heavy languages like Lisp.
 Company is a text completion framework for Emacs. The name stands for
 "complete anything". It uses pluggable back-ends and front-ends to
 retrieve and display completion candidates.
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
 
 (use-package company
   :straight t
@@ -2625,11 +2632,11 @@ retrieve and display completion candidates.
            company-capf)  ; completion-at-point-functions
           (company-abbrev company-dabbrev)
           )))
-(straight-use-package '(company-lsp :type git :flavor melpa :host github 
-                                    :repo "tigersoldier/company-lsp")
-  :config
-      (setq compnay-lsp-enable-snippet t)
-      (push 'company-lsp company-backends))
+;;(straight-use-package '(company-lsp :type git :flavor melpa :host github 
+;;                                    :repo "tigersoldier/company-lsp")
+;;  :config
+;;      (setq compnay-lsp-enable-snippet t)
+;;      (push 'company-lsp company-backends))
 
 (use-package company-statistics
     :straight t
@@ -2852,6 +2859,9 @@ Put all keybindings here (with doc)
 (define-key global-map (kbd "C-c p f") 'counsel-projectile-find-file)
 ;;(define-key projectile-mode-map (kbd "s-p") 'projectile-command-map)
 ;;(define-key projectile-mode-map (kbd "C-c p") 'projectile-command-map)
+(global-set-key (kbd "C-&") 'gnus)
+
+
 
 (if nec/measure-time
     (nec/timer "Global key bindings "))
@@ -3112,7 +3122,7 @@ blocks! Love this one ^_^
                   ("/" . dired-filter-map))
       :hook ((dired-mode . dired-filter-mode)
              (dired-mode . dired-filter-group-mode))
-      :init (gsetq dired-filter-revert 'never
+      :init (setq dired-filter-revert 'never
                    dired-filter-group-saved-groups
                    '(("default"
                       ("Git"
@@ -3319,8 +3329,15 @@ Might cause performance issues; http://orgmode.org/manual/Clean-view.html
   (setq org-deadline-warning-days 7)
   (setq org-blank-before-new-entry (quote ((heading . t)
                                            (plain-list-item . nil))))
-#+END_SRC
-#+BEGIN_SRC emacs-lisp
+  (setq org-export-default-language "da")
+  (setq org-export-backends '(ascii beamer bibtex html icalendar koma-letter 
+                              latex md odt org publish rss texinfo))
+  (setq org-export-with-archived-trees nil)
+  (setq org-export-with-drawers '("HIDE"))
+  (setq org-export-with-section-numbers nil)
+  (setq org-export-with-sub-superscripts nil)
+  (setq org-export-with-tags 'not-in-toc)
+  (setq org-export-with-timestamps t)
   (setq org-return-follows-link t)
   (setq org-remove-highlights-with-change nil)
   (setq org-read-date-prefer-future nil)
@@ -3454,7 +3471,7 @@ Disable property inheritance (in order to seed up)
  ;;     (require 'org-capture)
  ;;     (require 'org-agenda)
       (setq org-directory "~/Dropbox/org/"
-            org-agenda-files "~/Dropbox/org/org-files"
+;;            org-agenda-files "~/Dropbox/org/org-files"
             org-todo-keywords
             '((sequence "TODO(t)" "DOING(i)" "SOMEDAY(s)" "PHONE(p!)" 
                         "MØDE(m!)" "|" "DONE(d!)" "CANCEL(c@)"))
@@ -3721,108 +3738,117 @@ multiple times below:
 #+END_SRC
 
 #+begin_src emacs-lisp
-  ;; using doct
-      (setq org-capture-templates
-        (doct '(("Aftale"
-           :keys "a"
-           :file "~/Dropbox/org/agenda/organizer.org"
-           :type entry
-           :headline "Aftaler"
-           :template ("* TODO %?                     %^G:AFTALE:"
-                      "  SCHEDULED:  %^T"
-                              "  :PROPERTIES:"               
-                              "  :STED:  "
-                              "  :EMNE:  "
-                              "  :CATEGORY: Aftale "
-                              "  :CREATED: %U"
-                              "  :SRC: %a"
-                              "  :END:"))          
-                 ("Møde"
-                    :keys "m"
-                    :file "~/Dropbox/org/agenda/organizer.org"
-                    :type entry
-                    :headline "Møder"
-                    :template ("* TODO %?                     %^G:MØDE:"
-                               "  SCHEDULED:  %^T"
-                               "  :PROPERTIES:"               
-                               "  :STED:  "
-                               "  :EMNE:  "
-                               "  :CATEGORY: Møde "
-                               "  :CREATED: %U"
-                               "  :SRC: %a"
-                               "  :END:"))
-                 ("Noter"
-                    :keys "n"
-                    :file org-default-notes-file
-                    :type entry
-                    :headline "Noter"
-                    :template ("* %? "
-                               "  %i "
-                               "  see: %a"))
-                 ("Opgave"
-                   :keys "o"
-                   :file "~/Dropbox/org/agenda/organizer.org"
-                   :type entry
-                   :headline "Opgaver"
-                   :template ("* TODO %?                   %^G:OPGAVE:"
-                              "  SCHEDULED:  %^T"
-                              "  DEADLINE:  %^T"
-                              "  :EMNE:  "
-                              "  :CATEGORY: Opgave "
-                              "  :CREATED: %U"
-                              "  :SRC: %a"
-                              "  :END:"))
-                 ("Dagbog"
-                   :keys "j"
-                   :type entry
-                   :function org-journal-find-location
-                   :template ("* %(format-time-string org-journal-time-format)%^{Title}"
-                              "  %?"
-                              "  %i"))
-                 ("Tickler"
-                    :keys "T"
-                    :type entry
-                    :file "~/Dropbox/org/agenda/organizer.org"
-                    :headline "Husk"
-                    :template ("* TODO %?                :HUSK:%^G"
-                              "  SCHEDULED:  %^T"
-                              "  :PROPERTIES:"               
-                              "  :STED:  "
-                              "  :EMNE:  "
-                              "  :CATEGORY: Husk "
-                              "  :CREATED: %U"
-                              "  :SRC: %a"
-                              "  :END:")) 
-                 ("Kontakt"
-                   :keys "K"
-                   :file "~/Dropbox/org/agenda/contacts.org"
-                   :type entry
-                   :headline "Kontakter"
-                   :template ("* KONTAKT %?              :KONTAKT:"
-                              "  :PROPERTIES:   "
-                              "  :ADDRESS:      "
-                              "  :TELEFON:      "
-                              "  :EMAIL:        "
-                              "  :FØDSELSDAG:   "
-                              "  :NOTE:         "
-                              "  :CATAGORY: Kontakt "
-                              "  :END:          "))                          
-                 ("kommunikation" 
-                   :keys "k"
-                   :file "~/Dropbox/org/agenda/organizer.org"
-                   :children
-                     ((:group "Tid"
-                       :clock-in t
-                       :children 
-                         (("Telefon"
-                            :keys "t"
-                            :template "* Telefon med %?")
-                          ("Møde"
-                            :keys "m"
-                            :template "* Møde med %?")))
-                      ("Browsing" 
-                        :keys "b"
-                        :template "* Browsing %x"))))))
+    ;; using doct
+        (setq org-capture-templates
+          (doct '(("Aftale"
+             :keys "a"
+             :file "~/Dropbox/org/agenda/organizer.org"
+             :type entry
+             :headline "Aftaler"
+             :template ("* TODO %?                     %^G:AFTALE:"
+                        "  SCHEDULED:  %^T"
+                                "  :PROPERTIES:"               
+                                "  :STED:  "
+                                "  :EMNE:  "
+                                "  :CATEGORY: Aftale "
+                                "  :CREATED: %U"
+                                "  :SRC: %a"
+                                "  :END:"))          
+                   ("Møde"
+                      :keys "m"
+                      :file "~/Dropbox/org/agenda/organizer.org"
+                      :type entry
+                      :headline "Møder"
+                      :template ("* TODO %?                     %^G:MØDE:"
+                                 "  SCHEDULED:  %^T"
+                                 "  :PROPERTIES:"               
+                                 "  :STED:  "
+                                 "  :EMNE:  "
+                                 "  :CATEGORY: Møde "
+                                 "  :CREATED: %U"
+                                 "  :SRC: %a"
+                                 "  :END:"))
+                   ("Noter"
+                      :keys "n"
+                      :file org-default-notes-file
+                      :type entry
+                      :headline "Noter"
+                      :template ("* %? "
+                                 "  %i "
+                                 "  see: %a"))
+                   ("Opgave"
+                     :keys "o"
+                     :file "~/Dropbox/org/agenda/organizer.org"
+                     :type entry
+                     :headline "Opgaver"
+                     :clock-in t
+                     :template ("* TODO %?                   %^G:OPGAVE:"
+                                "  SCHEDULED:  %^T"
+                                "  DEADLINE:  %^T"
+                                "  :EMNE:  "
+                                "  :CATEGORY: OPGAVE "
+                                "  :CREATED: %U"
+                                "  :SRC: %a"
+                                "  :END:"))
+                   ("Dagbog"
+                     :keys "j"
+                     :type entry
+                     :function org-journal-find-location
+                     :template ("* %(format-time-string org-journal-time-format)%^{Title}"
+                                "  %?"
+                                "  %i"))
+                   ("Tickler"
+                      :keys "T"
+                      :type entry
+                      :file "~/Dropbox/org/agenda/organizer.org"
+                      :headline "Husk"
+                      :template ("* TODO %?                :HUSK:%^G"
+                                "  SCHEDULED:  %^T"
+                                "  :PROPERTIES:"               
+                                "  :STED:  "
+                                "  :EMNE:  "
+                                "  :CATEGORY: HUSK "
+                                "  :CREATED: %U"
+                                "  :SRC: %a"
+                                "  :END:")) 
+                   ("Kontakt"
+                     :keys "K"
+                     :file "~/Dropbox/org/agenda/contacts.org"
+                     :type entry
+                     :headline "Kontakter"
+                     :template ("* KONTAKT %?              :KONTAKT:"
+                                "  :PROPERTIES:   "
+                                "  :ADDRESS:      "
+                                "  :TELEFON:      "
+                                "  :EMAIL:        "
+                                "  :FØDSELSDAG:   "
+                                "  :NOTE:         "
+                                "  :CATAGORY: Kontakt "
+                                "  :END:          "))                          
+                   ("Telefon-Møde" 
+                     :keys "k"
+                     :file "~/Dropbox/org/agenda/opgaver.org"
+                     :children
+                       (:group "Tid"
+                         :clock-in t
+                         :children 
+                           (("Telefon"
+                              :keys "t"
+                              :template ("* Telefon med %? "
+                                        " :PROPERTIES:"               
+                                        " :EMNE:      "
+                                        " :CATEGORY: Telefon "
+                                        " :SRC:      %a"
+                                        " :END: "))
+                            ("Møde"
+                              :keys "m"
+                              :template ("* Møde med %?"
+                                        "  :PROPERTIES:"               
+                                        "  :EMNE:      "
+                                        "  :CATEGORY: Møde"
+                                        "  :SRC:      %a"
+                                        "  :END: "))))))))
+    
   (if nec/measure-time (nec/timer "org-capture "))
   #+end_src
 *** org agenda
@@ -3830,7 +3856,11 @@ multiple times below:
   :CUSTOM_ID: org agenda 
   :END:
   #+begin_src emacs-lisp 
-    (setq diary-file "~/.emacs.d/diary")
+    (setq diary-file "~/Dropbox/org/agenda/diary.org")
+    (setq org-agenda-files '("~/Dropbox/org/agenda/organizer.org" 
+                             "~/Dropbox/org/agenda/contacts.org" 
+                             "~/Dropbox/org/agenda/Notes.org" 
+                             "~/Dropbox/org/agenda/opgaver.org"))
     ;;(require 'org-mac-iCal)
     ;;(org-mac-iCal)
     (straight-use-package '(org-agenda :type git :repo "https://code.orgmode.org/bzg/org-mode.git" 
@@ -3841,6 +3871,16 @@ multiple times below:
       (setq org-agenda-span 14)
       (setq org-agenda-include-diary t)
       (setq org-agenda-start-on-weekday 1)
+      (setq org-agenda-dim-blocked-tasks t)
+      (setq org-log-into-drawer "LOGBOOK")
+      (setq org-agenda-prefix-format
+         '((agenda . " %i %-10:c%?-12t% s")
+	         (timeline . "  % s")
+	         (todo . " %i %-14:c")
+	         (tags . " %i %-14:c")
+	         (search . " %i %-14:c")))
+      (setq org-agenda-entry-text-maxlines 10)
+      (setq org-timer-default-timer 25)
       (setq org-agenda-sticky nil)
       (setq org-agenda-tags-column -100)
       (setq org-agenda-time-grid '((daily today require-timed)))
@@ -3855,7 +3895,6 @@ multiple times below:
     ;;      org-caldav-uuid-extension ".ics" 
     ;;      org-caldav-files '("~/org/agenda/appointments.org")
     ;;      org-caldav-debug-level 2)
-
     ;;(org-caldav-sync)
     (if nec/measure-time (nec/timer "org agenda" ))
 #+end_src
@@ -3876,8 +3915,8 @@ Org agenda is an interactive tool for generating summary reports from Org data
   (setq org-agenda-skip-scheduled-if-done t)
   (setq org-agenda-skip-deadline-if-done  t)
 
-   (straight-use-package '(origami :type git :flavor melpa :host github 
-                                   :repo "gregsexton/origami.el"))
+  (straight-use-package '(origami :type git :flavor melpa :host github 
+                                  :repo "gregsexton/origami.el"))
    (use-package org-super-agenda
       :straight t
       :hook (org-agenda-mode . origami-mode) ;; Easily fold groups via TAB.
@@ -3899,8 +3938,7 @@ Org agenda is an interactive tool for generating summary reports from Org data
 
                   (:auto-category t)
                   )))
-               
-   
+
   (org-agenda-list)
   (org-super-agenda-mode)
   (if nec/measure-time (nec/timer "org-super-agenda "))
@@ -3909,7 +3947,6 @@ Org agenda is an interactive tool for generating summary reports from Org data
 Origami mode ---see below in [[Text Folding with Origami-mode]]---
   works well with super-agenda. Just ~M-x origami-mode~ then ~C-c f~ to
   enable the folding hydra.
-
 
 *** org roam
 :PROPERTIES:
@@ -4152,8 +4189,8 @@ Origami mode ---see below in [[Text Folding with Origami-mode]]---
     (find-file filepath)))
 
 ;; Some hot keys to jump to often different relevant files
-;; Jump to the current clock if one is open, otherwise, go to my agenda file.
-(global-set-key (kbd "s-i") 'org-roam-insert)
+;; Jump to the current  clock if one is open, otherwise, go to my agenda file.
+(global-set-key (kbd "C-c r i") 'org-roam-insert)
 (provide 'jnf-org-roam.el)
 ;;; jnf-org-roam.el ends here
 #+end_src
@@ -4214,11 +4251,7 @@ Origami mode ---see below in [[Text Folding with Origami-mode]]---
  (if nec/measure-time (nec/timer "deft "))
 #+end_src
 *** zetteldeft
-<<<<<<< HEAD
 #+begin_src emacs-lisp :tangle no
-=======
-#+begin_src emacs-lisp
->>>>>>> 19e8d1ccf059d7f2fbe79cd3d8e014ec7461e725
 (setq deft-extensions '("org" "md" "txt"))
  
 (setq deft-directory (concat org-directory "/roam/")) 
@@ -4239,20 +4272,13 @@ lower case.
 In order to filter these from the deft summary, let's alter the
 regular expression:
 
-<<<<<<< HEAD
 #+begin_src emacs-lisp :tangle no
-=======
-#+begin_src emacs-lisp
->>>>>>> 19e8d1ccf059d7f2fbe79cd3d8e014ec7461e725
   (setq deft-strip-summary-regexp
    (concat "\\("
            "[\n\t]" ;; blank
            "\\|^#\\+[a-zA-Z_]+:.*$" ;;org-mode metadata
            "\\)"))
-<<<<<<< HEAD
 (if nec/measure-time (nec/timer "Zettledeft "))
-=======
->>>>>>> 19e8d1ccf059d7f2fbe79cd3d8e014ec7461e725
 #+end_SRC
 
 Its original value was =\\([\n ]\\|^#\\+[[:upper:]_]+:.*$\\)=.
@@ -4951,8 +4977,7 @@ easier on the eyes. For more, see the brief [[https://www.dailymotion.com/video/
 ;; This line binds the function-9 key so that it opens a buffer into gnuplot mode
 (global-set-key [(f9)] 'gnuplot-make-buffer)
 #+end_src
-*** 
-remember mode
+*** remember mode 
 :PROPERTIES:
 :CUSTOM_ID: h:8044df56-9819-4c61-abe6-43d352087211
 :END:
@@ -5107,11 +5132,42 @@ by `remember-notes-buffer-name'."
 
   ;;; most-used-words.el ends here
 #+end_src
+*** google translate
+#+begin_src emacs-lisp :tangle no
+(use-package google-translate
+  :straight t
+('normal
+   '(markdown-mode-map org-mode-map)
+   "z g t" #'rasen/google-translate-at-point
+   "z g T" #'google-translate-smooth-translate)
+
+  :commands (google-translate-smooth-translate)
+  :config
+  (defun rasen/google-translate-at-point (arg)
+    "Translate word at point. If prefix is provided, do reverse translation"
+    (interactive "P")
+    (if arg
+        (google-translate-at-point-reverse)
+      (google-translate-at-point)))
+
+  (require 'google-translate-default-ui)
+  (require 'google-translate-smooth-ui)
+  (setq google-translate-show-phonetic t)
+
+  (setq google-translate-default-source-language "en"
+        google-translate-default-target-language "da")
+
+  (setq google-translate-translation-directions-alist '(("en" . "da") ("da" . "en"))))
+  ;; auto-toggle input method
+  ;;(setq google-translate-input-method-auto-toggling t
+  ;;      google-translate-preferable-input-methods-alist '((nil . ("en"))
+  ;;                                                        (danish-computer . ("da")))))
+#+end_src
 *** elgantt
 :PROPERTIES:
 :CUSTOM_ID: elgantt
 :END:
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
 
 (require 'elgantt)
 (setq elgantt-user-set-color-priority-counter 0)
@@ -5404,12 +5460,9 @@ Ledger mode for MacBook Air
 (if nec/measure-time (nec/timer "ledger "))
 #+end_src
 * Languages
-<<<<<<< HEAD
-*** Pr
-ojectile
-=======
+
+
 *** Projectile
->>>>>>> 19e8d1ccf059d7f2fbe79cd3d8e014ec7461e725
 #+begin_src emacs-lisp :tangle yes
 (straight-use-package '(projectile :type git :flavor melpa 
                :files ("projectile.el" "projectile-pkg.el") 
@@ -5452,8 +5505,7 @@ We want to give all nye (and old) emacs-lisp files a header)
 :CUSTOM_ID: Python
 :END:
 #+begin_src emacs-lisp :tangle yes
-<<<<<<< HEAD
-  (use-package elpy
+(use-package elpy
       :straight t
       :diminish "  "
       :bind
@@ -5496,7 +5548,7 @@ We want to give all nye (and old) emacs-lisp files a header)
       :straight t
       :after lsp-mode
       :init (setq lsp-python-ms-auto-install-server t))
-=======
+
 (use-package elpy
     :straight t
     :diminish "  "
@@ -5540,7 +5592,6 @@ We want to give all nye (and old) emacs-lisp files a header)
     :straight t
     :after lsp-mode
     :init (setq lsp-python-ms-auto-install-server t))
->>>>>>> 19e8d1ccf059d7f2fbe79cd3d8e014ec7461e725
 
     (use-package lpy
       :straight t

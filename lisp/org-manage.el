@@ -154,7 +154,7 @@
 
 (defun org-manage-summary-header (&optional title)
   (concat
-   (format "%s\n" (or title "My org files"))
+   (format "%s\n" (or title "Mine org files"))
    (mapconcat
     'identity
     (org-manage-summary-command-help
