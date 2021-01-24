@@ -25,10 +25,10 @@
  '(nxml-bind-meta-tab-to-complete-flag nil)
  '(org-agenda-files
    '("~/Dropbox/org/agenda/organizer.org" "~/Dropbox/org/agenda/contacts.org" "~/Dropbox/org/agenda/Notes.org" "~/Dropbox/org/agenda/opgaver.org" "/Users/niels/Dropbox/org/journal/2021-01-21.org"))
- '(preview-TeX-style-dir "/Users/niels/.emacs.d/straight/build/auctex/latex")
+ '(preview-TeX-style-dir "/Users/niels/.emacs.d/straight/build/auctex/latex" t)
  '(projectile-known-projects-file "/Users/niels/.emacs.d/private/projectile-bookmarks.eld")
  '(projectile-mode-line-prefix " ✐")
- '(reftex-plug-into-AUCTeX t)
+ '(reftex-plug-into-AUCTeX t t)
  '(sane-term-shell-command "/bin/zsh")
  '(set-mark-command-repeat-pop t)
  '(smartparens-global-mode t)

@@ -1,4 +1,4 @@
-// Copyright (C) Microsoft Corporation. All rights reserved.
+// Copyright (C) algon IT. All rights reserved.
 
 #ifndef %N_H
 #define %N_H

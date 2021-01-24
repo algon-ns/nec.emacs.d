@@ -210,7 +210,6 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
 ;;; Code:
-
 (require 'lib-requires nil t)
   ;; (no error if not found):
   ;; libreq-insert-lib-requires-as-comment, libreq-file-header

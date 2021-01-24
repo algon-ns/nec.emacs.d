@@ -129,5 +129,5 @@
 ;; Resizing the Emacs frame can be a terribly expensive part of changing the
 ;; font. By inhibiting this, we easily halve startup times with fonts that are
 ;; larger than the system default.
-(nec/timer "Start mesure of load time")
+(nec/timer "Start mesure of load time (in early-init)")
 (setq frame-inhibit-implied-resize t)

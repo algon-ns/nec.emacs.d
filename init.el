@@ -88,9 +88,6 @@ NAME and ARGS are as in `use-package'."
   (declare (indent defun))
   `(use-package ,name
      ,@args))
-
-
-
 (setq garbage-collection-messages nil)
 ;;
 (defvar current-date-time-format "%a %b %d %Y-%m-%dT%H:%M:%S "
@@ -109,6 +106,7 @@ NAME and ARGS are as in `use-package'."
 (require 'package)
 (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/"))
 ;;; get and untangle the config.org file
+
 (defun my-tangle-config-org ()
   "This function will write all source blocks from =config.org= into =config.el= that are ...
 - not marked as =tangle: no=

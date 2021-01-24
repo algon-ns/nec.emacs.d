@@ -1,0 +1,6 @@
+#+AUTHOR: %U 
+#+LANGUAGE: da
+#+CATEGORY: Roam file
+#+DATE: <%Y/%m/%d>
+
+%@

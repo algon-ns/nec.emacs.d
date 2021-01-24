@@ -486,7 +486,6 @@ NAME and ARGS are as in `use-package'."
     - [[#ivy][ivy]]
     - [[#marginella][marginella]]
     - [[#smex][SMEX]]
-    - [[#disable-yasnippet-disable][DISABLE Yasnippet DISABLE]]
     - [[#ido][IDO]]
     - [[#parenthesis][parenthesis]]
     - [[#set-danish-calendar-data][set danish calendar data]]
@@ -556,6 +555,7 @@ NAME and ARGS are as in `use-package'."
     - [[#dap-debug-adapter-protocol][DAP (debug adapter protocol)]]
     - [[#markdown][MarkDown]]
 - [[#the-end][The end]]
+    - [[#check-for-new-versions][check for new versions]]
     - [[#time-uses][time uses]]
 
 * Basic emacs
@@ -660,12 +660,14 @@ The code below is a minor adaptation of the insights of Alain M. Lafon
 The general package is a helper package for defing key bindings and settings i a
 unified way. 
 se https://github.com/noctuid/general.el for documentation
+#+begin_src emacs-lisp :tangle yes
 (straight-use-package '(general :type git :flavor melpa :host github :repo "noctuid/general.el"))
 (use-package general
   :init
   (defalias 'gsetq #'general-setq)
   (defalias 'gsetq-local #'general-setq-local)
   (defalias 'gsetq-default #'general-setq-default))
+#+end_src
 ;;
 Beneath are several macros, to help define things
 These macros are conveinent shorthands.
@@ -992,13 +994,14 @@ abcdefghijklmnopqrstuvwxyzæøå
 (setenv "TMPDIR" "/tmp/")
 (setenv "TERM" "xterm-256color")
 (setenv "LANG" "da_DK.UTF-8")
-(setenv "PATH" "/bin:/usr/bin:/usr/local/bin:/sbin:/usr/sbin:/usr/local/opt:/usr/local/bin:/usr/local/sbin:/Library/Tex/texbin:/opt/X11/bin")
+(setenv "PATH" "/bin:/usr/bin:/usr/local/bin:/sbin:/usr/sbin:/usr/local/opt:/usr/local/bin:/usr/local/sbin:/Library/Tex/texbin:/Users/niels/.cargo/bin:/opt/X11/bin")
 (use-package exec-path-from-shell
   :straight t
   :if (and (eq system-type 'darwin) (display-graphic-p)))
 
 (if nec/measure-time (nec/timer "set PATH and env "))
 #+end_src
+
 
 *** list-environment
 :PROPERTIES:
@@ -2271,55 +2274,6 @@ of the minibuffer for your completion candidates.
 (global-set-key (kbd "C-c C-c M-x") 'execute-extended-command)
 (if nec/measure-time (nec/timer "SMEX   "))
 #+end_src
-*** DISABLE Yasnippet DISABLE
-;;#+begin_src emacs-lisp
-;;; init-yasnippet.el --- -*- lexical-binding: t -*-
-;;
-;; Filename: init-yasnippet.el
-;; Description: Initialize YASnippet
-;; Author: Mingde (Matthew) Zeng
-;; Copyright (C) 2019 Mingde (Matthew) Zeng
-;; Created: Tue Apr 23 23:08:17 2019 (-0400)
-;; Version: 2.0.0
-;; Last-Updated: Sat Apr 18 12:40:38 2020 (+0200)
-;;           By: Niels Søndergaard
-;; URL: https://github.com/MatthewZMD/.emacs.d
-;; Keywords: M-EMACS .emacs.d yasnippet
-;; Compatibility: emacs-version >= 26.1
-;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;
-;;; Commentary:
-;;
-;; This initializes YASnippet
-;;
-;;; Code:
-;;(use-package yasnippet
-;;  :straight t
-;;  :diminish yas-minor-mode
-;;  :init
-;;;;  (use-package yasnippet-snippets :after yasnippet)
-;;  :hook ((prog-mode LaTeX-mode org-mode) . yas-minor-mode)
-;;  :bind
-;;  (:map yas-minor-mode-map ("C-c C-n" . yas-expand-from-trigger-key))
-;;  (:map yas-keymap
-;;        (("TAB" . smarter-yas-expand-next-field)
-;;         ([(tab)] . smarter-yas-expand-next-field)))
-;;  :config   (yas-reload-all)
-;;  (setq yas-snippet-dirs "~/.emacs.d/snippets/")
-;;  (defun smarter-yas-expand-next-field ()
-;;    "Try to `yas-expand' then `yas-next-field' at current cursor position."
-;;    (interactive)
-;;    (let ((old-point (point))
-;;          (old-tick (buffer-chars-modified-tick)))
-;;      (yas-expand)
-;;      (when (and (eq old-point (point))
-;;                 (eq old-tick (buffer-chars-modified-tick)))
-;;        (ignore-errors (yas-next-field))))))
-;;(provide 'init-yasnippet)
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;; init-yasnippet.el ends here
-;;#+end_src
 *** IDO
 :PROPERTIES:
 :CUSTOM_ID: IDO
@@ -2632,11 +2586,11 @@ retrieve and display completion candidates.
            company-capf)  ; completion-at-point-functions
           (company-abbrev company-dabbrev)
           )))
-;;(straight-use-package '(company-lsp :type git :flavor melpa :host github 
-;;                                    :repo "tigersoldier/company-lsp")
-;;  :config
-;;      (setq compnay-lsp-enable-snippet t)
-;;      (push 'company-lsp company-backends))
+(straight-use-package '(company-lsp :type git :flavor melpa :host github 
+                                    :repo "tigersoldier/company-lsp"))
+(company-lsp-cache-candidates 'auto)
+(company-lsp-enable-snippet nil)
+(push 'company-lsp company-backends)
 
 (use-package company-statistics
     :straight t
@@ -2860,9 +2814,6 @@ Put all keybindings here (with doc)
 ;;(define-key projectile-mode-map (kbd "s-p") 'projectile-command-map)
 ;;(define-key projectile-mode-map (kbd "C-c p") 'projectile-command-map)
 (global-set-key (kbd "C-&") 'gnus)
-
-
-
 (if nec/measure-time
     (nec/timer "Global key bindings "))
 #+end_src
@@ -3935,6 +3886,7 @@ Org agenda is an interactive tool for generating summary reports from Org data
                   (:name "⭐ Møde" :todo "MØDE")
                   (:name "⭐ Vigtigt" :priority "A")
                   (:name "📌 Opgave" :category "OPGAVE")
+                  (:name "📌 Opgave" :tag "OPGAVE")
 
                   (:auto-category t)
                   )))
@@ -4080,38 +4032,6 @@ Origami mode ---see below in [[Text Folding with Origami-mode]]---
            :immediate-finish t)))
 (if nec/measure-time (nec/timer "org-roam-capture "))
 
-(defmacro go-roam-find-file-project-fn (project)
-  "Define a function to find an `org-roam' file within the given PROJECT."
-  (let* ((fn-name (intern (concat "go-roam-find-" (replace-regexp-in-string " +" "-" project))))
-         (docstring (concat "Find an `org-roam' file for: " project)))
-    `(defun ,fn-name (&optional completions filter-nf no-confirm)
-       ,docstring
-       (interactive)
-       (org-roam-find-file (concat ,project " ") completions filter-nf no-confirm))))
-
-(go-roam-find-file-project-fn "niels")
-(go-roam-find-file-project-fn "emacs")
-(go-roam-find-file-project-fn "bibliography")
-(go-roam-find-file-project-fn "4eren")
-(go-roam-find-file-project-fn "seniorraad")
-(go-roam-find-file-project-fn "iniziu")
-;;(defvar jnf-find-file-in-roam-project--title ("Find File in Roam Project" 1 -0.05))
-(pretty-hydra-define jnf-find-file-in-roam-project (:foreign-keys warn :title jnf-find-file-in-roam-project--title :quit-key "q")
-  (
-   "roam"
-   (("b" go-roam-find-permanent-bibliographies "Bibliography")
-    ("4" go-roam-find-permanent-4eren "4eren")
-    ("a" go-roam-find-niels "Niels")
-    ("t" go-roam-find-seniorraad "Seniorråd")
-    ("h" go-roam-find-iniziu "Iniziu")
-    ("s" go-roam-find-andre "Andre"))
-   ))
-(global-set-key (kbd "s-1") 'jnf-find-file-in-roam-project)
-;;;;;;;;;
-(use-package company-org-roam
-  :straight (:host github :repo "org-roam/company-org-roam")
-  :config
-  (push 'company-org-roam company-backends))
 
 ;;;;;;;;;;
 (defun org-roam/init-org-roam-bibtex()
@@ -4194,6 +4114,9 @@ Origami mode ---see below in [[Text Folding with Origami-mode]]---
 (provide 'jnf-org-roam.el)
 ;;; jnf-org-roam.el ends here
 #+end_src
+
+#+RESULTS:
+: jnf-org-roam\.el
 
 *** org-super-links
 #+begin_src emacs-lisp :tangle yes
@@ -5460,8 +5383,6 @@ Ledger mode for MacBook Air
 (if nec/measure-time (nec/timer "ledger "))
 #+end_src
 * Languages
-
-
 *** Projectile
 #+begin_src emacs-lisp :tangle yes
 (straight-use-package '(projectile :type git :flavor melpa 
@@ -5471,35 +5392,28 @@ Ledger mode for MacBook Air
 (projectile-mode +1)
 (straight-use-package '(counsel-projectile :type git :flavor melpa 
                :host github :repo "ericdanan/counsel-projectile"))
-(define-key global-map (kbd "C-c p f") 'counsel-projectile-find-file)
-(define-key projectile-mode-map (kbd "s-p") 'projectile-command-map)
-(define-key projectile-mode-map (kbd "C-c p") 'projectile-command-map)
+(general-define-key
+  "C-c p f" 'counsel-projectile-find-file
+  :keymap 'projectile-mode-map
+  "C-c p" 'projectile-command-map)
 (if nec/measure-time (nec/timer "projectile "))
 #+end_src
 *** Header for new files
 :PROPERTIES:
 :CUSTOM_ID: Header for emacs-lisp files
 :END:
-We want to give all nye (and old) emacs-lisp files a header)
+We want to give all nye (and old) files a header
 #+begin_src emacs-lisp :tangle yes
 (require 'file-template)
+;; we want headers on org and org-roam files too
+;;(add-to-list 'file-template-mapping-alist ("\\.org$" . "template.org"))
+;;(add-to-list 'file-template-mapping-alist ("20*.org$" . "org-template.sh"))
+
 (autoload 'file-template-find-file-not-found-hook "file-template" nil t)
 (add-hook 'find-file-not-found-hooks 'file-template-find-file-not-found-hook 'append)
-(if nec/measure-time (nec/timer "file header "))
+
+(if nec/measure-time (nec/timer "Header on files  "))
 #+end_src
-
-(require 'header2)
-(setq header-copyright-notice (concat "Copyright (C) 2020, " (user-full-name) "\n"))
-(add-to-list 'write-file-functions 'auto-update-file-header)
-(add-hook 'emacs-lisp-mode-hook 'auto-make-header)
-(straight-use-package-lazy 'autoinsert)
-  (setq auto-insert-query nil)
-  (setq auto-insert-directory "~/Dropbox/org/include/")
-  (auto-insert-mode 1)
-  (add-hook 'find-file-hook 'auto-insert)  
-  (define-auto-insert "\\.org?$" "std-header.org")
-(if nec/measure-time (nec/timer "App: header on files  "))
-
 *** Python
 :PROPERTIES:
 :CUSTOM_ID: Python
@@ -5514,8 +5428,7 @@ We want to give all nye (and old) emacs-lisp files a header)
             ("C-M-p" . elpy-nav-backward-block))
       :hook ((elpy-mode . flycheck-mode)
              (elpy-mode . (lambda ()
-                            (set (make-local-variable 'company-backends)
-                                 '((elpy-company-backend :with company-yasnippet))))))
+                            (set (make-local-variable 'company-backends)))))
       :init
       (elpy-enable)
       :config
@@ -5689,14 +5602,16 @@ We want to give all nye (and old) emacs-lisp files a header)
 (if nec/measure-time (nec/timer "MarkDown "))
 #+end_src
 * The end
-💢 start server
-
+*** check for new versions
+#+begin_src emacs-lisp
+;;; start the watcher (see straight.el documentation)
+(straight-watcher-start)
+#+end_src
 *** time uses
 :PROPERTIES:
 :CUSTOM_ID: time uses
 :END:
-#+begin_src emacs-lisp
-
+#+begin_src emacs-lisp :tangle yes
 (setq frame-title-format '("" "%b - Living The Dream (•̀ᴗ•́)و"))
 (defun display-startup-echo-area-message ()
   "The message that is shown after ‘user-init-file’ is loaded."
@@ -5708,5 +5623,4 @@ We want to give all nye (and old) emacs-lisp files a header)
               "; Time "       (emacs-init-time))))
 (open-dashboard)
 (message "→★★★ Total time for configuration  %.2fs"  (float-time (time-subtract (current-time) nec/total-time)))
-(message "      T H E   E N D")
 #+end_src
