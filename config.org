@@ -662,11 +662,15 @@ unified way.
 se https://github.com/noctuid/general.el for documentation
 #+begin_src emacs-lisp :tangle yes
 (straight-use-package '(general :type git :flavor melpa :host github :repo "noctuid/general.el"))
-(use-package general
-  :init
-  (defalias 'gsetq #'general-setq)
-  (defalias 'gsetq-local #'general-setq-local)
-  (defalias 'gsetq-default #'general-setq-default))
+(defalias 'gsetq #'general-setq)
+(defalias 'gsetq-local #'general-setq-local)
+(defalias 'gdefine-key #'general-define-key)
+(defalias 'gsetq-default #'general-setq-default)
+;; Unset C-z
+(general-unbind 'insert 
+  "C-z"
+  "C-x C-s")
+
 #+end_src
 ;;
 Beneath are several macros, to help define things
@@ -919,8 +923,7 @@ abcdefghijklmnopqrstuvwxyzæøå
 
 (setq-default frame-title-format '("" "%b - Som i en Drømmeverden (•̀ᴗ•́)و"))
 (setq ring-bell-function 'ignore)         ; Disable bell sound
-;; Unset C-z
-(global-unset-key (kbd "C-z"))
+
 (fset 'yes-or-no-p 'y-or-n-p)             ; y-or-n-p makes answering questions faster
 (show-paren-mode t)
 (show-paren-mode 'mixed)
@@ -1001,7 +1004,6 @@ abcdefghijklmnopqrstuvwxyzæøå
 
 (if nec/measure-time (nec/timer "set PATH and env "))
 #+end_src
-
 
 *** list-environment
 :PROPERTIES:
@@ -1566,8 +1568,8 @@ Non-null optional arg FILES-ONLY means mention only file buffers."
   "Instead of `save-buffer', save all opened buffers by calling `save-some-buffers' with ARG t."
   (interactive)
   (save-some-buffers t))
-(global-set-key (kbd "C-x C-s") nil)
-(global-set-key (kbd "C-x C-s") #'save-all-buffers)
+
+(gdefine-key "C-x C-s" #'save-all-buffers)
 (if nec/measure-time (nec/timer "save all buffers   "))
 #+end_src
 *** load misc fonts
@@ -1577,8 +1579,7 @@ Non-null optional arg FILES-ONLY means mention only file buffers."
 #+BEGIN_SRC emacs-lisp
 
   (when (display-graphic-p)
-    ;; Don't suspend frame on C-z, let it undo
-    (global-set-key (kbd "C-z") 'undo)
+
 
 (if ( version< "27.0" emacs-version ) ; )
     (set-fontset-font "fontset-default" 'unicode "Apple Color Emoji" nil 'prepend)
@@ -1667,7 +1668,7 @@ you to the absolute beginning of the line.
   (if (= (point) (progn (back-to-indentation) (point)))
       (beginning-of-line)))
 
-(global-set-key (kbd "C-a") 'beginning-of-line-dwim)
+
 #+END_SRC
 *** increase or decrease font size across all buffers
 :PROPERTIES:
@@ -1703,8 +1704,7 @@ Specially useful for presentations, demos and other shows alike.
 (defun decrease-default-font-height ()
   (interactive)
   (increment-default-font-height -10))
-(global-set-key (kbd "C-M-=") 'increase-default-font-height)
-(global-set-key (kbd "C-M--") 'decrease-default-font-height)
+
 (if nec/measure-time
           (nec/timer "Increase/Decrease font   "))
 #+end_src
@@ -1801,7 +1801,7 @@ visual line mode and stretch the cursor
              (message "Copied %s to killring (clipboard)" mytmpid)
            ))
  
-    (global-set-key (kbd "<f5>") 'my/copy-id-to-clipboard)
+    
     (if nec/measure-time (nec/timer "Copy ID  "))
 #+end_src
 
@@ -2166,14 +2166,10 @@ to an html file in `user-emacs-directory'"
 :CUSTOM_ID: AC Jump
 :END:
 #+BEGIN_SRC emacs-lisp
-(use-package ace-window
-    :straight t
-    :config
-    (global-set-key (kbd "C-x o") 'ace-window))
-(use-package ace-jump-mode
-  :straight t
-  :bind
-  ("C-c SPC" . ace-jump-mode))
+(straight-use-package '(ace-window :type git :flavor melpa :host github :repo "abo-abo/ace-window"))
+
+(straight-use-package '(ace-jump-mode :type git :flavor melpa :host github :repo "winterTTr/ace-jump-mode"))
+
 (if nec/measure-time (nec/timer "AC jump   "))
 #+END_SRC
 *** helm
@@ -2216,6 +2212,9 @@ to an html file in `user-emacs-directory'"
 (if nec/measure-time (nec/timer "Helm "))
 #+END_SRC
 *** ivy
+:PROPERTIES:
+:ID:       0980AA2F-D1C5-4C28-AB7A-D34700A62728
+:END:
 
 #+begin_src elisp
 (straight-usr-package '(ivy :type git :flavor melpa 
@@ -2224,25 +2223,9 @@ to an html file in `user-emacs-directory'"
  (ivy-mode 1)
 (setq ivy-use-virtual-buffers t)
 (setq enable-recursive-minibuffers t)
-;; enable this if you want `swiper' to use it
+
 ;; (setq search-default-mode #'char-fold-to-regexp)
-(global-set-key "\C-s" 'swiper)
-(global-set-key (kbd "C-c C-r") 'ivy-resume)
-(global-set-key (kbd "<f6>") 'ivy-resume)
-(global-set-key (kbd "M-x") 'counsel-M-x)
-(global-set-key (kbd "C-x C-f") 'counsel-find-file)
-(global-set-key (kbd "<f1> f") 'counsel-describe-function)
-(global-set-key (kbd "<f1> v") 'counsel-describe-variable)
-(global-set-key (kbd "<f1> o") 'counsel-describe-symbol)
-(global-set-key (kbd "<f1> l") 'counsel-find-library)
-(global-set-key (kbd "<f4> i") 'counsel-info-lookup-symbol)
-(global-set-key (kbd "<f4> u") 'counsel-unicode-char)
-(global-set-key (kbd "C-c g") 'counsel-git)
-(global-set-key (kbd "C-c j") 'counsel-git-grep)
-(global-set-key (kbd "C-c k") 'counsel-ag)
-(global-set-key (kbd "C-x l") 'counsel-locate)
-(global-set-key (kbd "C-S-o") 'counsel-rhythmbox)
-(define-key minibuffer-local-map (kbd "C-r") 'counsel-minibuffer-history)
+
 #+end_src
 
 *** marginella
@@ -2758,62 +2741,100 @@ that is supports a wide range of backends for finding completions -
 bindings
 Put all keybindings here (with doc)
 #+begin_src emacs-lisp :tangle yes
+;; Don't suspend frame on C-z, let it undo
+(general-unbind 'insert
+  "C-z" 
+  "<f1>")
+(gdefine-key 
+  :prefix "<f1>"
+    "f" 'counsel-describe-function
+    "v" 'counsel-describe-variable
+    "o" 'counsel-describe-symbol
+    "l" 'counsel-find-library)
+(gdefine-key "<f2>" 'open-dashboard)
+
+;;(general-define-key 
+;;  :global-prefix "<f4>")
+;;(gdefine-key "<f4> i" 'counsel-info-lookup-symbol)
+;;(gdefine-key "<f4> u" 'counsel-unicode-char)
+(gdefine-key "<f5>" 'my/copy-id-to-clipboard)
+(gdefine-key "<f6>" 'ivy-resume)
+(gdefine-key "C-c g" 'counsel-git)
 ;; zoom in/out the screen
-(global-set-key (kbd "C-+") 'text-scale-increase)
-(global-set-key (kbd "C--") 'text-scale-decrease)
+(gdefine-key "C-+" 'text-scale-increase)
+(gdefine-key "C--" 'text-scale-decrease)
+(gdefine-key "C-M-=" 'increase-default-font-height)
+(gdefine-key "C-M--" 'decrease-default-font-height)
 ;; crux
-(global-set-key (kbd "C-a")  'crux-move-beginning-of-line)
-(global-set-key (kbd "C-x 4 t")  'crux-transpose-windows)
-(global-set-key (kbd "C-x K")  'crux-kill-other-buffers)
-(global-set-key (kbd "M-o")  'crux-smart-open-line)
-(global-set-key (kbd "C-c D")  'crux-delete-file-and-buffer)
-(global-set-key (kbd "C-c e i")  'crux-find-user-init-file)
-(global-set-key (kbd "C-k")  'crux-smart-kill-line)
+(gdefine-key "C-a"  'crux-move-beginning-of-line)
+(gdefine-key "C-x 4 t"  'crux-transpose-windows)
+(gdefine-key "C-x K"  'crux-kill-other-buffers)
+(gdefine-key "M-o"  'crux-smart-open-line)
+(gdefine-key "C-c D"  'crux-delete-file-and-buffer)
+(gdefine-key "C-c e i"  'crux-find-user-init-file)
+(gdefine-key "C-k"  'crux-smart-kill-line)
 ;; org roam
-(global-set-key (kbd "C-c r l")  'org-roam)
-(global-set-key (kbd "C-c r g")  'org-roam-graph)
-(global-set-key (kbd "C-c r f")  'org-roam-find-file)
-(global-set-key (kbd "C-c r i")  'org-roam-insert)
-(global-set-key (kbd "C-c r c")  'org-roam-capture)
-(global-set-key (kbd"C-c r x")  'org-roam-jump-to-index)
-(global-set-key (kbd "C-c r r") 'org-backlink-mode-refresh-rate)
-(global-set-key (kbd "C-c r s") 'org-backlink-mode-refresh-rate)  
-(global-set-key (kbd "C-c r m") 'org-backlink-mode)  
-(global-set-key (kbd "C-c s s")  'org-super-links-link)
-(global-set-key (kbd "C-c s l")  'org-super-links-store-link)
-(global-set-key (kbd "C-c s C-l")  'org-super-links-insert-link)
-(global-set-key (kbd "C-c s d")  'org-super-links-quick-insert-drawer-link)
-(global-set-key (kbd "C-c s i")  'org-super-links-quick-insert-inline-link)
-(global-set-key (kbd "C-c s C-d")  'org-super-links-delete-link)
+(gdefine-key "C-c r l"  'org-roam)
+(gdefine-key "C-c r g"  'org-roam-graph)
+(gdefine-key "C-c r f"  'org-roam-find-file)
+(gdefine-key "C-c r i"  'org-roam-insert)
+(gdefine-key "C-c r c"  'org-roam-capture)
+(gdefine-key "C-c r x"  'org-roam-jump-to-index)
+(gdefine-key "C-c r r" 'org-backlink-mode-refresh-rate)
+(gdefine-key "C-c r s" 'org-backlink-mode-refresh-rate)  
+(gdefine-key "C-c r m" 'org-backlink-mode)  
+(gdefine-key "C-c s s"  'org-super-links-link)
+(gdefine-key "C-c s l"  'org-super-links-store-link)
+(gdefine-key "C-c s C-l"  'org-super-links-insert-link)
+(gdefine-key "C-c s d"  'org-super-links-quick-insert-drawer-link)
+(gdefine-key "C-c s i"  'org-super-links-quick-insert-inline-link)
+(gdefine-key "C-c s C-d"  'org-super-links-delete-link)
+;; ivy
+(gdefine-key  "C-s" 'swiper)
+(gdefine-key "C-c C-r" 'ivy-resume)
+
+(gdefine-key "M-x" 'counsel-M-x)
+(gdefine-key "C-x C-f" 'counsel-find-file)
+
+(gdefine-key "C-c j" 'counsel-git-grep)
+(gdefine-key "C-c k" 'counsel-ag)
+(gdefine-key "C-x l" 'counsel-locate)
+(gdefine-key "C-S-o" 'counsel-rhythmbox)
+
+(gdefine-key 
+  :keymaps 'minibuffer-local-map 
+           "C-r" 'counsel-minibuffer-history)
 ;; magit
-(global-set-key (kbd "C-c g")  'magit-status)
-(global-set-key (kbd "C-x g x")  'magit-checkout)
-(global-set-key (kbd "C-x g c")  'magit-commit)
-(global-set-key (kbd "C-x g p")  'magit-push)
-(global-set-key (kbd "C-x g u")  'magit-pull)
-(global-set-key (kbd "C-x g e")  'magit-ediff-resolve)
-(global-set-key (kbd "C-x g r")  'magit-rebase-interactive)
+(gdefine-key "C-c g"  'magit-status)
+(gdefine-key "C-x g x"  'magit-checkout)
+(gdefine-key "C-x g c"  'magit-commit)
+(gdefine-key "C-x g p"  'magit-push)
+(gdefine-key "C-x g u"  'magit-pull)
+(gdefine-key "C-x g e"  'magit-ediff-resolve)
+(gdefine-key "C-x g r"  'magit-rebase-interactive)
 ;; misc
-(global-set-key (kbd "M-g M-g") 'hydra-git-gutter/body)
-(global-set-key (kbd "C-c f")  'elfeed-dashboard)
-(global-set-key (kbd "C-M-S-s-d") 'deft)
-(global-set-key (kbd "C-x C-g") 'deft-find-file)
-(global-set-key (kbd "C-c n e")  'ebib)
-(global-set-key (kbd "C-c n r")  'org-ebib-open)
-(global-set-key (kbd "C-c n s")  'org-ebib-store-link)
-(global-set-key (kbd "C-c d")  'docker)
-(global-set-key (kbd "<f2>")  'open-dashboard)
-(global-set-key (kbd "C-c C-c C-b") 'cargo-build)
-(global-set-key (kbd "C-c C-c C-r") 'cargo-run)
-(global-set-key (kbd "C-c C-c C-t") 'cargo-test)
-(global-set-key (kbd "C-c q") 'auto-fill-mode)
-(global-set-key (kbd "C-c l") 'org-store-link)
-(global-set-key (kbd "C-c a") 'org-agenda)
-(global-set-key (kbd "C-c c") 'org-capture)
-(define-key global-map (kbd "C-c p f") 'counsel-projectile-find-file)
-;;(define-key projectile-mode-map (kbd "s-p") 'projectile-command-map)
-;;(define-key projectile-mode-map (kbd "C-c p") 'projectile-command-map)
-(global-set-key (kbd "C-&") 'gnus)
+(gdefine-key "M-g M-g" 'hydra-git-gutter/body)
+(gdefine-key "C-c f"  'elfeed-dashboard)
+(gdefine-key "C-M-S-s-d" 'deft)
+(gdefine-key "C-x C-g" 'deft-find-file)
+(gdefine-key "C-c n e"  'ebib)
+(gdefine-key "C-c n r"  'org-ebib-open)
+(gdefine-key "C-c n s"  'org-ebib-store-link)
+(gdefine-key "C-c d"  'docker)
+
+(gdefine-key "C-c C-c C-b" 'cargo-build)
+(gdefine-key "C-c C-c C-r" 'cargo-run)
+(gdefine-key "C-c C-c C-t" 'cargo-test)
+(gdefine-key "C-c q" 'auto-fill-mode)
+(gdefine-key "C-c l" 'org-store-link)
+(gdefine-key "C-c a" 'org-agenda)
+(gdefine-key "C-c c" 'org-capture)
+(gdefine-key 
+  :keymaps 'projectile-mode-map 
+    "C-c p" 'projectile-command-map)
+(gdefine-key "C-a" 'beginning-of-line-dwim)
+(gdefine-key "C-x o" 'ace-window)
+(gdefine-key "C-&" 'gnus)
 (if nec/measure-time
     (nec/timer "Global key bindings "))
 #+end_src
@@ -3658,7 +3679,7 @@ find them a little easier to reason about than the standard form.
 (straight-use-package '(doct :type git :flavor melpa :host github :repo "progfolio/doct"))
 (eval-when-compile (require 'subr-x))
 
-(if nec/measure-time (nec/timer "doct "))
+
 
 (defvar org-default-tasks-file "~/Dropbox/org/agenda/organizer.org")
 
@@ -3800,7 +3821,7 @@ multiple times below:
                                         "  :SRC:      %a"
                                         "  :END: "))))))))
     
-  (if nec/measure-time (nec/timer "org-capture "))
+  (if nec/measure-time (nec/timer "doct and org-capture "))
   #+end_src
 *** org agenda
   :PROPERTIES:
@@ -3931,7 +3952,7 @@ Origami mode ---see below in [[Text Folding with Origami-mode]]---
                ("C-c r i" . org-roam-insert)
                ("C-c r c" . org-roam-capture)
                ("C-c r x" . org-roam-jump-to-index)
-               ("C-c r g" . org-roam-graph-show))
+               ("C-c r g" . org-roam-graph))
               :map org-mode-map
               (("C-c r c" . org-roam-capture))
               (("C-c r x" . org-roam-jump-to-index)))
@@ -3956,7 +3977,7 @@ Origami mode ---see below in [[Text Folding with Origami-mode]]---
 (global-set-key (kbd "C-c r m") 'org-backlink-mode)  
 
 (setq org-roam-graph-viewer nil)
-  ;;(setq org-roam-graph-viewer "neato")
+;;(setq org-roam-graph-viewer "firefox")
 (use-package org-roam-protocol
     :straight (:type built-in)
     :after org-roam)
