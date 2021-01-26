@@ -469,6 +469,7 @@ NAME and ARGS are as in `use-package'."
     - [[#crux][crux]]
     - [[#disk-usage][disk Usage]]
     - [[#hostname][hostname]]
+    - [[#shrink-path][shrink path]]
     - [[#time-stamp--large-file-warning][time stamp / large file warning]]
     - [[#copy-id][copy ID]]
     - [[#running-on-a-macos][running on a macOS]]
@@ -1759,6 +1760,18 @@ Specially useful for presentations, demos and other shows alike.
           (nec/timer "Hostname   "))
 #+end_src
 
+*** shrink path
+
+Provides functions that offer fish shell[1] path truncation.
+Directory /usr/share/emacs/site-lisp => /u/s/e/site-lisp
+
+Also includes utility functions that make integration in eshell or the
+modeline easier.
+#+begin_src emacs-lisp :tangle yes
+;;; Code:
+(straight-use-package '(shrink-path :type git :flavor melpa 
+                        :host gitlab :repo "bennya/shrink-path.el"))
+#+end_src
 *** time stamp / large file warning
 :PROPERTIES:
 :CUSTOM_ID: Time stamp / large file warning
@@ -2780,6 +2793,10 @@ Put all keybindings here (with doc)
 (gdefine-key "C-c r i"  'org-roam-insert)
 (gdefine-key "C-c r c"  'org-roam-capture)
 (gdefine-key "C-c r x"  'org-roam-jump-to-index)
+(gdefine-key 
+  :keymaps 'org-mode-map
+           "C-c r c" 'org-roam-capture
+           "C-c r x" 'org-jump-to-index) 
 (gdefine-key "C-c r r" 'org-backlink-mode-refresh-rate)
 (gdefine-key "C-c r s" 'org-backlink-mode-refresh-rate)  
 (gdefine-key "C-c r m" 'org-backlink-mode)  
@@ -2936,12 +2953,13 @@ No body wants to, but at time you have to...
 
 (straight-use-package '(doom-modeline :type git :flavor melpa :host github 
                         :repo "seagle0128/doom-modeline"))
+
 ;;;;;;;ns  issue #406 doom-modeline
 (setq battery-status-function nil)
 ;;;;;;;ns
 (setq doom-modeline-height 1.4)
-(set-face-attribute 'mode-line nil :family "OpenDyslexic" :background "#2d334a" :height 125)
-(set-face-attribute 'mode-line-inactive nil :family "OpenDyslexic" :height 125)
+;;(set-face-attribute 'mode-line nil :family "OpenDyslexic" :background "#2d334a" :height 125)
+;;(set-face-attribute 'mode-line-inactive nil :family "OpenDyslexic" :height 125)
 ;; Whether display icons in the mode-line.
 ;; While using the server mode in GUI, should set the value explicitly.
 (setq doom-modeline-icon (display-graphic-p))
@@ -2972,7 +2990,9 @@ No body wants to, but at time you have to...
 (setq doom-modeline-gnus nil)
 ;;
 (setq doom-modeline-buffer-file-name-style 'truncate-with-project)
-
+;;(with-eval-after-load 'doom-modeline
+;;    (set-face-attribute 'mode-line nil :font "Menlo-12")
+;;    (set-face-attribute 'mode-line-inactive nil :font "Menlo-12"))
 (doom-modeline-mode)  
 (if nec/measure-time (nec/timer "mode line  "))
 #+end_src
@@ -3928,7 +3948,7 @@ Origami mode ---see below in [[Text Folding with Origami-mode]]---
 #+begin_src emacs-lisp
 ;;; jnf-org-roam.el --- Summary
 ;;; Commentary:
-;;
+;;  From: https://github.com/jeremyf/dotzshrc/
 ;;  This package provides configuration for org-roam
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; BEGIN ORG ROAM  and concerns
@@ -3970,6 +3990,7 @@ Origami mode ---see below in [[Text Folding with Origami-mode]]---
                                                  ("fillcolor" . "#EFEFFF")
                                                  ("color" . "#DEDEFF")
                                                  ("fontcolor" . "#111111"))))
+
 (require 'org-backlink)  
 (straight-use-package '(ox-hugo :type git :flavor melpa :host github :repo "kaushalmodi/ox-hugo"))
 (global-set-key (kbd "C-c r r") 'org-backlink-mode-refresh-rate)
@@ -4064,6 +4085,10 @@ Origami mode ---see below in [[Text Folding with Origami-mode]]---
 (setq org-roam-graph-exclude-matcher '("archive" "PRIVAT" "blog" "books" "bibliography"
                                        "include" "elfeed" "Documentation" "auto"
                                        "init" "Journal" "regularly" "tasks" "work"))
+
+
+
+
 (use-package org-roam-server
   :straight t
   :commands (org-roam-server-mode)
