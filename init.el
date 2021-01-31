@@ -35,9 +35,13 @@
 ;; ensure we can install from git sources
 (straight-use-package '(git :type git :flavor melpa :host github :repo "rejeep/git.el"))
 (if nec/measure-time (nec/timer "After load of straight and git.... "))
+;; speed up the use of org.
+;;(straight-use-package '(org :host github :repo "yantar92/org" :branch "feature/org-fold"
+;;                            :files (:defaults "contrib/lisp/")))
+
 (straight-use-package '(org :type git :repo "https://code.orgmode.org/bzg/org-mode.git"
                             :local-repo "org")
-                      :diminish " O")
+                            :diminish " O")
 (straight-use-package '(org-plus-contrib :type git :repo "https://code.orgmode.org/bzg/org-mode.git"
                                          :local-repo "org" :files (:defaults "contrib/lisp/*.el")))
 ;; need to get hold of org a soon as possible
@@ -46,13 +50,17 @@
 (straight-use-package-lazy '(f :type git :flavor melpa :files ("f.el" "f-pkg.el")
                           :host github :repo "rejeep/f.el"))
 (straight-use-package-lazy '(ht :type git :flavor melpa :files ("ht.el" "ht-pkg.el")
-                           :host github :repo "Wilfred/ht.el"))
+                                :host github :repo "Wilfred/ht.el"))
+(straight-use-package-lazy '(ov :type git :flavor melpa :host github
+                                :repo "emacsorphanage/ov"))
 (straight-use-package-lazy '(s :type git :flavor melpa :files ("s.el" "s-pkg.el")
                           :host github :repo "magnars/s.el"))
 (straight-use-package-lazy '(ts :type git :flavor melpa
                            :host github :repo "alphapapa/ts.el"))
 (straight-use-package-lazy '(a :type git :flavor melpa
                           :host github :repo "plexus/a.el"))
+(straight-use-package '(peg :type git :host github :repo "emacs-straight/peg"
+                            :files ("*" (:exclude ".git"))))
 (straight-use-package-lazy '(org-ql :type git :flavor melpa
                                :host github :repo "alphapapa/org-ql"))
 (straight-use-package-lazy '(emacsql :type git :flavor melpa

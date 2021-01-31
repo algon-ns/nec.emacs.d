@@ -294,8 +294,7 @@ If you wonder, where You found this file....
                            :host github :repo "alphapapa/ts.el"))
 (straight-use-package-lazy '(a :type git :flavor melpa
                           :host github :repo "plexus/a.el"))
-(straight-use-package-lazy '(org-ql :type git :flavor melpa
-                               :host github :repo "alphapapa/org-ql"))
+                               
 (straight-use-package-lazy '(emacsql :type git :flavor melpa
                                 :files ("emacsql.el"
                                         "emacsql-compiler.el"
@@ -483,7 +482,7 @@ NAME and ARGS are as in `use-package'."
     - [[#grep-and-find-file][grep and find file]]
   - [[#emacs-interface][emacs interface]]
     - [[#ac-jump][AC Jump]]
-    - [[#helm][helm]]
+    - [[#he][he]]
     - [[#ivy][ivy]]
     - [[#marginella][marginella]]
     - [[#smex][SMEX]]
@@ -1724,6 +1723,7 @@ Specially useful for presentations, demos and other shows alike.
    ("C-k" . crux-smart-kill-line))
   :config
   (crux-with-region-or-buffer indent-region)
+  (crux-reopen-as-root-mode t)
   (crux-with-region-or-buffer untabify)
   (crux-with-region-or-point-to-eol kill-ring-save)
   (defalias 'rename-file-and-buffer #'crux-rename-file-and-buffer))
@@ -2185,7 +2185,8 @@ to an html file in `user-emacs-directory'"
 
 (if nec/measure-time (nec/timer "AC jump   "))
 #+END_SRC
-*** helm
+*** he
+lm
 :PROPERTIES:
 :CUSTOM_ID: Helm
 :END:
@@ -2212,9 +2213,10 @@ to an html file in `user-emacs-directory'"
 	helm-quick-update t
 	helm-ff-skip-boring-files t)
 ;;  (helm-mode 1)
-(straight-use-package '(helm-bibtex :type git :flavor melpa :files ("helm-bibtex.el" "helm-bibtex-pkg.el") :host github :repo "tmalsburg/helm-bibtex"))
+(straight-use-package '(helm-bibtex :type git :flavor melpa 
+                        :files ("helm-bibtex.el" "helm-bibtex-pkg.el") :host github :repo "tmalsburg/helm-bibtex"))
 (straight-use-package-lazy '(helm-ag :type git :flavor melpa :host github :repo "emacsorphanage/helm-ag"))
-(straight-use-package-lazy '(helm-org :type git :flavor melpa :files ("helm-org.el" "helm-org-pkg.el") :host github :repo "emacs-helm/helm-org"))
+(straight-use-package '(helm-org :type git :flavor melpa :files ("helm-org.el" "helm-org-pkg.el") :host github :repo "emacs-helm/helm-org"))
 (straight-use-package-lazy 'helm-git-grep)
 (straight-use-package-lazy 'helm-projectile)
 ;;
@@ -2320,91 +2322,91 @@ Highlight matching ‘parenthesis’ when near one of them.
 We're not even close to define calendar, but the values are far more vide used
 than the calendar, the date is really used many places.
 #+begin_src emacs-lisp
-;;; Code:
-;; Week starts on monday
-(setq calendar-week-start-day 1)
-;; Use european date style, i.e. date/month
-(setq european-calendar-style 'european)
-;; Date format
-(setq calendar-date-display-form
-      '((if dayname
-            (concat dayname ", "))
-        day " " monthname " " year))
+  ;;; Code:
+  ;; Week starts on monday
+  (setq calendar-week-start-day 1)
+  ;; Use european date style, i.e. date/month
+  (setq european-calendar-style 'european)
+  ;; Date format
+  (setq calendar-date-display-form
+        '((if dayname
+              (concat dayname ", "))
+          day " " monthname " " year))
 
-;; 24 hour clock format
-(setq calendar-time-display-form
-      '(24-hours ":" minutes))
+  ;; 24 hour clock format
+  (setq calendar-time-display-form
+        '(24-hours ":" minutes))
 
-;; Weekday names
-(setq calendar-day-name-array
-      ["søndag" "mandag" "tirsdag" "onsdag" "torsdag" "fredag" "lørdag"])
-(setq calendar-day-abbrev-array
-      ["søn" "man" "tirs" "ons" "tors" "fre" "lør"])
-(setq calendar-day-header-array
-      ["sø" "ma" "ti" "on" "to" "fr" "lø"])
+  ;; Weekday names
+  (setq calendar-day-name-array
+        ["søndag" "mandag" "tirsdag" "onsdag" "torsdag" "fredag" "lørdag"])
+  (setq calendar-day-abbrev-array
+        ["søn" "man" "tirs" "ons" "tors" "fre" "lør"])
+  (setq calendar-day-header-array
+        ["sø" "ma" "ti" "on" "to" "fr" "lø"])
 
-;; Month names
-(setq calendar-month-name-array
-      ["januar" "februar" "marts" "april" "maj" "juni"
-       "juli" "august" "september" "oktober" "november" "december"])
-(setq calendar-month-abbrev-array
-      ["jan" "feb" "mar" "apr" "maj" "jun" "jul" "aug" "sep" "okt" "nov" "dec"])
+  ;; Month names
+  (setq calendar-month-name-array
+        ["januar" "februar" "marts" "april" "maj" "juni"
+         "juli" "august" "september" "oktober" "november" "december"])
+  (setq calendar-month-abbrev-array
+        ["jan" "feb" "mar" "apr" "maj" "jun" "jul" "aug" "sep" "okt" "nov" "dec"])
 
-:; Equinoxes/solstices names
-;; http://www.dmi.dk/dmi/nyd_aarets_laengste_dag_-_sommersolhverv
-(eval-after-load "solar"
-  '(progn
-     (setq solar-n-hemi-seasons
-           '("Forårsjævndøgn" "Sommersolhverv"
-             "Efterårsjævndøgn" "Vintersolhverv"))
-     (setq solar-s-hemi-seasons
-           '("Efterårsjævndøgn" "Vintersolhverv"
-             "Forårsjævndøgn" "Sommersolhverv"))))
+  :; Equinoxes/solstices names
+  ;; http://www.dmi.dk/dmi/nyd_aarets_laengste_dag_-_sommersolhverv
+  (eval-after-load "solar"
+    '(progn
+       (setq solar-n-hemi-seasons
+             '("Forårsjævndøgn" "Sommersolhverv"
+               "Efterårsjævndøgn" "Vintersolhverv"))
+       (setq solar-s-hemi-seasons
+             '("Efterårsjævndøgn" "Vintersolhverv"
+               "Forårsjævndøgn" "Sommersolhverv"))))
 
-;; Moon phace names
-(defadvice lunar-phase-name (around da-lunar-phase-name activate)
-  "Phases of the moon in danish."
-  (setq ad-return-value
-        (let ((phase (ad-get-arg 0)))
-          (cond ((= 0 phase) "Nymåne")
-                ((= 1 phase) "Tiltagende Halvmåne")
-                ((= 2 phase) "Fuldmåne")
-                ((= 3 phase) "Aftagende Halvmåne")))))
-
-
-;; Sunrise and sunset
-(defadvice solar-sunrise-sunset-string (around da-solar-sunrise-sunset-string
-                                               activate)
-  "Sunrise and sunset in danish."
-  (setq ad-return-value
-        (let ((l (solar-sunrise-sunset date)))
-          (format
-           "%s, %s i %s (%s timers dagslys)"
-           (if (car l)
-               (concat "Sol op " (apply 'solar-time-string (car l)))
-             "Ingen solopgang")
-           (if (car (cdr l))
-               (concat "ned " (apply 'solar-time-string (car (cdr l))))
-             "ingen solnedgang")
-           (eval calendar-location-name)
-           (car (cdr (cdr l)))))))
+  ;; Moon phace names
+  (defadvice lunar-phase-name (around da-lunar-phase-name activate)
+    "Phases of the moon in danish."
+    (setq ad-return-value
+          (let ((phase (ad-get-arg 0)))
+            (cond ((= 0 phase) "Nymåne")
+                  ((= 1 phase) "Tiltagende Halvmåne")
+                  ((= 2 phase) "Fuldmåne")
+                  ((= 3 phase) "Aftagende Halvmåne")))))
 
 
-;; Adapted from http://stackoverflow.com/questions/21364948/how-to-align-the-calendar-with-week-number-as-the-intermonth-text
-(setq calendar-intermonth-text
-      '(propertize
-        (format "%2d"
-                (car
-                 (calendar-iso-from-absolute
-                  (calendar-absolute-from-gregorian (list month day year)))))
-        'font-lock-face 'font-lock-doc-face))
+  ;; Sunrise and sunset
+  (defadvice solar-sunrise-sunset-string (around da-solar-sunrise-sunset-string
+                                                 activate)
+    "Sunrise and sunset in danish."
+    (setq ad-return-value
+          (let ((l (solar-sunrise-sunset date)))
+            (format
+             "%s, %s i %s (%s timers dagslys)"
+             (if (car l)
+                 (concat "Sol op " (apply 'solar-time-string (car l)))
+               "Ingen solopgang")
+             (if (car (cdr l))
+                 (concat "ned " (apply 'solar-time-string (car (cdr l))))
+               "ingen solnedgang")
+             (eval calendar-location-name)
+             (car (cdr (cdr l)))))))
 
-;; Week numbers are very common and there's no two-letter abreviation for it,
-;; Thus I'm not added a header. It could be added using this (ug=ugenummer):
-;;
-;; (setq calendar-intermonth-header nil)
-;;       (propertize "un" 'font-lock-face 'font-lock-keyword-face))
-(if nec/measure-time (nec/timer "Danish calendar data "))
+
+  ;; Adapted from http://stackoverflow.com/questions/21364948/how-to-align-the-calendar-with-week-number-as-the-intermonth-text
+  (setq calendar-intermonth-text
+        '(propertize
+          (format "%2d"
+                  (car
+                   (calendar-iso-from-absolute
+                    (calendar-absolute-from-gregorian (list month day year)))))
+          'font-lock-face 'font-lock-doc-face))
+
+  ;; Week numbers are very common and there's no two-letter abreviation for it,
+  ;; Thus I'm not added a header. It could be added using this (ug=ugenummer):
+  ;;
+  ;; (setq calendar-intermonth-header nil)
+  ;;       (propertize "un" 'font-lock-face 'font-lock-keyword-face))
+  (if nec/measure-time (nec/timer "Danish calendar data "))
 #+end_src
 *** calculate eastern sunday
 :PROPERTIES:
@@ -2766,10 +2768,7 @@ Put all keybindings here (with doc)
     "l" 'counsel-find-library)
 (gdefine-key "<f2>" 'open-dashboard)
 
-;;(general-define-key 
-;;  :global-prefix "<f4>")
-;;(gdefine-key "<f4> i" 'counsel-info-lookup-symbol)
-;;(gdefine-key "<f4> u" 'counsel-unicode-char)
+
 (gdefine-key "<f5>" 'my/copy-id-to-clipboard)
 (gdefine-key "<f6>" 'ivy-resume)
 (gdefine-key "C-c g" 'counsel-git)
@@ -2786,6 +2785,10 @@ Put all keybindings here (with doc)
 (gdefine-key "C-c D"  'crux-delete-file-and-buffer)
 (gdefine-key "C-c e i"  'crux-find-user-init-file)
 (gdefine-key "C-k"  'crux-smart-kill-line)
+(gdefine-key "C-c c b" 'crux-buffer-mode)
+(gdefine-key "C-c c R" 'crux-rename-file-and-buffer)
+(gdefine-key "C-c c D" 'crux-delete-file-and-buffer)
+
 ;; org roam
 (gdefine-key "C-c r l"  'org-roam)
 (gdefine-key "C-c r g"  'org-roam-graph)
@@ -3946,223 +3949,242 @@ Origami mode ---see below in [[Text Folding with Origami-mode]]---
 :ID:       D931D321-FC5E-4F6A-9411-EDE1B78E766E
 :END:
 #+begin_src emacs-lisp
-;;; jnf-org-roam.el --- Summary
-;;; Commentary:
-;;  From: https://github.com/jeremyf/dotzshrc/
-;;  This package provides configuration for org-roam
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; BEGIN ORG ROAM  and concerns
-;;
-;; With the latest update of org-roam, things again behavior
-;; correctly.  Now I can just load org-roam as part of my day to day
-;;; Code:
-;;Set place of database (ns 20. november 2020)
-(setq org-roam-directory "/Users/niels/Dropbox/org/roam/")
-(setq org-roam-index-file "/Users/niels/Dropbox/org/roam/Index.org")
-(setq org-roam-db-location "/Users/niels/Dropbox/org/roam/org-roam.db")
-(use-package org-roam
-  :straight t
-  :diminish " ♨"
-  :after pretty-hydra
-  :hook (after-init . org-roam-mode)
-  :custom (org-roam-directory "~/Dropbox/org/roam/")
-  :bind (:map org-roam-mode-map
-              (("C-c r l" . org-roam)
-               ("C-c r f" . org-roam-find-file)
-               ("C-c r i" . org-roam-insert)
-               ("C-c r c" . org-roam-capture)
-               ("C-c r x" . org-roam-jump-to-index)
-               ("C-c r g" . org-roam-graph))
-              :map org-mode-map
-              (("C-c r c" . org-roam-capture))
-              (("C-c r x" . org-roam-jump-to-index)))
-  ;; Use the traditional org first "*" element then the "#+title:"
-  ;; property to establish the title of the object, then append the
-  ;; "#+roam_alias:" as alternate titles
-  :init (setq org-roam-tag-sources '(prop all-directories))
-        (setq org-roam-buffer-position 'left
-           org-roam-buffer-width 0.25
-           org-roam-index-file "/Users/niels/Dropbox/org/roam/Index.org"
-           org-roam-graph-extra-config '(("overlap" . "false"))
-           org-roam-completion-system 'ivy)
-        (setq org-roam-graph-node-extra-config '(("shape" . "ellipse")   
-                                                 ("style" . "rounded,filled")
-                                                 ("fillcolor" . "#EFEFFF")
-                                                 ("color" . "#DEDEFF")
-                                                 ("fontcolor" . "#111111"))))
+  ;;; jnf-org-roam.el --- Summary
+  ;;; Commentary:
+  ;;  From: https://github.com/jeremyf/dotzshrc/
+  ;;  This package provides configuration for org-roam
+  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+  ;; BEGIN ORG ROAM  and concerns
+  ;;
+  ;; With the latest update of org-roam, things again behavior
+  ;; correctly.  Now I can just load org-roam as part of my day to day
+  ;;; Code:
+  ;;Set place of database (ns 20. november 2020)
+  (setq org-roam-directory "/Users/niels/Dropbox/org/roam/")
+  (setq org-roam-index-file "/Users/niels/Dropbox/org/roam/Index.org")
+  (setq org-roam-db-location "/Users/niels/Dropbox/org/roam/org-roam.db")
+  (defvar nec/open-roam-buffer-on-find-file t
+   "If non-nil, open the org-roam buffer when opening an org roam file.")
+  (use-package org-roam
+    :straight t
+    :diminish " ♨"
+    :after pretty-hydra
+    :hook (after-init . org-roam-mode)
+    :hook (org-roam-backlinks-mode . turn-on-visual-line-mode)
+    :commands (org-roam-buffer-toggle-display
+               org-roam-find-file
+               org-roam-graph-show
+               org-roam-insert
+               org-roam-switch-to-buffer
+               org-roam-dailies-date
+               org-roam-dailies-today
+               org-roam-dailies-tomorrow
+               org-roam-dailies-yesterday)
+    :bind (:map org-roam-mode-map
+                (("C-c r l" . org-roam)
+                 ("C-c r s" . org-roam-switch-to-buffer)
+                 ("C-c r f" . org-roam-find-file)
+                 ("C-c r i" . org-roam-insert)
+                 ("C-c r c" . org-roam-capture)
+                 ("C-c r x" . org-roam-jump-to-index)
+                 ("C-c r g" . org-roam-graph))
+                :map org-mode-map
+                (("C-c r c" . org-roam-capture))
+                (("C-c r x" . org-roam-jump-to-index)))
+    :config (setq org-roam-verbose nil
+                  org-roam-buffer-no-delete-other-windows t) ; make org-roam buffer sticky
+  ;;                org-roam-completion-system)
+  ;;                (cond ((featurep :completion helm) 'helm)
+  ;;                      ((featurep :completion ivy) 'ivy)
+  ;;                      ((featurep :completion ido) 'ido)
+  ;;                      ('default))
+  ;;                org-roam-completion-fuzzy-match
+  ;;                (or (featurep :completion helm +fuzzy)
+  ;;                    (featurep :completion ivy +fuzzy)))
+    ;; Use the traditional org first "*" element then the "#+title:"
+    ;; property to establish the title of the object, then append the
+    ;; "#+roam_alias:" as alternate titles
+    :init (setq org-roam-tag-sources '(prop all-directories))
+          (setq org-roam-buffer-position 'left
+             org-roam-db-update-method 'immediate
+             org-roam-buffer-width 0.25
+             org-roam-index-file "/Users/niels/Dropbox/org/roam/Index.org"
+             org-roam-graph-extra-config '(("overlap" . "false"))
+             org-roam-completion-system 'ivy)
+          (setq org-roam-graph-node-extra-config '(("shape" . "ellipse")   
+                                                   ("style" . "rounded,filled")
+                                                   ("fillcolor" . "#EFEFFF")
+                                                   ("color" . "#DEDEFF")
+                                                   ("fontcolor" . "#111111"))))
+  ;; Hide the mode line in the org-roam buffer, since it serves no purpose. This
+    ;; makes it easier to distinguish among other org buffers.
+    ;;(add-hook 'org-roam-buffer-prepare-hook #'hide-mode-line-mode)
 
-(require 'org-backlink)  
-(straight-use-package '(ox-hugo :type git :flavor melpa :host github :repo "kaushalmodi/ox-hugo"))
-(global-set-key (kbd "C-c r r") 'org-backlink-mode-refresh-rate)
-(global-set-key (kbd "C-c r s") 'org-backlink-mode-refresh-rate)  
-(global-set-key (kbd "C-c r m") 'org-backlink-mode)  
-
+  (require 'org-backlink)  
+  (straight-use-package '(ox-hugo :type git :flavor melpa :host github :repo "kaushalmodi/ox-hugo"))
+  (global-set-key (kbd "C-c r r") 'org-backlink-mode-refresh-rate)
+  (global-set-key (kbd "C-c r s") 'org-backlink-mode-refresh-rate)  
+  (global-set-key (kbd "C-c r m") 'org-backlink-mode)  
+(require 'org-graph-view)
 (setq org-roam-graph-viewer nil)
-;;(setq org-roam-graph-viewer "firefox")
-(use-package org-roam-protocol
-    :straight (:type built-in)
-    :after org-roam)
+;;(setq org-roam-graph-viewer 'org-graph-view)
+(setq org-roam-graph-executable "/usr/local/bin/dot")
+;;(setq org-roam-graph-viewer #'eww-open-file)
+;;(setq org-roam-graph-viewer "/usr/local/bin/firefox")
+  (use-package org-roam-protocol
+      :straight (:type built-in)
+      :after org-roam)
 
-  ;; First use "#+roam_tags:" then the directory structure to build the
-  ;; list of tags.
-  ;;
-  ;; See https://www.orgroam.com/manual/Tags.html#Tags
-  ;;
-(if nec/measure-time (nec/timer "org-roam "))
-  (setq org-roam-title-sources '((title headline) alias))
-  (setq org-roam-update-db-idle-seconds 300)
-  ;; Note: Order of these templates matters. The `org-roam-insert-immediate` uses
-  ;; the first one in the list (e.g. Fleeting)
-  ;;
-  (setq org-roam-capture-templates
-        '(("a" "andet" plain (function org-roam--capture-get-point)
-           "%?"
-           :file-name "%<%Y%m%d%H%M%S>-${slug}"
-           :head  "#+title: ${title}\n#+roam_tags:\n* ${title}\n\n"
-           :unnarrowed t
-           :immediate-finish t)
-          ("4" "4eren" plain (function org-roam--capture-get-point)
-           "%?"
-           :file-name "4eren/%<%Y%m%d%H%M%S>-${slug}"
-           :head "#+title: ${title}\n#+roam_tags:\n* ${title}\n\n"
-           :unnarrowed t)
-          ("b" "bibliographic" plain (function org-roam--capture-get-point)
-           "%?"
-           :file-name "bibliography/%<%Y%m%d%H%M%S>-${slug}"
-           :head "#+title: ${title}\n#+roam_tags:\n* ${title}\n\n"
-           :unnarrowed t)
-          ("u" "roam unsorted" plain (function org-roam--capture-get-point)
-           "%?"
-           :file-name "%<%Y%m%d%H%M%S>-${slug}"
-           :head "#+title: ${title}\n#+roam_tags:\n* ${title}\n\n"
-           :unnarrowed t)
-          ("e" "emacs" plain (function org-roam--capture-get-point)
-           "%?"
-           :file-name "emacs/%<%Y%m%d%H%M%S>-${slug}"
-           :head "#+title: ${title}\n#+roam_tags:\n* ${title}\n\n"
-           :unnarrowed t)
-          
-;;          ("d" "Project > Diversity Equity Incluson (DEI)" plain (function org-roam--capture-get-point)
-;;           "%?"
-;;           :file-name "projects/diversity-equity-inclusion/%<%Y%m%d%H%M%S>---${slug}"
-;;           :head  "#+title: ${title}\n#+roam_tags:\n* ${title}\n\n"
-;;           :unnarrowed t
-;;           :immediate-finish t)
-          ("i" "iniziu" plain (function org-roam--capture-get-point)
-           "%?"
-           :file-name "iniziu/%<%Y%m%d%H%M%S>-${slug}"
-           :head  "#+title: ${title}\n#+roam_tags:\n* ${title}\n\n"
-           :unnarrowed t
-           :immediate-finish t)
-          ("s" "seniorråd" plain (function org-roam--capture-get-point)
-           "%?"
-           :file-name "seniorraad/%<%Y%m%d%H%M%S>---${slug}"
-           :head  "#+title: ${title}\n#+roam_tags:\n* ${title}\n\n"
-           :unnarrowed t
-           :immediate-finish t)
-;;          ("o" "andre" plain (function org-roam--capture-get-point)
-;;           "%?"
-;;           :file-name "/roam/andre/%<%Y%m%d%H%M%S>---${slug}"
-;;           :head  "#+title: ${title}\n#+roam_tags:\n* ${title}\n\n"
-;;           :unnarrowed t
-;;           :immediate-finish t)
-          ("n" "niels" plain (function org-roam--capture-get-point)
-           "%?"
-           :file-name "niels/%<%Y%m%d%H%M%S>-${slug}"
-           :head  "#+title: ${title}\n#+roam_tags:\n* ${title}\n\n"
-           :unnarrowed t
-           :immediate-finish t)))
-(if nec/measure-time (nec/timer "org-roam-capture "))
+    ;; First use "#+roam_tags:" then the directory structure to build the
+    ;; list of tags.
+    ;;
+    ;; See https://www.orgroam.com/manual/Tags.html#Tags
+    ;;
+    (setq org-roam-title-sources '((title headline) alias))
+    (setq org-roam-update-db-idle-seconds 300)
+    ;; Note: Order of these templates matters. The `org-roam-insert-immediate` uses
+    ;; the first one in the list (e.g. Fleeting)
+    ;;
+    (setq org-roam-capture-templates
+          '(("a" "andet" plain (function org-roam--capture-get-point)
+             "%?"
+             :file-name "%<%Y%m%d%H%M%S>-${slug}"
+             :head  "#+title: ${title}\n
+                     #+roam_tags:\n
+                      :HOME: \n* ${title}\n\n"
+             :unnarrowed t
+             :immediate-finish t)
+            ("4" "4eren" plain (function org-roam--capture-get-point)
+             "%?"
+             :file-name "4eren/%<%Y%m%d%H%M%S>-${slug}"
+             :head "#+title: ${title}\n#+roam_tags:\n :HOME: \n* ${title}\n\n"
+             :unnarrowed t)
+            ("b" "bibliographic" plain (function org-roam--capture-get-point)
+             "%?"
+             :file-name "bibliography/%<%Y%m%d%H%M%S>-${slug}"
+             :head "#+title: ${title}\n#+roam_tags:\n :HOME: \n* ${title}\n\n"
+             :unnarrowed t)
+            ("u" "roam unsorted" plain (function org-roam--capture-get-point)
+             "%?"
+             :file-name "%<%Y%m%d%H%M%S>-${slug}"
+             :head "#+title: ${title}\n#+roam_tags:\n* ${title}\n\n"
+             :unnarrowed t)
+            ("e" "emacs" plain (function org-roam--capture-get-point)
+             "%?"
+             :file-name "emacs/%<%Y%m%d%H%M%S>-${slug}"
+             :head "#+title: ${title}\n#+roam_tags:\n :HOME: \n* ${title}\n\n"
+             :unnarrowed t)
 
-
-;;;;;;;;;;
-(defun org-roam/init-org-roam-bibtex()
-   (straight-use-package '(org-roam-bibtex :type git :flavor melpa 
-                        :host github :repo "org-roam/org-roam-bibtex")
-           :hook (org-roam-mode . org-roam-bibtex-mode)))
-
-;;;;;;;;;;
-(setq org-roam-graph-exclude-matcher '("archive" "PRIVAT" "blog" "books" "bibliography"
-                                       "include" "elfeed" "Documentation" "auto"
-                                       "init" "Journal" "regularly" "tasks" "work"))
+  ;;          ("d" "Project > Diversity Equity Incluson (DEI)" plain (function org-roam--capture-get-point)
+  ;;           "%?"
+  ;;           :file-name "projects/diversity-equity-inclusion/%<%Y%m%d%H%M%S>---${slug}"
+  ;;           :head  "#+title: ${title}\n#+roam_tags:\n* ${title}\n\n"
+  ;;           :unnarrowed t
+  ;;           :immediate-finish t)
+            ("i" "iniziu" plain (function org-roam--capture-get-point)
+             "%?"
+             :file-name "iniziu/%<%Y%m%d%H%M%S>-${slug}"
+             :head  "#+title: ${title}\n#+roam_tags:\n :HOME: \n* ${title}\n\n"
+             :unnarrowed t
+             :immediate-finish t)
+            ("s" "seniorråd" plain (function org-roam--capture-get-point)
+             "%?"
+             :file-name "seniorraad/%<%Y%m%d%H%M%S>---${slug}"
+             :head  "#+title: ${title}\n#+roam_tags:\n :HOME: \n* ${title}\n\n"
+             :unnarrowed t
+             :immediate-finish t)
+  ;;          ("o" "andre" plain (function org-roam--capture-get-point)
+  ;;           "%?"
+  ;;           :file-name "/roam/andre/%<%Y%m%d%H%M%S>---${slug}"
+  ;;           :head  "#+title: ${title}\n#+roam_tags:\n* ${title}\n\n"
+  ;;           :unnarrowed t
+  ;;           :immediate-finish t)
+            ("n" "niels" plain (function org-roam--capture-get-point)
+             "%?"
+             :file-name "niels/%<%Y%m%d%H%M%S>-${slug}"
+             :head  "#+title: ${title}\n#+roam_tags:\n :HOME: \n* ${title}\n\n"
+             :unnarrowed t
+             :immediate-finish t)))
+  (if nec/measure-time (nec/timer "org-roam-capture "))
+  ;;;;;;;;;;
 
 
+  ;;;;;;;;;;
+  (setq org-roam-graph-exclude-matcher '("archive" "PRIVAT" "blog" "books" "agenda"
+                                         "include" "elfeed" "Documentation" "auto" "elfeed"
+                                         "init" "journal" "regularly" "tasks" "work"))
+  ;;;;;;;;;;;
+  (use-package org-roam-server
+    :straight t
+    :commands (org-roam-server-mode)
+    :config
+    (setq org-roam-server-host "127.0.0.1"
+          org-roam-server-port 8080
+          org-roam-server-export-inline-images t
+          org-roam-server-authenticate nil
+          org-roam-server-serve-files nil
+          org-roam-server-served-file-extensions '("pdf" "mp4" "ogv")    
+          org-roam-server-network-poll t
+          org-roam-server-network-arrows nil
+          org-roam-server-network-label-truncate t
+          org-roam-server-network-label-truncate-length 60
+          org-roam-server-network-label-wrap-length 20)
+    (defun org-roam-server-open ()
+      "Ensure the server is active, then open the roam graph."
+      (interactive)
+      (org-roam-server-mode 1))) 
+  (org-roam-server-mode)
 
+  ;; https://ag91.github.io/blog/2020/11/12/write-org-roam-notes-via-elisp/
+  (defun jnf/make-filepath (title now &optional zone)
+    "Make filename from note TITLE and NOW time (assumed in the current time ZONE)."
+    (f-join
+     org-roam-directory
+     "roam"
+     (concat
+      (format-time-string "%Y%m%d%H%M%S-" now (or zone (current-time-zone)))
+      (org-roam--title-to-slug title)
+      ".org")))
 
-(use-package org-roam-server
-  :straight t
-  :commands (org-roam-server-mode)
-  :config
-  (setq org-roam-server-host "127.0.0.1"
-        org-roam-server-port 8080
-        org-roam-server-export-inline-images t
-        org-roam-server-authenticate nil
-        org-roam-server-serve-files nil
-        org-roam-server-served-file-extensions '("pdf" "mp4" "ogv")    
-        org-roam-server-network-poll t
-        org-roam-server-network-arrows nil
-        org-roam-server-network-label-truncate t
-        org-roam-server-network-label-truncate-length 60
-        org-roam-server-network-label-wrap-length 20)
-  (defun org-roam-server-open ()
-    "Ensure the server is active, then open the roam graph."
+  (defun jnf/insert-org-roam-file (file-path title &optional links sources text quote)
+    "Insert org roam file in FILE-PATH with TITLE, LINKS, SOURCES, TEXT, QUOTE."
+    (with-temp-file file-path
+      (insert
+       "#+TITLE: " title
+       "\n\n- tags :: " (--reduce (concat acc ", " it) links) "\n"
+       (if sources (concat "- source :: " (--reduce (concat acc ", " it) sources) "\n") "")
+       "\n"
+       (if text text "")
+       "\n"
+       "\n"
+       (if quote
+           (concat "#+begin_src text \n"
+       quote "\n"
+       "#+end_src")
+         ""))))
+
+  (defun send-roaming ()
+    "Convert an org node to a `org-roam' note."
     (interactive)
-    (org-roam-server-mode 1))) 
-(org-roam-server-mode)
+    (let* ((heading (org-get-heading t t t t))
+           (body (org-get-entry))
+           (link (format "[[id:%s][%s]]" (org-id-get-create) heading))
+           (filepath (jnf/make-filepath heading (current-time))))
+      (jnf/insert-org-roam-file
+       filepath
+       heading
+       nil
+       (list link)
+       (format "* Note stored from tasks\n%s" body)
+       nil)
+      (find-file filepath)))
 
-;; https://ag91.github.io/blog/2020/11/12/write-org-roam-notes-via-elisp/
-(defun jnf/make-filepath (title now &optional zone)
-  "Make filename from note TITLE and NOW time (assumed in the current time ZONE)."
-  (f-join
-   org-roam-directory
-   "roam"
-   (concat
-    (format-time-string "%Y%m%d%H%M%S-" now (or zone (current-time-zone)))
-    (org-roam--title-to-slug title)
-    ".org")))
-
-(defun jnf/insert-org-roam-file (file-path title &optional links sources text quote)
-  "Insert org roam file in FILE-PATH with TITLE, LINKS, SOURCES, TEXT, QUOTE."
-  (with-temp-file file-path
-    (insert
-     "#+TITLE: " title
-     "\n\n- tags :: " (--reduce (concat acc ", " it) links) "\n"
-     (if sources (concat "- source :: " (--reduce (concat acc ", " it) sources) "\n") "")
-     "\n"
-     (if text text "")
-     "\n"
-     "\n"
-     (if quote
-         (concat "#+begin_src text \n"
-     quote "\n"
-     "#+end_src")
-       ""))))
-
-(defun send-roaming ()
-  "Convert an org node to a `org-roam' note."
-  (interactive)
-  (let* ((heading (org-get-heading t t t t))
-         (body (org-get-entry))
-         (link (format "[[id:%s][%s]]" (org-id-get-create) heading))
-         (filepath (jnf/make-filepath heading (current-time))))
-    (jnf/insert-org-roam-file
-     filepath
-     heading
-     nil
-     (list link)
-     (format "* Note stored from tasks\n%s" body)
-     nil)
-    (find-file filepath)))
-
-;; Some hot keys to jump to often different relevant files
-;; Jump to the current  clock if one is open, otherwise, go to my agenda file.
-(global-set-key (kbd "C-c r i") 'org-roam-insert)
-(provide 'jnf-org-roam.el)
-;;; jnf-org-roam.el ends here
+  ;; Some hot keys to jump to often different relevant files
+  ;; Jump to the current  clock if one is open, otherwise, go to my agenda file.
+  (global-set-key (kbd "C-c r i") 'org-roam-insert)
+  (provide 'jnf-org-roam.el)
+  ;;; jnf-org-roam.el ends here
 #+end_src
-
-#+RESULTS:
-: jnf-org-roam\.el
 
 *** org-super-links
 #+begin_src emacs-lisp :tangle yes
@@ -5098,8 +5120,17 @@ by `remember-notes-buffer-name'."
           (newline)))))
 
   (provide 'most-used-words)
+(if nec/measure-time (nec/timer "Tæl ord "))
 
-  ;;; most-used-words.el ends here
+(straight-use-package
+ '(company-wordfreq :type git :host github :repo "johannes-mueller/company-wordfreq.el"))
+(setq company-wordfreq-path
+      (concat (file-name-as-directory user-emacs-directory) "private/wordfreq"))
+(add-hook 'text-mode-hook (lambda ()
+                            (setq-local company-backends '(company-wordfreq))
+                            (setq-local company-transformers nil)))
+(if nec/measure-time (nec/timer "Tæl alle ord "))
+;;; most-used-words.el ends here
 #+end_src
 *** google translate
 #+begin_src emacs-lisp :tangle no
@@ -5430,7 +5461,7 @@ Ledger mode for MacBook Air
 #+end_src
 * Languages
 *** Projectile
-#+begin_src emacs-lisp :tangle yes
+#+begin_src emacs-lisp :tangle no
 (straight-use-package '(projectile :type git :flavor melpa 
                :files ("projectile.el" "projectile-pkg.el") 
                :host github :repo "bbatsov/projectile"))
