@@ -9,6 +9,7 @@ url
 games
 elpa
 elpy
+private/tmp
 config.org_archive
 org-roam.db
 .dap-breakpoints

@@ -445,7 +445,6 @@ NAME and ARGS are as in `use-package'."
     - [[#setting-my-favorite-theme][setting my favorite theme]]
     - [[#initial-frame][initial frame]]
     - [[#backup][backup]]
-    - [[#create-missing-directory-for-find-file][create missing directory for find-file]]
     - [[#fundamentals-for-hydras][fundamentals for Hydras]]
     - [[#ctrl-s--isearch][ctrl-s  (isearch)]]
     - [[#making-emacs-secure][making emacs secure]]
@@ -454,6 +453,8 @@ NAME and ARGS are as in `use-package'."
     - [[#utf-8-please][UTF-8 please]]
     - [[#insert-char-preview][insert-char-preview]]
     - [[#scratch-buffer][scratch buffer]]
+    - [[#create-missing-directory-for-find-file][create missing directory for find-file]]
+    - [[#create-tmp-directory][Create tmp directory]]
     - [[#kill-buffer-and-the-file-associated][kill buffer and the file associated]]
     - [[#rename-current-buffer-and-file-associated][rename current buffer and file associated]]
     - [[#clean-stale-buffers][clean stale buffers]]
@@ -1256,21 +1257,7 @@ Source: https://github.com/m-parashar/emax64/issues/5
           backup-by-copying t)
 (if nec/measure-time (nec/timer "Backup   "))
 #+end_src
-*** create missing directory for find-file
-:PROPERTIES:
-:CUSTOM_ID: create missing directory for find-file
-:END:
-#+begin_src emacs-lisp
-(defun my-create-non-existent-directory ()
-  (let ((parent-directory (file-name-directory buffer-file-name)))
-    (when (and (not (file-exists-p parent-directory))
-               (y-or-n-p (format "Directory `%s' does not exist! Create it?" parent-directory)))
-      (make-directory parent-directory t))))
-;;
-(add-to-list 'find-file-not-found-functions #'my-create-non-existent-directory)
-(if nec/measure-time
-          (nec/timer "Create missing files   "))
-#+end_src
+
 *** fundamentals for Hydras
 :PROPERTIES:
 :CUSTOM_ID: h:af691a31-917e-4d9b-aee6-5744b1173999
@@ -1490,8 +1477,29 @@ with character preview in completion prompt. from: [[https://gitlab.com/matsievs
 (setq initial-buffer-choice 'acg-initial-buffer-choice)
 (if nec/measure-time (nec/timer "avoid scratch buffer "))
 #+end_src
+*** create missing directory for find-file
+:PROPERTIES:
+:CUSTOM_ID: create missing directory for find-file
+:END:
+#+begin_src emacs-lisp
+(defun my-create-non-existent-directory ()
+  (let ((parent-directory (file-name-directory buffer-file-name)))
+    (when (and (not (file-exists-p parent-directory))
+               (y-or-n-p (format "Directory `%s' does not exist! Create it?" parent-directory)))
+      (make-directory parent-directory t))))
+;;
+(add-to-list 'find-file-not-found-functions #'my-create-non-existent-directory)
+(if nec/measure-time
+          (nec/timer "Create missing files   "))
+#+end_src
+*** Create tmp directory
+#+begin_src emacs-lisp
+(setq nec/tmp-dir "~/.emacs.d/private/tmp")
+(when (file-exists-p nec/tmp-dir)
+      (delete-directory nec/tmp-dir))
+(make-directory nec/tmp-dir t)
+#+end_src
 *** kill buffer and the file associated
-
  #+BEGIN_SRC emacs-lisp :tangle yes
      (defun bk/kill-buffer-and-file (buffer-name)
        "Removes file connected to current buffer and kills buffer."
@@ -5701,3 +5709,4 @@ We want to give all nye (and old) files a header
 (open-dashboard)
 (message "→★★★ Total time for configuration  %.2fs"  (float-time (time-subtract (current-time) nec/total-time)))
 #+end_src
+

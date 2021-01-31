@@ -33,6 +33,7 @@
  '(set-mark-command-repeat-pop t)
  '(smartparens-global-mode t)
  '(sp-show-pair-from-inside t)
+ '(temporary-file-directory "/Users/niels/.emacs.d/private/tmp")
  '(xterm-mouse-mode t))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
@@ -40,7 +41,7 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(cfw:face-toolbar-button-off ((t (:foreground "gray76" :weight bold))))
- '(dashboard-banner-logo-title ((t (:family "Love LetterTW" :height 123))))
+ '(dashboard-banner-logo-titdelete-filele ((t (:family "Love LetterTW" :height 123))))
  '(lsp-ui-doc-background ((t (:background nil))))
  '(lsp-ui-doc-header ((t (:inherit (font-lock-string-face italic)))))
  '(org-journal-calendar-entry-face ((t (:foreground "#ee3b3b" :slant italic))))
