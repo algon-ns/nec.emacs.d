@@ -32,7 +32,7 @@
 ;;
 ;;Some fundemental default settings are here
 (setq package-enable-at-startup nil)
-(setq-default debug-on-error         nil
+(setq-default debug-on-error         t
               message-log-max        t
               ad-redefinition-action 'accept)
 ;; be sure to have Straight.el as the first thing to do
@@ -124,7 +124,7 @@
 (setq nec/nutid (current-time))
 
 (defun nec/timer (tekst)
-  (message  (concat  "→ ★ " tekst "  %.2fs" )  (float-time (time-subtract (current-time) nec/nutid)))
+  (message  (concat  "→ ★      " tekst "  %.2fs" )  (float-time (time-subtract (current-time) nec/nutid)))
   (setq nec/nutid (current-time)))
 ;; Resizing the Emacs frame can be a terribly expensive part of changing the
 ;; font. By inhibiting this, we easily halve startup times with fonts that are

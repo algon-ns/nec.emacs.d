@@ -87,9 +87,8 @@
                             rss
                             texinfo))
 ;; Key Chord functionality in use-package
-(use-package use-package-chords
-  :straight t
-  :config (key-chord-mode 1))
+(straight-use-package '(key-chord :type git :flavor melpa :host github
+                                  :repo "emacsorphanage/key-chord"))
 (defmacro use-feature (name &rest args)
   "Like `use-package', but with `straight-use-package-by-default' disabled.
 NAME and ARGS are as in `use-package'."

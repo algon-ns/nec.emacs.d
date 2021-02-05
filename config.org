@@ -318,10 +318,7 @@ If you wonder, where You found this file....
                             publish
                             rss
                             texinfo))
-;; Key Chord functionality in use-package
-(use-package use-package-chords
-  :straight t
-  :config (key-chord-mode 1))
+
 (defmacro use-feature (name &rest args)
   "Like `use-package', but with `straight-use-package-by-default' disabled.
 NAME and ARGS are as in `use-package'."
@@ -430,10 +427,11 @@ NAME and ARGS are as in `use-package'."
     - [[#initel][init.el]]
 - [[#basic-emacs][Basic emacs]]
   - [[#fundamental-constants-and-functions][Fundamental constants and functions]]
-    - [[#better-defaults][better Defaults]]
-    - [[#general-and-helpers][general and helpers]]
-    - [[#version-and-warning-if-wrong-version][version and warning if wrong version]]
+    - [[#better-defaults][Better defaults]]
+    - [[#common-and-helpers][Common and Helpers]]
+    - [[#version-control-and-warning-if-wrong-version][version control and warning if wrong version]]
     - [[#load-custom-file][load custom file]]
+    - [[#commify][commify]]
     - [[#typeface-suitability-test][typeface suitability test]]
     - [[#bind-key][bind key]]
     - [[#variables-and-defaults][variables and defaults]]
@@ -517,11 +515,12 @@ NAME and ARGS are as in `use-package'."
 - [[#org-and-friends][org and friends]]
     - [[#org-general-settings][org general settings]]
     - [[#org-bullets][org bullets]]
+    - [[#org-superstar][org superstar]]
     - [[#refiling-setup][refiling Setup]]
     - [[#org-journal][org journal]]
     - [[#doct-and-org-capture][doct and org-capture]]
     - [[#org-agenda][org agenda]]
-    - [[#org-super-agenda][org super agenda]]
+    - [[#org][org]]
     - [[#org-roam][org roam]]
     - [[#org-super-links][org-super-links]]
     - [[#deft][deft]]
@@ -548,6 +547,7 @@ NAME and ARGS are as in `use-package'."
     - [[#elfeed][elfeed]]
     - [[#ledger-mode][ledger-mode]]
 - [[#languages][Languages]]
+    - [[#yasnippets][Yasnippets]]
     - [[#projectile][Projectile]]
     - [[#header-for-new-files][Header for new files]]
     - [[#python][Python]]
@@ -570,7 +570,7 @@ First the basics for running emacs
 :PROPERTIES:
 :CUSTOM_ID: Fundamental constants and functions
 :END:
-*** better Defaults
+*** Better defaults
 Here are what I consider better defaults as per my own experience.
 #+BEGIN_SRC emacs-lisp :tangle yes
 (setq-default
@@ -654,7 +654,7 @@ The code below is a minor adaptation of the insights of Alain M. Lafon
   
 (if nec/measure-time (nec/timer "Better default "))
 #+end_src
-*** general and helpers
+*** Common and Helpers
 :PROPERTIES:
 :ID:       7B041D81-6330-43C6-95A6-ED94E7C46D3F
 :END:
@@ -779,9 +779,9 @@ e.g. (:bind "C-m" (message "Hello world." e.g. (:bind org-mode "C-m" (message "H
        `(define-key ,mode (kbd ,key) ,body)))
     ;; global binding
     (_ `(global-set-key (kbd ,key) ,(eval `(:command ,@body))))))
-(if nec/measure-time (nec/timer "Helpers "))
+(if nec/measure-time (nec/timer "Common and Helpers "))
 #+end_src
-*** version and warning if wrong version
+*** version control and warning if wrong version
 :PROPERTIES:
 :CUSTOM_ID: Version and full stop
 :END:
@@ -815,6 +815,21 @@ what is stored in that added =custom= snippet. But......
 ;;; Load custom file. Don't hide errors. Hide success message
 (load custom-file 'noerror)
 (if nec/measure-time (nec/timer "Load custom.el   "))
+#+end_src
+*** commify
+Insert or remove grouping commas (or other grouping character) in the number
+under or adjacent to the cursor, or for all numbers within the region, with a
+single command. This is an otherwise tedious chore and one that is not easily
+done via a macro or other Emacs user-level facilities.
+In our contry we are using "," for decimal and "." for tousand divider
+#+begin_src emacs-lisp :tangle yes
+(straight-use-package '(key-chord :type git :flavor melpa :host github 
+                                  :repo "emacsorphanage/key-chord"))
+(straight-use-package '(commify :type git :flavor melpa :host github 
+                                :repo "ddoherty03/commify"))
+(setq commify-decimal-char ","
+      commify-group-char ".")
+(key-chord-define-global ",," 'commify-toggle)
 #+end_src
 *** typeface suitability test
 :PROPERTIES:
@@ -1489,15 +1504,15 @@ with character preview in completion prompt. from: [[https://gitlab.com/matsievs
       (make-directory parent-directory t))))
 ;;
 (add-to-list 'find-file-not-found-functions #'my-create-non-existent-directory)
-(if nec/measure-time
-          (nec/timer "Create missing files   "))
+(if nec/measure-time (nec/timer "Create missing files   "))
 #+end_src
 *** Create tmp directory
 #+begin_src emacs-lisp
 (setq nec/tmp-dir "~/.emacs.d/private/tmp")
 (when (file-exists-p nec/tmp-dir)
-      (delete-directory nec/tmp-dir))
+      (delete-directory nec/tmp-dir t))
 (make-directory nec/tmp-dir t)
+(if nec/measure-time (nec/timer "reset tmp directory"))
 #+end_src
 *** kill buffer and the file associated
  #+BEGIN_SRC emacs-lisp :tangle yes
@@ -2807,7 +2822,8 @@ Put all keybindings here (with doc)
 (gdefine-key 
   :keymaps 'org-mode-map
            "C-c r c" 'org-roam-capture
-           "C-c r x" 'org-jump-to-index) 
+           "C-c r x" 'org-jump-to-index
+           "C-c >" 'org-insert-structure-template) 
 (gdefine-key "C-c r r" 'org-backlink-mode-refresh-rate)
 (gdefine-key "C-c r s" 'org-backlink-mode-refresh-rate)  
 (gdefine-key "C-c r m" 'org-backlink-mode)  
@@ -3319,10 +3335,14 @@ associated with org-mode by default.»
 #+END_SRC
 Might cause performance issues; http://orgmode.org/manual/Clean-view.html
 #+BEGIN_SRC emacs-lisp
-  (setq org-bookmark-names-plist nil)
-  (setq org-export-creator-string "\\tiny{Emacs 28.0.50 (Org mode 9.4)}")
-  (setq org-id-link-to-org-use-id t)
+  (setq org-startup-align-all-tables t)
+  (setq org-startup-folded nil)
   (setq org-startup-indented t)
+  (setq org-startup-with-inline-images t)
+  (setq org-startup-with-latex-preview t)
+  (setq org-bookmark-names-plist nil)
+  (setq org-export-creator-string "\\tiny{Emacs 28.0.50 (Org mode 9.4.4)}")
+  (setq org-id-link-to-org-use-id t)
   (setq org-enforce-todo-dependencies t)
   (setq org-insert-heading-respect-content nil)
   (setq org-reverse-note-order nil)
@@ -3632,7 +3652,7 @@ Disable property inheritance (in order to seed up)
 :CUSTOM_ID: org bullets
 :END:
  [[https://github.com/sabof/org-bullets][org-bullets]] - Shows org-mode bullets as pretty UTF-8 characters.
-#+begin_src emacs-lisp 
+#+begin_src emacs-lisp :tangle yes
 ;; Prettify UI
 (require 'pretty-symbols)
 (use-package org-bullets
@@ -3641,13 +3661,35 @@ Disable property inheritance (in order to seed up)
   :init (setq org-bullets-bullet-list '("⭐️" "🌀" "💢" "⚾️" "🔵" "🔴" "🔘")))
 (if nec/measure-time (nec/timer "org bullets" ))
 #+end_src
+*** org superstar
+Prettify headings and plain lists in Org mode. This package is a direct
+descendant of ‘org-bullets’, with most of the code base completely rewritten. 
+#+begin_src emacs-lisp :tangle no
+(require 'pretty-symbols)
+(straight-use-package '(org-superstar :type git :flavor melpa :host github 
+                                      :repo "integral-dw/org-superstar-mode"))
 
+;;(with-eval-after-load 'org-superstar
+;;  (set-face-attribute 'org-superstar-item nil :height 1.2)
+;;  (set-face-attribute 'org-superstar-header-bullet nil :height 1.2)
+;;  (set-face-attribute 'org-superstar-leading nil :height 1.3))
+;; Set different bullets, with one getting a terminal fallback.
+(setq org-superstar-headline-bullet-list '("⭐️" "🌀" "💢" "⚾️" "🔵" "🔴" "🔘"))
+;;(setq org-superstar-headline-bullets-list
+;;      '("◉" ("🞛" ?◈) "○" "▷"))
+;; Stop cycling bullets to emphasize hierarchy of headlines.
+(setq org-superstar-cycle-headline-bullets nil)
+;; Hide away leading stars on terminal.
+(setq org-superstar-leading-fallback ?\s)
+(add-hook 'org-mode-hook (lambda () (org-superstar-mode 1)))
+(if nec/measure-time (nec/timer "org superstar "))
+#+end_src
 *** refiling Setup
 :PROPERTIES:
 :CUSTOM_ID: Refiling Task
 :ID:       8A75E393-5AE3-4D52-9A7C-29BFB81700F9
 :END:
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
 ; Targets include this file and any file contributing to the agenda - up to 9 levels deep
 (setq org-refile-targets (quote ((nil :maxlevel . 7)
                                  (org-agenda-files :maxlevel . 7))))
@@ -3872,6 +3914,8 @@ multiple times below:
       (setq org-agenda-inhibit-startup t)
       (setq org-agenda-show-log t)
       (setq org-agenda-span 14)
+      (setq org-agenda-insert-diary-strategy 'date-tree-last)
+      (setq org-agenda-time-leading-zero t)
       (setq org-agenda-include-diary t)
       (setq org-agenda-start-on-weekday 1)
       (setq org-agenda-dim-blocked-tasks t)
@@ -3902,7 +3946,8 @@ multiple times below:
     (if nec/measure-time (nec/timer "org agenda" ))
 #+end_src
 
-*** org super agenda
+*** org
+super agenda
 :PROPERTIES:
 :CUSTOM_ID: Super-Agenda
 :END:
@@ -3910,7 +3955,11 @@ multiple times below:
 Org agenda is an interactive tool for generating summary reports from Org data
 ---e.g., commonly, the weekly task list is generated from todo tasks.
 
-#+begin_src emacs-lisp
+Origami mode ---see below in [[Text Folding with Origami-mode]]---
+  works well with super-agenda. Just ~M-x origami-mode~ then ~C-c f~ to
+  enable the folding hydra.
+
+#+begin_src emacs-lisp  :tangle yes
   ;; Display tags really close to their tasks.
   (setq org-agenda-tags-column -10)
   (setq org-deadline-warning-days 14)
@@ -3935,7 +3984,7 @@ Org agenda is an interactive tool for generating summary reports from Org data
                   ;; Discard full-day events from agenda
                   (:discard (:category "Cal"))
 
-                  (:name "⭐ Møde" :todo "MØDE")
+                  (:name "⭐ Møde" :tag "MØDE")
                   (:name "⭐ Vigtigt" :priority "A")
                   (:name "📌 Opgave" :category "OPGAVE")
                   (:name "📌 Opgave" :tag "OPGAVE")
@@ -3948,15 +3997,11 @@ Org agenda is an interactive tool for generating summary reports from Org data
   (if nec/measure-time (nec/timer "org-super-agenda "))
 #+END_SRC
 
-Origami mode ---see below in [[Text Folding with Origami-mode]]---
-  works well with super-agenda. Just ~M-x origami-mode~ then ~C-c f~ to
-  enable the folding hydra.
-
 *** org roam
 :PROPERTIES:
 :ID:       D931D321-FC5E-4F6A-9411-EDE1B78E766E
 :END:
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
   ;;; jnf-org-roam.el --- Summary
   ;;; Commentary:
   ;;  From: https://github.com/jeremyf/dotzshrc/
@@ -3968,6 +4013,8 @@ Origami mode ---see below in [[Text Folding with Origami-mode]]---
   ;; correctly.  Now I can just load org-roam as part of my day to day
   ;;; Code:
   ;;Set place of database (ns 20. november 2020)
+  ;;(require 'org-graph-view)
+(require 'org-backlink)  
   (setq org-roam-directory "/Users/niels/Dropbox/org/roam/")
   (setq org-roam-index-file "/Users/niels/Dropbox/org/roam/Index.org")
   (setq org-roam-db-location "/Users/niels/Dropbox/org/roam/org-roam.db")
@@ -3981,7 +4028,7 @@ Origami mode ---see below in [[Text Folding with Origami-mode]]---
     :hook (org-roam-backlinks-mode . turn-on-visual-line-mode)
     :commands (org-roam-buffer-toggle-display
                org-roam-find-file
-               org-roam-graph-show
+               org-roam-graph
                org-roam-insert
                org-roam-switch-to-buffer
                org-roam-dailies-date
@@ -4015,6 +4062,7 @@ Origami mode ---see below in [[Text Folding with Origami-mode]]---
     :init (setq org-roam-tag-sources '(prop all-directories))
           (setq org-roam-buffer-position 'left
              org-roam-db-update-method 'immediate
+             org-roam-doctor-inhibit-startup nil
              org-roam-buffer-width 0.25
              org-roam-index-file "/Users/niels/Dropbox/org/roam/Index.org"
              org-roam-graph-extra-config '(("overlap" . "false"))
@@ -4028,12 +4076,12 @@ Origami mode ---see below in [[Text Folding with Origami-mode]]---
     ;; makes it easier to distinguish among other org buffers.
     ;;(add-hook 'org-roam-buffer-prepare-hook #'hide-mode-line-mode)
 
-  (require 'org-backlink)  
+  
   (straight-use-package '(ox-hugo :type git :flavor melpa :host github :repo "kaushalmodi/ox-hugo"))
   (global-set-key (kbd "C-c r r") 'org-backlink-mode-refresh-rate)
   (global-set-key (kbd "C-c r s") 'org-backlink-mode-refresh-rate)  
   (global-set-key (kbd "C-c r m") 'org-backlink-mode)  
-(require 'org-graph-view)
+
 (setq org-roam-graph-viewer nil)
 ;;(setq org-roam-graph-viewer 'org-graph-view)
 (setq org-roam-graph-executable "/usr/local/bin/dot")
@@ -4042,7 +4090,6 @@ Origami mode ---see below in [[Text Folding with Origami-mode]]---
   (use-package org-roam-protocol
       :straight (:type built-in)
       :after org-roam)
-
     ;; First use "#+roam_tags:" then the directory structure to build the
     ;; list of tags.
     ;;
@@ -4115,13 +4162,10 @@ Origami mode ---see below in [[Text Folding with Origami-mode]]---
              :immediate-finish t)))
   (if nec/measure-time (nec/timer "org-roam-capture "))
   ;;;;;;;;;;
-
-
-  ;;;;;;;;;;
   (setq org-roam-graph-exclude-matcher '("archive" "PRIVAT" "blog" "books" "agenda"
                                          "include" "elfeed" "Documentation" "auto" "elfeed"
                                          "init" "journal" "regularly" "tasks" "work"))
-  ;;;;;;;;;;;
+;;;;;;;;;;;
   (use-package org-roam-server
     :straight t
     :commands (org-roam-server-mode)
@@ -4131,7 +4175,7 @@ Origami mode ---see below in [[Text Folding with Origami-mode]]---
           org-roam-server-export-inline-images t
           org-roam-server-authenticate nil
           org-roam-server-serve-files nil
-          org-roam-server-served-file-extensions '("pdf" "mp4" "ogv")    
+          org-roam-server-served-file-extensions '("pdf" "mp4" "svg" "ogv")    
           org-roam-server-network-poll t
           org-roam-server-network-arrows nil
           org-roam-server-network-label-truncate t
@@ -4212,7 +4256,7 @@ Origami mode ---see below in [[Text Folding with Origami-mode]]---
         org-super-links-link-prefix 'org-super-links-link-prefix-timestamp))
 #+end_src
 *** deft
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp  :tangle yes
 (straight-use-package '(deft :type git :flavor melpa 
                              :host github :repo "jrblevin/deft"))
     (setq deft-default-extension "org")
@@ -4283,7 +4327,7 @@ regular expression:
 Its original value was =\\([\n ]\\|^#\\+[[:upper:]_]+:.*$\\)=.
 
 *** org ref
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp  :tangle yes
 (straight-use-package '(org-ref :type git :flavor melpa :files 
                        (:defaults "org-ref.org" "org-ref.bib" "citeproc" "org-ref-pkg.el") 
                         :host github :repo "jkitchin/org-ref"))
@@ -4331,7 +4375,7 @@ Its original value was =\\([\n ]\\|^#\\+[[:upper:]_]+:.*$\\)=.
 :END:
 The best solution to maintain your contacts.
 Be careful that to install it, this one is available with =org-plus-contrib=.
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
 ;; (straight-use-package '(org-agenda :type git :repo "https://code.orgmode.org/bzg/org-mode.git" :local-repo "org/lisp")) 
 (setq org-contacts-files '("~/Dropbox/org/agenda/contacts.org"))
 (if nec/measure-time (nec/timer "org-contact"))
@@ -4339,7 +4383,7 @@ Be careful that to install it, this one is available with =org-plus-contrib=.
 *** org tree slide 
 slide
 Do presentation directly from Emacs
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
 
  (straight-use-package '(moom :type git :flavor melpa :host github :repo "takaxp/moom"))
  (with-eval-after-load "moom"
@@ -4358,7 +4402,7 @@ Do presentation directly from Emacs
 
 [[https://github.com/ndw/org-mac-iCal][org-mac-iCal]] allows you to imports events from iCal.app to the Emacs diary.
 #+NAME: package-org-mac-iCal
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp :tangle yes
 
 (require 'org-mac-iCal)
 (setq org-mac-iCal-import-exchange t)
@@ -4380,13 +4424,13 @@ Do presentation directly from Emacs
 *** org cliplink
 [[https://github.com/rexim/org-cliplink][org-cliplink]] inserts Org-mode links from the clipboard.
 #+NAME: package-org-cliplink)
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp :tangle yes
   (straight-use-package 'org-cliplink)
 (if nec/measure-time (nec/timer "org-cliplink "))
 #+END_SRC
 *** væk mig
 A package to wake me up, whenever I shall do something
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp  :tangle yes
 (require 'alert)
 (require 'org-timed-alerts)
   (setq org-timed-alerts-alert-function #'alert)
@@ -4403,13 +4447,13 @@ A package to wake me up, whenever I shall do something
 :PROPERTIES:
 :CUSTOM_ID: org-manage and header
 :END:
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
 (require 'org-manage)
 (if nec/measure-time (nec/timer "org manage "))
 #+end_src
 *** excellent PDF Viewer
 Let's install the [[https://github.com/politza/pdf-tools][pdf-tools]] library for viewing PDFs in Emacs.
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp  :tangle yes
 ;; (straight-use-package '(pdf-tools :type git :flavor melpa :files ("lisp/*.el" "README" ("build" "Makefile") ("build" "server") 
 ;; (:exclude "lisp/tablist.el" "lisp/tablist-filter.el") "pdf-tools-pkg.el") :host github :repo "politza/pdf-tools"))
 ;; (setq pdf-info-epdfinfo-program "/usr/local/bin/epdfinfo")
@@ -4435,7 +4479,7 @@ easier on the eyes. For more, see the brief [[https://www.dailymotion.com/video/
 :PROPERTIES:
 :CUSTOM_ID: LaTeX
 :END:
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp  :tangle yes
       (straight-use-package '(auctex :type git :host github :repo "emacs-straight/auctex" 
                                      :files ("*" (:exclude ".git"))))
       ;; (straight-use-package 'preview)
@@ -5468,6 +5512,19 @@ Ledger mode for MacBook Air
 (if nec/measure-time (nec/timer "ledger "))
 #+end_src
 * Languages
+*** Yasnippets
+YASnippet is a template system for Emacs. It allows you to type an abbreviation
+and automatically expand it into function templates. Bundled language templates
+include: C, C++, C#, Perl, Python, Ruby, SQL, LaTeX, HTML, CSS and more.
+#+begin_src emacs-lisp  :tangle no
+(straight-use-package '(yasnippet :type git :flavor melpa 
+                                  :files ("yasnippet.el" "snippets" "yasnippet-pkg.el") 
+                                  :host github :repo "joaotavora/yasnippet"))
+(add-to-list 'load-path "~/.emacs.d/snippets/")
+(require 'yasnippet)
+(yas-global-mode 1)
+(if nec/measure-time (nec/timer "YASnippets "))
+#+end_src
 *** Projectile
 #+begin_src emacs-lisp :tangle no
 (straight-use-package '(projectile :type git :flavor melpa 
@@ -5503,10 +5560,13 @@ We want to give all nye (and old) files a header
 :PROPERTIES:
 :CUSTOM_ID: Python
 :END:
-#+begin_src emacs-lisp :tangle yes
+#+begin_src emacs-lisp :tangle no
+(straight-use-package '(python :type git :host github 
+                               :repo "emacs-straight/python" 
+                               :files ("*" (:exclude ".git"))))
 (use-package elpy
       :straight t
-      :diminish "  "
+      :diminish " "
       :bind
       (:map elpy-mode-map
             ("C-M-n" . elpy-nav-forward-block)
@@ -5520,7 +5580,7 @@ We want to give all nye (and old) files a header
       (setq elpy-modules (delq 'elpy-module-flymake elpy-modules))
       ; fix for MacOS, see https://github.com/jorgenschaefer/elpy/issues/1550
       (setq elpy-shell-echo-output nil)
-      (setq elpy-rpc-python-command "python")
+      (setq elpy-rpc-python-command "python3")
       (setq elpy-rpc-timeout 2))
   ;;
   (with-eval-after-load 'python
@@ -5540,73 +5600,25 @@ We want to give all nye (and old) files a header
       (setq blacken-line-length '88))
   (use-package python-docstring
       :straight t
-      :diminish "  仝"
+      :diminish " 仝"
       :hook (python-mode . python-docstring-mode))
   (use-package lsp-python-ms
       :straight t
       :after lsp-mode
       :init (setq lsp-python-ms-auto-install-server t))
 
-(use-package elpy
-    :straight t
-    :diminish "  "
-    :bind
-    (:map elpy-mode-map
-          ("C-M-n" . elpy-nav-forward-block)
-          ("C-M-p" . elpy-nav-backward-block))
-    :hook ((elpy-mode . flycheck-mode)
-           (elpy-mode . (lambda ()
-                          (set (make-local-variable 'company-backends)
-                               '((elpy-company-backend :with company-yasnippet))))))
-    :init
-    (elpy-enable)
-    :config
-    (setq elpy-modules (delq 'elpy-module-flymake elpy-modules))
-    ; fix for MacOS, see https://github.com/jorgenschaefer/elpy/issues/1550
-    (setq elpy-shell-echo-output nil)
-    (setq elpy-rpc-python-command "python")
-    (setq elpy-rpc-timeout 2))
-;;
-(with-eval-after-load 'python
-  (defun python-shell-completion-native-try ()
-    "Return non-nil if can trigger native completion."
-    (let ((python-shell-completion-native-enable t)
-          (python-shell-completion-native-output-timeout
-           python-shell-completion-native-try-output-timeout))
-      (python-shell-completion-native-get-completions
-       (get-buffer-process (current-buffer))
-       nil "_"))))
-
-(use-package blacken
-    :straight t
-    :hook (python-mode . blacken-mode)
-    :config
-    (setq blacken-line-length '88))
-(use-package python-docstring
-    :straight t
-    :diminish "  仝"
-    :hook (python-mode . python-docstring-mode))
-(use-package lsp-python-ms
-    :straight t
-    :after lsp-mode
-    :init (setq lsp-python-ms-auto-install-server t))
-
-    (use-package lpy
-      :straight t
-      :hook (python-mode . (lambda () (lpy-mode))))
   (if nec/measure-time (nec/timer "python "))
   ;;
   (straight-use-package '(ein :type git :flavor melpa 
           :files ("lisp/*" (:exclude "lisp/zeroein.el") "ein-pkg.el") 
           :host github :repo "millejoh/emacs-ipython-notebook"))
-
   (if nec/measure-time (nec/timer "ipython  "))
 #+end_src
 *** Rust
 :PROPERTIES:
 :CUSTOM_ID: Rust
 :END:
-#+begin_src emacs-lisp :tangle no
+#+begin_src emacs-lisp :tangle yes
 (defcustom *rust* (or (executable-find "rustc")
   		    (executable-find "cargo")
   		    (executable-find "rustup"))
