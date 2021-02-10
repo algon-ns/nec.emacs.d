@@ -104,7 +104,7 @@ Suggested values are \" \", \"0\" and \"\"."
      ("\\.pl$" . "template.pl")
      ("\\.py$" . "template.py")
      ("\\.org$" . "template.org")
-     ("20\\.org$" . "org-template.org"))
+     ("2021*.org$" . "org-template.org"))
   "*Alist mapping filename or extension to a template."
   :group 'file-template
   :type 'alist)
@@ -208,7 +208,7 @@ tags are:
 (defun file-template-get-month-num ()
   "Get month as a number."
   (let ((month (file-template-get-date-item 'month))
-        (month-names '("Dec" "Nov" "Oct" "Sep" "Aug" "Jul" "Jun" "May" "Apr" "Mar" "Feb" "Jan")))
+        (month-names '("Dec" "Nov" "Okt" "Sep" "Aug" "Jul" "Jun" "Maj" "Apr" "Mar" "Feb" "Jan")))
     (catch 'found
       (while month-names
         (if (string= month (car month-names))

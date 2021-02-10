@@ -35,9 +35,6 @@
 ;; ensure we can install from git sources
 (straight-use-package '(git :type git :flavor melpa :host github :repo "rejeep/git.el"))
 (if nec/measure-time (nec/timer "After load of straight and git.... "))
-;; speed up the use of org.
-;;(straight-use-package '(org :host github :repo "yantar92/org" :branch "feature/org-fold"
-;;                            :files (:defaults "contrib/lisp/")))
 
 (straight-use-package '(org :type git :repo "https://code.orgmode.org/bzg/org-mode.git"
                             :local-repo "org")

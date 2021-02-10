@@ -481,7 +481,7 @@ NAME and ARGS are as in `use-package'."
     - [[#grep-and-find-file][grep and find file]]
   - [[#emacs-interface][emacs interface]]
     - [[#ac-jump][AC Jump]]
-    - [[#he][he]]
+    - [[#helm][helm]]
     - [[#ivy][ivy]]
     - [[#marginella][marginella]]
     - [[#smex][SMEX]]
@@ -565,7 +565,7 @@ NAME and ARGS are as in `use-package'."
 :END:
 I've tried to make this in an orderdly manner, which is not an 
 easy task for me, as the is far from my normally behavior.
-First the basics for running emacs
+First backup the basics for running emacs
 ** Fundamental constants and functions
 :PROPERTIES:
 :CUSTOM_ID: Fundamental constants and functions
@@ -1013,7 +1013,7 @@ abcdefghijklmnopqrstuvwxyzæøå
 (setenv "TMPDIR" "/tmp/")
 (setenv "TERM" "xterm-256color")
 (setenv "LANG" "da_DK.UTF-8")
-(setenv "PATH" "/bin:/usr/bin:/usr/local/bin:/sbin:/usr/sbin:/usr/local/opt:/usr/local/bin:/usr/local/sbin:/Library/Tex/texbin:/Users/niels/.cargo/bin:/opt/X11/bin")
+(setenv "PATH" "/bin:/usr/bin:/usr/local/bin:/sbin:/usr/sbin:/usr/local/opt:/usr/local/sbin:/Library/Tex/texbin:/Users/niels/.cargo/bin:/opt/X11/bin")
 (use-package exec-path-from-shell
   :straight t
   :if (and (eq system-type 'darwin) (display-graphic-p)))
@@ -2208,8 +2208,7 @@ to an html file in `user-emacs-directory'"
 
 (if nec/measure-time (nec/timer "AC jump   "))
 #+END_SRC
-*** he
-lm
+*** helm
 :PROPERTIES:
 :CUSTOM_ID: Helm
 :END:
@@ -4772,7 +4771,7 @@ easier on the eyes. For more, see the brief [[https://www.dailymotion.com/video/
 
     (add-hook 'find-file-hooks 'add-diary-save-hook))
   (if nec/measure-time (nec/timer "initiate appt/diary "))
-  
+
 
     (declare-function cfw:open-calendar-buffer "calfw")
     (declare-function cfw:refresh-calendar-buffer "calfw")
@@ -4923,7 +4922,7 @@ easier on the eyes. For more, see the brief [[https://www.dailymotion.com/video/
         ; If we leave Emacs running overnight - reset the appointments one minute after midnight
       (run-at-time "24:01" nil 'nec/org-agenda-to-appt)
 
-    
+
       (setq zoneinfo-style-world-list '(("America/Los_Angeles" "Seattle")
                                         ("America/New_York" "New York")
                                         ("Europe/London" "London")
@@ -4949,6 +4948,7 @@ easier on the eyes. For more, see the brief [[https://www.dailymotion.com/video/
   ("C-x g c" . magit-commit)
   ("C-x g p" . magit-push)
   ("C-x g u" . magit-pull)
+  ("C-x g t" . git-timemachine)
   ("C-x g e" . magit-ediff-resolve)
   ("C-x g r" . magit-rebase-interactive))
 
