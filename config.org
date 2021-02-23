@@ -1,6 +1,6 @@
 #+TITLE:   Emacs configuration file
 #+AUTHOR:   Niels Søndergaard
-#+EMAIL:   niels@algon.dk
+#+EMAIL:    niels@algon.dk
 #+CATEGORY:   Emacs configuratione files
 #+DESCRIPTION:   A literate programming version of my Emacs Configuration
 #+LANGUAGE:   da
@@ -451,6 +451,7 @@ NAME and ARGS are as in `use-package'."
     - [[#utf-8-please][UTF-8 please]]
     - [[#insert-char-preview][insert-char-preview]]
     - [[#scratch-buffer][scratch buffer]]
+    - [[#aggressive-indent-mode][aggressive indent mode]]
     - [[#create-missing-directory-for-find-file][create missing directory for find-file]]
     - [[#create-tmp-directory][Create tmp directory]]
     - [[#kill-buffer-and-the-file-associated][kill buffer and the file associated]]
@@ -487,7 +488,7 @@ NAME and ARGS are as in `use-package'."
     - [[#smex][SMEX]]
     - [[#ido][IDO]]
     - [[#parenthesis][parenthesis]]
-    - [[#set-danish-calendar-data][set danish calendar data]]
+    - [[#danish-calendar-data][Danish calendar data]]
     - [[#calculate-eastern-sunday][calculate eastern sunday]]
     - [[#danish-holidays][danish holidays]]
     - [[#rainbow][rainbow]]
@@ -520,11 +521,10 @@ NAME and ARGS are as in `use-package'."
     - [[#org-journal][org journal]]
     - [[#doct-and-org-capture][doct and org-capture]]
     - [[#org-agenda][org agenda]]
-    - [[#org][org]]
+    - [[#org-super-agenda][org super agenda]]
     - [[#org-roam][org roam]]
     - [[#org-super-links][org-super-links]]
     - [[#deft][deft]]
-    - [[#zetteldeft][zetteldeft]]
     - [[#org-ref][org ref]]
     - [[#org-contact][org contact]]
     - [[#org-tree-slide][org tree slide]]
@@ -538,6 +538,7 @@ NAME and ARGS are as in `use-package'."
     - [[#calendar][calendar]]
     - [[#magit][magit]]
     - [[#gnuplot][gnuplot]]
+    - [[#show-ascii-table][show ASCII table]]
     - [[#remember-mode][remember mode]]
     - [[#docker][docker]]
     - [[#tæl-ord][tæl ord]]
@@ -1492,6 +1493,15 @@ with character preview in completion prompt. from: [[https://gitlab.com/matsievs
 (setq initial-buffer-choice 'acg-initial-buffer-choice)
 (if nec/measure-time (nec/timer "avoid scratch buffer "))
 #+end_src
+*** aggressive indent mode
+aggressive-indent-mode is a minor mode that keeps your code always indented.
+#+begin_src emacs-lisp
+(straight-use-package '(aggressive-indent :type git :flavor melpa 
+                        :host github :repo "Malabarba/aggressive-indent-mode"))
+(add-hook 'emacs-lisp-mode-hook #'aggressive-indent-mode)
+(add-hook 'css-mode-hook #'aggressive-indent-mode)
+
+#+end_src
 *** create missing directory for find-file
 :PROPERTIES:
 :CUSTOM_ID: create missing directory for find-file
@@ -1602,8 +1612,6 @@ Non-null optional arg FILES-ONLY means mention only file buffers."
 #+BEGIN_SRC emacs-lisp
 
   (when (display-graphic-p)
-
-
 (if ( version< "27.0" emacs-version ) ; )
     (set-fontset-font "fontset-default" 'unicode "Apple Color Emoji" nil 'prepend)
   (warn "This Emacs version is too old to properly support emoji."))
@@ -2337,7 +2345,7 @@ Highlight matching ‘parenthesis’ when near one of them.
 
 #+end_src
 
-*** set danish calendar data
+*** Danish calendar data
 :PROPERTIES:
 :CUSTOM_ID: Set danish calendar data
 :END:
@@ -2754,7 +2762,6 @@ that is supports a wide range of backends for finding completions -
 ;;(require 'color-theme-approximate-on)
 ;;(color-theme-approximate-on()))
 #+END_SRC
-
 *** auto Super Save
 :PROPERTIES:
 :CUSTOM_ID: Auto Super Save
@@ -3244,7 +3251,7 @@ We want a Dashboard, which demand Page Break Line
       (setq dashboard-center-content t)
       (setq dashboard-week-agenda t)
       (setq dashboard-banner-logo-title "Open EMACS for a new world...")
-      (setq dashboard-startup-banner "/Users/niels/.emacs.d/images/ohands.png")
+      (setq dashboard-startup-banner "/Users/niels/.emacs.d/images/iHands.png")
       (setq dashboard-items '((bookmarks . 6) (agenda . 6)))
       (setq initial-buffer-choice (lambda () (get-buffer dashboard-buffer-name)))
       (setq dashboard-set-heading-icons t)
@@ -3727,7 +3734,7 @@ descendant of ‘org-bullets’, with most of the code base completely rewritten
 :PROPERTIES:
 :CUSTOM_ID: org-journal
 :END:
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
 (use-package org-journal
       :straight t
       :bind
@@ -3747,7 +3754,7 @@ descendant of ‘org-bullets’, with most of the code base completely rewritten
 [[https://github.com/progfolio/doct][doct]] provies “Declarative Org-mode Capture Templates” for Emacs. I
 find them a little easier to reason about than the standard form.
 
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp :tangle yes
 (straight-use-package '(doct :type git :flavor melpa :host github :repo "progfolio/doct"))
 (eval-when-compile (require 'subr-x))
 
@@ -3781,7 +3788,7 @@ multiple times below:
        Captured %<%Y-%m-%d %H:%M>" "Template for basic task."))
 #+END_SRC
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle yes
     ;; using doct
         (setq org-capture-templates
           (doct '(("Aftale"
@@ -3899,7 +3906,7 @@ multiple times below:
   :PROPERTIES:
   :CUSTOM_ID: org agenda 
   :END:
-  #+begin_src emacs-lisp 
+  #+begin_src emacs-lisp :tangle yes
     (setq diary-file "~/Dropbox/org/agenda/diary.org")
     (setq org-agenda-files '("~/Dropbox/org/agenda/organizer.org" 
                              "~/Dropbox/org/agenda/contacts.org" 
@@ -3919,12 +3926,39 @@ multiple times below:
       (setq org-agenda-start-on-weekday 1)
       (setq org-agenda-dim-blocked-tasks t)
       (setq org-log-into-drawer "LOGBOOK")
-      (setq org-agenda-prefix-format
-         '((agenda . " %i %-10:c%?-12t% s")
-	         (timeline . "  % s")
-	         (todo . " %i %-14:c")
-	         (tags . " %i %-14:c")
-	         (search . " %i %-14:c")))
+      (with-eval-after-load 'org-agenda
+        (add-to-list 'org-agenda-prefix-format
+           '((agenda . " %i %-10:c%?-12t")
+	           (timeline . "  % s")	           
+             (todo . " %i %-14:c")
+	           (tags . " %i %-14:c")
+	           (search . " %i %-14:c"))))
+;; modify agenda "date headings" format (to abbreviate day and month names)
+      (setq org-agenda-format-date 'my-org-agenda-format-date-aligned)
+
+      (defun my-org-agenda-format-date-aligned (date)                                                                                                                                             
+        "Format a DATE string for display in the daily/weekly agenda, or timeline.
+         This function makes sure that dates are aligned for easy reading."
+        (require 'cal-iso)
+        (let* ((dayname (calendar-day-name date 1 nil))
+          (day (cadr date))
+          (day-of-week (calendar-day-of-week date))
+          (month (car date))
+          (monthname (calendar-month-name month 1))
+          (year (nth 2 date))
+          (iso-week (org-days-to-iso-week
+                    (calendar-absolute-from-gregorian date)))
+          (weekyear (cond ((and (= month 1) (>= iso-week 52))
+                          (1- year))
+                         ((and (= month 12) (<= iso-week 1))
+                          (1+ year))
+                         (t year)))
+          (weekstring (if (= day-of-week 1)
+                         (format " W%02d" iso-week)
+                       "")))
+          (format "%-8s %2d %s %4d%s"
+            dayname day monthname year weekstring)))
+
       (setq org-agenda-entry-text-maxlines 10)
       (setq org-timer-default-timer 25)
       (setq org-agenda-sticky nil)
@@ -3945,8 +3979,7 @@ multiple times below:
     (if nec/measure-time (nec/timer "org agenda" ))
 #+end_src
 
-*** org
-super agenda
+*** org super agenda
 :PROPERTIES:
 :CUSTOM_ID: Super-Agenda
 :END:
@@ -3974,16 +4007,23 @@ Origami mode ---see below in [[Text Folding with Origami-mode]]---
       :bind (:map org-super-agenda-header-map ("<tab>" . origami-toggle-node))
       :config
       (setq org-super-agenda-groups
-                '((:name "⏰ Calendar" :time-grid t)
-                  (:name "Optional" :priority "C" :order 90)
-
-                  (:name "⚠ Overdue!" :deadline past)
-                  (:name "⚠ Overdue!" :scheduled past)
+                '((:name "⭐ Møde" 
+                          :tag "MØDE")
+                  (:name  "👪  Aftale"
+                          :tag "AFTALE")
+                  (:name "⏰ Calendar" 
+                          :time-grid t
+                          :todo "TODO")
+                  (:name "Optional" 
+                          :priority "C" 
+                          :order 90)
+                  (:name "⚠ Deadline overdue!" 
+                          :deadline past)
+                  (:name "⚠ Start overdue!" 
+                          :scheduled past)
 
                   ;; Discard full-day events from agenda
-                  (:discard (:category "Cal"))
-
-                  (:name "⭐ Møde" :tag "MØDE")
+                  ;; (:discard (:category "Cal"))
                   (:name "⭐ Vigtigt" :priority "A")
                   (:name "📌 Opgave" :category "OPGAVE")
                   (:name "📌 Opgave" :tag "OPGAVE")
@@ -4017,6 +4057,7 @@ Origami mode ---see below in [[Text Folding with Origami-mode]]---
   (setq org-roam-directory "/Users/niels/Dropbox/org/roam/")
   (setq org-roam-index-file "/Users/niels/Dropbox/org/roam/Index.org")
   (setq org-roam-db-location "/Users/niels/Dropbox/org/roam/org-roam.db")
+  (setq org-roam-graph-executable "/usr/local/bin/dot")
   (defvar nec/open-roam-buffer-on-find-file t
    "If non-nil, open the org-roam buffer when opening an org roam file.")
   (use-package org-roam
@@ -4046,7 +4087,13 @@ Origami mode ---see below in [[Text Folding with Origami-mode]]---
                 (("C-c r c" . org-roam-capture))
                 (("C-c r x" . org-roam-jump-to-index)))
     :config (setq org-roam-verbose nil
-                  org-roam-buffer-no-delete-other-windows t) ; make org-roam buffer sticky
+                  org-roam-buffer-no-delete-other-windows t ; make org-roam buffer sticky
+                  org-roam-buffer-position 'left
+                  org-roam-buffer-width 0.25
+                  org-roam-db-update-method 'immediate
+                  org-roam-doctor-inhibit-startup nil
+                  org-roam-graph-viewer nil)
+                  org-roam-mode t nil (org-roam)
   ;;                org-roam-completion-system)
   ;;                (cond ((featurep :completion helm) 'helm)
   ;;                      ((featurep :completion ivy) 'ivy)
@@ -4292,39 +4339,6 @@ Origami mode ---see below in [[Text Folding with Origami-mode]]---
   ":END:\n\n"))
  (if nec/measure-time (nec/timer "deft "))
 #+end_src
-*** zetteldeft
-#+begin_src emacs-lisp :tangle no
-(setq deft-extensions '("org" "md" "txt"))
- 
-(setq deft-directory (concat org-directory "/roam/")) 
-(setq deft-recursive t)
-;; Search the deft directory recursively, to include subdirectories.n 
-(straight-use-package '(zetteldeft :type git :flavor melpa 
-                        :files (:defaults "zetteldeft.org"
-                        "zetteldeft-pkg.el") :host github :repo "EFLS/zetteldeft"))
-(zetteldeft-set-classic-keybindings) 
-(setq zetteldeft-home-id "Index.org")
-(setq zetteldeft-id-format "%Y%m%d%H%M%S")
-(setq zetteldeft-id-regex "20[0-9]\\{12\\}")
-#+end_src 
-I tend to write =org-mode= titles with =#+title:= (i.e.,
-uncapitalized). Also other =org-mode= code at the beginning is written in
-lower case.
-
-In order to filter these from the deft summary, let's alter the
-regular expression:
-
-#+begin_src emacs-lisp :tangle no
-  (setq deft-strip-summary-regexp
-   (concat "\\("
-           "[\n\t]" ;; blank
-           "\\|^#\\+[a-zA-Z_]+:.*$" ;;org-mode metadata
-           "\\)"))
-(if nec/measure-time (nec/timer "Zettledeft "))
-#+end_SRC
-
-Its original value was =\\([\n ]\\|^#\\+[[:upper:]_]+:.*$\\)=.
-
 *** org ref
 #+begin_src emacs-lisp  :tangle yes
 (straight-use-package '(org-ref :type git :flavor melpa :files 
@@ -5020,6 +5034,23 @@ easier on the eyes. For more, see the brief [[https://www.dailymotion.com/video/
 ;; This line binds the function-9 key so that it opens a buffer into gnuplot mode
 (global-set-key [(f9)] 'gnuplot-make-buffer)
 #+end_src
+*** show ASCII table
+#+begin_src emacs-lisp :tangle yes
+;; Show ASCII table.
+;; Obtained from http://www.chrislott.org/geek/emacs/dotemacs.html.
+(defun ascii-table ()
+  "Print the ascii table. Based on a defun by Alex Schroeder <asc@bsiag.com>."
+  (interactive)
+  (switch-to-buffer "*ASCII*")
+  (erase-buffer)
+  (insert (format "ASCII characters up to number %d.\n" 254))
+  (let ((i 0))
+    (while (< i 254)
+      (setq i (+ i 1))
+      (insert (format "%4d %c\n" i i))))
+  (goto-char (point-min)))
+
+#+end_src
 *** remember mode 
 :PROPERTIES:
 :CUSTOM_ID: h:8044df56-9819-4c61-abe6-43d352087211
@@ -5503,7 +5534,7 @@ by `remember-notes-buffer-name'."
 
 *** ledger-mode
 Ledger mode for MacBook Air
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
 (straight-use-package '(ledger-mode :type git :flavor melpa :files (:defaults "ledger-test.el" "ledger-mode-pkg.el") :host github :repo "ledger/ledger-mode"))
 (straight-use-package '(company-ledger :type git :flavor melpa :host github :repo "debanjum/company-ledger"))
 (straight-use-package '(flycheck-ledger :type git :flavor melpa :host github :repo "purcell/flycheck-ledger"))
