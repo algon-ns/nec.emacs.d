@@ -1,0 +1,1 @@
+/Users/niels/.emacs.d/straight/repos/tide/tsserver/lib.esnext.array.d.ts

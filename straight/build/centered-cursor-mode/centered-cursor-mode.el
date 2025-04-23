@@ -1,0 +1,1 @@
+/Users/niels/.emacs.d/straight/repos/centered-cursor-mode.el/centered-cursor-mode.el

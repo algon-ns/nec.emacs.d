@@ -1,0 +1,1 @@
+/Users/niels/.emacs.d/straight/repos/tide/tsserver/lib.es2015.proxy.d.ts

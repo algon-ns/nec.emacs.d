@@ -1,0 +1,40 @@
+;;;; Emacs Bookmark Format Version 1;;;; -*- coding: utf-8-emacs; mode: lisp-data -*-
+;;; This format is meant to be slightly human-readable;
+;;; nevertheless, you probably don't want to edit it.
+;;; -*- End Of Bookmark File Format Version Stamp -*-
+(("home       "
+ (filename . "~/")
+ (front-context-string . "org\n  drwxr-xr-x")
+ (rear-context-string . "36 Apr  4 10:39 ")
+ (position . 2244)
+ (last-modified 26628 61188 589595 0))
+("Dokumenter "
+ (filename . "~/Documents/")
+ (front-context-string . "4eren\n  drwxr-xr")
+ (rear-context-string . "92 Nov 13 17:55 ")
+ (position . 92)
+ (last-modified 26628 61229 892220 0))
+("org        "
+ (filename . "~/org/")
+ (front-context-string . "4eren\n  drwxrwxr")
+ (rear-context-string . "1K Apr  4 10:03 ")
+ (position . 86)
+ (last-modified 26628 61143 80126 0))
+("dot.emacs.d"
+ (filename . "~/.emacs.d/")
+ (front-context-string . "init.el\n  drwxr-")
+ (rear-context-string . "50 Apr 17 10:51 ")
+ (position . 829)
+ (last-modified 26624 50026 249756 0))
+("projekt    "
+ (filename . "~/projekt/")
+ (front-context-string . "emacs\n  drwxr-xr")
+ (rear-context-string . "0K Apr 17 01:41 ")
+ (position . 260)
+ (last-modified 26628 61277 832701 0))
+ ("NSdata     "
+  (filename . "/Volumes/NSdata/")
+  (front-context-string . ".DocumentRevisio")
+  (rear-context-string . "88 Apr 19 11:47 ")
+  (position . 84)
+  (last-modified 26628 61370 442984 0)))

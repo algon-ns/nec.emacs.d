@@ -1,0 +1,5 @@
+* Default
+** .emacs.d
+ - path :: ~/.emacs.d
+** rb.emacs.d
+ - path :: ~/.config/rb.emacs.d

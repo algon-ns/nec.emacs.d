@@ -1,0 +1,331 @@
+;;; -*- coding: utf-8; mode: lisp-data -*-
+(("/Users/niels/org/agenda/møder.org" . 18659)
+ ("/Users/niels/org/agenda/huskeliste.org" . 3341)
+ ("/Users/niels/org/agenda/note.org" . 1171)
+ ("/Users/niels/" (dired-filename . "/Users/niels/.emacs.d"))
+ ("/Users/niels/.emacs.d/"
+  (dired-filename . "/Users/niels/.emacs.d/nec.emacs"))
+ ("/Users/niels/.emacs.d/nec.emacs/"
+  (dired-filename . "/Users/niels/.emacs.d/nec.emacs/.."))
+ ("/Users/niels/.emacs.d/init.el" . 2166)
+ ("/Users/niels/.emacs.d/config/"
+  (dired-filename . "/Users/niels/.emacs.d/config/core"))
+ ("/Users/niels/.emacs.d/config/core/registers.el" . 1853)
+ ("/Users/niels/.emacs.d/config/core/"
+  (dired-filename . "/Users/niels/.emacs.d/config/core/crux-load.el"))
+ ("/Users/niels/.emacs.d/config/core/crux-load.el" . 1292)
+ ("/Users/niels/.emacs.d/config/core/packages.el" . 3089)
+ ("/Users/niels/.emacs.d/early-init.el" . 3648)
+ ("/Users/niels/.emacs.d/config/core/osx.el" . 1222)
+ ("/Users/niels/org/" (dired-filename . "/Users/niels/org/niels"))
+ ("/Users/niels/org/niels/"
+  (dired-filename . "/Users/niels/org/niels/buddy"))
+ ("/Users/niels/org/niels/buddy/2004-01-22--april/"
+  (dired-filename
+   . "/Users/niels/org/niels/buddy/2004-01-22--april/april.org"))
+ ("/Users/niels/Downloads/"
+  (dired-filename
+   . "/Users/niels/Downloads/Dankort-3338012772-20250422.csv"))
+ ("/Users/niels/Downloads/Dankort-3338012772-20250422.csv" . 116)
+ ("/Users/niels/org/niels/buddy/2004-01-22--april/april.org" . 5044)
+ ("/Users/niels/.emacs.d/lisp/bank-buddy.el" . 2736)
+ ("/Users/niels/.emacs.d/lisp/"
+  (dired-filename . "/Users/niels/.emacs.d/lisp/bank-buddy-core.el"))
+ ("/Users/niels/.emacs.d/lisp/bank-buddy-core.el" . 4116)
+ ("/Users/niels/.emacs.d/lisp/bank-buddy-cat-mode.el" . 3248)
+ ("/Users/niels/Desktop/"
+  (dired-filename . "/Users/niels/Desktop/2004-01-22--zz"))
+ ("/Users/niels/.emacs.d/var/buddy.el" . 896)
+ ("/Users/niels/.emacs.d/lisp/bankbuddy.el" . 671)
+ ("/Users/niels/org/agenda/"
+  (dired-filename . "/Users/niels/org/agenda/udgifter"))
+ ("/Users/niels/.emacs.d/config/core/keybindings.el" . 3742)
+ ("/Users/niels/.emacs.d/config/core/settings.el" . 4269)
+ ("/Users/niels/.emacs.d/config/programming/"
+  (dired-filename . "/Users/niels/.emacs.d/config"))
+ ("/Users/niels/.emacs.d/config/ui/faces.el" . 2697)
+ ("/Users/niels/.emacs.d/config/ui/interface.el" . 329)
+ ("/Users/niels/.emacs.d/config/ui/theme.el" . 3293)
+ ("/Users/niels/.emacs.d/config/ui/uuid-simple.el" . 1656)
+ ("/Users/niels/.emacs.d/config/ui/banners/"
+  (dired-filename . "/Users/niels/.emacs.d/config/ui"))
+ ("/Users/niels/.emacs.d/config/ui/"
+  (dired-filename . "/Users/niels/.emacs.d/config/ui/dashboard.el"))
+ ("/Users/niels/.emacs.d/config/ui/dashboard.el" . 1417)
+ ("/Users/niels/.emacs.d/elpa/"
+  (dired-filename . "/Users/niels/.emacs.d"))
+ ("/Users/niels/.emacs.d/eln-cache/"
+  (dired-filename . "/Users/niels/.emacs.d/eln-cache/31_0_50-1f9fc3b1"))
+ ("/Users/niels/.emacs.d/eln-cache/31_0_50-1f9fc3b1/"
+  (dired-filename
+   . "/Users/niels/.emacs.d/eln-cache/31_0_50-1f9fc3b1/treesit-37439c61-b063ad26.eln"))
+ ("/Users/niels/.emacs.d/config/programming/treesitter.el" . 5713)
+ ("/Users/niels/org/emacs/"
+  (dired-filename . "/Users/niels/org/emacs/Agenda-Danish.org"))
+ ("/Users/niels/.emacs.d/config/programming/lsp.el" . 2346)
+ ("/Users/niels/.emacs.d/config/programming/lua.el" . 671)
+ ("/Users/niels/.emacs.d/config/programming/python.el" . 2128)
+ ("/Users/niels/org/emacs/all-keys.org" . 47649)
+ ("/Users/niels/.emacs.d/var/"
+  (dired-filename . "/Users/niels/.emacs.d/var/custom.el"))
+ ("/Users/niels/.emacs.d/var/custom.el" . 1438)
+ ("/Users/niels/Data/Macintosh HD - Data/Applications/Utilities/"
+  (dired-filename
+   . "/Users/niels/Data/Macintosh HD - Data/Applications/Utilities/Adobe Creative Cloud"))
+ ("/Users/niels/Data/Macintosh HD - Data/Applications/"
+  (dired-filename
+   . "/Users/niels/Data/Macintosh HD - Data/Applications/Utilities"))
+ ("/Users/niels/Data/Macintosh HD - Data/Library/"
+  (dired-filename
+   . "/Users/niels/Data/Macintosh HD - Data/Library/Application Support"))
+ ("/Users/niels/Data/Macintosh HD - Data/"
+  (dired-filename . "/Users/niels/Data/Macintosh HD - Data/Library"))
+ ("/Users/niels/Data/niels/dovenlas/"
+  (dired-filename . "/Users/niels/Data/niels/dovenlas/dovenlas.org"))
+ ("/Users/niels/Data/niels/"
+  (dired-filename . "/Users/niels/Data/niels/dovenlas"))
+ ("/Users/niels/Data/"
+  (dired-filename . "/Users/niels/Data/dot.config"))
+ ("/Users/niels/Data/dot.config/"
+  (dired-filename . "/Users/niels/Data/dot.config/aculich.emacs.d"))
+ ("/Users/niels/Data/dot.config/aculich.emacs.d/"
+  (dired-filename
+   . "/Users/niels/Data/dot.config/aculich.emacs.d/lisp"))
+ ("/Users/niels/Data/dot.config/aculich.emacs.d/lisp/extras.el" . 9902)
+ ("/Users/niels/Data/dot.config/aculich.emacs.d/lisp/dot-org.el"
+  . 30536)
+ ("/Users/niels/Data/dot.config/aculich.emacs.d/lisp/org-settings.el"
+  . 2892)
+ ("/Users/niels/Data/dot.config/aculich.emacs.d/lisp/org-smart-capture.el"
+  . 6057)
+ ("/Users/niels/Data/dot.config/aculich.emacs.d/lisp/utility.el"
+  . 2226)
+ ("/Users/niels/Data/dot.config/aculich.emacs.d/lisp/uuid-simple.el"
+  . 1503)
+ ("/Users/niels/Data/dot.config/aculich.emacs.d/lisp/"
+  (dired-filename
+   . "/Users/niels/Data/dot.config/aculich.emacs.d/lisp/uuid-simple.el"))
+ ("/Applications/Emacs.app/Contents/Resources/lisp/calendar/calendar.el"
+  . 11792)
+ ("/Volumes/NSdata/" (dired-filename . "/Volumes/NSdata/dot.config"))
+ ("/Volumes/NSdata/dot.config/"
+  (dired-filename . "/Volumes/NSdata/dot.config/ethan.emacs.d"))
+ ("/Volumes/NSdata/dot.config/ethan.emacs.d/"
+  (dired-filename . "/Volumes/NSdata/dot.config/ethan.emacs.d/lisp"))
+ ("/Volumes/NSdata/dot.config/ethan.emacs.d/lisp/"
+  (dired-filename
+   . "/Volumes/NSdata/dot.config/ethan.emacs.d/lisp/init-p-treesit.el"))
+ ("/Volumes/NSdata/dot.config/ethan.emacs.d/lisp/init-p-treesit.el"
+  . 4625)
+ ("/Users/niels/org/niels/xxx.org" . 471)
+ ("/Users/niels/.config/"
+  (dired-filename . "/Users/niels/.config/nec20240725.emacs.d"))
+ ("/Users/niels/.config/nec20240725.emacs.d/"
+  (dired-filename . "/Users/niels/.config/nec20240725.emacs.d/lisp"))
+ ("/Users/niels/.config/nec20240725.emacs.d/lisp/"
+  (dired-filename
+   . "/Users/niels/.config/nec20240725.emacs.d/lisp/init-registers.el"))
+ ("/Users/niels/.config/nec20240725.emacs.d/lisp/init-registers.el"
+  . 2003)
+ ("/Users/niels/.emacs.d/config/ui/ibuffer.el" . 1624)
+ ("/Volumes/NSdata/dot.config/hamacs.emacs.d/bootstrap.org" . 8175)
+ ("/Volumes/NSdata/dot.config/hamacs.emacs.d/bootstrap.el" . 3449)
+ ("/Volumes/NSdata/dot.config/hamacs.emacs.d/"
+  (dired-filename
+   . "/Volumes/NSdata/dot.config/hamacs.emacs.d/ha-config.el"))
+ ("/Volumes/NSdata/dot.config/ethan.emacs.d/lisp/init-f-dired.el"
+  . 1655)
+ ("/Users/niels/.emacs.d/config/write/"
+  (dired-filename . "/Users/niels/.emacs.d/config/write/countw.el"))
+ ("/Users/niels/.emacs.d/config/write/countw.el" . 3453)
+ ("/Volumes/NSdata/dot.config/Rag.emacs.d/setup-files/setup-lsp.el"
+  . 1660)
+ ("/Volumes/NSdata/dot.config/Rag.emacs.d/setup-files/"
+  (dired-filename
+   . "/Volumes/NSdata/dot.config/Rag.emacs.d/setup-files/setup-org.el"))
+ ("/Volumes/NSdata/dot.config/Rag.emacs.d/"
+  (dired-filename
+   . "/Volumes/NSdata/dot.config/Rag.emacs.d/setup-files"))
+ ("/Volumes/NSdata/dot.config/LuciusChen.emacs.d/lisp/"
+  (dired-filename
+   . "/Volumes/NSdata/dot.config/LuciusChen.emacs.d/lisp/init-org.el"))
+ ("/Volumes/NSdata/dot.config/LuciusChen.emacs.d/"
+  (dired-filename
+   . "/Volumes/NSdata/dot.config/LuciusChen.emacs.d/lisp"))
+ ("/Volumes/NSdata/dot.config/karthink.emacs.d/"
+  (dired-filename . "/Volumes/NSdata/dot.config/karthink.emacs.d/lisp"))
+ ("/Volumes/NSdata/dot.config/karthink.emacs.d/lisp/setup-lua.el"
+  . 545)
+ ("/Volumes/NSdata/dot.config/karthink.emacs.d/lisp/"
+  (dired-filename
+   . "/Volumes/NSdata/dot.config/karthink.emacs.d/lisp/utilities.el"))
+ ("/Volumes/NSdata/dot.config/karthink.emacs.d/lisp/utilities.el"
+  . 2596)
+ ("/Users/niels/.emacs.d/straight/"
+  (dired-filename . "/Users/niels/.emacs.d/straight/repos"))
+ ("/Users/niels/.emacs.d/straight/repos/"
+  (dired-filename . "/Users/niels/.emacs.d/straight/repos/projectile"))
+ ("/Volumes/NSdata/.fseventsd/" (dired-filename . "/Volumes/NSdata"))
+ ("/Volumes/NSdata/dot.config/wiegley.emacs.d/lisp/chess/"
+  (dired-filename . "/Volumes/NSdata/dot.config/wiegley.emacs.d/lisp"))
+ ("/Volumes/NSdata/dot.config/wiegley.emacs.d/lisp/merlin.el" . 1811)
+ ("/Volumes/NSdata/dot.config/wiegley.emacs.d/lisp/"
+  (dired-filename
+   . "/Volumes/NSdata/dot.config/wiegley.emacs.d/lisp/c-includes.el"))
+ ("/Volumes/NSdata/dot.config/wiegley.emacs.d/snippets/"
+  (dired-filename
+   . "/Volumes/NSdata/dot.config/wiegley.emacs.d/snippets/agda2-mode"))
+ ("/Volumes/NSdata/dot.config/tecosaur.emacs.d/lisp/LaTeX-auto-activating-snippets/"
+  (dired-filename . "/Volumes/NSdata/dot.config/tecosaur.emacs.d/lisp"))
+ ("/Volumes/NSdata/dot.config/tecosaur.emacs.d/lisp/emacs-everywhere/"
+  (dired-filename . "/Volumes/NSdata/dot.config/tecosaur.emacs.d/lisp"))
+ ("/Volumes/NSdata/dot.config/tecosaur.emacs.d/lisp/"
+  (dired-filename
+   . "/Volumes/NSdata/dot.config/tecosaur.emacs.d/lisp/emacs-everywhere"))
+ ("/Volumes/NSdata/dot.config/tecosaur.emacs.d/misc/"
+  (dired-filename
+   . "/Volumes/NSdata/dot.config/tecosaur.emacs.d/misc/config-publishing"))
+ ("/Volumes/NSdata/dot.config/tecosaur.emacs.d/"
+  (dired-filename
+   . "/Volumes/NSdata/dot.config/tecosaur.emacs.d/config.org"))
+ ("/Volumes/NSdata/dot.config/tecosaur.emacs.d/config.org" . 55704)
+ ("/Volumes/NSdata/dot.config/wiegley.emacs.d/"
+  (dired-filename
+   . "/Volumes/NSdata/dot.config/wiegley.emacs.d/snippets"))
+ ("/Volumes/NSdata/dot.config/Rag.emacs.d/lisp/"
+  (dired-filename . "/Volumes/NSdata/dot.config/Rag.emacs.d"))
+ ("/Volumes/NSdata/dot.config/Rag.emacs.d/setup-files/setup-lua.el"
+  . 398)
+ ("/Users/niels/.emacs.d/config/programming/web-dev.el" . 2348)
+ ("/Volumes/NSdata/dot.config/Rag.emacs.d/setup-files/setup-ibuffer.el"
+  . 3722)
+ ("/Users/niels/.emacs.d/config/core/files-dired.el" . 5359)
+ ("/Users/niels/.emacs.d/templates/50:.*.org" . 606)
+ ("/Users/niels/.emacs.d/templates/25:TeX.org" . 596)
+ ("/Users/niels/.emacs.d/templates/"
+  (dired-filename . "/Users/niels/.emacs.d/templates/50:.*.org"))
+ ("/Users/niels/.emacs.d/straight/repos/org/"
+  (dired-filename . "/Users/niels/.emacs.d/straight/repos/org/lisp"))
+ ("/Users/niels/.emacs.d/straight/repos/org/lisp/ox-icalendar.el"
+  . 1624)
+ ("/Users/niels/.emacs.d/straight/repos/org/lisp/"
+  (dired-filename
+   . "/Users/niels/.emacs.d/straight/repos/org/lisp/ox-icalendar.el"))
+ ("/Users/niels/projekt/"
+  (dired-filename . "/Users/niels/projekt/emacs"))
+ ("/Users/niels/projekt/emacs/"
+  (dired-filename . "/Users/niels/projekt/emacs/lisp"))
+ ("/Users/niels/projekt/emacs/lisp/obsolete/"
+  (dired-filename
+   . "/Users/niels/projekt/emacs/lisp/obsolete/autoarg.elc"))
+ ("/Users/niels/projekt/emacs/lisp/mail/"
+  (dired-filename
+   . "/Users/niels/projekt/emacs/lisp/mail/mail-extr.elc"))
+ ("/Users/niels/projekt/emacs/lisp/"
+  (dired-filename . "/Users/niels/projekt/emacs/lisp/org"))
+ ("/Users/niels/projekt/emacs/lisp/org/ob-latex.el" . 2151)
+ ("/Users/niels/projekt/emacs/lisp/org/ox.el" . 295456)
+ ("/Users/niels/projekt/emacs/lisp/org/"
+  (dired-filename . "/Users/niels/projekt/emacs/lisp/org/ox.el"))
+ ("/Users/niels/org/ældresagen/"
+  (dired-filename . "/Users/niels/org/ældresagen/aarshjul2023.org"))
+ ("/Users/niels/org/agenda/Arkiv/"
+  (dired-filename . "/Users/niels/org/agenda"))
+ ("/Users/niels/org/agenda/note.ics" . 446)
+ ("/Users/niels/org/agenda/udgifter/benzin/"
+  (dired-filename . "/Users/niels/org/agenda/udgifter"))
+ ("/Users/niels/org/agenda/udgifter/"
+  (dired-filename . "/Users/niels/org/agenda/udgifter/benzin"))
+ ("/Users/niels/.emacs.d/config/write/latex-extra.el" . 23429)
+ ("/Users/niels/.emacs.d/config/write/pdf-tools.el" . 1773)
+ ("/Users/niels/.emacs.d/config/org/"
+  (dired-filename . "/Users/niels/.emacs.d/config"))
+ ("/Users/niels/.emacs.d/config/write/latex-ed.el" . 4284)
+ ("/Users/niels/.emacs.d/config/write/latex-table-wizard.el" . 13977)
+ ("/Users/niels/org/include/"
+  (dired-filename . "/Users/niels/org/include/auto"))
+ ("/Users/niels/org/niels/demokrati.org" . 372)
+ ("/Users/niels/Qt/" . 968)
+ ("/Users/niels/.emacs.d/config/hooks.el" . 202)
+ ("/Users/niels/.emacs.d/config/aliases.el" . 702)
+ ("/Users/niels/.emacs.d/config/tools/"
+  (dired-filename . "/Users/niels/.emacs.d/config"))
+ ("/Users/niels/.emacs.d/config/write/init-latex.el" . 1294)
+ ("/Users/niels/.config/ns.emacs.d/"
+  (dired-filename . "/Users/niels/.config/ns.emacs.d/snippets"))
+ ("/Users/niels/.config/ns.emacs.d/snippets/"
+  (dired-filename
+   . "/Users/niels/.config/ns.emacs.d/snippets/python-mode"))
+ ("/Users/niels/.emacs.d/snippets/"
+  (dired-filename . "/Users/niels/.emacs.d/snippets/python-mode"))
+ ("/Users/niels/.emacs.d/snippets/python-mode/"
+  (dired-filename
+   . "/Users/niels/.emacs.d/snippets/python-mode/images"))
+ ("/Users/niels/.emacs.d/etc/"
+  (dired-filename . "/Users/niels/.emacs.d/etc/bookmarks"))
+ ("/Users/niels/source/"
+  (dired-filename . "/Users/niels/source/artbollocks-mode"))
+ ("/Volumes/" (dired-filename . "/Volumes/NSdata"))
+ ("/Users/niels/.emacs.d/lisp/dropdown-list.el" . 11504)
+ ("/Users/niels/.emacs.d/lisp/cleandesk.el" . 17486)
+ ("/Users/niels/.config/ns.emacs.d/lisp/"
+  (dired-filename
+   . "/Users/niels/.config/ns.emacs.d/lisp/cleandesk.el"))
+ ("/Users/niels/.emacs.d/var/auto-save-list/"
+  (dired-filename . "/Users/niels/.emacs.d/var"))
+ ("/Users/niels/.emacs.d/var/backupfiles/"
+  (dired-filename . "/Users/niels/.emacs.d/var"))
+ ("/Users/niels/.emacs.d/config/org/org-ns.el" . 8492)
+ ("/Users/niels/.emacs.d/config/write/lorumipsum.el" . 1217)
+ ("/Users/niels/.config/ns.emacs.d/init.el" . 8475)
+ ("/Users/niels/.emacs.d/config/calendar/"
+  (dired-filename . "/Users/niels/.emacs.d/config"))
+ ("/Users/niels/.emacs.d/config/completion/"
+  (dired-filename . "/Users/niels/.emacs.d/config"))
+ ("/Users/niels/projekt/emacs/lisp/progmodes/"
+  (dired-filename
+   . "/Users/niels/projekt/emacs/lisp/progmodes/antlr-mode.el"))
+ ("/Users/niels/.emacs.d/config/ui/hydra.el" . 2158)
+ ("/Users/niels/.config/ns.emacs.d/lisp/bootstrap.el" . 2937)
+ ("/Users/niels/.config/ns.emacs.d/lisp/defaults.el" . 3749)
+ ("/Users/niels/.config/ns.emacs.d/lisp/files-essential.el" . 714)
+ ("/Users/niels/.config/ns.emacs.d/lisp/functions.el" . 1540)
+ ("/Users/niels/.config/ns.emacs.d/lisp/files-dired.el" . 415)
+ ("/Users/niels/.config/ns.emacs.d/templates/"
+  (dired-filename . "/Users/niels/.config/ns.emacs.d"))
+ ("/Users/niels/.config/ns.emacs.d/snippets/sh-mode/"
+  (dired-filename . "/Users/niels/.config/ns.emacs.d/snippets"))
+ ("/Users/niels/.config/ns.emacs.d/snippets/python-mode/"
+  (dired-filename
+   . "/Users/niels/.config/ns.emacs.d/snippets/python-mode"))
+ ("/Users/niels/.emacs.d/straight/repos/emacs-web-server/"
+  (dired-filename . "/Users/niels/.emacs.d/straight/repos"))
+ ("/Users/niels/.emacs.d/straight/repos/diff-hl/" . 1474)
+ ("/Users/niels/.config/ns.emacs.d/lisp/settings.el" . 2660)
+ ("/Users/niels/.emacs.d/config/org/org-roam-load.el" . 1487)
+ ("/Users/niels/.config/ns.emacs.d/lisp/theme.el" . 2906)
+ ("/Users/niels/.emacs.d/straight/repos/org-roam-ui/util/"
+  (dired-filename . "/Users/niels/.emacs.d/straight/repos/org-roam-ui"))
+ ("/Users/niels/.emacs.d/straight/repos/org-roam-ui/"
+  (dired-filename
+   . "/Users/niels/.emacs.d/straight/repos/org-roam-ui/README.md"))
+ ("/Users/niels/.emacs.d/straight/repos/org-roam-ui/README.md" . 598)
+ ("/Users/niels/.emacs.d/straight/repos/org-roam-ui/org-roam-ui.el"
+  . 1428)
+ ("/Users/niels/.config/ns.emacs.d/lisp/hydra.el" . 1116)
+ ("/Users/niels/.emacs.d/config/completion/orderless.el" . 327)
+ ("/Users/niels/.emacs.d/config/org/org-doct.el" . 5346)
+ ("/Users/niels/.emacs.d/config/org/org-journal.el" . 73377)
+ ("/Users/niels/.emacs.d/config/completion/company.el" . 81)
+ ("/Users/niels/.emacs.d/config/completion/marginalia.el" . 547)
+ ("/Users/niels/.emacs.d/config/completion/vertico.el" . 364)
+ ("/Users/niels/.emacs.d/config/ui/bookmarks.el" . 5303)
+ ("/Users/niels/.config/ns.emacs.d/lisp/key-setting.el" . 864)
+ ("/Users/niels/.config/ns.emacs.d/lisp/bookmarks.el" . 1019)
+ ("/Users/niels/.config/ns.emacs.d/lisp/dashboard.el" . 1751)
+ ("/Users/niels/*Messages*" . 3717)
+ ("/Users/niels/.emacs.d/images/"
+  (dired-filename . "/Users/niels/.emacs.d"))
+ ("/Users/niels/.config/ns.emacs.d/images/"
+  (dired-filename . "/Users/niels/.config/ns.emacs.d"))
+ ("/Users/niels/.config/ns.emacs.d/early-init.el" . 8174))

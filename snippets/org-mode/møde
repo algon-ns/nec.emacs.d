@@ -1,0 +1,17 @@
+# -*- mode: snippet -*-
+# name: elisp
+# key: >mde
+# --
+* MEETING Møde om %^{something}
+SCHEDULED: %(org-insert-time-stamp (org-read-date t t) t)
+:LOGBOOK:
+- Added: %U
+:END:
+
+** Deltagere
+- [X] Niels Søndergaard
+- [ ] %?
+
+** Agenda
+
+** Noter

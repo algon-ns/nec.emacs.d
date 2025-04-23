@@ -1,0 +1,25 @@
+# -**- mode: org; TeX-master: `(file-name-nondirectory (file-name-sans-extension (buffer-file-name)))` -**-
+#+TITLE: `(file-name-nondirectory (file-name-sans-extension (buffer-file-name)))`
+#+AUTHOR: Niels Søndergaard
+#+DATE: `(format-time-string "%e. %B %Y")`
+#+EMAIL: niels@algon.dk
+#+LANGUAGE: da
+#+CATEGORY: org
+#+DESCRIPTION:
+#+KEYWORDS:
+#+OPTIONS:  H:3 num:t toc:nil \n:nil @:t e:t ø_Æ::t |:t ^:t -:t f:t *:t <:t
+#+OPTIONS:  tex:t arch:t title:nil  broken-links:mark 
+#+INCLUDE: "/Users/niels/org/include/standarder/standard.org"
+#+INCLUDE: "/Users/niels/org/include/headers/NS-hdr.tex" export latex
+
+
+* Indledning
+
+
+
+# Local Variables:
+# org-export-with-properties: ()
+# org-export-with-title: t
+# Tex-master: `(file-name-nondirectory (file-name-sans-extension (buffer-file-name)))` 
+# End:
+

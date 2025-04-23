@@ -1,0 +1,1 @@
+/Users/niels/.emacs.d/straight/repos/modus-themes/modus-operandi-tritanopia-theme.el

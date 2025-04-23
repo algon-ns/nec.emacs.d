@@ -1,0 +1,1 @@
+/Users/niels/.emacs.d/straight/repos/vertico/vertico.el

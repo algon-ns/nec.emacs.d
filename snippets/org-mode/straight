@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: straight
+# key: straight
+# --
+(straight-use-package 'packet)

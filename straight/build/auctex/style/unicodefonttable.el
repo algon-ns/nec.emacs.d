@@ -1,0 +1,1 @@
+/Users/niels/.emacs.d/straight/repos/auctex/style/unicodefonttable.el

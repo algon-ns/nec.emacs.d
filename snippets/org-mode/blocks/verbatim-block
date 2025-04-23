@@ -1,0 +1,8 @@
+# -*- mode: snippet -*-
+# name: verbatim-block
+# key: <w
+# contributor: Niels Søndergaard <niels@algon.dk>
+# --
+#+BEGIN_VERBATIM
+${1:`(if (region-active-p) (yas-selected-text) "replace. Tab to end.")`}
+#+END_VERBATIM
