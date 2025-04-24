@@ -1,25 +1,94 @@
 ;;; -*- coding: utf-8; mode: lisp-data -*-
-(("/Users/niels/org/agenda/møder.org" . 18659)
+(("/Users/niels/org/agenda/møder.org" . 183)
  ("/Users/niels/org/agenda/huskeliste.org" . 3341)
  ("/Users/niels/org/agenda/note.org" . 1171)
- ("/Users/niels/" (dired-filename . "/Users/niels/.emacs.d"))
+ ("/Users/niels/.emacs.d/.gitignore" . 112)
+ ("/Users/niels/.emacs.d/.git/branches/"
+  (dired-filename . "/Users/niels/.emacs.d/.git/branches/.."))
+ ("/Users/niels/.emacs.d/.git/hooks/"
+  (dired-filename . "/Users/niels/.emacs.d/.git/hooks/.."))
+ ("/Users/niels/.emacs.d/.git/info/exclude" . 241)
+ ("/Users/niels/.emacs.d/.git/info/"
+  (dired-filename . "/Users/niels/.emacs.d/.git/info/.."))
+ ("/Users/niels/.emacs.d/.git/logs/refs/heads/"
+  (dired-filename . "/Users/niels/.emacs.d/.git/logs/refs/heads/.."))
+ ("/Users/niels/.emacs.d/.git/logs/refs/remotes/"
+  (dired-filename . "/Users/niels/.emacs.d/.git/logs/refs/remotes/.."))
+ ("/Users/niels/.emacs.d/.git/logs/refs/"
+  (dired-filename . "/Users/niels/.emacs.d/.git/logs/refs/.."))
+ ("/Users/niels/.emacs.d/.git/logs/"
+  (dired-filename . "/Users/niels/.emacs.d/.git/logs/.."))
+ ("/Users/niels/.emacs.d/.git/objects/"
+  (dired-filename . "/Users/niels/.emacs.d/.git/objects/00"))
+ ("/Users/niels/.emacs.d/.git/refs/heads/"
+  (dired-filename . "/Users/niels/.emacs.d/.git/refs/heads/master"))
+ ("/Users/niels/.emacs.d/.git/refs/"
+  (dired-filename . "/Users/niels/.emacs.d/.git/refs/.."))
+ ("/Users/niels/.emacs.d/.git/"
+  (dired-filename . "/Users/niels/.emacs.d/.git/config"))
  ("/Users/niels/.emacs.d/"
-  (dired-filename . "/Users/niels/.emacs.d/nec.emacs"))
- ("/Users/niels/.emacs.d/nec.emacs/"
-  (dired-filename . "/Users/niels/.emacs.d/nec.emacs/.."))
- ("/Users/niels/.emacs.d/init.el" . 2166)
+  (dired-filename . "/Users/niels/.emacs.d/.git"))
+ ("/Users/niels/" (dired-filename . "/Users/niels/.zshrc"))
+ ("/Users/niels/.zshrc" . 10776)
+ ("/Users/niels/.config/"
+  (dired-filename . "/Users/niels/.config/ns.emacs.d"))
+ ("/Users/niels/.emacs.d/config/tools/"
+  (dired-filename . "/Users/niels/.emacs.d/config/tools"))
+ ("/Users/niels/.emacs.d/lisp/" . 528)
+ ("/Users/niels/.config/ns.emacs.d/"
+  (dired-filename . "/Users/niels/.config/ns.emacs.d/lisp"))
+ ("/Users/niels/.config/ns.emacs.d/lisp/magits.el" . 1048)
+ ("/Users/niels/.config/ns.emacs.d/lisp/"
+  (dired-filename . "/Users/niels/.config/ns.emacs.d/lisp/magits.el"))
+ ("/Users/niels/.emacs.d/init.el" . 2262)
+ ("/Users/niels/.emacs.d/config/programming/"
+  (dired-filename . "/Users/niels/.emacs.d/config/programming/lsp.el"))
+ ("/Users/niels/.emacs.d/config/org/"
+  (dired-filename
+   . "/Users/niels/.emacs.d/config/org/org-babel-insert-src-block.el"))
  ("/Users/niels/.emacs.d/config/"
   (dired-filename . "/Users/niels/.emacs.d/config/core"))
- ("/Users/niels/.emacs.d/config/core/registers.el" . 1853)
  ("/Users/niels/.emacs.d/config/core/"
-  (dired-filename . "/Users/niels/.emacs.d/config/core/crux-load.el"))
+  (dired-filename . "/Users/niels/.emacs.d/config/core/magits.el"))
+ ("/Users/niels/.emacs.d/config/core/magits.el" . 996)
+ ("/Users/niels/.emacs.d/config/completion/"
+  (dired-filename
+   . "/Users/niels/.emacs.d/config/completion/company.el"))
+ ("/Users/niels/.emacs.d/config/programming/lsp.el" . 2591)
+ ("/Users/niels/Documents/Niels/"
+  (dired-filename . "/Users/niels/Documents/Niels/Sundhed"))
+ ("/Users/niels/org/" (dired-filename . "/Users/niels/org/niels"))
+ ("/Users/niels/org/niels/"
+  (dired-filename . "/Users/niels/org/niels/secret"))
+ ("/Users/niels/org/niels/secret/"
+  (dired-filename . "/Users/niels/org/niels/secret/login.org"))
+ ("/Users/niels/org/niels/secret/login.org" . 21408)
+ ("/Users/niels/Manualer/"
+  (dired-filename . "/Users/niels/Manualer/LaTeX"))
+ ("/Users/niels/Manualer/LaTeX/"
+  (dired-filename . "/Users/niels/Manualer/LaTeX/beamer"))
+ ("/Users/niels/.emacs.d/config/programming/yassip.el" . 1973)
+ ("/Users/niels/.emacs.d/config/programming/flychecks.el" . 913)
+ ("/Users/niels/org/emacs/Agenda-Danish.org" . 1340)
+ ("/Users/niels/org/emacs/"
+  (dired-filename . "/Users/niels/org/emacs/acal.tex"))
+ ("/Users/niels/.emacs.d/config/write/"
+  (dired-filename . "/Users/niels/.emacs.d/config"))
+ ("/Users/niels/Documents/Niels/ADHD/" . 38)
+ ("/Users/niels/.emacs.d/etc/"
+  (dired-filename . "/Users/niels/.emacs.d/etc/bookmarks"))
+ ("/Users/niels/Documents/Niels/Sundhed/medicin-status.org" . 995)
+ ("/Users/niels/Documents/"
+  (dired-filename . "/Users/niels/Documents/Niels"))
+ ("/Users/niels/.emacs.d/transient/"
+  (dired-filename . "/Users/niels/.emacs.d"))
+ ("/Users/niels/.emacs.d/eln-cache/"
+  (dired-filename . "/Users/niels/.emacs.d"))
+ ("/Users/niels/.emacs.d/config/core/registers.el" . 1853)
  ("/Users/niels/.emacs.d/config/core/crux-load.el" . 1292)
  ("/Users/niels/.emacs.d/config/core/packages.el" . 3089)
  ("/Users/niels/.emacs.d/early-init.el" . 3648)
  ("/Users/niels/.emacs.d/config/core/osx.el" . 1222)
- ("/Users/niels/org/" (dired-filename . "/Users/niels/org/niels"))
- ("/Users/niels/org/niels/"
-  (dired-filename . "/Users/niels/org/niels/buddy"))
  ("/Users/niels/org/niels/buddy/2004-01-22--april/"
   (dired-filename
    . "/Users/niels/org/niels/buddy/2004-01-22--april/april.org"))
@@ -29,8 +98,6 @@
  ("/Users/niels/Downloads/Dankort-3338012772-20250422.csv" . 116)
  ("/Users/niels/org/niels/buddy/2004-01-22--april/april.org" . 5044)
  ("/Users/niels/.emacs.d/lisp/bank-buddy.el" . 2736)
- ("/Users/niels/.emacs.d/lisp/"
-  (dired-filename . "/Users/niels/.emacs.d/lisp/bank-buddy-core.el"))
  ("/Users/niels/.emacs.d/lisp/bank-buddy-core.el" . 4116)
  ("/Users/niels/.emacs.d/lisp/bank-buddy-cat-mode.el" . 3248)
  ("/Users/niels/Desktop/"
@@ -41,8 +108,6 @@
   (dired-filename . "/Users/niels/org/agenda/udgifter"))
  ("/Users/niels/.emacs.d/config/core/keybindings.el" . 3742)
  ("/Users/niels/.emacs.d/config/core/settings.el" . 4269)
- ("/Users/niels/.emacs.d/config/programming/"
-  (dired-filename . "/Users/niels/.emacs.d/config"))
  ("/Users/niels/.emacs.d/config/ui/faces.el" . 2697)
  ("/Users/niels/.emacs.d/config/ui/interface.el" . 329)
  ("/Users/niels/.emacs.d/config/ui/theme.el" . 3293)
@@ -54,15 +119,10 @@
  ("/Users/niels/.emacs.d/config/ui/dashboard.el" . 1417)
  ("/Users/niels/.emacs.d/elpa/"
   (dired-filename . "/Users/niels/.emacs.d"))
- ("/Users/niels/.emacs.d/eln-cache/"
-  (dired-filename . "/Users/niels/.emacs.d/eln-cache/31_0_50-1f9fc3b1"))
  ("/Users/niels/.emacs.d/eln-cache/31_0_50-1f9fc3b1/"
   (dired-filename
    . "/Users/niels/.emacs.d/eln-cache/31_0_50-1f9fc3b1/treesit-37439c61-b063ad26.eln"))
  ("/Users/niels/.emacs.d/config/programming/treesitter.el" . 5713)
- ("/Users/niels/org/emacs/"
-  (dired-filename . "/Users/niels/org/emacs/Agenda-Danish.org"))
- ("/Users/niels/.emacs.d/config/programming/lsp.el" . 2346)
  ("/Users/niels/.emacs.d/config/programming/lua.el" . 671)
  ("/Users/niels/.emacs.d/config/programming/python.el" . 2128)
  ("/Users/niels/org/emacs/all-keys.org" . 47649)
@@ -118,8 +178,6 @@
  ("/Volumes/NSdata/dot.config/ethan.emacs.d/lisp/init-p-treesit.el"
   . 4625)
  ("/Users/niels/org/niels/xxx.org" . 471)
- ("/Users/niels/.config/"
-  (dired-filename . "/Users/niels/.config/nec20240725.emacs.d"))
  ("/Users/niels/.config/nec20240725.emacs.d/"
   (dired-filename . "/Users/niels/.config/nec20240725.emacs.d/lisp"))
  ("/Users/niels/.config/nec20240725.emacs.d/lisp/"
@@ -135,8 +193,6 @@
    . "/Volumes/NSdata/dot.config/hamacs.emacs.d/ha-config.el"))
  ("/Volumes/NSdata/dot.config/ethan.emacs.d/lisp/init-f-dired.el"
   . 1655)
- ("/Users/niels/.emacs.d/config/write/"
-  (dired-filename . "/Users/niels/.emacs.d/config/write/countw.el"))
  ("/Users/niels/.emacs.d/config/write/countw.el" . 3453)
  ("/Volumes/NSdata/dot.config/Rag.emacs.d/setup-files/setup-lsp.el"
   . 1660)
@@ -238,8 +294,6 @@
   (dired-filename . "/Users/niels/org/agenda/udgifter/benzin"))
  ("/Users/niels/.emacs.d/config/write/latex-extra.el" . 23429)
  ("/Users/niels/.emacs.d/config/write/pdf-tools.el" . 1773)
- ("/Users/niels/.emacs.d/config/org/"
-  (dired-filename . "/Users/niels/.emacs.d/config"))
  ("/Users/niels/.emacs.d/config/write/latex-ed.el" . 4284)
  ("/Users/niels/.emacs.d/config/write/latex-table-wizard.el" . 13977)
  ("/Users/niels/org/include/"
@@ -248,11 +302,7 @@
  ("/Users/niels/Qt/" . 968)
  ("/Users/niels/.emacs.d/config/hooks.el" . 202)
  ("/Users/niels/.emacs.d/config/aliases.el" . 702)
- ("/Users/niels/.emacs.d/config/tools/"
-  (dired-filename . "/Users/niels/.emacs.d/config"))
  ("/Users/niels/.emacs.d/config/write/init-latex.el" . 1294)
- ("/Users/niels/.config/ns.emacs.d/"
-  (dired-filename . "/Users/niels/.config/ns.emacs.d/snippets"))
  ("/Users/niels/.config/ns.emacs.d/snippets/"
   (dired-filename
    . "/Users/niels/.config/ns.emacs.d/snippets/python-mode"))
@@ -261,16 +311,11 @@
  ("/Users/niels/.emacs.d/snippets/python-mode/"
   (dired-filename
    . "/Users/niels/.emacs.d/snippets/python-mode/images"))
- ("/Users/niels/.emacs.d/etc/"
-  (dired-filename . "/Users/niels/.emacs.d/etc/bookmarks"))
  ("/Users/niels/source/"
   (dired-filename . "/Users/niels/source/artbollocks-mode"))
  ("/Volumes/" (dired-filename . "/Volumes/NSdata"))
  ("/Users/niels/.emacs.d/lisp/dropdown-list.el" . 11504)
  ("/Users/niels/.emacs.d/lisp/cleandesk.el" . 17486)
- ("/Users/niels/.config/ns.emacs.d/lisp/"
-  (dired-filename
-   . "/Users/niels/.config/ns.emacs.d/lisp/cleandesk.el"))
  ("/Users/niels/.emacs.d/var/auto-save-list/"
   (dired-filename . "/Users/niels/.emacs.d/var"))
  ("/Users/niels/.emacs.d/var/backupfiles/"
@@ -279,8 +324,6 @@
  ("/Users/niels/.emacs.d/config/write/lorumipsum.el" . 1217)
  ("/Users/niels/.config/ns.emacs.d/init.el" . 8475)
  ("/Users/niels/.emacs.d/config/calendar/"
-  (dired-filename . "/Users/niels/.emacs.d/config"))
- ("/Users/niels/.emacs.d/config/completion/"
   (dired-filename . "/Users/niels/.emacs.d/config"))
  ("/Users/niels/projekt/emacs/lisp/progmodes/"
   (dired-filename

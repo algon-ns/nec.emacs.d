@@ -75,6 +75,12 @@
   (add-hook 'tex-mode-hook 'lsp)
   (add-hook 'latex-mode-hook 'lsp))
 
+(use-package flycheck-eglot
+  :straight t
+  :after (flycheck eglot)
+  :config
+  (global-flycheck-eglot-mode 1))
+
 
 ;; optionally
 ;; (use-package lsp-ui :commands lsp-ui-mode)

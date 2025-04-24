@@ -14,6 +14,12 @@
  (rear-context-string . "92 Nov 13 17:55 ")
  (position . 92)
  (last-modified 26628 61229 892220 0))
+("niels (dok)"
+  (filename . "~/Documents/Niels/")
+  (front-context-string . "Sundhed\n  drwxr-")
+  (rear-context-string . "1K Apr  7 17:57 ")
+  (position . 843)
+  (last-modified 26632 53205 717964 0))
 ("org        "
  (filename . "~/org/")
  (front-context-string . "4eren\n  drwxrwxr")
@@ -32,9 +38,10 @@
  (rear-context-string . "0K Apr 17 01:41 ")
  (position . 260)
  (last-modified 26628 61277 832701 0))
- ("NSdata     "
-  (filename . "/Volumes/NSdata/")
-  (front-context-string . ".DocumentRevisio")
-  (rear-context-string . "88 Apr 19 11:47 ")
-  (position . 84)
-  (last-modified 26628 61370 442984 0)))
+("NSdata     "
+ (filename . "/Volumes/NSdata/")
+ (front-context-string . ".DocumentRevisio")
+ (rear-context-string . "88 Apr 19 11:47 ")
+ (position . 84)
+ (last-modified 26628 61370 442984 0))
+)

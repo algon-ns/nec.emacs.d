@@ -33,9 +33,9 @@
 
 ;;; Code:
 
-(setq tmpfilename (concat user-emacs-directory "snippets/"))
+(setopt tmpfilename  "~/.emacs.d/snippets/")
 
-(setq yas-snippet-dirs
+(setopt yas-snippet-dirs
       (list (concat tmpfilename "bibtex-mode/")
 	    (concat tmpfilename "emacs-lisp-mode/" )
 	    (concat tmpfilename "latex-mode/")  	
@@ -49,16 +49,7 @@
   :straight t
   :init (yas-global-mode 1))
 
-(defconst yasnippet-snippets-dir
-  (expand-file-name
-   "snippets"
-   (file-name-directory
-    ;; Copied from ‘f-this-file’ from f.el.
-    (cond
-     (load-in-progress load-file-name)
-     ((and (boundp 'byte-compile-current-file) byte-compile-current-file)
-      byte-compile-current-file)
-     (:else (buffer-file-name))))))
+(defconst yasnippet-snippets-dir "~/.emacs.d/snippets")
 
 ;;;###autoload
 (defun yasnippet-snippets-initialize ()

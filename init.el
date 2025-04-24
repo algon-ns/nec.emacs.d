@@ -56,6 +56,7 @@
 (require 'core/registers)
 (require 'core/crux-load)
 (require 'core/keybindings)
+(require 'core/magits)
 (require 'core/settings)
 (require 'core/files-dired)
 (if nec/measure-time (nec/stimer "core"))
@@ -93,6 +94,7 @@
 (require 'programming/lsp)
 (require 'programming/python)
 (require 'programming/web-dev)
+(require 'programming/flychecks)
 (require 'programming/yassip)
 (if nec/measure-time (nec/stimer "programming"))
 ;;
