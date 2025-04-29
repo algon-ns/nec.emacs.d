@@ -1,4 +1,5 @@
-((magit-commit
-  ("--all" "--allow-empty")
-  nil)
- (magit-dispatch nil))
+((magit-commit nil
+               ("--all")
+               ("--all" "--allow-empty"))
+ (magit-dispatch nil)
+ (magit-push nil))

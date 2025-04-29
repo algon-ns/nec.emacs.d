@@ -70,7 +70,7 @@
   (setq org-default-priority ?E) ;; If an item has no priority, it is considered [#E].
 
   (setq org-priority-faces
-		'((65 . "#BF616A")
+	'((65 . "#BF616A")
           (66 . "#EBCB8B")
           (67 . "#B48EAD")
           (68 . "#81A1C1")

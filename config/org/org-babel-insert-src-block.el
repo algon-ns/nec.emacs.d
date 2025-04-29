@@ -95,7 +95,7 @@
 			(kbd "C-. s")
 			'my-org-babel-insert-src-block)
 
-(if nec/measure-time (nec/stimer "org-babel-insert-src-block"))
+(if nec/measure-time (nec/sstimer "org/org-babel-insert-src-block"))
 
-(provide 'org-babel-insert-src-block)
+(provide 'org/org-babel-insert-src-block)
 ;;; org-babel-insert-src-block.el ends here

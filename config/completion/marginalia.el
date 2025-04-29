@@ -13,6 +13,13 @@
    '(marginalia-annotators-heavy marginalia-annotators-lv))
   :init
   (marginalia-mode))
+
+(use-package nerd-icons-completion
+  :after marginalia
+  :config
+  (nerd-icons-completion-mode)
+  (add-hook 'marginalia-mode-hook #'nerd-icons-completion-marginalia-setup))
+
 (if nec/measure-time (nec/sstimer "completion/marginella"))
 (provide 'completion/marginalia)
 ;;; marginalia.el ends here

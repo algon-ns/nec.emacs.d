@@ -27,6 +27,7 @@
  '(bm-face ((t (:background "#cba6f7" :foreground "#11111b"))))
  '(bm-persistent-face ((t (:background "#cba6f7" :foreground "#11111b"))))
  '(diary ((t (:foreground "#00d3d0"))))
+ '(posframe-border ((t (:background "#cba6f7"))))
  '(fill-column-indicator ((t (:foreground "#cba6f7" :style dotted))))
  '(flycheck-error ((t (:underline (:color "#cba6f7" :style line) :weight normal))))
  '(flycheck-info ((t (:underline (:color "#b4befe" :style line) :weight normal))))

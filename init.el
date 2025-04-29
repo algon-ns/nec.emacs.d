@@ -52,6 +52,7 @@
 (if nec/measure-time (nec/header "start core"))
 (require 'core/packages) 
 ;;(load (expand-file-name "core/packages" config-dir))
+(require 'core/libraries)
 (require 'core/osx)
 (require 'core/registers)
 (require 'core/crux-load)
@@ -73,18 +74,22 @@
 (if nec/measure-time (nec/stimer "ui"))
 ;;
 (if nec/measure-time (nec/header "start completion"))
+(require 'completion/nerd-icons-compl)
 (require 'completion/company)
 (require 'completion/vertico)
 (require 'completion/marginalia)
 (require 'completion/orderless)
+(require 'completion/ivy-counsel)
 (if nec/measure-time (nec/stimer "completion"))
 ;;
 (if nec/measure-time (nec/header "start org"))
 (require 'org/org-ns)
 (require 'org/org-doct)
 (require 'org/org-roam-load)
+(require 'org/org-babel-insert-src-block)
 (require 'org/org-subs)
 (require 'org/org-star)
+(require 'org/org-table)
 (require 'org/org-journal)
 (if nec/measure-time (nec/stimer "org"))
 ;;
@@ -105,6 +110,7 @@
 (if nec/measure-time (nec/stimer "calendar"))
 ;;
 (if nec/measure-time (nec/header "start write"))
+(require 'write/export-org )
 (require 'write/pdf-tools)
 (require 'write/countw)
 ;; (require 'write/init-latex)
@@ -125,8 +131,11 @@
 (require 'tools/ligature)
 (if nec/measure-time (nec/stimer "tools"))
 ;;
+(if nec/measure-time (nec/header "fun"))
 
 
+(if nec/measure-time (nec/stimer "fun"))
+;;
 
 ;;
 (if nec/measure-time (nec/header "misc"))

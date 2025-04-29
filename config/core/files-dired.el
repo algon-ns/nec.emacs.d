@@ -3,7 +3,7 @@
 (use-package nerd-icons-dired
   :straight t
   :after nerd-icons
-  :hook dired-mode)
+  :hook (dired-mode . nerd-icons-dired-mode))
 
 (setq insert-directory-program (concat homebrew-prefix "bin/gls") dired-use-ls-dired t)
 
