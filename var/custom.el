@@ -18,7 +18,10 @@
      "b9c002dc827fb75b825da3311935c9f505d48d7ee48f470f0aa7ac5d2a595ab2"
      "90185f1d8362727f2aeac7a3d67d3aec789f55c10bb47dada4eefb2e14aa5d01"
      "b1791a921c4f38cb966c6f78633364ad880ad9cf36eef01c60982c54ec9dd088"
-     default)))
+     default))
+ '(image-load-path
+   '("/Applications/Emacs.app/Contents/Resources/etc/images/" "~/images/"
+     load-path "~/emojis/emojione-v2.2.6-22")))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -27,7 +30,6 @@
  '(bm-face ((t (:background "#cba6f7" :foreground "#11111b"))))
  '(bm-persistent-face ((t (:background "#cba6f7" :foreground "#11111b"))))
  '(diary ((t (:foreground "#00d3d0"))))
- '(posframe-border ((t (:background "#cba6f7"))))
  '(fill-column-indicator ((t (:foreground "#cba6f7" :style dotted))))
  '(flycheck-error ((t (:underline (:color "#cba6f7" :style line) :weight normal))))
  '(flycheck-info ((t (:underline (:color "#b4befe" :style line) :weight normal))))
@@ -37,6 +39,7 @@
  '(line-number-current-line ((t (:foreground "#b4befe" :weight bold))))
  '(lsp-ui-doc-background ((t (:background "#1e1e2e"))))
  '(lsp-ui-doc-header ((t (:background "#cba6f7" :foreground "#1e1e2e" :weight bold))))
+ '(posframe-border ((t (:background "#cba6f7"))))
  '(treemacs-directory-face ((t (:foreground "#89b4fa"))))
  '(treemacs-git-added-face ((t (:foreground "#cba6f7" :weight bold))))
  '(treemacs-git-modified-face ((t (:foreground "#94e2d5" :weight bold))))

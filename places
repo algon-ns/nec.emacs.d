@@ -1,118 +1,41 @@
 ;;; -*- coding: utf-8; mode: lisp-data -*-
-(("/Users/niels/org/" (dired-filename . "/Users/niels/org/niels"))
+(("/Users/niels/org/agenda/aftaler.org" . 217)
+ ("/Users/niels/org/" (dired-filename . "/Users/niels/org/niels"))
  ("/Users/niels/org/niels/"
-  (dired-filename . "/Users/niels/org/niels/secret"))
- ("/Users/niels/org/niels/priser1950-2025.org" . 1967)
- ("/Users/niels/org/emacs/"
-  (dired-filename . "/Users/niels/org/emacs/macal-conf.org"))
- ("/Users/niels/.config/"
-  (dired-filename . "/Users/niels/.config/ns.emacs.d"))
- ("/Users/niels/.config/ns.emacs.d/"
-  (dired-filename . "/Users/niels/.config/ns.emacs.d/init.el"))
- ("/Users/niels/.config/ns.emacs.d/init.el" . 8233)
- ("/Users/niels/.config/ns.emacs.d/lisp/"
-  (dired-filename
-   . "/Users/niels/.config/ns.emacs.d/lisp/org-babel-insert-src-block.el"))
- ("/Users/niels/.emacs.d/config/programming/"
-  (dired-filename
-   . "/Users/niels/.emacs.d/config/programming/flychecks.el"))
- ("/Users/niels/.emacs.d/config/org/org-ns.el" . 8320)
- ("/Users/niels/.emacs.d/config/org/org-doct.el" . 5174)
- ("/Users/niels/.emacs.d/config/org/org-roam-load.el" . 3515)
- ("/Users/niels/.config/ns.emacs.d/lisp/org-babel-insert-src-block.el"
-  . 2473)
- ("/Users/niels/" (dired-filename . "/Users/niels/org"))
+  (dired-filename . "/Users/niels/org/niels/archive"))
+ ("/Users/niels/org/niels/MobiltBredbaand.org" . 2587)
  ("/Users/niels/.emacs.d/"
   (dired-filename . "/Users/niels/.emacs.d/config"))
- ("/Users/niels/.emacs.d/config/"
-  (dired-filename . "/Users/niels/.emacs.d/config/org"))
- ("/Users/niels/.emacs.d/config/org/"
-  (dired-filename
-   . "/Users/niels/.emacs.d/config/org/org-babel-insert-src-block.el"))
- ("/Users/niels/.emacs.d/init.el" . 3133)
- ("/Users/niels/.emacs.d/config/org/org-babel-insert-src-block.el"
-  . 3052)
- ("/Users/niels/Documents/"
-  (dired-filename . "/Users/niels/Documents/ÆldreSagen"))
- ("/Users/niels/Documents/ÆldreSagen/"
-  (dired-filename . "/Users/niels/Documents/ÆldreSagen/Årsmøde2024"))
- ("/Users/niels/Documents/ÆldreSagen/Brugervejledninger/"
-  (dired-filename
-   . "/Users/niels/Documents/ÆldreSagen/Brugervejledninger/Medlemmer.pages"))
- ("/Users/niels/.emacs.d/config/completion/"
-  (dired-filename
-   . "/Users/niels/.emacs.d/config/completion/nerd-icons-compl.el"))
- ("/Users/niels/.emacs.d/config/completion/nerd-icons-compl.el" . 1117)
- ("/Users/niels/.emacs.d/config/completion/marginalia.el" . 735)
+ ("/Users/niels/.emacs.d/config/core/settings.el" . 4146)
+ ("/Users/niels/.emacs.d/config/core/osx.el" . 2351)
  ("/Users/niels/.emacs.d/config/core/"
-  (dired-filename . "/Users/niels/.emacs.d/config"))
- ("/Users/niels/.emacs.d/etc/"
+  (dired-filename . "/Users/niels/.emacs.d/config/core/.."))
+ ("/Users/niels/.emacs.d/config/"
+  (dired-filename . "/Users/niels/.emacs.d/config/ui"))
+ ("/Users/niels/.emacs.d/config/ui/"
+  (dired-filename . "/Users/niels/.emacs.d/config/ui/theme.el"))
+ ("/Users/niels/.emacs.d/config/ui/theme.el" . 2726)
+ ("/Users/niels/.emacs.d/early-init.el" . 3696)
+ ("/Users/niels/.emacs.d/images/"
   (dired-filename . "/Users/niels/.emacs.d"))
- ("/Users/niels/.emacs.d/config/completion/ivy-counsel.el" . 2282)
- ("/Users/niels/Data/"
-  (dired-filename . "/Users/niels/Data/dot.config"))
- ("/Users/niels/Data/dot.config/aculich.emacs.d/etc/unannoy.el" . 1821)
- ("/Users/niels/Data/dot.config/aculich.emacs.d/etc/feed-setup.el"
-  . 197)
- ("/Users/niels/Data/dot.config/aculich.emacs.d/etc/"
-  (dired-filename . "/Users/niels/Data/dot.config/aculich.emacs.d"))
- ("/Users/niels/Data/dot.config/aculich.emacs.d/lisp/org-settings.el"
-  . 246)
- ("/Users/niels/Data/dot.config/aculich.emacs.d/lisp/org-smart-capture.el"
-  . 7451)
- ("/Users/niels/Data/dot.config/aculich.emacs.d/lisp/lunaryorn-osx.el"
-  . 1836)
- ("/Users/niels/Data/dot.config/aculich.emacs.d/lisp/"
+ ("/Users/niels/.emacs.d/emojis/emojione-v2.2.6-22/"
   (dired-filename
-   . "/Users/niels/Data/dot.config/aculich.emacs.d/lisp/lunaryorn-osx.el"))
- ("/Users/niels/Data/dot.config/aculich.emacs.d/"
+   . "/Users/niels/.emacs.d/emojis/emojione-v2.2.6-22/1f192.png"))
+ ("/Users/niels/.emacs.d/emojis/"
+  (dired-filename . "/Users/niels/.emacs.d"))
+ ("/Users/niels/.emacs.d/config/core/packages.el" . 3092)
+ ("/Users/niels/.emacs.d/init.el" . 2384)
+ ("/Users/niels/.emacs.d/config/core/libraries.el" . 1193)
+ ("/Users/niels/" (dired-filename . "/Users/niels/.config"))
+ ("/Users/niels/.config/"
+  (dired-filename . "/Users/niels/.config/brihad.emacs.d"))
+ ("/Users/niels/.config/brihad.emacs.d/lisp/erc-libera-sasl/"
+  (dired-filename . "/Users/niels/.config/brihad.emacs.d/lisp"))
+ ("/Users/niels/.config/brihad.emacs.d/lisp/vertico-extensions/"
+  (dired-filename . "/Users/niels/.config/brihad.emacs.d/lisp"))
+ ("/Users/niels/.config/brihad.emacs.d/lisp/"
+  (dired-filename . "/Users/niels/.config/brihad.emacs.d"))
+ ("/Users/niels/.config/brihad.emacs.d/"
   (dired-filename
-   . "/Users/niels/Data/dot.config/aculich.emacs.d/lisp"))
- ("/Users/niels/Data/dot.config/clover.emacs.d/lisp/keyboard-setting.el"
-  . 2338)
- ("/Users/niels/Data/dot.config/clover.emacs.d/lisp/lang/"
-  (dired-filename
-   . "/Users/niels/Data/dot.config/clover.emacs.d/lisp/lang/python-setting.el"))
- ("/Users/niels/Data/dot.config/clover.emacs.d/lisp/"
-  (dired-filename
-   . "/Users/niels/Data/dot.config/clover.emacs.d/lisp/lang"))
- ("/Users/niels/Data/dot.config/clover.emacs.d/transient/"
-  (dired-filename . "/Users/niels/Data/dot.config/clover.emacs.d"))
- ("/Users/niels/Data/dot.config/clover.emacs.d/request/"
-  (dired-filename . "/Users/niels/Data/dot.config/clover.emacs.d"))
- ("/Users/niels/Data/dot.config/clover.emacs.d/img/"
-  (dired-filename . "/Users/niels/Data/dot.config/clover.emacs.d"))
- ("/Users/niels/Data/dot.config/clover.emacs.d/doc/"
-  (dired-filename
-   . "/Users/niels/Data/dot.config/clover.emacs.d/doc/Functions.org"))
- ("/Users/niels/Data/dot.config/clover.emacs.d/"
-  (dired-filename . "/Users/niels/Data/dot.config/clover.emacs.d/doc"))
- ("/Users/niels/Data/dot.config/DarwinAward.emacs.d/config.org"
-  . 16039)
- ("/Users/niels/Data/dot.config/DarwinAward.emacs.d/"
-  (dired-filename
-   . "/Users/niels/Data/dot.config/DarwinAward.emacs.d/config.org"))
- ("/Users/niels/Data/dot.config/ethan.emacs.d/lisp/init-f-dired.el"
-  . 2658)
- ("/Users/niels/Data/dot.config/ethan.emacs.d/lisp/init-l-markdown.el"
-  . 3525)
- ("/Users/niels/Data/dot.config/ethan.emacs.d/lisp/"
-  (dired-filename
-   . "/Users/niels/Data/dot.config/ethan.emacs.d/lisp/init-r-roam.el"))
- ("/Users/niels/Data/dot.config/ethan.emacs.d/"
-  (dired-filename . "/Users/niels/Data/dot.config/ethan.emacs.d/lisp"))
- ("/Users/niels/Data/dot.config/"
-  (dired-filename . "/Users/niels/Data/dot.config/karthink.emacs.d"))
- ("/Users/niels/Data/dot.config/karthink.emacs.d/"
-  (dired-filename
-   . "/Users/niels/Data/dot.config/karthink.emacs.d/lisp"))
- ("/Users/niels/Data/dot.config/karthink.emacs.d/lisp/setup-calc.el"
-  . 1587)
- ("/Users/niels/Data/dot.config/karthink.emacs.d/lisp/"
-  (dired-filename
-   . "/Users/niels/Data/dot.config/karthink.emacs.d/lisp/setup-org.el"))
- ("/Users/niels/Data/dot.config/karthink.emacs.d/lisp/setup-org.el"
-  . 15775)
- ("/Users/niels/org/niels/secret/"
-  (dired-filename . "/Users/niels/org/niels/secret/login.org"))
- ("/Users/niels/org/niels/secret/login.org" . 2934))
+   . "/Users/niels/.config/brihad.emacs.d/configuration.org"))
+ ("/Users/niels/.config/brihad.emacs.d/configuration.org" . 8284))

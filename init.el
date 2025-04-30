@@ -51,7 +51,6 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (if nec/measure-time (nec/header "start core"))
 (require 'core/packages) 
-;;(load (expand-file-name "core/packages" config-dir))
 (require 'core/libraries)
 (require 'core/osx)
 (require 'core/registers)
