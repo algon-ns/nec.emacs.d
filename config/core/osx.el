@@ -32,25 +32,25 @@
   (use-package osx-lib
     :straight t)
   
-  (setopt ns-pop-up-frames nil            ; Don't pop up new frames from the workspace
-	  ns-use-thin-smoothing t	  
-	  ;; sane trackpad/mouse scroll settings
-	  mac-redisplay-dont-reset-vscroll t
-	  mac-mouse-wheel-smooth-scroll t
-	  ;; mouse-wheel-scroll-amount '(5 ((shift) . 2))  ; one line at a time
-	  ;; mouse-wheel-progressive-speed nil             ; don't accelerate scrolling
-	  ;; Curse Lion and its sudden but inevitable fullscreen mode!
-	  ;; NOTE Meaningless to railwaycat's emacs-mac build
-	  ns-use-native-fullscreen nil
-	  ;; Don't open files from the workspace in a new frame
-	  mac-option-modifier 'meta       ; Option is simply the natural Meta
-	  mac-command-modifier 'super     ; But command is a lot easier to hit
-	  mac-control-modifier 'control   ; control as... control
-	  mac-right-command-modifier 'left
-	  mac-right-option-modifier 'none ; Keep right option for accented input
-	  mac-left-options-modifier 'meta
-	  ;; Just in case we ever need these keys
-	  mac-function-modifier 'hyper))
+(setopt ns-pop-up-frames nil            ; Don't pop up new frames from the workspace
+        ns-use-thin-smoothing t	  
+	;; sane trackpad/mouse scroll settings
+	mac-redisplay-dont-reset-vscroll t
+	;; mac-mouse-wheel-smooth-scroll t
+	;; mouse-wheel-scroll-amount '(5 ((shift) . 2))  ; one line at a time
+	;; mouse-wheel-progressive-speed nil             ; don't accelerate scrolling
+	;; Curse Lion and its sudden but inevitable fullscreen mode!
+	;; NOTE Meaningless to railwaycat's emacs-mac build
+	ns-use-native-fullscreen nil
+	;; Don't open files from the workspace in a new frame
+	mac-option-modifier 'meta       ; Option is simply the natural Meta
+	mac-command-modifier 'super     ; But command is a lot easier to hit
+	mac-control-modifier 'control   ; control as... control
+	mac-right-command-modifier 'left
+	mac-right-option-modifier 'none ; Keep right option for accented input
+	mac-left-options-modifier 'meta
+	;; Just in case we ever need these keys
+	mac-function-modifier 'hyper))
 ;; Mac specific
 (when macOS
   (progn

@@ -43,8 +43,6 @@
 	    (concat tmpfilename "org-ai-mode/")
 	    (concat tmpfilename "python-mode/")))
 
-
-
 (use-package yasnippet
   :straight t
   :init (yas-global-mode 1))

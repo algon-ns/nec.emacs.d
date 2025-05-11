@@ -138,7 +138,7 @@
 (add-hook 'java-ts-mode-hook #'(lambda () (treesit-parser-create 'java)))
 
 
-(if nec/measure-time (nec/stimer "programming/treesitter"))
+(if nec/measure-time (nec/sstimer "programming/treesitter"))
 
 (provide 'programming/treesitter)
 ;;; init-treestiiter.el ends here

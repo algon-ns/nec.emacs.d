@@ -1,41 +1,113 @@
 ;;; -*- coding: utf-8; mode: lisp-data -*-
-(("/Users/niels/org/agenda/aftaler.org" . 217)
- ("/Users/niels/org/" (dired-filename . "/Users/niels/org/niels"))
- ("/Users/niels/org/niels/"
-  (dired-filename . "/Users/niels/org/niels/archive"))
- ("/Users/niels/org/niels/MobiltBredbaand.org" . 2587)
+(("/Users/niels/org/agenda/møder.org" . 11972)
+ ("/Users/niels/org/agenda/aftaler.org" . 9111)
+ ("/Users/niels/.emacs.d/var/diary" . 1677)
  ("/Users/niels/.emacs.d/"
   (dired-filename . "/Users/niels/.emacs.d/config"))
- ("/Users/niels/.emacs.d/config/core/settings.el" . 4146)
- ("/Users/niels/.emacs.d/config/core/osx.el" . 2351)
- ("/Users/niels/.emacs.d/config/core/"
-  (dired-filename . "/Users/niels/.emacs.d/config/core/.."))
  ("/Users/niels/.emacs.d/config/"
-  (dired-filename . "/Users/niels/.emacs.d/config/ui"))
- ("/Users/niels/.emacs.d/config/ui/"
-  (dired-filename . "/Users/niels/.emacs.d/config/ui/theme.el"))
- ("/Users/niels/.emacs.d/config/ui/theme.el" . 2726)
- ("/Users/niels/.emacs.d/early-init.el" . 3696)
- ("/Users/niels/.emacs.d/images/"
-  (dired-filename . "/Users/niels/.emacs.d"))
- ("/Users/niels/.emacs.d/emojis/emojione-v2.2.6-22/"
+  (dired-filename . "/Users/niels/.emacs.d/config/completion"))
+ ("/Users/niels/.emacs.d/config/completion/"
   (dired-filename
-   . "/Users/niels/.emacs.d/emojis/emojione-v2.2.6-22/1f192.png"))
- ("/Users/niels/.emacs.d/emojis/"
-  (dired-filename . "/Users/niels/.emacs.d"))
- ("/Users/niels/.emacs.d/config/core/packages.el" . 3092)
- ("/Users/niels/.emacs.d/init.el" . 2384)
- ("/Users/niels/.emacs.d/config/core/libraries.el" . 1193)
- ("/Users/niels/" (dired-filename . "/Users/niels/.config"))
+   . "/Users/niels/.emacs.d/config/completion/ivy-counsel.el"))
+ ("/Users/niels/.emacs.d/config/completion/ivy-counsel.el" . 1600)
  ("/Users/niels/.config/"
-  (dired-filename . "/Users/niels/.config/brihad.emacs.d"))
- ("/Users/niels/.config/brihad.emacs.d/lisp/erc-libera-sasl/"
-  (dired-filename . "/Users/niels/.config/brihad.emacs.d/lisp"))
- ("/Users/niels/.config/brihad.emacs.d/lisp/vertico-extensions/"
-  (dired-filename . "/Users/niels/.config/brihad.emacs.d/lisp"))
- ("/Users/niels/.config/brihad.emacs.d/lisp/"
-  (dired-filename . "/Users/niels/.config/brihad.emacs.d"))
- ("/Users/niels/.config/brihad.emacs.d/"
+  (dired-filename . "/Users/niels/.config/nec.emacs.d"))
+ ("/Users/niels/.config/nec.emacs.d/"
+  (dired-filename . "/Users/niels/.config/nec.emacs.d/straight"))
+ ("/Users/niels/.config/nec.emacs.d/straight/"
+  (dired-filename . "/Users/niels/.config/nec.emacs.d/straight/repos"))
+ ("/Users/niels/.config/nec.emacs.d/straight/repos/"
   (dired-filename
-   . "/Users/niels/.config/brihad.emacs.d/configuration.org"))
- ("/Users/niels/.config/brihad.emacs.d/configuration.org" . 8284))
+   . "/Users/niels/.config/nec.emacs.d/straight/repos/poetry.el"))
+ ("/Users/niels/.config/nec.emacs.d/straight/repos/poetry.el/"
+  (dired-filename
+   . "/Users/niels/.config/nec.emacs.d/straight/repos/poetry.el/poetry.el"))
+ ("/Users/niels/.config/nec.emacs.d/straight/repos/poetry.el/poetry.el"
+  . 1699)
+ ("/Users/niels/.emacs.d/straight/repos/dired-hacks/"
+  (dired-filename
+   . "/Users/niels/.emacs.d/straight/repos/dired-hacks/dired-avfs.el"))
+ ("/Users/niels/.emacs.d/straight/repos/"
+  (dired-filename . "/Users/niels/.emacs.d/straight/repos/dired-hacks"))
+ ("/Users/niels/.emacs.d/straight/"
+  (dired-filename . "/Users/niels/.emacs.d/straight/repos"))
+ ("/Users/niels/projekt/"
+  (dired-filename . "/Users/niels/projekt/emacs"))
+ ("/Users/niels/projekt/emacs/"
+  (dired-filename . "/Users/niels/projekt/emacs/lisp"))
+ ("/Users/niels/projekt/emacs/lisp/"
+  (dired-filename . "/Users/niels/projekt/emacs/lisp/dired.el"))
+ ("/Users/niels/projekt/emacs/lisp/dired.el" . 203689)
+ ("/Users/niels/.emacs.d/snippets/applescript-mode/"
+  (dired-filename . "/Users/niels/.emacs.d/snippets"))
+ ("/Users/niels/.emacs.d/snippets/"
+  (dired-filename . "/Users/niels/.emacs.d/snippets/org-mode"))
+ ("/Users/niels/.emacs.d/snippets/org-mode/"
+  (dired-filename . "/Users/niels/.emacs.d/snippets/org-mode/møde"))
+ ("/Users/niels/.emacs.d/snippets/org-mode/møde" . 231)
+ ("/Users/niels/.emacs.d/etc/"
+  (dired-filename . "/Users/niels/.emacs.d/etc/private.el"))
+ ("/Users/niels/.emacs.d/etc/private.el" . 62)
+ ("/Users/niels/.emacs.d/config/ui/setup-private-file.el" . 2000)
+ ("/Users/niels/.emacs.d/config/ui/"
+  (dired-filename . "/Users/niels/.emacs.d/config"))
+ ("/Users/niels/.emacs.d/init.el" . 1916)
+ ("/Users/niels/.config/nec.emacs.d/config/"
+  (dired-filename . "/Users/niels/.config/nec.emacs.d/config/ui"))
+ ("/Users/niels/.config/nec.emacs.d/config/ui/"
+  (dired-filename
+   . "/Users/niels/.config/nec.emacs.d/config/ui/setup-private-file.el"))
+ ("/Users/niels/.emacs.d/templates/"
+  (dired-filename . "/Users/niels/.emacs.d/templates/10:.*.el"))
+ ("/Users/niels/.emacs.d/templates/10:.*.el" . 351)
+ ("/Users/niels/.emacs.d/config/tools/"
+  (dired-filename . "/Users/niels/.emacs.d/config/tools/flycheck.el"))
+ ("/Users/niels/.emacs.d/config/tools/flycheck.el" . 563)
+ ("/Users/niels/.emacs.d/early-init.el" . 2758)
+ ("/Users/niels/.emacs.d/config/core/settings.el" . 2372)
+ ("/Users/niels/.emacs.d/config/core/registers.el" . 1572)
+ ("/Users/niels/.emacs.d/config/core/"
+  (dired-filename . "/Users/niels/.emacs.d/config/core/registers.el"))
+ ("/Users/niels/.emacs.d/config/core/private.el" . 1787)
+ ("/Users/niels/Documents/"
+  (dired-filename . "/Users/niels/Documents/Seniorraad"))
+ ("/Users/niels/Documents/Seniorraad/"
+  (dired-filename . "/Users/niels/Documents/Seniorraad/SRhoeringssvar"))
+ ("/Users/niels/Documents/Seniorraad/SRhoeringssvar/"
+  (dired-filename
+   . "/Users/niels/Documents/Seniorraad/SRhoeringssvar/kompressionshjælpemidler-20250519.tex"))
+ ("/Users/niels/Documents/Seniorraad/SRhoeringssvar/kompressionshjælpemidler-20250519.tex"
+  . 7506)
+ ("/Users/niels/Documents/Seniorraad/SRhoeringssvar/kompressionshjælpemidler-20250519.org"
+  . 1538)
+ ("/Users/niels/Library/Containers/com.apple.mail/Data/Library/Mail Downloads/7DAB12F4-96FD-4777-A072-25A05B2136F0/SleepSession-09-05-2025.json"
+  . 7566)
+ ("/Users/niels/org/" (dired-filename . "/Users/niels/org/niels"))
+ ("/Users/niels/org/niels/"
+  (dired-filename . "/Users/niels/org/niels/secret"))
+ ("/Users/niels/org/niels/secret/" . 1308)
+ ("/Users/niels/.emacs.d/config/programming/"
+  (dired-filename . "/Users/niels/.emacs.d/config/programming/lsp.el"))
+ ("/Users/niels/.emacs.d/config/programming/lsp.el" . 2834)
+ ("/Users/niels/Documents/Niels/"
+  (dired-filename . "/Users/niels/Documents/Niels/Sundhed"))
+ ("/Users/niels/org/niels/secret/login.org" . 2914)
+ ("/Users/niels/Documents/Niels/Bog/Kapitler/01_start/fødsel.org"
+  . 1145)
+ ("/Users/niels/org/bog/Kapitler/juletraet.tex" . 90)
+ ("/Users/niels/org/bog/Kapitler/"
+  (dired-filename . "/Users/niels/org/bog/Kapitler/juletraet.tex"))
+ ("/Users/niels/org/bog/"
+  (dired-filename . "/Users/niels/org/bog/Kapitler"))
+ ("/Users/niels/.emacs.d/templates/25:TeX.org" . 520)
+ ("/Users/niels/.emacs.d/templates/10:.*.tex" . 230)
+ ("/Users/niels/" (dired-filename . "/Users/niels/.config"))
+ ("/Users/niels/.config/nec20240725.emacs.d/"
+  (dired-filename . "/Users/niels/.config"))
+ ("/Users/niels/.config/ns.emacs.d/"
+  (dired-filename . "/Users/niels/.config/ns.emacs.d/.cache"))
+ ("/Users/niels/.config/nec2024.emacs.d/README.md" . 2)
+ ("/Users/niels/.config/nec2024.emacs.d/"
+  (dired-filename . "/Users/niels/.config/nec2024.emacs.d/README.md"))
+ ("/Users/niels/.emacs.d/var/"
+  (dired-filename . "/Users/niels/.emacs.d/var/diary")))

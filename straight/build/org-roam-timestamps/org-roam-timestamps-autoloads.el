@@ -10,7 +10,7 @@
 ;;; Generated autoloads from org-roam-timestamps.el
 
 (defvar org-roam-timestamps-mode nil "\
-Non-nil if org-roam-timestamps mode is enabled.
+Non-nil if Org-Roam-Timestamps mode is enabled.
 See the `org-roam-timestamps-mode' command
 for a description of this minor mode.
 Setting this variable directly does not take effect;
@@ -21,7 +21,7 @@ or call the function `org-roam-timestamps-mode'.")
 Automatically add creation and modification timestamps to org-roam nodes.
 
 This is a global minor mode.  If called interactively, toggle the
-`org-roam-timestamps mode' mode.  If the prefix argument is positive,
+`Org-Roam-Timestamps mode' mode.  If the prefix argument is positive,
 enable the mode, and if it is zero or negative, disable the mode.
 
 If called from Lisp, toggle the mode if ARG is `toggle'.  Enable the

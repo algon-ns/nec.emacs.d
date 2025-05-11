@@ -51,12 +51,28 @@
   ;; set prefix for lsp-command-keymap (few alternatives - "C-l", "C-c l")
   (setq lsp-keymap-prefix "C-c l")
   :hook (((c-mode c++-mode java-mode json-mode python-mode typescript-mode
-				  xml-mode ruby-mode rust-mode php-mode eslint-mode latex-mode) . lsp))
+		  xml-mode ruby-mode rust-mode php-mode eslint-mode latex-mode) . lsp))
+    :config
+  (setopt lsp-auto-guess-root t)
+  (setopt lsp-log-io nil)
+  (setopt lsp-restart 'auto-restart)
+  (setopt lsp-enable-symbol-highlighting nil)
+  (setopt lsp-enable-on-type-formatting nil)
+  (setopt lsp-signature-auto-activate nil)
+  (setopt lsp-signature-render-documentation nil)
+  (setopt lsp-eldoc-hook nil)
+  (setopt lsp-modeline-code-actions-enable nil)
+  (setopt lsp-modeline-diagnostics-enable nil)
+  (setopt lsp-headerline-breadcrumb-enable nil)
+  (setopt lsp-semantic-tokens-enable nil)
+  (setopt lsp-enable-folding nil)
+  (setopt lsp-enable-imenu nil)
+  (setopt lsp-enable-snippet nil)
+  (setopt read-process-output-max (* 1024 1024)) ;; 1MB
+  (setopt lsp-idle-delay 0.5)
   :custom
   (lsp-clients-typescript-server-args '("--stdio" "--tsserver-log-file" "/dev/stderr"))
-  (lsp-enable-folding nil)
   (lsp-enable-links nil)
-  (lsp-enable-snippet nil)
   (lsp-prefer-flymake nil)
   (lsp-session-file "~/var/lsp-session-v1")
   (lsp-restart 'auto-restart)
@@ -66,10 +82,6 @@
 				  :flavor melpa
 				  :host github
 				  :repo "ROCKTAKEY/lsp-latex"))
-(with-eval-after-load "tex-mode"
-  (add-hook 'tex-mode-hook 'lsp)
-  (add-hook 'latex-mode-hook 'lsp))
-
 
 (with-eval-after-load "tex-mode"
   (add-hook 'tex-mode-hook 'lsp)
@@ -81,7 +93,6 @@
   :config
   (global-flycheck-eglot-mode 1))
 
-
 ;; optionally
 ;; (use-package lsp-ui :commands lsp-ui-mode)
 ;; if you are ivy user
@@ -92,7 +103,7 @@
 (use-package dap-mode)
 ;; (use-package dap-LANGUAGE) to load the dap adapter for your language
 
-(if nec/measure-time (nec/stimer "programming/lsp"))
+(if nec/measure-time (nec/sstimer "programming/lsp"))
 
 (provide 'programming/lsp)
 ;;; init-lsp.el ends here

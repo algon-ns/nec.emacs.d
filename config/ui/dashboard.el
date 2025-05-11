@@ -29,7 +29,7 @@
                              (registers . "nf-oct-database")))
   (dashboard-set-file-icons t)
   (dashboard-center-content t)
-  (dashboard-banner-logo-title "I use emacs btw 🤓☝👣🏹")
+  (dashboard-banner-logo-title "I use emacs btw 🤓👣🏹")
   (dashboard-startup-banner (expand-file-name "images/ringe.png" user-emacs-directory))
   (dashboard-footer-messages '("vim's kinda cute, but I need much more."))
   (dashboard-footer-icon

@@ -1,5 +1,0 @@
-# -*- mode: snippet -*-
-# name: LATEX
-# key: >LAH
-# --
-#+LaTeX_HEADER: $1

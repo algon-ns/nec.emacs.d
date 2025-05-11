@@ -119,6 +119,23 @@ If no region is selected, send the entire buffer."
 (global-set-key (kbd "C-<return>") #'sardine/eval-block)
 (global-set-key (kbd "C-.") #'sardine/stop-code)
 
+;; delete all but current and Dashboard* buffers
+(defun delete-all-but-current-and-dashboard ()
+"Delete all buffers except the current buffer and the *Dashboard* buffer."
+(interactive)
+(let ((current-buffer (current-buffer))
+      (dashboard-buffer (get-buffer-create "*Dashboard*"))) ; Ensure *Dashboard* exists
+  (dolist (buffer (buffer-list))
+    (unless (or (eq buffer current-buffer)
+                (eq buffer dashboard-buffer))
+      (kill-buffer buffer)))
+  (switch-to-buffer current-buffer))) ; Switch to current buffer
+(global-set-key (kbd "C-<") #'delete-all-but-current-and-dashboard)
+
+
+
+
+
 (if nec/measure-time (nec/sstimer "tools/functions"))
 (provide 'tools/functions)
 ;;; functions.el ends here

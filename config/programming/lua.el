@@ -22,7 +22,5 @@
                       (file-name-as-directory user-cache-directory)
                       "EmmyLua-LanguageServer/")))
 
-
-
 (if nec/measure-time (nec/sstimer "programming/lua"))
 (provide 'programming/lua)

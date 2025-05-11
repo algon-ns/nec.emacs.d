@@ -33,8 +33,6 @@
 ;;; Code:
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (if nec/measure-time (nec/header "start measure of load time ('init.el')"))
-(setq user-full-name    "Niels Søndergaard"
-      user-mail-address "niels@algon.dk")
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; figure out if homebrew is using "/opt/homebrew (on Apple
 ;; Mx silicon) or /usr/local (on Intel silicon)
@@ -48,6 +46,7 @@
 ;; setup the load paths so that I can require my own packages
 ;; to drive the boot process
 (add-to-list 'load-path (expand-file-name "lisp" user-emacs-directory))
+(add-to-list 'load-path (expand-file-name "etc" user-emacs-directory))
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (if nec/measure-time (nec/header "start core"))
 (require 'core/packages) 
@@ -64,11 +63,14 @@
 (if nec/measure-time (nec/header "start ui"))
 ;; (load (expand-file-name "ui/interface" config-dir))
 (require 'ui/bookmarks)
+(require 'ui/setup-private-file)
+(require 'etc/private)
 (require 'ui/theme)
 (require 'ui/faces)
 (require 'ui/uuid-simple)
 (require 'ui/hydra)
 (require 'ui/ibuffer)
+;; (require 'ui/nerd-icons-ibuffer)
 (require 'ui/dashboard)
 (if nec/measure-time (nec/stimer "ui"))
 ;;

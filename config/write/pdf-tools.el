@@ -41,7 +41,7 @@
   ;; automatically annotate highlights
   (setq pdf-annot-activate-created-annotations t)
   (define-pdf-cache-function pagelabels)
-  :hook ((pdf-view-mode-hook . (lambda () (display-line-numbers-mode -1)))
+  :hook ((pdf-view-mode-hook . (lambda () (display-line-numbers-mode nil)))
          (pdf-view-mode-hook . pdf-tools-enable-minor-modes))
   )
 

@@ -9,6 +9,6 @@
 #+KEYWORDS:
 #+OPTIONS:  H:3 num:t toc:nil \n:nil @:t e:t ø_Æ::t |:t ^:t -:t f:t *:t <:t
 #+OPTIONS:  arch:t title:nil f:t broken-links:mark 
-#+INCLUDE: "/Users/niels/org/include/standard.org"
+#+INCLUDE: "/Users/niels/org/include/standarder/standard.org"
 #+INCLUDE: "/Users/niels/org/include/headers/algon-hdr.tex" export latex
 
